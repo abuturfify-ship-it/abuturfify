@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turfify — Sign In | Play. Book. Enjoy.</title>
+  <meta name="description" content="Sign in or create your Turfify account to book premium sports turfs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --green:#10B981;--green-dark:#059669;--green-light:#34D399;
+      --green-glow:rgba(16,185,129,0.18);
+      --bg:#080E14;--surface:#0F1923;--surface2:#162233;
+      --border:rgba(255,255,255,0.07);--border-green:rgba(16,185,129,0.3);
+      --text:#F1F5F9;--text-muted:#8B9BB4;--text-dim:#4A5568;
+      --error:#EF4444;--error-bg:rgba(239,68,68,0.1);
+      --radius:16px;--radius-sm:10px;
+    }
+    html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+    .auth-wrapper{display:grid;grid-template-columns:1fr 1fr;height:100vh}
+    /* LEFT */
+    .auth-brand{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:48px;background:linear-gradient(145deg,#0a1628 0%,#0d1f35 50%,#071a0e 100%);overflow:hidden}
+    .auth-brand::before{content:'';position:absolute;top:-120px;left:-120px;width:500px;height:500px;background:radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%);pointer-events:none}
+    .brand-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(16,185,129,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+    .brand-logo{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+    .brand-logo-badge{width:44px;height:44px;background:linear-gradient(135deg,var(--green),var(--green-dark));border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(16,185,129,0.4)}
+    .brand-logo-text{font-size:22px;font-weight:800;letter-spacing:-0.5px}
+    .brand-logo-text span{color:var(--green)}
+    .brand-center{position:relative;z-index:1}
+    .brand-headline{font-size:40px;font-weight:800;line-height:1.15;letter-spacing:-1.5px;margin-bottom:20px}
+    .brand-headline .highlight{background:linear-gradient(90deg,var(--green),var(--green-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .brand-desc{font-size:15px;color:var(--text-muted);line-height:1.7;max-width:360px;margin-bottom:40px}
+    .brand-stats{display:flex;gap:28px}
+    .stat-number{font-size:26px;font-weight:800;color:var(--green);display:block;line-height:1}
+    .stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-top:4px;display:block}
+    .brand-features{position:relative;z-index:1;display:flex;flex-direction:column;gap:14px}
+    .feature-chip{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:10px;font-size:13px;color:var(--text-muted)}
+    .feature-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}
+    /* RIGHT */
+    .auth-panel{display:flex;align-items:center;justify-content:center;padding:40px 32px;background:var(--surface);overflow-y:auto}
+    .auth-card{width:100%;max-width:420px}
+    .auth-card-header{margin-bottom:28px}
+    .auth-card-title{font-size:26px;font-weight:800;letter-spacing:-0.7px;margin-bottom:6px}
+    .auth-card-sub{font-size:14px;color:var(--text-muted)}
+    /* TABS */
+    .auth-tabs{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;border:1px solid var(--border)}
+    .auth-tab{flex:1;padding:9px;border:none;background:transparent;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Inter',sans-serif;border-radius:8px;cursor:pointer;transition:all .22s ease}
+    .auth-tab.active{background:var(--green);color:#fff;box-shadow:0 4px 16px rgba(16,185,129,0.35)}
+    /* VIEWS */
+    .auth-view{display:none;animation:fadeSlide .25s ease}
+    .auth-view.active{display:block}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    /* FORM */
+    .form-group{margin-bottom:14px}
+    .form-label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
+    .form-input{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;transition:border-color .2s,box-shadow .2s;outline:none}
+    .form-input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-glow)}
+    .form-input::placeholder{color:var(--text-dim)}
+    .form-input-wrap{position:relative}
+    .form-input-wrap .form-input{padding-right:44px}
+    .input-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-dim);cursor:pointer;transition:color .2s;background:none;border:none}
+    .input-icon:hover{color:var(--green)}
+    /* ROLE */
+    .role-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .role-card{position:relative}
+    .role-card input[type=radio]{position:absolute;opacity:0;width:0;height:0}
+    .role-card label{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;background:var(--surface2);text-align:center}
+    .role-card label:hover{border-color:var(--border-green)}
+    .role-card input:checked+label{border-color:var(--green);background:rgba(16,185,129,0.08);box-shadow:0 0 0 1px var(--green),0 4px 16px rgba(16,185,129,0.12)}
+    .role-icon{width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;font-size:18px}
+    .role-name{font-size:13px;font-weight:700;color:var(--text)}
+    .role-desc{font-size:11px;color:var(--text-muted)}
+    /* BUTTON */
+    .btn-auth{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),var(--green-dark));border:none;border-radius:var(--radius-sm);color:#fff;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .22s ease;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(16,185,129,0.3);margin-top:4px}
+    .btn-auth:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 28px rgba(16,185,129,0.45)}
+    .btn-auth:disabled{opacity:.65;cursor:not-allowed}
+    .btn-auth .btn-spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+    .btn-auth.loading .btn-text{display:none}
+    .btn-auth.loading .btn-spinner{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* ALERTS */
+    .alert{display:none;padding:12px 14px;border-radius:var(--radius-sm);font-size:13px;line-height:1.5;margin-bottom:14px;align-items:flex-start;gap:10px}
+    .alert.show{display:flex}
+    .alert-error{background:var(--error-bg);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5}
+    .alert-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green-light)}
+    /* MISC */
+    .forgot-link-wrap{text-align:right;margin-top:-4px;margin-bottom:14px}
+    .link-btn{background:none;border:none;color:var(--green);font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;padding:0;transition:color .2s}
+    .link-btn:hover{color:var(--green-light);text-decoration:underline}
+    .auth-footer-text{text-align:center;font-size:13px;color:var(--text-muted);margin-top:18px}
+    .back-home{display:flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13px;text-decoration:none;margin-bottom:28px;transition:color .2s}
+    .back-home:hover{color:var(--green)}
+    /* STRENGTH */
+    .password-strength{display:none;margin-top:6px}
+    .strength-bar{height:3px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:4px}
+    .strength-fill{height:100%;border-radius:4px;transition:width .3s,background .3s}
+    .strength-label{font-size:11px;color:var(--text-dim)}
+    /* RESPONSIVE */
+    @media(max-width:900px){
+      .auth-wrapper{grid-template-columns:1fr}
+      .auth-brand{display:none}
+      html,body{overflow:auto}
+      .auth-panel{min-height:100vh;padding:32px 20px}
+    }
+  </style>
+</head>
+<body>
+<div class="auth-wrapper">
+  <!-- LEFT BRAND PANEL -->
+  <aside class="auth-brand">
+    <div class="brand-grid"></div>
+    <div class="brand-logo">
+      <div class="brand-logo-badge">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round">
+          <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"/><circle cx="12" cy="4" r="1.5" fill="#fff"/>
+        </svg>
+      </div>
+      <span class="brand-logo-text">Turfi<span>fy</span></span>
+    </div>
+    <div class="brand-center">
+      <h1 class="brand-headline">The Premium<br>Sports Booking<br><span class="highlight">Platform.</span></h1>
+      <p class="brand-desc">Join thousands of players and turf owners on Bangalore's most trusted sports marketplace. Real-time slots, instant confirmation, secure payments.</p>
+      <div class="brand-stats">
+        <div><span class="stat-number">1,200+</span><span class="stat-label">Turfs Listed</span></div>
+        <div><span class="stat-number">48K+</span><span class="stat-label">Players</span></div>
+        <div><span class="stat-number">4.9★</span><span class="stat-label">Avg Rating</span></div>
+      </div>
+    </div>
+    <div class="brand-features">
+      <div class="feature-chip"><span class="dot"></span>Instant slot confirmation</div>
+      <div class="feature-chip"><span class="dot"></span>Secure Supabase authentication</div>
+      <div class="feature-chip"><span class="dot"></span>Owner &amp; Player role management</div>
+    </div>
+  </aside>
+
+  <!-- RIGHT AUTH PANEL -->
+  <main class="auth-panel">
+    <div class="auth-card">
+      <a href="index.html" class="back-home">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back to Turfify
+      </a>
+      <div class="auth-card-header">
+        <h2 class="auth-card-title" id="auth-page-title">Welcome back 👋</h2>
+        <p class="auth-card-sub" id="auth-page-sub">Sign in to your Turfify account</p>
+      </div>
+
+      <div class="auth-tabs" id="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" onclick="switchView('signin')">Sign In</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchView('signup')">Sign Up</button>
+      </div>
+
+      <!-- SIGN IN -->
+      <div class="auth-view active" id="view-signin">
+        <div class="alert alert-error" id="signin-error"><span>⚠️</span><span id="signin-error-msg"></span></div>
+        <div class="alert alert-success" id="signin-success"><span>✅</span><span id="signin-success-msg">Signed in! Redirecting...</span></div>
+        <form id="form-signin" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="signin-email">Email Address</label>
+            <input class="form-input" type="email" id="signin-email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signin-password">Password</label>
+            <div class="form-input-wrap">
+              <input class="form-input" type="password" id="signin-password" placeholder="••••••••" autocomplete="current-password" required>
+              <button type="button" class="input-icon" onclick="togglePwd('signin-password')" title="Show/hide password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="forgot-link-wrap">
+            <button type="button" class="link-btn" onclick="switchView('forgot')">Forgot password?</button>
+          </div>
+          <button type="submit" class="btn-auth" id="btn-signin">
+            <span class="btn-text">Sign In to Turfify</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </form>
+        <p class="auth-footer-text">Don't have an account? <button class="link-btn" onclick="switchView('signup')">Create one free</button></p>
+      </div>
+
+      <!-- SIGN UP -->
+      <div class="auth-view" id="view-signup">
+        <div class="alert alert-error" id="signup-error"><span>⚠️</span><span id="signup-error-msg"></span></div>
+        <div class="alert alert-success" id="signup-success"><span>✅</span><span id="signup-success-msg"></span></div>
+        <form id="form-signup" novalidate>
+          <div class="form-group">
+            <label class="form-label">I am a</label>
+            <div class="role-selector">
+              <div class="role-card">
+                <input type="radio" name="role" id="role-player" value="player" checked>
+                <label for="role-player"><div class="role-icon">⚽</div><span class="role-name">Player</span><span class="role-desc">Book turfs &amp; slots</span></label>
+              </div>
+              <div class="role-card">
+                <input type="radio" name="role" id="role-owner" value="owner">
+                <label for="role-owner"><div class="role-icon">🏟️</div><span class="role-name">Turf Owner</span><span class="role-desc">List &amp; manage turfs</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-name">Full Name</label>
+            <input class="form-input" type="text" id="signup-name" placeholder="Rahul Sharma" autocomplete="name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-email">Email Address</label>
+            <input class="form-input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-phone">Phone Number</label>
+            <input class="form-input" type="tel" id="signup-phone" placeholder="+91 98765 43210" autocomplete="tel">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-password">Password</label>
+            <div class="form-input-wrap">
+              <input class="form-input" type="password" id="signup-password" placeholder="Min. 8 characters" autocomplete="new-password" required oninput="checkStrength(this.value)">
+              <button type="button" class="input-icon" onclick="togglePwd('signup-password')" title="Show/hide password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="password-strength" id="pwd-strength">
+              <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+              <span class="strength-label" id="strength-label">Too weak</span>
+            </div>
+          </div>
+          <button type="submit" class="btn-auth" id="btn-signup">
+            <span class="btn-text">Create My Account</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </form>
+        <p class="auth-footer-text">Already have an account? <button class="link-btn" onclick="switchView('signin')">Sign in</button></p>
+      </div>
+
+      <!-- FORGOT PASSWORD -->
+      <div class="auth-view" id="view-forgot">
+        <div class="alert alert-error" id="forgot-error"><span>⚠️</span><span id="forgot-error-msg"></span></div>
+        <div class="alert alert-success" id="forgot-success"><span>📧</span><span>Reset link sent! Check your inbox and follow the instructions.</span></div>
+        <form id="form-forgot" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="forgot-email">Your Email Address</label>
+            <input class="form-input" type="email" id="forgot-email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <button type="submit" class="btn-auth" id="btn-forgot">
+            <span class="btn-text">Send Reset Link</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </form>
+        <p class="auth-footer-text">Remembered it? <button class="link-btn" onclick="switchView('signin')">Back to Sign In</button></p>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL  = 'https://fksdanhjdhqbpijoolzf.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  const TITLES = {
+    signin: { title: 'Welcome back 👋',      sub: 'Sign in to your Turfify account' },
+    signup: { title: 'Create account 🚀',    sub: "Join Turfify — it's free" },
+    forgot: { title: 'Reset password 🔑',   sub: "We'll email you a reset link" }
+  };
+
+  function switchView(view) {
+    document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
+    document.getElementById('view-' + view).classList.add('active');
+    document.getElementById('auth-page-title').textContent = TITLES[view].title;
+    document.getElementById('auth-page-sub').textContent   = TITLES[view].sub;
+    const tabs = document.getElementById('auth-tabs');
+    tabs.style.display = view === 'forgot' ? 'none' : 'flex';
+    document.getElementById('tab-signin')?.classList.toggle('active', view === 'signin');
+    document.getElementById('tab-signup')?.classList.toggle('active', view === 'signup');
+  }
+
+  function setLoading(btn, on) {
+    btn.disabled = on;
+    btn.classList.toggle('loading', on);
+  }
+
+  function showErr(prefix, msg) {
+    const el = document.getElementById(prefix + '-error');
+    const sp = document.getElementById(prefix + '-error-msg');
+    if (sp) sp.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function showOk(prefix, msg) {
+    const el = document.getElementById(prefix + '-success');
+    const sp = document.getElementById(prefix + '-success-msg');
+    if (sp && msg) sp.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function hide(id) { document.getElementById(id)?.classList.remove('show'); }
+
+  function togglePwd(id) {
+    const inp = document.getElementById(id);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  function checkStrength(val) {
+    const wrap = document.getElementById('pwd-strength');
+    wrap.style.display = val.length ? 'block' : 'none';
+    let score = 0;
+    if (val.length >= 8)           score++;
+    if (/[A-Z]/.test(val))        score++;
+    if (/[0-9]/.test(val))        score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const lvls = [
+      {p:'20%',c:'#EF4444',t:'Too weak'},
+      {p:'45%',c:'#F59E0B',t:'Weak'},
+      {p:'65%',c:'#FBBF24',t:'Fair'},
+      {p:'85%',c:'#34D399',t:'Good'},
+      {p:'100%',c:'#10B981',t:'Strong 💪'}
+    ];
+    const l = lvls[score] || lvls[0];
+    document.getElementById('strength-fill').style.cssText = `width:${l.p};background:${l.c}`;
+    const lbl = document.getElementById('strength-label');
+    lbl.textContent = l.t;
+    lbl.style.color = l.c;
+  }
+
+  async function redirectByRole(userId) {
+    try {
+      const { data } = await sb.from('profiles').select('role').eq('id', userId).single();
+      window.location.href = (data?.role === 'owner') ? 'owner-dashboard.html' : 'player-dashboard.html';
+    } catch { window.location.href = 'player-dashboard.html'; }
+  }
+
+  /* ─── SIGN IN ─── */
+  document.getElementById('form-signin').addEventListener('submit', async e => {
+    e.preventDefault();
+    hide('signin-error'); hide('signin-success');
+    const email = document.getElementById('signin-email').value.trim();
+    const pass  = document.getElementById('signin-password').value;
+    const btn   = document.getElementById('btn-signin');
+    if (!email || !pass) { showErr('signin','Please fill in all fields.'); return; }
+    setLoading(btn, true);
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) {
+      setLoading(btn, false);
+      showErr('signin', error.message === 'Invalid login credentials'
+        ? 'Incorrect email or password. Please try again.' : error.message);
+      return;
+    }
+    showOk('signin', 'Signed in! Redirecting to your dashboard...');
+    setTimeout(() => redirectByRole(data.user.id), 1000);
+  });
+
+  /* ─── SIGN UP ─── */
+  document.getElementById('form-signup').addEventListener('submit', async e => {
+    e.preventDefault();
+    hide('signup-error'); hide('signup-success');
+    const role  = document.querySelector('input[name="role"]:checked')?.value || 'player';
+    const name  = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const phone = document.getElementById('signup-phone').value.trim();
+    const pass  = document.getElementById('signup-password').value;
+    const btn   = document.getElementById('btn-signup');
+    if (!name || !email || !pass) { showErr('signup','Please fill in all required fields.'); return; }
+    if (pass.length < 8) { showErr('signup','Password must be at least 8 characters.'); return; }
+    setLoading(btn, true);
+    const { data, error } = await sb.auth.signUp({
+      email, password: pass,
+      options: { data: { full_name: name, role, phone } }
+    });
+    if (error) { setLoading(btn, false); showErr('signup', error.message); return; }
+    if (data.user) {
+      await sb.from('profiles').upsert({
+        id: data.user.id, full_name: name, email, phone: phone || null,
+        role, created_at: new Date().toISOString()
+      });
+    }
+    setLoading(btn, false);
+    if (data.session) {
+      showOk('signup', 'Account created! Redirecting...');
+      setTimeout(() => redirectByRole(data.user.id), 1200);
+    } else {
+      showOk('signup', '🎉 Account created! Please check your email to confirm, then sign in.');
+      document.getElementById('form-signup').reset();
+    }
+  });
+
+  /* ─── FORGOT PASSWORD ─── */
+  document.getElementById('form-forgot').addEventListener('submit', async e => {
+    e.preventDefault();
+    hide('forgot-error'); hide('forgot-success');
+    const email = document.getElementById('forgot-email').value.trim();
+    const btn   = document.getElementById('btn-forgot');
+    if (!email) { showErr('forgot','Please enter your email address.'); return; }
+    setLoading(btn, true);
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/auth.html'
+    });
+    setLoading(btn, false);
+    if (error) { showErr('forgot', error.message); return; }
+    document.getElementById('forgot-success').classList.add('show');
+    document.getElementById('forgot-email').value = '';
+  });
+
+  /* ─── INITIALIZE FROM URL QUERY / SESSION ─── */
+  (async () => {
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode') || params.get('view');
+    if (mode === 'signup' || mode === 'register') {
+      switchView('signup');
+    } else if (mode === 'forgot') {
+      switchView('forgot');
+    }
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user && !window.location.hash.includes('type=recovery')) {
+      await redirectByRole(session.user.id);
+    }
+  })();
+</script>
+</body>
+</html>

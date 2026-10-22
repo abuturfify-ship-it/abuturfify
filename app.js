@@ -91,20 +91,17 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Facility submitted! Our verification team will reach out within 2 hours.');
   });
 
-  // Auth triggers
+  // Auth triggers - Redirect to Supabase Auth Page
   document.getElementById('btn-open-login')?.addEventListener('click', () => {
-    document.getElementById('auth-title').textContent = 'Login to Turfify';
-    openModal(modalAuth);
+    window.location.href = 'auth.html?mode=signin';
   });
 
   document.getElementById('btn-open-register')?.addEventListener('click', () => {
-    document.getElementById('auth-title').textContent = 'Create Turfify Account';
-    openModal(modalAuth);
+    window.location.href = 'auth.html?mode=signup';
   });
 
   document.getElementById('btn-bottom-cta')?.addEventListener('click', () => {
-    document.getElementById('auth-title').textContent = 'Claim New User Offer';
-    openModal(modalAuth);
+    window.location.href = 'auth.html?mode=signup';
   });
 
   document.getElementById('auth-submit-form')?.addEventListener('submit', (e) => {
