@@ -199,7 +199,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-base-rate').textContent = `₹${rate}`;
         document.getElementById('modal-total-rate').textContent = `₹${rate}`;
 
+        // Set today's date as default if not already set
+        const dateInput = document.getElementById('booking-date');
+        if (!dateInput.value) {
+          dateInput.value = new Date().toISOString().split('T')[0];
+        }
+
         openModal(modalBooking);
+        // Refresh slot colours based on actual bookings
+        refreshSlotAvailability();
       });
     });
 
@@ -219,15 +227,55 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial render of all turfs from store
   renderMarketplaceTurfs();
 
-  document.querySelectorAll('.slot-btn:not(.booked)').forEach(slot => {
-    slot.addEventListener('click', () => {
-      document.querySelectorAll('.slot-btn').forEach(s => s.classList.remove('selected'));
-      slot.classList.add('selected');
+  // --------------------------------------------------------------------------
+  // Slot Availability: Mark booked slots as red/disabled for all users
+  // --------------------------------------------------------------------------
+  function refreshSlotAvailability() {
+    if (!window.TurfifyStore) return;
+
+    const date = document.getElementById('booking-date')?.value || new Date().toISOString().split('T')[0];
+    const allBookings = window.TurfifyStore.getBookings();
+
+    // Get time slots booked for this turf on this date (only confirmed, not cancelled)
+    const bookedSlots = allBookings
+      .filter(b =>
+        b.turf_id === activeTurfId &&
+        b.date === date &&
+        b.status !== 'Cancelled'
+      )
+      .map(b => b.time_slot ? b.time_slot.trim() : '');
+
+    document.querySelectorAll('.slot-btn').forEach(btn => {
+      const slotLabel = btn.dataset.slot ? btn.dataset.slot.trim() : '';
+
+      // Reset state first
+      btn.classList.remove('booked', 'selected');
+      btn.disabled = false;
+
+      if (slotLabel && bookedSlots.includes(slotLabel)) {
+        // Mark as booked — red & disabled
+        btn.classList.add('booked');
+        btn.disabled = true;
+      } else if (slotLabel) {
+        // Re-bind click for available slots
+        btn.onclick = () => {
+          document.querySelectorAll('.slot-btn').forEach(s => s.classList.remove('selected'));
+          btn.classList.add('selected');
+        };
+      }
     });
-  });
+  }
+
+  // Refresh slots when date changes
+  document.getElementById('booking-date')?.addEventListener('change', refreshSlotAvailability);
 
   document.getElementById('btn-confirm-slot')?.addEventListener('click', () => {
-    const slot = document.querySelector('.slot-btn.selected')?.dataset.slot || '06:00 - 07:00 PM';
+    const selectedBtn = document.querySelector('.slot-btn.selected');
+    if (!selectedBtn) {
+      showToast('⚠️ Please select an available slot first.');
+      return;
+    }
+    const slot = selectedBtn.dataset.slot;
     const date = document.getElementById('booking-date').value || new Date().toISOString().split('T')[0];
     
     if (window.TurfifyStore) {

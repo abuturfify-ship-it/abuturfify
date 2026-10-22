@@ -1438,11 +1438,12 @@ button {
 }
 
 .slot-btn.booked {
-  background: var(--slate-100);
-  border-color: var(--slate-200);
-  color: var(--slate-400);
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  color: #DC2626;
   cursor: not-allowed;
   text-decoration: line-through;
+  opacity: 0.85;
 }
 
 .summary-card {
