@@ -1,250 +1,224 @@
 /* ==========================================================================
    TURFIFY ADMIN PANEL — INTERACTIVE SCRIPT
-   Data Management, Section Switcher, SVG Charts, Live Filters, Modals & Toast
+   Fully Dynamic: reads from TurfifyStore (localStorage)
+   Revenue Split: Owner 70% | Admin Platform 30%
    ========================================================================== */
 
-// Sample Data Store
-const AdminStore = {
-  stats: {
-    revenue: 428500,
-    activeTurfs: 48,
-    totalBookings: 1248,
-    activeUsers: 892,
-    settledPayouts: 385000,
-    pendingPayouts: 43500
-  },
+const OWNER_SHARE = 0.70;
+const ADMIN_SHARE = 0.30;
 
-  turfs: [
-    {
-      id: "TRF-001",
-      name: "Greenfield Arena 5v5",
-      location: "Anna Nagar, Chennai",
-      sport: "Football",
-      price: 1200,
-      rating: 4.9,
-      status: "active",
-      bookingsCount: 312,
-      owner: "Vikram Rathore",
-      img: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&auto=format&fit=crop&q=80"
-    },
-    {
-      id: "TRF-002",
-      name: "Striker's Bay Box Cricket",
-      location: "Koramangala, Bangalore",
-      sport: "Cricket",
-      price: 1500,
-      rating: 4.8,
-      status: "active",
-      bookingsCount: 284,
-      owner: "Pooja Hegde",
-      img: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600&auto=format&fit=crop&q=80"
-    },
-    {
-      id: "TRF-003",
-      name: "Velocity Badminton Hub",
-      location: "Indiranagar, Bangalore",
-      sport: "Badminton",
-      price: 800,
-      rating: 4.7,
-      status: "active",
-      bookingsCount: 198,
-      owner: "Karthik Nair",
-      img: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&auto=format&fit=crop&q=80"
-    },
-    {
-      id: "TRF-004",
-      name: "Champions Turf Nungambakkam",
-      location: "Nungambakkam, Chennai",
-      sport: "Football",
-      price: 1400,
-      rating: 4.9,
-      status: "active",
-      bookingsCount: 245,
-      owner: "Suresh Raman",
-      img: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=600&auto=format&fit=crop&q=80"
-    },
-    {
-      id: "TRF-005",
-      name: "Apex Tennis & Pickleball Court",
-      location: "Adyar, Chennai",
-      sport: "Tennis",
-      price: 1100,
-      rating: 4.6,
-      status: "inactive",
-      bookingsCount: 92,
-      owner: "Ananya Roy",
-      img: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&auto=format&fit=crop&q=80"
-    },
-    {
-      id: "TRF-006",
-      name: "Thunderbolt Multi-sport Dome",
-      location: "Whitefield, Bangalore",
-      sport: "Multi-sport",
-      price: 1600,
-      rating: 4.9,
-      status: "active",
-      bookingsCount: 117,
-      owner: "Arjun Reddy",
-      img: "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=600&auto=format&fit=crop&q=80"
-    }
-  ],
+// ─── Helpers ────────────────────────────────────────────────────────────────
+function fmt(n) {
+  return '₹' + Number(n || 0).toLocaleString('en-IN');
+}
 
-  bookings: [
-    {
-      id: "BK-9021",
-      customer: "Rahul Sharma",
-      email: "rahul.s@gmail.com",
-      turf: "Greenfield Arena 5v5",
-      slot: "Today, 07:00 PM - 08:00 PM",
-      sport: "Football",
-      amount: 1200,
-      status: "confirmed",
-      gateway: "Razorpay UPI",
-      date: "2026-10-15"
-    },
-    {
-      id: "BK-9020",
-      customer: "Aditi Rao",
-      email: "aditi.rao@outlook.com",
-      turf: "Striker's Bay Box Cricket",
-      slot: "Today, 08:00 PM - 09:30 PM",
-      sport: "Cricket",
-      amount: 2250,
-      status: "confirmed",
-      gateway: "Razorpay Card",
-      date: "2026-10-15"
-    },
-    {
-      id: "BK-9019",
-      customer: "Naveen Kumar",
-      email: "naveen.k@gmail.com",
-      turf: "Velocity Badminton Hub",
-      slot: "Today, 06:00 PM - 07:00 PM",
-      sport: "Badminton",
-      amount: 800,
-      status: "walkin",
-      gateway: "Cash at Desk",
-      date: "2026-10-15"
-    },
-    {
-      id: "BK-9018",
-      customer: "Dinesh Karthik",
-      email: "dk.chennai@gmail.com",
-      turf: "Champions Turf Nungambakkam",
-      slot: "Tomorrow, 06:00 AM - 07:00 AM",
-      sport: "Football",
-      amount: 1400,
-      status: "confirmed",
-      gateway: "Razorpay Netbanking",
-      date: "2026-10-16"
-    },
-    {
-      id: "BK-9017",
-      customer: "Meera Krishnan",
-      email: "meera.k@gmail.com",
-      turf: "Apex Tennis & Pickleball Court",
-      slot: "Oct 14, 05:00 PM - 06:00 PM",
-      sport: "Tennis",
-      amount: 1100,
-      status: "cancelled",
-      gateway: "Razorpay UPI",
-      date: "2026-10-14"
-    },
-    {
-      id: "BK-9016",
-      customer: "Harish Varma",
-      email: "harish.v@live.com",
-      turf: "Thunderbolt Multi-sport Dome",
-      slot: "Oct 14, 08:00 PM - 10:00 PM",
-      sport: "Multi-sport",
-      amount: 3200,
-      status: "confirmed",
-      gateway: "Razorpay UPI",
-      date: "2026-10-14"
-    }
-  ],
+function getSportIcon(sport) {
+  switch ((sport || '').toLowerCase()) {
+    case 'football':  return '⚽';
+    case 'cricket':   return '🏏';
+    case 'badminton': return '🏸';
+    case 'tennis':    return '🎾';
+    default:          return '🏟️';
+  }
+}
 
-  users: [
-    {
-      id: "USR-101",
-      name: "Rahul Sharma",
-      email: "rahul.s@gmail.com",
-      role: "Player",
-      phone: "+91 98765 43210",
-      totalBookings: 14,
-      totalSpent: 16800,
-      status: "active",
-      joined: "Jan 2026"
-    },
-    {
-      id: "USR-102",
-      name: "Vikram Rathore",
-      email: "vikram@greenfieldarena.com",
-      role: "Turf Owner",
-      phone: "+91 98451 23456",
-      turfsManaged: 2,
-      totalRevenue: 342000,
-      status: "active",
-      joined: "Nov 2025"
-    },
-    {
-      id: "USR-103",
-      name: "Aditi Rao",
-      email: "aditi.rao@outlook.com",
-      role: "Player",
-      phone: "+91 99001 88223",
-      totalBookings: 9,
-      totalSpent: 12400,
-      status: "active",
-      joined: "Mar 2026"
-    },
-    {
-      id: "USR-104",
-      name: "Pooja Hegde",
-      email: "pooja@strikersbay.com",
-      role: "Turf Owner",
-      phone: "+91 97400 55112",
-      turfsManaged: 1,
-      totalRevenue: 284000,
-      status: "active",
-      joined: "Dec 2025"
-    },
-    {
-      id: "USR-105",
-      name: "Karthik Nair",
-      email: "karthik@velocityhub.in",
-      role: "Turf Owner",
-      phone: "+91 96112 33445",
-      turfsManaged: 1,
-      totalRevenue: 158400,
-      status: "active",
-      joined: "Feb 2026"
-    },
-    {
-      id: "USR-106",
-      name: "Siddharth Verma",
-      email: "sid.verma@gmail.com",
-      role: "Player",
-      phone: "+91 91234 56789",
-      totalBookings: 3,
-      totalSpent: 3600,
-      status: "inactive",
-      joined: "Aug 2026"
+function getAvatarColor(name) {
+  const colors = [
+    'linear-gradient(135deg, #10B981, #06B6D4)',
+    'linear-gradient(135deg, #3B82F6, #8B5CF6)',
+    'linear-gradient(135deg, #F59E0B, #EA580C)',
+    'linear-gradient(135deg, #EC4899, #8B5CF6)',
+    'linear-gradient(135deg, #14B8A6, #0D9488)'
+  ];
+  let hash = 0;
+  for (let i = 0; i < (name || '').length; i++) hash += name.charCodeAt(i);
+  return colors[hash % colors.length];
+}
+
+// ─── TurfifyStore accessors ──────────────────────────────────────────────────
+function getLiveBookings() {
+  return window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
+}
+
+function getLiveTurfs() {
+  return window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+}
+
+function getLiveUsers() {
+  const bookings = getLiveBookings();
+  const turfs = getLiveTurfs();
+
+  // Build players from booking records
+  const playerMap = {};
+  bookings.forEach(b => {
+    if (!b.player_id) return;
+    if (!playerMap[b.player_id]) {
+      playerMap[b.player_id] = {
+        id: b.player_id,
+        name: b.player_name || 'Player',
+        phone: b.player_phone || '—',
+        email: '—',
+        role: 'Player',
+        bookings: 0,
+        spent: 0,
+        joined: b.date || '—'
+      };
     }
-  ]
-};
+    if (b.status !== 'Cancelled') {
+      playerMap[b.player_id].bookings++;
+      playerMap[b.player_id].spent += (b.amount || 0);
+    }
+  });
+
+  // Build owners from turfs
+  const ownerMap = {};
+  turfs.forEach(t => {
+    if (!t.owner_id) return;
+    if (!ownerMap[t.owner_id]) {
+      ownerMap[t.owner_id] = {
+        id: t.owner_id,
+        name: t.owner_name || 'Owner (' + t.owner_id + ')',
+        phone: t.owner_phone || '—',
+        email: t.owner_email || '—',
+        role: 'Turf Owner',
+        turfsManaged: 0,
+        totalRevenue: 0,
+        joined: '—'
+      };
+    }
+    ownerMap[t.owner_id].turfsManaged++;
+  });
+
+  // Add booking revenue to owners
+  bookings.forEach(b => {
+    const turf = turfs.find(t => t.id === b.turf_id);
+    if (!turf || !turf.owner_id || !ownerMap[turf.owner_id]) return;
+    if (b.status !== 'Cancelled') {
+      ownerMap[turf.owner_id].totalRevenue += (b.amount || 0);
+      if (ownerMap[turf.owner_id].joined === '—') {
+        ownerMap[turf.owner_id].joined = b.date || '—';
+      }
+    }
+  });
+
+  return [...Object.values(playerMap), ...Object.values(ownerMap)];
+}
 
 // Application Controller
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
+  renderKPIs();
   initDashboardCharts();
   renderTurfsList();
   renderBookingsTable();
   renderUsersTable();
-  initModalHandlers();
   initFilters();
   initExportButtons();
 });
+
+// ─── KPI Stats ───────────────────────────────────────────────────────────────
+function renderKPIs() {
+  const bookings = getLiveBookings();
+  const turfs    = getLiveTurfs();
+  const users    = getLiveUsers();
+
+  const confirmed   = bookings.filter(b => b.status !== 'Cancelled');
+  const totalGMV    = confirmed.reduce((s, b) => s + (b.amount || 0), 0);
+  const adminRev    = Math.round(totalGMV * ADMIN_SHARE);
+  const players     = users.filter(u => u.role === 'Player').length;
+  const owners      = users.filter(u => u.role === 'Turf Owner').length;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  set('kpi-gmv',           fmt(totalGMV));
+  set('kpi-turfs',         turfs.length);
+  set('kpi-bookings',      confirmed.length);
+  set('kpi-users',         users.length);
+  set('kpi-users-footer',  `${players} Players • ${owners} Owners`);
+  set('kpi-admin-revenue', fmt(adminRev));
+
+  renderActivityFeed(bookings.slice(0, 3));
+  renderPaymentsSplit(confirmed, turfs);
+}
+
+// ─── Activity Feed ───────────────────────────────────────────────────────────
+function renderActivityFeed(bookings) {
+  const el = document.getElementById('activity-feed');
+  if (!el) return;
+  if (!bookings.length) {
+    el.innerHTML = `<div style="text-align:center;padding:32px;color:#94A3B8;">No recent activity yet.</div>`;
+    return;
+  }
+  el.innerHTML = bookings.map((b, i) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;${i < bookings.length-1 ? 'border-bottom:1px solid var(--slate-50);' : ''}">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:1.2rem;">${getSportIcon(b.sport)}</span>
+        <div>
+          <div style="font-weight:700;color:var(--navy-900);">${b.player_name || 'Player'} booked ${b.turf_name || 'a Turf'}</div>
+          <div style="font-size:0.76rem;color:var(--slate-400);">${b.date || ''} ${b.time_slot || ''} &bull; ${b.payment_status || ''}</div>
+        </div>
+      </div>
+      <span class="status-pill ${b.status === 'Confirmed' ? 'confirmed' : b.status === 'Cancelled' ? 'cancelled' : 'walkin'}">${fmt(b.amount || 0)}</span>
+    </div>
+  `).join('');
+}
+
+// ─── Payments / Revenue Split ─────────────────────────────────────────────
+function renderPaymentsSplit(confirmed, turfs) {
+  const el = document.getElementById('payments-split-body');
+  if (!el) return;
+
+  if (!confirmed.length) {
+    el.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94A3B8;">No confirmed bookings yet.</td></tr>`;
+    return;
+  }
+
+  // Per-booking rows
+  el.innerHTML = confirmed.map(b => {
+    const ownerAmt = Math.round((b.amount || 0) * OWNER_SHARE);
+    const adminAmt = Math.round((b.amount || 0) * ADMIN_SHARE);
+    const turf     = turfs.find(t => t.id === b.turf_id);
+    const ownerName = turf?.owner_name || 'Owner';
+    return `
+      <tr>
+        <td><span style="font-family:monospace;font-weight:700;color:#2563EB;">${b.id}</span></td>
+        <td><div style="font-weight:600;">${b.player_name || '—'}</div><div style="font-size:0.74rem;color:#64748B;">${b.turf_name || '—'}</div></td>
+        <td style="font-size:0.8rem;color:#64748B;">${b.date || '—'}<br><small>${b.time_slot || ''}</small></td>
+        <td style="font-weight:700;">${fmt(b.amount || 0)}</td>
+        <td><div style="font-weight:700;color:#10B981;">${fmt(ownerAmt)}</div><div style="font-size:0.72rem;color:#64748B;">${ownerName} (70%)</div></td>
+        <td><div style="font-weight:700;color:#3B82F6;">${fmt(adminAmt)}</div><div style="font-size:0.72rem;color:#64748B;">Platform (30%)</div></td>
+        <td><span class="status-pill confirmed">Paid</span></td>
+      </tr>`;
+  }).join('');
+
+  // Owner payout summary
+  const ownerTotals = {};
+  confirmed.forEach(b => {
+    const turf = turfs.find(t => t.id === b.turf_id);
+    const oid  = turf?.owner_id || b.turf_id;
+    const oname = turf?.owner_name || 'Owner';
+    if (!ownerTotals[oid]) ownerTotals[oid] = { name: oname, total: 0, count: 0 };
+    ownerTotals[oid].total += (b.amount || 0);
+    ownerTotals[oid].count++;
+  });
+
+  const summEl = document.getElementById('owner-payout-summary');
+  if (summEl) {
+    const entries = Object.values(ownerTotals);
+    summEl.innerHTML = entries.length ? entries.map(o => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--slate-50);">
+        <div>
+          <div style="font-weight:700;color:var(--navy-900);">${o.name}</div>
+          <div style="font-size:0.76rem;color:var(--slate-400);">${o.count} booking(s) &bull; GMV: ${fmt(o.total)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800;color:#10B981;font-size:1.05rem;">${fmt(Math.round(o.total * OWNER_SHARE))}</div>
+          <div style="font-size:0.72rem;color:#64748B;">Owner Payout (70%)</div>
+        </div>
+      </div>
+    `).join('') : `<div style="text-align:center;padding:20px;color:#94A3B8;">No payouts yet.</div>`;
+  }
+}
 
 // Navigation Handling
 function initNavigation() {
@@ -279,20 +253,31 @@ function initNavigation() {
   }
 }
 
-// Chart Initializations
+// ─── Chart (dynamic from real bookings) ────────────────────────────────────
 function initDashboardCharts() {
-  const chartWrapper = document.getElementById("revenue-curve-svg");
+  const chartWrapper = document.getElementById('revenue-curve-svg');
   if (!chartWrapper) return;
 
-  const points = [
-    { x: 30, y: 160, label: "Mon", val: "₹38k" },
-    { x: 110, y: 140, label: "Tue", val: "₹45k" },
-    { x: 190, y: 110, label: "Wed", val: "₹56k" },
-    { x: 270, y: 125, label: "Thu", val: "₹51k" },
-    { x: 350, y: 70, label: "Fri", val: "₹72k" },
-    { x: 430, y: 35, label: "Sat", val: "₹89k" },
-    { x: 510, y: 45, label: "Sun", val: "₹84k" }
-  ];
+  const bookings = getLiveBookings().filter(b => b.status !== 'Cancelled');
+  const byDate = {};
+  bookings.forEach(b => { const d = b.date || 'N/A'; byDate[d] = (byDate[d] || 0) + (b.amount || 0); });
+  const dates = Object.keys(byDate).sort().slice(-7);
+  const vals  = dates.map(d => byDate[d]);
+  const maxVal = Math.max(...vals, 1);
+
+  if (!dates.length) {
+    chartWrapper.innerHTML = `<div style="padding:40px;text-align:center;color:#94A3B8;">No booking data yet for chart.</div>`;
+    return;
+  }
+
+  const svgW = 540, svgH = 200, padX = 30, padY = 20;
+  const stepX = (svgW - padX * 2) / Math.max(dates.length - 1, 1);
+  const points = dates.map((d, i) => ({
+    x: padX + i * stepX,
+    y: svgH - padY - ((vals[i] / maxVal) * (svgH - padY * 2)),
+    label: d.slice(5),
+    val: fmt(vals[i])
+  }));
 
   let pathD = `M ${points[0].x} ${points[0].y}`;
   for (let i = 1; i < points.length; i++) {
@@ -347,194 +332,159 @@ function initDashboardCharts() {
   `;
 }
 
-// Render Turfs in Grid
-function renderTurfsList(filterSport = "all", searchQuery = "") {
-  const container = document.getElementById("turfs-grid-container");
+// Render Turfs Grid
+function renderTurfsList(filterSport = 'all', searchQuery = '') {
+  const container = document.getElementById('turfs-grid-container');
   if (!container) return;
 
-  let filtered = AdminStore.turfs;
+  let turfs = getLiveTurfs();
 
-  if (filterSport !== "all") {
-    filtered = filtered.filter(t => t.sport.toLowerCase() === filterSport.toLowerCase());
+  if (filterSport !== 'all') {
+    turfs = turfs.filter(t => (t.sport || '').toLowerCase() === filterSport.toLowerCase());
   }
-
-  if (searchQuery.trim() !== "") {
+  if (searchQuery.trim()) {
     const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(t => t.name.toLowerCase().includes(q) || t.location.toLowerCase().includes(q));
+    turfs = turfs.filter(t => (t.name || '').toLowerCase().includes(q) || (t.location || '').toLowerCase().includes(q));
   }
 
-  if (filtered.length === 0) {
-    container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #94A3B8;">No turfs found matching criteria.</div>`;
+  if (!turfs.length) {
+    container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">No turfs registered yet.</div>`;
     return;
   }
 
-  container.innerHTML = filtered.map(t => `
+  container.innerHTML = turfs.map(t => `
     <div class="turf-admin-card" id="card-${t.id}">
-      <div class="turf-card-header-img" style="background-image: url('${t.img}')">
+      <div class="turf-card-header-img" style="background-image:url('${t.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&auto=format&fit=crop&q=80'}')">
         <div class="turf-card-overlay">
-          <span class="turf-sport-badge">
-            ${getSportIcon(t.sport)} ${t.sport}
-          </span>
-          <span class="status-pill ${t.status}">${t.status}</span>
+          <span class="turf-sport-badge">${getSportIcon(t.sport)} ${t.sport || 'Sport'}</span>
+          <span class="status-pill active">active</span>
         </div>
       </div>
       <div class="turf-card-content">
         <h3 class="turf-card-title">${t.name}</h3>
-        <p class="turf-card-location">📍 ${t.location}</p>
-        
+        <p class="turf-card-location">📍 ${t.location || '—'}</p>
         <div class="turf-metric-bar">
-          <div>
-            <div class="turf-metric-unit">Hourly Rate</div>
-            <div class="turf-metric-num">₹${t.price}</div>
-          </div>
-          <div>
-            <div class="turf-metric-unit">Rating</div>
-            <div class="turf-metric-num">⭐ ${t.rating}</div>
-          </div>
-          <div>
-            <div class="turf-metric-unit">Bookings</div>
-            <div class="turf-metric-num">${t.bookingsCount}</div>
-          </div>
+          <div><div class="turf-metric-unit">Rate/hr</div><div class="turf-metric-num">${fmt(t.price_per_hour || 0)}</div></div>
+          <div><div class="turf-metric-unit">Rating</div><div class="turf-metric-num">⭐ ${t.rating || 'New'}</div></div>
+          <div><div class="turf-metric-unit">Reviews</div><div class="turf-metric-num">${t.reviews_count || 0}</div></div>
         </div>
-
-        <div style="font-size: 0.78rem; color: #64748B; margin-bottom: 8px;">
-          Managed by: <strong style="color: #0F172A;">${t.owner}</strong>
-        </div>
-
+        <div style="font-size:0.78rem;color:#64748B;margin-bottom:8px;">Owner ID: <strong>${t.owner_id || '—'}</strong></div>
         <div class="turf-card-actions">
-          <button class="table-action-btn" onclick="toggleTurfStatus('${t.id}')">
-            ${t.status === 'active' ? '⏸️ Deactivate' : '▶️ Activate'}
-          </button>
-          <div style="display: flex; gap: 6px;">
-            <button class="table-action-btn" onclick="editTurfPrompt('${t.id}')">✏️ Edit</button>
-            <button class="table-action-btn delete" onclick="deleteTurf('${t.id}')">🗑️</button>
-          </div>
+          <button class="table-action-btn delete" onclick="adminDeleteTurf('${t.id}')">🗑️ Remove</button>
         </div>
       </div>
     </div>
-  `).join("");
+  `).join('');
 }
 
 // Render Bookings Table
-function renderBookingsTable(filterStatus = "all", searchQuery = "") {
-  const tbody = document.getElementById("bookings-table-body");
+function renderBookingsTable(filterStatus = 'all', searchQuery = '') {
+  const tbody = document.getElementById('bookings-table-body');
   if (!tbody) return;
 
-  let filtered = AdminStore.bookings;
+  let bookings = getLiveBookings();
 
-  if (filterStatus !== "all") {
-    filtered = filtered.filter(b => b.status === filterStatus);
+  if (filterStatus !== 'all') {
+    bookings = bookings.filter(b => (b.status || '').toLowerCase() === filterStatus.toLowerCase());
   }
-
-  if (searchQuery.trim() !== "") {
+  if (searchQuery.trim()) {
     const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(b => 
-      b.customer.toLowerCase().includes(q) || 
-      b.turf.toLowerCase().includes(q) ||
-      b.id.toLowerCase().includes(q)
+    bookings = bookings.filter(b =>
+      (b.player_name || '').toLowerCase().includes(q) ||
+      (b.turf_name || '').toLowerCase().includes(q) ||
+      (b.id || '').toLowerCase().includes(q)
     );
   }
 
-  if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 32px; color: #94A3B8;">No booking records match this query.</td></tr>`;
+  if (!bookings.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94A3B8;">No bookings found.</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = filtered.map(b => `
-    <tr id="row-${b.id}">
-      <td>
-        <span style="font-family: monospace; font-weight: 700; color: #2563EB;">${b.id}</span>
-      </td>
-      <td>
-        <div class="user-info-cell">
-          <div class="cell-avatar" style="background: ${getAvatarColor(b.customer)}">
-            ${b.customer.substring(0, 2).toUpperCase()}
+  tbody.innerHTML = bookings.map(b => {
+    const ownerAmt = Math.round((b.amount || 0) * OWNER_SHARE);
+    const adminAmt = Math.round((b.amount || 0) * ADMIN_SHARE);
+    return `
+      <tr id="row-${b.id}">
+        <td><span style="font-family:monospace;font-weight:700;color:#2563EB;">${b.id}</span></td>
+        <td>
+          <div class="user-info-cell">
+            <div class="cell-avatar" style="background:${getAvatarColor(b.player_name || '')}">${(b.player_name || 'PL').substring(0,2).toUpperCase()}</div>
+            <div>
+              <div class="user-name-cell">${b.player_name || '—'}</div>
+              <div class="user-email-cell">${b.player_phone || '—'}</div>
+            </div>
           </div>
-          <div>
-            <div class="user-name-cell">${b.customer}</div>
-            <div class="user-email-cell">${b.email}</div>
-          </div>
-        </div>
-      </td>
-      <td>
-        <div style="font-weight: 600; color: #0F172A;">${b.turf}</div>
-        <div style="font-size: 0.76rem; color: #64748B;">${b.slot}</div>
-      </td>
-      <td>
-        <span class="status-pill ${b.status}">${b.status}</span>
-      </td>
-      <td>
-        <div style="font-weight: 700; color: #0F172A;">₹${b.amount}</div>
-        <div style="font-size: 0.74rem; color: #64748B;">${b.gateway}</div>
-      </td>
-      <td style="font-size: 0.8rem; color: #64748B;">
-        ${b.date}
-      </td>
-      <td>
-        <div style="display: flex; gap: 6px;">
-          ${b.status !== 'confirmed' ? `<button class="table-action-btn" onclick="updateBookingStatus('${b.id}', 'confirmed')">Confirm</button>` : ''}
-          ${b.status !== 'cancelled' ? `<button class="table-action-btn delete" onclick="updateBookingStatus('${b.id}', 'cancelled')">Cancel</button>` : ''}
-        </div>
-      </td>
-    </tr>
-  `).join("");
+        </td>
+        <td>
+          <div style="font-weight:600;color:#0F172A;">${b.turf_name || '—'}</div>
+          <div style="font-size:0.76rem;color:#64748B;">${b.date || ''} &bull; ${b.time_slot || ''}</div>
+        </td>
+        <td><span class="status-pill ${b.status === 'Confirmed' ? 'confirmed' : b.status === 'Cancelled' ? 'cancelled' : 'walkin'}">${b.status || '—'}</span></td>
+        <td>
+          <div style="font-weight:700;color:#0F172A;">${fmt(b.amount || 0)}</div>
+          <div style="font-size:0.72rem;color:#10B981;">Owner: ${fmt(ownerAmt)} (70%)</div>
+          <div style="font-size:0.72rem;color:#3B82F6;">Admin: ${fmt(adminAmt)} (30%)</div>
+        </td>
+        <td style="font-size:0.8rem;color:#64748B;">${b.payment_status || '—'}</td>
+        <td>
+          ${b.status !== 'Cancelled' ? `<button class="table-action-btn delete" onclick="adminCancelBooking('${b.id}')">Cancel</button>` : '<span style="color:#94A3B8;font-size:0.8rem;">Cancelled</span>'}
+        </td>
+      </tr>`;
+  }).join('');
 }
 
 // Render Users Table
-function renderUsersTable(filterRole = "all", searchQuery = "") {
-  const tbody = document.getElementById("users-table-body");
+function renderUsersTable(filterRole = 'all', searchQuery = '') {
+  const tbody = document.getElementById('users-table-body');
   if (!tbody) return;
 
-  let filtered = AdminStore.users;
+  let users = getLiveUsers();
 
-  if (filterRole !== "all") {
-    filtered = filtered.filter(u => u.role.toLowerCase().includes(filterRole.toLowerCase()));
+  if (filterRole !== 'all') {
+    users = users.filter(u => u.role.toLowerCase().includes(filterRole.toLowerCase()));
   }
-
-  if (searchQuery.trim() !== "") {
+  if (searchQuery.trim()) {
     const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+    users = users.filter(u => (u.name || '').toLowerCase().includes(q) || (u.phone || '').toLowerCase().includes(q));
   }
 
-  tbody.innerHTML = filtered.map(u => `
+  if (!users.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:#94A3B8;">No registrations yet. Users appear here once they sign up and book a slot.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = users.map(u => `
     <tr>
       <td>
         <div class="user-info-cell">
-          <div class="cell-avatar" style="background: ${getAvatarColor(u.name)}">
-            ${u.name.substring(0, 2).toUpperCase()}
-          </div>
+          <div class="cell-avatar" style="background:${getAvatarColor(u.name)}">${(u.name || 'US').substring(0,2).toUpperCase()}</div>
           <div>
-            <div class="user-name-cell">${u.name}</div>
-            <div class="user-email-cell">${u.phone}</div>
+            <div class="user-name-cell">${u.name || '—'}</div>
+            <div class="user-email-cell">${u.phone || '—'}</div>
           </div>
         </div>
       </td>
+      <td><span style="font-size:0.82rem;font-weight:600;color:#475569;">${u.email || '—'}</span></td>
       <td>
-        <span style="font-size: 0.82rem; font-weight: 600; color: #475569;">${u.email}</span>
+        <span class="status-pill ${u.role === 'Turf Owner' ? 'active' : 'walkin'}">${u.role}</span>
       </td>
       <td>
-        <span class="status-pill ${u.role === 'Turf Owner' ? 'active' : 'walkin'}">
-          ${u.role}
-        </span>
-      </td>
-      <td>
-        <div style="font-weight: 700;">
-          ${u.role === 'Turf Owner' ? `₹${u.totalRevenue.toLocaleString()}` : `${u.totalBookings} slots`}
+        <div style="font-weight:700;">
+          ${u.role === 'Turf Owner'
+            ? `${fmt(Math.round((u.totalRevenue || 0) * OWNER_SHARE))} <span style="font-size:0.72rem;color:#94A3B8;">(70% share)</span>`
+            : `${u.bookings || 0} slots`}
         </div>
-        <div style="font-size: 0.74rem; color: #64748B;">
-          ${u.role === 'Turf Owner' ? `${u.turfsManaged} Turf(s)` : `Spent ₹${u.totalSpent.toLocaleString()}`}
+        <div style="font-size:0.74rem;color:#64748B;">
+          ${u.role === 'Turf Owner'
+            ? `${u.turfsManaged || 0} Turf(s) &bull; GMV: ${fmt(u.totalRevenue || 0)}`
+            : `Total spent: ${fmt(u.spent || 0)}`}
         </div>
       </td>
-      <td>
-        <span class="status-pill ${u.status}">${u.status}</span>
-      </td>
-      <td>
-        <button class="table-action-btn" onclick="toggleUserStatus('${u.id}')">
-          ${u.status === 'active' ? 'Suspend' : 'Reinstate'}
-        </button>
-      </td>
+      <td><span class="status-pill active">active</span></td>
+      <td style="font-size:0.78rem;color:#64748B;">${u.joined || '—'}</td>
     </tr>
-  `).join("");
+  `).join('');
 }
 
 // Filter Initializations
@@ -570,148 +520,47 @@ function initFilters() {
   }
 }
 
-// Modal Handlers
-function initModalHandlers() {
-  const modalBackdrop = document.getElementById("add-turf-modal");
-  const openModalBtn = document.getElementById("btn-open-add-turf");
-  const closeModalBtn = document.getElementById("btn-close-turf-modal");
-  const cancelModalBtn = document.getElementById("btn-cancel-turf-modal");
-  const saveTurfBtn = document.getElementById("btn-save-turf");
-
-  if (openModalBtn && modalBackdrop) {
-    openModalBtn.addEventListener("click", () => {
-      modalBackdrop.classList.add("active");
-    });
-  }
-
-  const closeModal = () => modalBackdrop?.classList.remove("active");
-
-  closeModalBtn?.addEventListener("click", closeModal);
-  cancelModalBtn?.addEventListener("click", closeModal);
-
-  saveTurfBtn?.addEventListener("click", () => {
-    const name = document.getElementById("form-turf-name")?.value;
-    const location = document.getElementById("form-turf-location")?.value;
-    const sport = document.getElementById("form-turf-sport")?.value;
-    const price = document.getElementById("form-turf-price")?.value;
-    const owner = document.getElementById("form-turf-owner")?.value;
-
-    if (!name || !location || !price) {
-      showToast("Please fill in all required turf fields.", true);
-      return;
-    }
-
-    const newTurf = {
-      id: `TRF-00${AdminStore.turfs.length + 1}`,
-      name,
-      location,
-      sport: sport || "Football",
-      price: parseInt(price) || 1200,
-      rating: 5.0,
-      status: "active",
-      bookingsCount: 0,
-      owner: owner || "Turf Partner",
-      img: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&auto=format&fit=crop&q=80"
-    };
-
-    AdminStore.turfs.unshift(newTurf);
-    renderTurfsList();
-    closeModal();
-    showToast(`Turf "${name}" added successfully!`);
-  });
-}
-
 // Actions
-window.toggleTurfStatus = function(turfId) {
-  const turf = AdminStore.turfs.find(t => t.id === turfId);
-  if (turf) {
-    turf.status = turf.status === "active" ? "inactive" : "active";
+window.adminDeleteTurf = function(turfId) {
+  if (confirm('Remove this turf from the marketplace?')) {
+    if (window.TurfifyStore) window.TurfifyStore.deleteTurf(turfId);
     renderTurfsList();
-    showToast(`Turf status changed to ${turf.status}.`);
+    renderKPIs();
+    showToast('Turf removed from marketplace.');
   }
 };
 
-window.deleteTurf = function(turfId) {
-  if (confirm("Are you sure you want to remove this turf from the marketplace?")) {
-    AdminStore.turfs = AdminStore.turfs.filter(t => t.id !== turfId);
-    renderTurfsList();
-    showToast("Turf deleted successfully.");
-  }
-};
-
-window.editTurfPrompt = function(turfId) {
-  const turf = AdminStore.turfs.find(t => t.id === turfId);
-  if (!turf) return;
-  const newPrice = prompt(`Update hourly rate for ${turf.name} (Current: ₹${turf.price}):`, turf.price);
-  if (newPrice && !isNaN(newPrice)) {
-    turf.price = parseInt(newPrice);
-    renderTurfsList();
-    showToast(`Hourly rate updated to ₹${turf.price}.`);
-  }
-};
-
-window.updateBookingStatus = function(bookingId, status) {
-  const booking = AdminStore.bookings.find(b => b.id === bookingId);
-  if (booking) {
-    booking.status = status;
+window.adminCancelBooking = function(bookingId) {
+  if (confirm(`Cancel booking ${bookingId}?`)) {
+    if (window.TurfifyStore) window.TurfifyStore.cancelBooking(bookingId);
     renderBookingsTable();
-    showToast(`Booking ${bookingId} marked as ${status}.`);
-  }
-};
-
-window.toggleUserStatus = function(userId) {
-  const user = AdminStore.users.find(u => u.id === userId);
-  if (user) {
-    user.status = user.status === "active" ? "suspended" : "active";
-    renderUsersTable();
-    showToast(`User ${user.name} is now ${user.status}.`);
+    renderKPIs();
+    showToast(`Booking ${bookingId} cancelled.`);
   }
 };
 
 // Export Functionality
 function initExportButtons() {
-  const exportCsvBtn = document.getElementById("btn-export-bookings-csv");
-  if (exportCsvBtn) {
-    exportCsvBtn.addEventListener("click", () => {
-      let csv = "BookingID,Customer,Turf,Slot,Amount,Status,Gateway,Date\n";
-      AdminStore.bookings.forEach(b => {
-        csv += `"${b.id}","${b.customer}","${b.turf}","${b.slot}","${b.amount}","${b.status}","${b.gateway}","${b.date}"\n`;
-      });
-      const blob = new Blob([csv], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Turfify_Bookings_Export_${new Date().toISOString().slice(0, 10)}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("Bookings export downloaded as CSV.");
+  document.getElementById('btn-export-bookings-csv')?.addEventListener('click', () => {
+    const bookings = getLiveBookings();
+    let csv = 'BookingID,Player,Phone,Turf,Date,Slot,Amount,OwnerShare(70%),AdminShare(30%),Status\n';
+    bookings.forEach(b => {
+      const ownerAmt = Math.round((b.amount || 0) * OWNER_SHARE);
+      const adminAmt = Math.round((b.amount || 0) * ADMIN_SHARE);
+      csv += `"${b.id}","${b.player_name || ''}","${b.player_phone || ''}","${b.turf_name || ''}","${b.date || ''}","${b.time_slot || ''}","${b.amount || 0}","${ownerAmt}","${adminAmt}","${b.status || ''}"\n`;
     });
-  }
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Turfify_Bookings_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV exported with 70/30 revenue split data.');
+  });
 }
 
-// Helpers
-function getSportIcon(sport) {
-  switch (sport.toLowerCase()) {
-    case "football": return "⚽";
-    case "cricket": return "🏏";
-    case "badminton": return "🏸";
-    case "tennis": return "🎾";
-    default: return "🏟️";
-  }
-}
 
-function getAvatarColor(name) {
-  const colors = [
-    "linear-gradient(135deg, #10B981, #06B6D4)",
-    "linear-gradient(135deg, #3B82F6, #8B5CF6)",
-    "linear-gradient(135deg, #F59E0B, #EA580C)",
-    "linear-gradient(135deg, #EC4899, #8B5CF6)",
-    "linear-gradient(135deg, #14B8A6, #0D9488)"
-  ];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash += name.charCodeAt(i);
-  return colors[hash % colors.length];
-}
 
 function showToast(message, isError = false) {
   const shelf = document.getElementById("toast-shelf") || createToastShelf();

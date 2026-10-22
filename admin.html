@@ -157,48 +157,48 @@
 
           <!-- 4 KPI Stats Grid -->
           <div class="kpi-grid">
-            <!-- Card 1: Revenue -->
+            <!-- Card 1: GMV -->
             <div class="kpi-card green">
               <div class="kpi-top">
                 <div class="kpi-icon-wrap">₹</div>
-                <div class="kpi-trend positive">↑ 18.4%</div>
+                <div class="kpi-trend positive">Live</div>
               </div>
-              <div class="kpi-value">₹4,28,500</div>
+              <div class="kpi-value" id="kpi-gmv">₹0</div>
               <div class="kpi-label">Total Platform GMV</div>
-              <div class="kpi-footer-text">Oct 2026 Monthly Volume</div>
+              <div class="kpi-footer-text">All confirmed bookings</div>
             </div>
 
             <!-- Card 2: Turfs -->
             <div class="kpi-card blue">
               <div class="kpi-top">
                 <div class="kpi-icon-wrap">🏟️</div>
-                <div class="kpi-trend positive">↑ 6 venues</div>
+                <div class="kpi-trend positive">Live</div>
               </div>
-              <div class="kpi-value">48</div>
+              <div class="kpi-value" id="kpi-turfs">0</div>
               <div class="kpi-label">Active Turfs Listed</div>
-              <div class="kpi-footer-text">Across Chennai & Bangalore</div>
+              <div class="kpi-footer-text">Registered on platform</div>
             </div>
 
             <!-- Card 3: Bookings -->
             <div class="kpi-card amber">
               <div class="kpi-top">
                 <div class="kpi-icon-wrap">⚡</div>
-                <div class="kpi-trend positive">↑ 24.2%</div>
+                <div class="kpi-trend positive">Live</div>
               </div>
-              <div class="kpi-value">1,248</div>
-              <div class="kpi-label">Slots Booked This Month</div>
-              <div class="kpi-footer-text">94.8% completion rate</div>
+              <div class="kpi-value" id="kpi-bookings">0</div>
+              <div class="kpi-label">Confirmed Bookings</div>
+              <div class="kpi-footer-text">Excluding cancelled</div>
             </div>
 
             <!-- Card 4: Users -->
             <div class="kpi-card violet">
               <div class="kpi-top">
                 <div class="kpi-icon-wrap">👥</div>
-                <div class="kpi-trend positive">↑ 142 new</div>
+                <div class="kpi-trend positive">Live</div>
               </div>
-              <div class="kpi-value">892</div>
-              <div class="kpi-label">Registered Athletes & Owners</div>
-              <div class="kpi-footer-text">680 Players • 212 Owners</div>
+              <div class="kpi-value" id="kpi-users">0</div>
+              <div class="kpi-label">Registered Users & Owners</div>
+              <div class="kpi-footer-text" id="kpi-users-footer">0 Players • 0 Owners</div>
             </div>
           </div>
 
@@ -276,48 +276,17 @@
             </div>
           </div>
 
-          <!-- Quick Action Banner -->
+          <!-- Live Activity Feed -->
           <div class="table-panel">
-            <div style="padding: 20px 24px; border-bottom: 1px solid var(--slate-100); display: flex; justify-content: space-between; align-items: center;">
+            <div style="padding:20px 24px;border-bottom:1px solid var(--slate-100);display:flex;justify-content:space-between;align-items:center;">
               <div>
-                <h3 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--navy-900);">Recent Live Activity Feed</h3>
-                <p style="font-size: 0.8rem; color: var(--slate-400);">Instant transactions flowing through Razorpay gateway</p>
+                <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800;color:var(--navy-900);">Recent Live Activity Feed</h3>
+                <p style="font-size:0.8rem;color:var(--slate-400);">Latest bookings from all players</p>
               </div>
               <button class="btn-secondary-light" onclick="document.getElementById('nav-bookings').click()">View All Bookings →</button>
             </div>
-            <div style="padding: 16px 24px; display: flex; flex-direction: column; gap: 12px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--slate-50);">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                  <span style="font-size: 1.2rem;">⚡</span>
-                  <div>
-                    <div style="font-weight: 700; color: var(--navy-900);">Rahul Sharma booked Greenfield Arena 5v5</div>
-                    <div style="font-size: 0.76rem; color: var(--slate-400);">Slot: Today, 07:00 PM - 08:00 PM • UPI Instant</div>
-                  </div>
-                </div>
-                <span class="status-pill confirmed">₹1,200 Paid</span>
-              </div>
-
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--slate-50);">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                  <span style="font-size: 1.2rem;">🏏</span>
-                  <div>
-                    <div style="font-weight: 700; color: var(--navy-900);">Aditi Rao booked Striker's Bay Box Cricket</div>
-                    <div style="font-size: 0.76rem; color: var(--slate-400);">Slot: Today, 08:00 PM - 09:30 PM • Card Payment</div>
-                  </div>
-                </div>
-                <span class="status-pill confirmed">₹2,250 Paid</span>
-              </div>
-
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                  <span style="font-size: 1.2rem;">🚶</span>
-                  <div>
-                    <div style="font-weight: 700; color: var(--navy-900);">Naveen Kumar booked Velocity Badminton Hub</div>
-                    <div style="font-size: 0.76rem; color: var(--slate-400);">Slot: Today, 06:00 PM - 07:00 PM • Cash Walk-in registered</div>
-                  </div>
-                </div>
-                <span class="status-pill walkin">₹800 Walk-in</span>
-              </div>
+            <div style="padding:16px 24px;" id="activity-feed">
+              <div style="text-align:center;padding:32px;color:#94A3B8;">Loading activity...</div>
             </div>
           </div>
         </section>
@@ -533,57 +502,44 @@
             </div>
           </div>
 
-          <!-- Recent Payout Ledger -->
+          <!-- Revenue Split: Per Booking 70/30 -->
           <div class="table-panel">
-            <div style="padding: 20px 24px; border-bottom: 1px solid var(--slate-100);">
-              <h3 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--navy-900);">Venue Settlement Ledger (T+1 Automated)</h3>
+            <div style="padding:20px 24px;border-bottom:1px solid var(--slate-100);">
+              <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800;color:var(--navy-900);">Revenue Split Per Booking — Owner 70% | Platform 30%</h3>
+              <p style="font-size:0.8rem;color:var(--slate-400);margin-top:4px;">Every confirmed booking is automatically split between the turf owner and the platform.</p>
             </div>
-            <div style="overflow-x: auto;">
+            <div style="overflow-x:auto;">
               <table class="admin-data-table">
                 <thead>
                   <tr>
-                    <th>Settlement Ref</th>
-                    <th>Venue Partner</th>
-                    <th>Bank Account</th>
-                    <th>Gross Amount</th>
-                    <th>Fee (10%)</th>
-                    <th>Net Disbursed</th>
+                    <th>Booking ID</th>
+                    <th>Player & Turf</th>
+                    <th>Date & Slot</th>
+                    <th>Total Paid</th>
+                    <th style="color:#10B981;">Owner (70%)</th>
+                    <th style="color:#3B82F6;">Platform (30%)</th>
                     <th>Status</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td><span style="font-family: monospace; font-weight: 700;">STL-8801</span></td>
-                    <td><strong>Greenfield Arena</strong></td>
-                    <td style="font-family: monospace; font-size: 0.8rem;">HDFC •••• 9102</td>
-                    <td>₹34,800</td>
-                    <td style="color: #64748B;">₹3,480</td>
-                    <td><strong style="color: var(--green-dark);">₹31,320</strong></td>
-                    <td><span class="status-pill confirmed">Disbursed</span></td>
-                  </tr>
-                  <tr>
-                    <td><span style="font-family: monospace; font-weight: 700;">STL-8802</span></td>
-                    <td><strong>Striker's Bay</strong></td>
-                    <td style="font-family: monospace; font-size: 0.8rem;">ICICI •••• 4519</td>
-                    <td>₹45,000</td>
-                    <td style="color: #64748B;">₹4,500</td>
-                    <td><strong style="color: var(--green-dark);">₹40,500</strong></td>
-                    <td><span class="status-pill confirmed">Disbursed</span></td>
-                  </tr>
-                  <tr>
-                    <td><span style="font-family: monospace; font-weight: 700;">STL-8803</span></td>
-                    <td><strong>Velocity Hub</strong></td>
-                    <td style="font-family: monospace; font-size: 0.8rem;">Axis •••• 2891</td>
-                    <td>₹18,400</td>
-                    <td style="color: #64748B;">₹1,840</td>
-                    <td><strong style="color: var(--green-dark);">₹16,560</strong></td>
-                    <td><span class="status-pill pending">Pending T+1</span></td>
-                  </tr>
+                <tbody id="payments-split-body">
+                  <tr><td colspan="7" style="text-align:center;padding:32px;color:#94A3B8;">Loading...</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
+
+          <!-- Owner Payout Summary -->
+          <div class="table-panel" style="margin-top:20px;">
+            <div style="padding:20px 24px;border-bottom:1px solid var(--slate-100);">
+              <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800;color:var(--navy-900);">Owner Payout Summary</h3>
+              <p style="font-size:0.8rem;color:var(--slate-400);margin-top:4px;">Total earnings owed to each turf owner (70% of their bookings GMV).</p>
+            </div>
+            <div style="padding:16px 24px;" id="owner-payout-summary">
+              <div style="text-align:center;padding:32px;color:#94A3B8;">Loading...</div>
+            </div>
+          </div>
         </section>
+
 
         <!-- ==================================================================
              SECTION 6: REPORTS & EXPORT
