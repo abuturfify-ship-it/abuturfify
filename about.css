@@ -1,0 +1,944 @@
+/* ==========================================================================
+   ABOUT US SECTION — SPORTS TURF MARKETPLACE (MATCHING REFERENCE IMAGE 1:1)
+   Design System: Electric Blue (#1464F4), Lime Green (#58C900), Navy (#071B3A)
+   Typography: Plus Jakarta Sans + Caveat Script Slogan
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Caveat:wght@600;700&family=Kaushan+Script&display=swap');
+
+:root {
+  --ref-blue: #1464F4;
+  --ref-blue-light: #EEF4FF;
+  --ref-blue-border: rgba(20, 100, 244, 0.25);
+  
+  --ref-green: #58C900;
+  --ref-green-dark: #46A300;
+  --ref-green-light: #F0FBE8;
+  --ref-green-border: rgba(88, 201, 0, 0.28);
+  
+  --ref-navy: #071B3A;
+  --ref-body: #475569;
+  --ref-slate: #64748B;
+  --ref-border: #E8EEF5;
+  
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-brush: 'Caveat', cursive, sans-serif;
+}
+
+/* Base resets inside the section */
+.about-ref-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+  background-color: #FFFFFF;
+  font-family: var(--font-sans);
+  color: var(--ref-navy);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.about-ref-container *, 
+.about-ref-container *::before, 
+.about-ref-container *::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   1. TOP HERO SECTION (HEADLINE ON LEFT, BRUSH TURF PHOTO ON RIGHT)
+   ========================================================================== */
+
+.hero-top-row {
+  display: grid;
+  grid-template-columns: 500px 1fr;
+  align-items: center;
+  gap: 0px;
+  position: relative;
+  min-height: 520px;
+  margin-bottom: 28px;
+}
+
+/* Left Hero Content */
+.hero-left-col {
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  padding-right: 0px;
+  max-width: 500px;
+}
+
+/* Label: ABOUT US */
+.hero-about-tag {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.hero-about-tag span {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: var(--ref-blue);
+  text-transform: uppercase;
+  padding-bottom: 3px;
+}
+
+.hero-about-tag .green-bar {
+  width: 44px;
+  height: 3px;
+  background-color: var(--ref-green);
+  border-radius: 4px;
+}
+
+/* Title Case Headline */
+.hero-title-main {
+  font-size: clamp(2.3rem, 3.6vw, 3.35rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--ref-navy);
+  margin-bottom: 18px;
+}
+
+.hero-title-main .text-blue {
+  color: var(--ref-blue);
+}
+
+.hero-title-main .text-green {
+  color: var(--ref-green);
+}
+
+/* Subheadings */
+.hero-sub-p1 {
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--ref-body);
+  line-height: 1.55;
+  margin-bottom: 8px;
+  max-width: 480px;
+}
+
+.hero-sub-p2 {
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--ref-body);
+  line-height: 1.55;
+  margin-bottom: 24px;
+}
+
+.hero-sub-p2 .kw-green {
+  color: var(--ref-green);
+  font-weight: 700;
+}
+
+.hero-sub-p2 .kw-blue {
+  color: var(--ref-blue);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   COMPACT HORIZONTAL STATS BAR
+   ========================================================================== */
+
+.hero-stats-pill {
+  background: #FFFFFF;
+  border: 1px solid var(--ref-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px -4px rgba(7, 27, 58, 0.06), 0 2px 6px rgba(7, 27, 58, 0.03);
+  padding: 12px 18px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  gap: 10px;
+  max-width: 490px;
+}
+
+.stat-box-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.stat-box-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 15%;
+  height: 70%;
+  width: 1px;
+  background-color: var(--ref-border);
+}
+
+.stat-circle-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-circle-icon.blue-bg {
+  background-color: var(--ref-blue-light);
+  color: var(--ref-blue);
+}
+
+.stat-circle-icon.green-bg {
+  background-color: var(--ref-green-light);
+  color: var(--ref-green);
+}
+
+.stat-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-num-val {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--ref-navy);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.stat-label-val {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--ref-slate);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+/* ==========================================================================
+   RIGHT HERO IMAGE WITH ORGANIC BRUSH SWOOSH & CURSIVE SLOGAN
+   ========================================================================== */
+
+.hero-right-col {
+  position: relative;
+  height: 100%;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  margin-left: -50px;
+  z-index: 1;
+}
+
+/* Brush Swoosh Image Mask Container */
+.hero-brush-frame {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  overflow: hidden;
+  border-radius: 0 24px 24px 0;
+}
+
+.hero-turf-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 35%;
+  /* Organic brush curve masking the left edge */
+  mask-image: linear-gradient(to right, transparent 0%, transparent 2%, #000000 16%, #000000 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 2%, #000000 16%, #000000 100%);
+  transition: transform 0.6s ease;
+}
+
+.hero-brush-frame:hover .hero-turf-bg {
+  transform: scale(1.03);
+}
+
+/* Organic swoosh SVG overlay along the left curve */
+.brush-curve-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 140px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Floating Cursive Script Slogan */
+.hero-slogan-overlay {
+  position: absolute;
+  top: 18px;
+  right: 28px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.script-row {
+  font-family: var(--font-brush);
+  font-size: clamp(2.3rem, 3.3vw, 3.3rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-shadow: 
+    0 0 12px #FFFFFF,
+    0 0 6px #FFFFFF,
+    0 2px 4px rgba(255, 255, 255, 0.95);
+}
+
+.script-row.navy {
+  color: var(--ref-navy);
+}
+
+.script-row.blue {
+  color: var(--ref-blue);
+  margin-right: 12px;
+}
+
+.script-row.green {
+  color: #288F00;
+  margin-right: 4px;
+  text-shadow: 
+    0 0 16px #FFFFFF,
+    0 0 8px #FFFFFF,
+    1px 1px 0 #FFFFFF,
+    -1px -1px 0 #FFFFFF,
+    1px -1px 0 #FFFFFF,
+    -1px 1px 0 #FFFFFF,
+    0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   2. TWO-SIDED PLATFORM ROW (LEFT CARD — CENTER CONNECTOR — RIGHT CARD)
+   ========================================================================== */
+
+.platform-two-sided-row {
+  display: grid;
+  grid-template-columns: 1fr 190px 1fr;
+  align-items: center;
+  position: relative;
+  margin-bottom: 28px;
+}
+
+/* Left Card: For Turf Owners */
+.role-card-owners {
+  background: #FFFFFF;
+  border: 1px solid var(--ref-green-border);
+  border-radius: 24px;
+  box-shadow: 0 8px 24px -4px rgba(88, 201, 0, 0.08), 0 2px 8px rgba(7, 27, 58, 0.04);
+  padding: 22px 24px;
+  display: grid;
+  grid-template-columns: 145px 1fr;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.role-card-owners:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -4px rgba(88, 201, 0, 0.16);
+}
+
+/* Vertical Photo */
+.role-vertical-photo {
+  width: 145px;
+  height: 205px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px -2px rgba(7, 27, 58, 0.1);
+  flex-shrink: 0;
+}
+
+.role-vertical-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.role-card-owners:hover .role-vertical-photo img,
+.role-card-players:hover .role-vertical-photo img {
+  transform: scale(1.05);
+}
+
+/* Content Area */
+.role-content-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.role-header-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+/* Circle Badge Icons */
+.role-badge-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.role-badge-icon.green-solid {
+  background-color: var(--ref-green);
+  box-shadow: 0 4px 10px rgba(88, 201, 0, 0.3);
+}
+
+.role-badge-icon.blue-solid {
+  background-color: var(--ref-blue);
+  box-shadow: 0 4px 10px rgba(20, 100, 244, 0.3);
+}
+
+.role-h3-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ref-navy);
+  text-transform: uppercase;
+}
+
+.role-h3-title .hl-green {
+  color: var(--ref-green);
+}
+
+.role-h3-title .hl-blue {
+  color: var(--ref-blue);
+}
+
+.role-sub-line {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ref-slate);
+  margin-bottom: 14px;
+}
+
+/* Feature List Items */
+.role-items-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.role-point {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ref-navy);
+}
+
+.point-icon-outline {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.point-icon-outline.green-tint {
+  background-color: var(--ref-green-light);
+  color: var(--ref-green);
+}
+
+.point-icon-outline.blue-tint {
+  background-color: var(--ref-blue-light);
+  color: var(--ref-blue);
+}
+
+/* ==========================================================================
+   CENTER FEATURE: ONE PLATFORM CIRCLE WITH MOTION SOCCER BALL
+   ========================================================================== */
+
+.center-platform-hub {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0 -18px;
+}
+
+.hub-circular-badge {
+  position: relative;
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 12px 36px -4px rgba(7, 27, 58, 0.1),
+              0 2px 10px rgba(20, 100, 244, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  transition: transform 0.3s ease;
+}
+
+.hub-circular-badge:hover {
+  transform: scale(1.04);
+}
+
+/* Concentric Rings with Continuous Roaming Orbit */
+.hub-ring-green {
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--ref-green);
+  pointer-events: none;
+  animation: roamGreenOrbit 10s linear infinite;
+}
+
+.hub-ring-blue {
+  position: absolute;
+  inset: 0px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ref-blue);
+  pointer-events: none;
+  animation: roamBlueOrbit 14s linear infinite reverse;
+}
+
+/* Roaming Energy Ripple */
+.hub-energy-ripple {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(20, 100, 244, 0.35);
+  pointer-events: none;
+  animation: rippleRoam 2.8s cubic-bezier(0.1, 0.8, 0.2, 1) infinite;
+}
+
+@keyframes roamGreenOrbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes roamBlueOrbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes rippleRoam {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.9;
+    border-color: rgba(88, 201, 0, 0.6);
+  }
+  50% {
+    border-color: rgba(20, 100, 244, 0.5);
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+/* Orbital Connection Dots roaming continuously */
+.hub-dot-green-left {
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--ref-green);
+  box-shadow: 0 0 10px var(--ref-green), 0 0 16px rgba(88, 201, 0, 0.8);
+}
+
+.hub-dot-blue-top {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--ref-blue);
+  box-shadow: 0 0 10px var(--ref-blue), 0 0 16px rgba(20, 100, 244, 0.8);
+}
+
+.hub-dot-blue-bottom {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--ref-blue);
+  box-shadow: 0 0 10px var(--ref-blue);
+}
+
+/* Speeding Football with Dynamic Floating Roam Motion */
+.hub-ball-wrapper {
+  width: 68px;
+  height: 62px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.speed-soccer-ball-svg {
+  width: 64px;
+  height: 60px;
+  filter: drop-shadow(0 4px 12px rgba(20, 100, 244, 0.25));
+  animation: ballDynamicRoam 3s ease-in-out infinite;
+}
+
+@keyframes ballDynamicRoam {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(3px, -4px) rotate(5deg) scale(1.04);
+  }
+  50% {
+    transform: translate(0, -6px) rotate(-3deg) scale(1.07);
+  }
+  75% {
+    transform: translate(-3px, -2px) rotate(3deg) scale(1.03);
+  }
+}
+
+.hub-title-blue {
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--ref-blue);
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.hub-title-navy {
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--ref-navy);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Right Card: For Players */
+.role-card-players {
+  background: #FFFFFF;
+  border: 1px solid var(--ref-blue-border);
+  border-radius: 24px;
+  box-shadow: 0 8px 24px -4px rgba(20, 100, 244, 0.08), 0 2px 8px rgba(7, 27, 58, 0.04);
+  padding: 22px 24px;
+  display: grid;
+  grid-template-columns: 1fr 145px;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.role-card-players:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -4px rgba(20, 100, 244, 0.16);
+}
+
+/* ==========================================================================
+   3. TRUST & VALUE SECTION (4 COLUMNS IN A LONG WHITE PILL)
+   ========================================================================== */
+
+.trust-row-pill {
+  background: #FFFFFF;
+  border: 1px solid var(--ref-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px -4px rgba(7, 27, 58, 0.05);
+  padding: 22px 28px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.trust-col-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+}
+
+.trust-col-box:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 10%;
+  height: 80%;
+  width: 1px;
+  background-color: var(--ref-border);
+}
+
+.trust-col-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.trust-col-icon.green-soft {
+  background-color: var(--ref-green-light);
+  color: var(--ref-green);
+}
+
+.trust-col-icon.blue-soft {
+  background-color: var(--ref-blue-light);
+  color: var(--ref-blue);
+}
+
+.trust-col-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.trust-col-headline {
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.trust-col-headline.hl-green {
+  color: var(--ref-green);
+}
+
+.trust-col-headline.hl-blue {
+  color: var(--ref-blue);
+}
+
+.trust-col-desc {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ref-body);
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   4. BOTTOM CTA BAR (ROUNDED PILL WITH SCRIPT BUTTON)
+   ========================================================================== */
+
+.bottom-cta-pill {
+  background: #FFFFFF;
+  border: 1px solid var(--ref-border);
+  border-radius: 9999px;
+  box-shadow: 0 8px 24px -4px rgba(7, 27, 58, 0.05);
+  padding: 12px 18px 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.cta-left-slogan {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ref-navy);
+  white-space: nowrap;
+}
+
+.cta-vert-sep {
+  width: 1px;
+  height: 32px;
+  background-color: var(--ref-border);
+}
+
+.cta-mid-group {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.cta-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cta-sub-icon-square {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1.5px solid var(--ref-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ref-green);
+  flex-shrink: 0;
+}
+
+.cta-sub-icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--ref-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.cta-sub-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.cta-sub-bold {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--ref-navy);
+  line-height: 1.2;
+}
+
+.cta-sub-gray {
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--ref-slate);
+}
+
+/* Green Script Pill Button */
+.cta-green-pill-btn {
+  background: linear-gradient(135deg, #58C900 0%, #46AA00 100%);
+  color: #FFFFFF;
+  text-decoration: none;
+  padding: 10px 32px;
+  border-radius: 9999px;
+  box-shadow: 0 6px 18px rgba(88, 201, 0, 0.4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+.cta-green-pill-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(88, 201, 0, 0.5);
+}
+
+.cta-green-pill-btn .btn-script-text {
+  font-family: var(--font-brush);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   RESPONSIVE ADAPTATIONS
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .hero-top-row {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  
+  .hero-right-col {
+    min-height: 380px;
+  }
+
+  .platform-two-sided-row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .center-platform-hub {
+    margin: 12px auto;
+  }
+
+  .bottom-cta-pill {
+    flex-wrap: wrap;
+    border-radius: 24px;
+    padding: 20px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-stats-pill {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-box-item:nth-child(2)::after {
+    display: none;
+  }
+
+  .trust-row-pill {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .trust-col-box:nth-child(2)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-ref-container {
+    padding: 16px 14px 36px;
+  }
+
+  .hero-title-main {
+    font-size: 2.1rem;
+  }
+
+  .hero-stats-pill {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-box-item::after {
+    display: none;
+  }
+
+  .role-card-owners, 
+  .role-card-players {
+    grid-template-columns: 1fr;
+  }
+
+  .role-vertical-photo {
+    width: 100%;
+    height: 180px;
+  }
+
+  .trust-row-pill {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-col-box::after {
+    display: none;
+  }
+
+  .cta-mid-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

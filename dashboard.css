@@ -1,0 +1,484 @@
+/* ==========================================================================
+   TURFIFY DASHBOARDS CSS — DUAL ROLE STYLING
+   High-converting, polished UI for Turf Owners & Players
+   ========================================================================== */
+
+/* Dashboard Layout Shell */
+.dash-page {
+  background: #F8FAFC;
+  min-height: 100vh;
+  padding-top: 88px; /* space for fixed navbar */
+  font-family: var(--font-main);
+  color: var(--navy-900);
+}
+
+.dash-topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--slate-200);
+  padding: 1.25rem 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.dash-topbar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dash-welcome h1 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.dash-welcome p {
+  color: var(--slate-500);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.role-badge.owner {
+  background: #FFF7ED;
+  color: #C2410C;
+  border: 1px solid #FFEDD5;
+}
+
+.role-badge.player {
+  background: #ECFDF5;
+  color: #047857;
+  border: 1px solid #D1FAE5;
+}
+
+/* Role Switcher Toolbar */
+.role-switch-pill {
+  display: flex;
+  background: var(--slate-100);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--slate-200);
+}
+
+.role-switch-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--slate-600);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.role-switch-btn.active {
+  background: var(--white);
+  color: var(--navy-900);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-subtle);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.metric-card.green::before { background: var(--primary-green); }
+.metric-card.orange::before { background: var(--warm-orange); }
+.metric-card.blue::before { background: var(--brand-blue); }
+.metric-card.teal::before { background: var(--brand-teal); }
+
+.metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.metric-icon.green { background: #ECFDF5; color: var(--primary-green-dark); }
+.metric-icon.orange { background: #FFF7ED; color: var(--warm-orange); }
+.metric-icon.blue { background: #EFF6FF; color: var(--brand-blue); }
+.metric-icon.teal { background: #F0FDFA; color: var(--brand-teal); }
+
+.metric-data .metric-label {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metric-data .metric-val {
+  font-size: 1.65rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--navy-900);
+  line-height: 1.2;
+}
+
+.metric-data .metric-sub {
+  font-size: 0.75rem;
+  color: var(--primary-green-dark);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Dashboard Sections */
+.dash-grid-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 992px) {
+  .dash-grid-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-panel {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-subtle);
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--slate-100);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-body {
+  padding: 1.5rem;
+}
+
+/* Timetable & Slots for Owner */
+.slot-matrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.slot-item {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  text-align: center;
+  transition: var(--transition);
+  cursor: pointer;
+  background: var(--slate-50);
+}
+
+.slot-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.slot-item.available {
+  border-color: #A7F3D0;
+  background: #F0FDF4;
+}
+
+.slot-item.available .slot-badge {
+  color: #047857;
+  background: #DCFCE7;
+}
+
+.slot-item.booked {
+  border-color: #FECACA;
+  background: #FEF2F2;
+}
+
+.slot-item.booked .slot-badge {
+  color: #B91C1C;
+  background: #FEE2E2;
+}
+
+.slot-item.walkin {
+  border-color: #FED7AA;
+  background: #FFF7ED;
+}
+
+.slot-item.walkin .slot-badge {
+  color: #C2410C;
+  background: #FFEDD5;
+}
+
+.slot-time {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--navy-900);
+}
+
+.slot-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Tables for Bookings */
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.dash-table th {
+  text-align: left;
+  padding: 10px 12px;
+  background: var(--slate-50);
+  color: var(--slate-500);
+  font-weight: 600;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.dash-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--slate-100);
+  color: var(--navy-800);
+  vertical-align: middle;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status-pill.confirmed {
+  background: #ECFDF5;
+  color: #059669;
+}
+
+.status-pill.walkin {
+  background: #FFF7ED;
+  color: #EA580C;
+}
+
+.status-pill.cancelled {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+/* Next Game Hero Card (Player View) */
+.hero-match-card {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  color: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 30px -5px rgba(15, 23, 42, 0.25);
+  margin-bottom: 2rem;
+}
+
+.hero-match-card::after {
+  content: '⚽';
+  position: absolute;
+  right: -10px;
+  bottom: -20px;
+  font-size: 8rem;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.match-tag {
+  display: inline-block;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid var(--primary-green);
+  color: #34D399;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 0.75rem;
+}
+
+.hero-match-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.match-details-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1rem 0 1.5rem 0;
+  color: var(--slate-300);
+  font-size: 0.9rem;
+}
+
+.match-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-match-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-match-action {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  transition: var(--transition);
+}
+
+.btn-match-primary {
+  background: var(--primary-green);
+  color: var(--white);
+}
+
+.btn-match-primary:hover {
+  background: var(--primary-green-dark);
+}
+
+.btn-match-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-match-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Turfs List in Owner Dashboard */
+.owner-turf-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: 0.75rem;
+  background: var(--white);
+}
+
+.owner-turf-img {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.owner-turf-info {
+  flex: 1;
+}
+
+.owner-turf-title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+
+.owner-turf-meta {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+  display: flex;
+  gap: 10px;
+}
+
+.btn-mini-action {
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--slate-300);
+  background: var(--white);
+  color: var(--slate-700);
+  transition: var(--transition);
+}
+
+.btn-mini-action:hover {
+  background: var(--slate-100);
+  border-color: var(--slate-400);
+}

@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turfify — Play. Book. Enjoy. | Premium Sports Turf Marketplace</title>
+  <meta name="description" content="Book verified football turfs, cricket arenas, and badminton courts in Bangalore. Instant confirmation, real-time slots, and secure payments.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="about.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       1. NAVIGATION BAR
+       ========================================================================== -->
+  <header class="header" id="navbar">
+    <div class="container nav-container">
+      <!-- Logo: Stylized lowercase 't' badge + Turfify -->
+      <a href="#home" class="brand" aria-label="Turfify Home">
+        <div class="logo-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor"></circle>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title">Turfify</span>
+          <span class="brand-tagline">Play. Book. Enjoy.</span>
+        </div>
+      </a>
+
+      <!-- Center Nav Links -->
+      <nav aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#search-section" class="nav-link">Find Turfs</a></li>
+          <li><a href="dashboard.html" class="nav-link" style="color: var(--primary-green-dark); font-weight: 700;">Dashboard</a></li>
+          <li><a href="admin.html" class="nav-link" style="color: #2563EB; font-weight: 700;">⚡ Admin</a></li>
+          <li><a href="#owner-box" class="nav-link">List Your Turf</a></li>
+          <li><a href="#how-it-works-section" class="nav-link">How It Works</a></li>
+          <li><a href="#about" class="nav-link">About Us</a></li>
+          <li><a href="#contact" class="nav-link">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <!-- Right Nav Buttons -->
+      <div class="nav-actions">
+        <button class="btn-sun-toggle" id="btn-theme-toggle" aria-label="Toggle Theme" title="Daylight Theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+        <button class="btn-login-outline" id="btn-open-login">Login</button>
+        <button class="btn-register-solid" id="btn-open-register">Register</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       2. HERO SECTION
+       ========================================================================== -->
+  <section class="hero-wrapper" id="home">
+    <!-- Right side background visual with soft gradient fade to white on the left -->
+    <div class="hero-bg-visual"></div>
+
+    <div class="container">
+      <div class="hero-inner-grid">
+        <!-- Left Hero Content -->
+        <div class="hero-left">
+          <h1 class="hero-main-title">
+            <span class="word-navy">Book Your</span>
+            <span class="word-green">Perfect Turf</span>
+            <span class="word-navy">Anywhere, Anytime</span>
+          </h1>
+
+          <p class="hero-subtext">
+            <span>Find and book the best turfs near you.</span>
+            <span class="hero-subtext-line2">Quick, easy and hassle-free.</span>
+          </p>
+
+          <!-- 3 Trust Features in Horizontal Row -->
+          <div class="trust-features-row">
+            <!-- Feature 1: Verified Turfs -->
+            <div class="trust-feature-item">
+              <div class="trust-feature-icon green-shield">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+              </div>
+              <div class="trust-feature-text">
+                <span class="trust-feature-title">Verified Turfs</span>
+                <span class="trust-feature-sub">Quality Assured</span>
+              </div>
+            </div>
+
+            <!-- Feature 2: Instant Booking -->
+            <div class="trust-feature-item">
+              <div class="trust-feature-icon blue-bolt">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </div>
+              <div class="trust-feature-text">
+                <span class="trust-feature-title">Instant Booking</span>
+                <span class="trust-feature-sub">In Just Few Clicks</span>
+              </div>
+            </div>
+
+            <!-- Feature 3: Secure Payments -->
+            <div class="trust-feature-item">
+              <div class="trust-feature-icon yellow-lock">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <div class="trust-feature-text">
+                <span class="trust-feature-title">Secure Payments</span>
+                <span class="trust-feature-sub">100% Safe & Secure</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Attractive Sports Tagline / Quote Box Under Trust Badges -->
+          <div class="hero-quote-box">
+            <div class="hero-quote-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+              </svg>
+            </div>
+            <div class="hero-quote-content">
+              <p class="hero-quote-text">“Your Game, Your Arena — <span class="quote-highlight">Book in seconds, play for hours!</span>”</p>
+              <div class="hero-quote-rating">
+                <span class="stars">★★★★★</span>
+                <span class="rating-label">Trusted by <strong>50,000+</strong> active players & sports enthusiasts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Floating Turf Owner Card Over Patio Visual -->
+        <div class="hero-right">
+          <div class="floating-hero-owner-card">
+            <div class="owner-card-icon-pill">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <line x1="9" y1="22" x2="9" y2="12"></line>
+                <line x1="15" y1="22" x2="15" y2="12"></line>
+                <line x1="9" y1="12" x2="15" y2="12"></line>
+              </svg>
+            </div>
+            <h3 class="owner-card-heading">Are you a<br><span>Turf Owner</span>?</h3>
+            <p class="owner-card-desc">
+              Register your turf and connect with thousands of players.
+            </p>
+            <button class="btn-owner-green" id="btn-hero-owner">
+              <span>Register Your Turf</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+            <div class="owner-card-social-proof">
+              <div class="owner-avatars">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64&q=80" alt="Owner">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=64&h=64&q=80" alt="Owner">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=64&h=64&q=80" alt="Owner">
+              </div>
+              <span class="owner-join-label">Join 1000+ owners</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integrated Search Booking Bar at bottom of Hero Viewport -->
+    <div class="container hero-search-container" id="search-section">
+      <form class="search-pill-card" id="search-form">
+        <!-- 1. Location -->
+        <div class="search-col">
+          <div class="search-col-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <div class="search-col-text">
+            <span class="search-col-label">Location</span>
+            <select class="search-col-select" id="select-location">
+              <option value="all">Select Location</option>
+              <option value="koramangala">Koramangala</option>
+              <option value="hsr">HSR Layout</option>
+              <option value="indiranagar">Indiranagar</option>
+              <option value="jayanagar">Jayanagar</option>
+              <option value="whitefield">Whitefield</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 2. Sport -->
+        <div class="search-col">
+          <div class="search-col-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"></circle>
+              <polygon points="12 8 14 11 11 15 9 12"></polygon>
+            </svg>
+          </div>
+          <div class="search-col-text">
+            <span class="search-col-label">Sport</span>
+            <select class="search-col-select" id="select-sport">
+              <option value="all">All Sports</option>
+              <option value="football">Football</option>
+              <option value="cricket">Cricket</option>
+              <option value="badminton">Badminton</option>
+              <option value="basketball">Basketball</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. Date -->
+        <div class="search-col">
+          <div class="search-col-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="search-col-text">
+            <span class="search-col-label">Date</span>
+            <select class="search-col-select" id="select-date">
+              <option value="today">Select Date</option>
+              <option value="today">Today, Sep 3</option>
+              <option value="tomorrow">Tomorrow, Sep 4</option>
+              <option value="weekend">This Weekend</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 4. Time -->
+        <div class="search-col">
+          <div class="search-col-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="search-col-text">
+            <span class="search-col-label">Time</span>
+            <select class="search-col-select" id="select-time">
+              <option value="all">Select Time</option>
+              <option value="morning">Morning (6 AM - 10 AM)</option>
+              <option value="day">Day (10 AM - 4 PM)</option>
+              <option value="evening">Evening (4 PM - 8 PM)</option>
+              <option value="night">Night (8 PM - Midnight)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Search Button (Teal-Cyan Pill) -->
+        <button type="submit" class="btn-search-pill" id="btn-search-turfs">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>Search Turfs</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       4. EXPLORE BY SPORT (5 PASTEL CARDS)
+       ========================================================================== -->
+  <section class="sports-row-section" id="sports">
+    <div class="container">
+      <div class="sports-pill-grid">
+        <!-- 1. Football -->
+        <div class="sport-pill-card football" data-sport="football">
+          <div class="sport-pill-icon">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="12 7 15.5 10 14 14 10 14 8.5 10 12 7"></polygon>
+              <line x1="12" y1="2" x2="12" y2="7"></line>
+              <line x1="21.5" y1="9" x2="15.5" y2="10"></line>
+              <line x1="18" y1="19" x2="14" y2="14"></line>
+              <line x1="6" y1="19" x2="10" y2="14"></line>
+              <line x1="2.5" y1="9" x2="8.5" y2="10"></line>
+            </svg>
+          </div>
+          <div class="sport-pill-details">
+            <span class="sport-pill-name">Football</span>
+            <span class="sport-pill-sub">Turfs</span>
+          </div>
+        </div>
+
+        <!-- 2. Cricket -->
+        <div class="sport-pill-card cricket" data-sport="cricket">
+          <div class="sport-pill-icon">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="21" x2="19" y2="7"></line>
+              <path d="M19 7l-2-2a2 2 0 0 0-2.8 0L7.5 11.7a2 2 0 0 0 0 2.8l2 2a2 2 0 0 0 2.8 0L19 9.8A2 2 0 0 0 19 7z"></path>
+              <circle cx="18" cy="18" r="3"></circle>
+            </svg>
+          </div>
+          <div class="sport-pill-details">
+            <span class="sport-pill-name">Cricket</span>
+            <span class="sport-pill-sub">Turfs</span>
+          </div>
+        </div>
+
+        <!-- 3. Badminton -->
+        <div class="sport-pill-card badminton" data-sport="badminton">
+          <div class="sport-pill-icon">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="18" r="3"></circle>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+              <path d="M8 8c2.5-3 5.5-3 8 0"></path>
+              <path d="M9.5 11c1.5-2 3.5-2 5 0"></path>
+            </svg>
+          </div>
+          <div class="sport-pill-details">
+            <span class="sport-pill-name">Badminton</span>
+            <span class="sport-pill-sub">Courts</span>
+          </div>
+        </div>
+
+        <!-- 4. Basketball -->
+        <div class="sport-pill-card basketball" data-sport="basketball">
+          <div class="sport-pill-icon">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <div class="sport-pill-details">
+            <span class="sport-pill-name">Basketball</span>
+            <span class="sport-pill-sub">Courts</span>
+          </div>
+        </div>
+
+        <!-- 5. More -->
+        <div class="sport-pill-card more" data-sport="all">
+          <div class="sport-pill-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="2"></rect>
+            </svg>
+          </div>
+          <div class="sport-pill-details">
+            <span class="sport-pill-name">More</span>
+            <span class="sport-pill-sub">Sports</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       5. STATISTICS BANNER (VIBRANT GREEN TO ROYAL BLUE GRADIENT)
+       ========================================================================== -->
+  <section class="stats-banner-section">
+    <div class="container">
+      <div class="stats-gradient-bar">
+        <!-- Metric 1: 500+ Listed Turfs -->
+        <div class="stat-metric-box">
+          <div class="stat-icon-disc">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="stat-metric-info">
+            <span class="stat-metric-number">500+</span>
+            <span class="stat-metric-label">Listed Turfs</span>
+          </div>
+        </div>
+
+        <!-- Metric 2: 50K+ Happy Players -->
+        <div class="stat-metric-box">
+          <div class="stat-icon-disc">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+              <line x1="9" y1="9" x2="9.01" y2="9"></line>
+              <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+          </div>
+          <div class="stat-metric-info">
+            <span class="stat-metric-number">50K+</span>
+            <span class="stat-metric-label">Happy Players</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: 10K+ Bookings Completed -->
+        <div class="stat-metric-box">
+          <div class="stat-icon-disc">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="stat-metric-info">
+            <span class="stat-metric-number">10K+</span>
+            <span class="stat-metric-label">Bookings Completed</span>
+          </div>
+        </div>
+
+        <!-- Metric 4: 4.8 Average Rating -->
+        <div class="stat-metric-box">
+          <div class="stat-icon-disc">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <div class="stat-metric-info">
+            <span class="stat-metric-number">4.8</span>
+            <span class="stat-metric-label">Average Rating</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       6. TOP RATED TURFS NEAR YOU
+       ========================================================================== -->
+  <section class="turfs-listing-section" id="popular-turfs">
+    <div class="container">
+      <div class="section-top-bar">
+        <div class="section-heading-block">
+          <div class="heading-green-pill-dash"></div>
+          <h2 class="section-main-heading">Top Rated Turfs Near You</h2>
+        </div>
+        <a href="#search-section" class="link-view-all">
+          <span>View All Turfs</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+
+      <div class="turf-cards-row-wrapper">
+        <div class="turfs-cards-grid" id="turfs-container">
+          <!-- Turf 1: The Arena Sports -->
+          <div class="turf-listing-card" data-sport="football" data-location="koramangala" data-name="The Arena Sports" data-rate="1200">
+            <div class="turf-media">
+              <img src="images/turf-arena.jpg" alt="The Arena Sports Koramangala">
+              <div class="rating-pill-green">★ 4.8</div>
+            </div>
+            <div class="turf-details-body">
+              <h3 class="turf-card-title">The Arena Sports</h3>
+              <div class="turf-card-loc">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>Koramangala, Bangalore</span>
+              </div>
+              <div class="amenities-badges-row">
+                <span class="amenity-chip">🏠 Indoor</span>
+                <span class="amenity-chip">🅿️ Parking</span>
+                <span class="amenity-chip">🚻 Washroom</span>
+              </div>
+              <div class="turf-card-actions-row">
+                <div class="price-line">₹1200 <span class="price-unit">/hr</span></div>
+                <div class="action-btns-group">
+                  <button class="btn-card-book" data-turf="The Arena Sports" data-rate="1200" data-loc="Koramangala">Book Now</button>
+                  <button class="btn-card-heart" aria-label="Favorite">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Turf 2: Kickoff Hub -->
+          <div class="turf-listing-card" data-sport="cricket" data-location="hsr" data-name="Kickoff Hub" data-rate="1000">
+            <div class="turf-media">
+              <img src="images/turf-kickoff.jpg" alt="Kickoff Hub HSR Layout">
+              <div class="rating-pill-green">★ 4.7</div>
+            </div>
+            <div class="turf-details-body">
+              <h3 class="turf-card-title">Kickoff Hub</h3>
+              <div class="turf-card-loc">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>HSR Layout, Bangalore</span>
+              </div>
+              <div class="amenities-badges-row">
+                <span class="amenity-chip">🌳 Outdoor</span>
+                <span class="amenity-chip">☕ Cafe</span>
+                <span class="amenity-chip">🅿️ Parking</span>
+              </div>
+              <div class="turf-card-actions-row">
+                <div class="price-line">₹1000 <span class="price-unit">/hr</span></div>
+                <div class="action-btns-group">
+                  <button class="btn-card-book" data-turf="Kickoff Hub" data-rate="1000" data-loc="HSR Layout">Book Now</button>
+                  <button class="btn-card-heart" aria-label="Favorite">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Turf 3: Game On Turf -->
+          <div class="turf-listing-card" data-sport="badminton" data-location="indiranagar" data-name="Game On Turf" data-rate="900">
+            <div class="turf-media">
+              <img src="images/turf-gameon.jpg" alt="Game On Turf Indiranagar">
+              <div class="rating-pill-green">★ 4.9</div>
+            </div>
+            <div class="turf-details-body">
+              <h3 class="turf-card-title">Game On Turf</h3>
+              <div class="turf-card-loc">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>Indiranagar, Bangalore</span>
+              </div>
+              <div class="amenities-badges-row">
+                <span class="amenity-chip">🏠 Indoor</span>
+                <span class="amenity-chip">🏏 Net Practice</span>
+                <span class="amenity-chip">🅿️ Parking</span>
+              </div>
+              <div class="turf-card-actions-row">
+                <div class="price-line">₹900 <span class="price-unit">/hr</span></div>
+                <div class="action-btns-group">
+                  <button class="btn-card-book" data-turf="Game On Turf" data-rate="900" data-loc="Indiranagar">Book Now</button>
+                  <button class="btn-card-heart" aria-label="Favorite">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Turf 4: Playground Pro -->
+          <div class="turf-listing-card" data-sport="football" data-location="jayanagar" data-name="Playground Pro" data-rate="1500">
+            <div class="turf-media">
+              <img src="images/turf-playground.jpg" alt="Playground Pro Jayanagar">
+              <div class="rating-pill-green">★ 4.6</div>
+            </div>
+            <div class="turf-details-body">
+              <h3 class="turf-card-title">Playground Pro</h3>
+              <div class="turf-card-loc">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>Jayanagar, Bangalore</span>
+              </div>
+              <div class="amenities-badges-row">
+                <span class="amenity-chip">🌳 Outdoor</span>
+                <span class="amenity-chip">💡 Flood Light</span>
+                <span class="amenity-chip">🅿️ Parking</span>
+              </div>
+              <div class="turf-card-actions-row">
+                <div class="price-line">₹1500 <span class="price-unit">/hr</span></div>
+                <div class="action-btns-group">
+                  <button class="btn-card-book" data-turf="Playground Pro" data-rate="1500" data-loc="Jayanagar">Book Now</button>
+                  <button class="btn-card-heart" aria-label="Favorite">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Arrow Right -->
+        <button class="carousel-next-btn" id="btn-next-turfs" aria-label="Next Turfs">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       7. HOW IT WORKS & TURF OWNER REGISTRATION (DUAL SHOWCASE)
+       ========================================================================== -->
+  <section class="how-it-works-dual-section" id="how-it-works-section">
+    <div class="container">
+      <div class="dual-layout-grid">
+        <!-- Left: Book in 4 Simple Steps -->
+        <div class="how-it-works-box">
+          <span class="pill-badge-small">How It Works</span>
+          <h3 class="how-it-works-title">Book in 4 Simple Steps</h3>
+
+          <div class="steps-horizontal-row">
+            <!-- Step 1: Find Turf -->
+            <div class="step-item-card">
+              <div class="step-num-circle">1</div>
+              <div class="step-graphic-box">
+                <svg width="70" height="70" viewBox="0 0 64 64" fill="none">
+                  <path d="M6 18L24 12L40 18L58 12V48L40 54L24 48L6 54V18Z" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                  <path d="M24 12L40 18V54L24 48V12Z" fill="#DCFCE7"/>
+                  <rect x="27" y="24" width="10" height="14" rx="2" fill="#86EFAC" stroke="#16A34A" stroke-dasharray="2 2"/>
+                  <path d="M12 28C17 30 21 36 24 42" stroke="#E2E8F0" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M40 24C45 26 49 32 53 36" stroke="#E2E8F0" stroke-width="2.5" stroke-linecap="round"/>
+                  <ellipse cx="32" cy="42" rx="9" ry="3.5" fill="rgba(15, 23, 42, 0.2)"/>
+                  <path d="M32 14C26.5 14 22 18.5 22 24C22 31.5 32 42 32 42C32 42 42 31.5 42 24C42 18.5 37.5 14 32 14Z" fill="url(#stepPinGrad)"/>
+                  <circle cx="32" cy="24" r="4.5" fill="#FFFFFF"/>
+                  <defs>
+                    <linearGradient id="stepPinGrad" x1="22" y1="14" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#34D399"/>
+                      <stop offset="1" stop-color="#059669"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+              <h4 class="step-graphic-title">Find Turf</h4>
+              <p class="step-graphic-desc">Search turfs near you by location & sport.</p>
+            </div>
+
+            <!-- Step 2: Choose Slot -->
+            <div class="step-item-card">
+              <div class="step-num-circle">2</div>
+              <div class="step-graphic-box">
+                <svg width="70" height="70" viewBox="0 0 64 64" fill="none">
+                  <rect x="12" y="16" width="40" height="38" rx="8" fill="rgba(37, 99, 235, 0.12)"/>
+                  <rect x="10" y="14" width="44" height="40" rx="8" fill="#FFFFFF" stroke="#DBEAFE" stroke-width="2"/>
+                  <path d="M10 22C10 17.58 13.58 14 18 14H46C50.42 14 54 17.58 54 22V25H10V22Z" fill="url(#stepCalGrad)"/>
+                  <rect x="18" y="10" width="4" height="8" rx="2" fill="#84CC16"/>
+                  <rect x="42" y="10" width="4" height="8" rx="2" fill="#84CC16"/>
+                  <rect x="16" y="31" width="7" height="7" rx="2" fill="#F1F5F9" stroke="#CBD5E1"/>
+                  <rect x="28" y="31" width="7" height="7" rx="2" fill="#F1F5F9" stroke="#CBD5E1"/>
+                  <rect x="40" y="31" width="7" height="7" rx="2" fill="#DCFCE7" stroke="#22C55E"/>
+                  <rect x="16" y="42" width="7" height="7" rx="2" fill="#F1F5F9" stroke="#CBD5E1"/>
+                  <rect x="28" y="42" width="7" height="7" rx="2" fill="#10B981"/>
+                  <path d="M30 45.5L31.5 47L34.5 44" stroke="#FFFFFF" stroke-width="1.3" stroke-linecap="round"/>
+                  <rect x="40" y="42" width="7" height="7" rx="2" fill="#F1F5F9" stroke="#CBD5E1"/>
+                  <defs>
+                    <linearGradient id="stepCalGrad" x1="10" y1="14" x2="54" y2="25" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#3B82F6"/>
+                      <stop offset="1" stop-color="#1D4ED8"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+              <h4 class="step-graphic-title">Choose Slot</h4>
+              <p class="step-graphic-desc">Pick your preferred date and time slot.</p>
+            </div>
+
+            <!-- Step 3: Book & Pay -->
+            <div class="step-item-card">
+              <div class="step-num-circle">3</div>
+              <div class="step-graphic-box">
+                <svg width="70" height="70" viewBox="0 0 64 64" fill="none">
+                  <rect x="18" y="10" width="28" height="46" rx="6" fill="#0F172A" stroke="#334155" stroke-width="2"/>
+                  <rect x="20" y="14" width="24" height="38" rx="4" fill="#F8FAFC"/>
+                  <rect x="28" y="11" width="8" height="2" rx="1" fill="#64748B"/>
+                  <rect x="22" y="18" width="20" height="12" rx="3" fill="url(#stepPayGrad)"/>
+                  <rect x="24" y="21" width="6" height="3" rx="1" fill="#FCD34D"/>
+                  <ellipse cx="32" cy="43" rx="9" ry="3" fill="rgba(0,0,0,0.15)"/>
+                  <circle cx="32" cy="39" r="9" fill="url(#stepCoinGrad)" stroke="#B45309" stroke-width="1.2"/>
+                  <circle cx="32" cy="39" r="7.2" fill="none" stroke="#FDE68A" stroke-width="0.8"/>
+                  <text x="32" y="43" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="900" fill="#78350F" text-anchor="middle">₹</text>
+                  <defs>
+                    <linearGradient id="stepPayGrad" x1="22" y1="18" x2="42" y2="30" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#0284C7"/>
+                      <stop offset="1" stop-color="#0D9488"/>
+                    </linearGradient>
+                    <linearGradient id="stepCoinGrad" x1="25" y1="32" x2="39" y2="46" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#FDE047"/>
+                      <stop offset="1" stop-color="#F59E0B"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+              <h4 class="step-graphic-title">Book & Pay</h4>
+              <p class="step-graphic-desc">Confirm your booking with secure payment.</p>
+            </div>
+
+            <!-- Step 4: Play & Enjoy -->
+            <div class="step-item-card">
+              <div class="step-num-circle">4</div>
+              <div class="step-graphic-box">
+                <svg width="70" height="70" viewBox="0 0 64 64" fill="none">
+                  <path d="M11 16L12.5 19.5L16 21L12.5 22.5L11 26L9.5 22.5L6 21L9.5 19.5L11 16Z" fill="#F59E0B"/>
+                  <path d="M53 14L54.5 17.5L58 19L54.5 20.5L53 24L51.5 20.5L48 19L51.5 17.5L53 14Z" fill="#10B981"/>
+                  <circle cx="15" cy="30" r="2" fill="#3B82F6"/>
+                  <circle cx="49" cy="28" r="2" fill="#EC4899"/>
+                  <!-- Player 1 -->
+                  <circle cx="23" cy="24" r="5" fill="#FBBF24"/>
+                  <path d="M16 41C16 35 20 31 24 31C28 31 31 35 31 41V48H16V41Z" fill="#10B981"/>
+                  <path d="M19 32L14 24" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"/>
+                  <!-- Player 2 -->
+                  <circle cx="41" cy="24" r="5" fill="#FDE047"/>
+                  <path d="M33 41C33 35 37 31 40 31C44 31 48 35 48 41V48H33V41Z" fill="#0284C7"/>
+                  <path d="M44 32L49 24" stroke="#0284C7" stroke-width="2.5" stroke-linecap="round"/>
+                  <!-- Soccer Ball -->
+                  <circle cx="32" cy="48" r="6" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.2"/>
+                  <polygon points="32,45 34,47 33,50 31,50 30,47" fill="#0F172A"/>
+                </svg>
+              </div>
+              <h4 class="step-graphic-title">Play & Enjoy</h4>
+              <p class="step-graphic-desc">Show up and enjoy your game time!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Are You a Turf Owner? Peach Card -->
+        <div class="owner-card-peach" id="owner-box">
+          <div class="owner-peach-content">
+            <h3 class="owner-peach-title">Are You a<br><span>Turf Owner?</span></h3>
+            <p class="owner-peach-desc">
+              List your turf, manage bookings and grow your business with thousands of players.
+            </p>
+            <button class="btn-owner-orange" id="btn-owner-orange-cta">
+              <span>Register Your Turf</span>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <!-- User's preferred high-res Turf Owner Illustration Graphic -->
+          <div class="owner-peach-graphic">
+            <img src="images/owner-illustration.jpg" alt="Turf Facility Manager" class="owner-man-illustration">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       7B. ABOUT US SECTION (TWO-SIDED SPORTS TURF PLATFORM)
+       ========================================================================== -->
+  <section class="about-ref-container" id="about">
+    
+    <!-- 1. Top Hero Section -->
+    <div class="hero-top-row">
+      <!-- Left Column: Content & Statistics -->
+      <div class="hero-left-col">
+        <div class="hero-about-tag">
+          <span>ABOUT US</span>
+          <div class="green-bar"></div>
+        </div>
+
+        <h2 class="hero-title-main">
+          Where Turf Owners<br>
+          Meet <span class="text-blue">Players.</span><br>
+          Where Every <span class="text-green">Game</span> Begins.
+        </h2>
+
+        <p class="hero-sub-p1">
+          We’re building a smarter and easier way to discover, manage, and book sports turfs.
+        </p>
+
+        <p class="hero-sub-p2">
+          Our platform brings turf owners and players together in one place. 
+          <span class="kw-green">List.</span> 
+          <span class="kw-green">Discover.</span> 
+          <span class="kw-blue">Book.</span> 
+          <span class="kw-blue">Play.</span>
+        </p>
+
+        <div class="hero-stats-pill" id="stats-pill-bar">
+          <div class="stat-box-item">
+            <div class="stat-circle-icon blue-bg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </div>
+            <div class="stat-texts">
+              <span class="stat-num-val">1000+</span>
+              <span class="stat-label-val">TURFS LISTED</span>
+            </div>
+          </div>
+
+          <div class="stat-box-item">
+            <div class="stat-circle-icon green-bg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="stat-texts">
+              <span class="stat-num-val">50K+</span>
+              <span class="stat-label-val">HAPPY PLAYERS</span>
+            </div>
+          </div>
+
+          <div class="stat-box-item">
+            <div class="stat-circle-icon blue-bg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <circle cx="8" cy="14" r="1"></circle>
+                <circle cx="12" cy="14" r="1"></circle>
+                <circle cx="16" cy="14" r="1"></circle>
+                <circle cx="8" cy="18" r="1"></circle>
+                <circle cx="12" cy="18" r="1"></circle>
+              </svg>
+            </div>
+            <div class="stat-texts">
+              <span class="stat-num-val">25K+</span>
+              <span class="stat-label-val">BOOKINGS MONTHLY</span>
+            </div>
+          </div>
+
+          <div class="stat-box-item">
+            <div class="stat-circle-icon green-bg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+              </svg>
+            </div>
+            <div class="stat-texts">
+              <span class="stat-num-val" style="color: var(--ref-green);">4.8★</span>
+              <span class="stat-label-val">PLAYER RATING</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Realistic Turf Photo with Organic Curved Edge & Cursive Slogan -->
+      <div class="hero-right-col">
+        <div class="hero-brush-frame">
+          <img src="images/about-hero-turf.jpg" alt="Premium outdoor sports football turf during sunny day" class="hero-turf-bg">
+          
+          <svg class="brush-curve-svg" viewBox="0 0 180 480" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0,0 C 70,50 115,130 90,210 C 65,290 110,390 180,480 L 0,480 Z" fill="#FFFFFF"/>
+            <circle cx="96" cy="120" r="5" fill="#FFFFFF"/>
+            <circle cx="112" cy="138" r="3.5" fill="#FFFFFF"/>
+            <circle cx="125" cy="155" r="2.5" fill="#FFFFFF"/>
+            <circle cx="78" cy="270" r="5" fill="#FFFFFF"/>
+            <circle cx="92" cy="290" r="3.5" fill="#FFFFFF"/>
+            <circle cx="135" cy="385" r="4" fill="#FFFFFF"/>
+            <circle cx="152" cy="405" r="3" fill="#FFFFFF"/>
+          </svg>
+
+          <div class="hero-slogan-overlay">
+            <span class="script-row navy">Your Turf.</span>
+            <span class="script-row blue">Your Game.</span>
+            <span class="script-row green">Your Community.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Two-Sided Platform Row -->
+    <div class="platform-two-sided-row">
+      <!-- Left Card: For Turf Owners -->
+      <article class="role-card-owners">
+        <div class="role-vertical-photo">
+          <img src="images/about-owner-turf.jpg" alt="Modern sports turf facility pavilion and seating" loading="lazy">
+        </div>
+
+        <div class="role-content-area">
+          <div class="role-header-line">
+            <div class="role-badge-icon green-solid" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <h3 class="role-h3-title">FOR <span class="hl-green">TURF OWNERS</span></h3>
+          </div>
+
+          <p class="role-sub-line">Turn your turf into a digital business.</p>
+
+          <ul class="role-items-list">
+            <li class="role-point">
+              <div class="point-icon-outline green-tint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+              </div>
+              <span>Register your turf in minutes</span>
+            </li>
+            <li class="role-point">
+              <div class="point-icon-outline green-tint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+              </div>
+              <span>Showcase your facilities & photos</span>
+            </li>
+            <li class="role-point">
+              <div class="point-icon-outline green-tint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+              <span>Manage availability & bookings</span>
+            </li>
+            <li class="role-point">
+              <div class="point-icon-outline green-tint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+              </div>
+              <span>Reach more players & grow your business</span>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Center Feature: One Platform with Speeding Soccer Ball -->
+      <div class="center-platform-hub">
+        <div class="hub-circular-badge">
+          <!-- Continuous Energy Ripple -->
+          <div class="hub-energy-ripple"></div>
+
+          <div class="hub-ring-green">
+            <div class="hub-dot-green-left"></div>
+          </div>
+          <div class="hub-ring-blue">
+            <div class="hub-dot-blue-top"></div>
+            <div class="hub-dot-blue-bottom"></div>
+          </div>
+
+          <div class="hub-ball-wrapper">
+            <svg class="speed-soccer-ball-svg" viewBox="0 0 72 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 6,48 L 28,32" stroke="#1464F4" stroke-width="4" stroke-linecap="round"/>
+              <path d="M 2,56 L 36,36" stroke="#1464F4" stroke-width="5" stroke-linecap="round"/>
+              <path d="M 12,62 L 38,44" stroke="#1464F4" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M 18,52 L 32,40" stroke="#1464F4" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="46" cy="26" r="19" fill="#FFFFFF" stroke="#071B3A" stroke-width="1.8"/>
+              <polygon points="46,18 51,22 49,29 43,29 41,22" fill="#071B3A"/>
+              <line x1="46" y1="18" x2="46" y2="7" stroke="#071B3A" stroke-width="1.4"/>
+              <line x1="51" y1="22" x2="63" y2="18" stroke="#071B3A" stroke-width="1.4"/>
+              <line x1="49" y1="29" x2="58" y2="40" stroke="#071B3A" stroke-width="1.4"/>
+              <line x1="43" y1="29" x2="34" y2="40" stroke="#071B3A" stroke-width="1.4"/>
+              <line x1="41" y1="22" x2="29" y2="18" stroke="#071B3A" stroke-width="1.4"/>
+              <path d="M 38,8 C 42,7 50,7 54,8 L 46,14 Z" fill="#071B3A"/>
+              <path d="M 64,22 C 65,26 65,30 63,33 L 56,28 Z" fill="#071B3A"/>
+              <path d="M 53,44 C 50,45 42,45 39,44 L 46,38 Z" fill="#071B3A"/>
+              <path d="M 28,33 C 27,30 27,26 28,22 L 35,28 Z" fill="#071B3A"/>
+            </svg>
+          </div>
+
+          <span class="hub-title-blue">ONE PLATFORM</span>
+          <span class="hub-title-navy">ENDLESS POSSIBILITIES</span>
+        </div>
+      </div>
+
+      <!-- Right Card: For Players -->
+      <article class="role-card-players">
+        <div class="role-content-area">
+          <div class="role-header-line">
+            <div class="role-badge-icon blue-solid" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <h3 class="role-h3-title">FOR <span class="hl-blue">PLAYERS</span></h3>
+          </div>
+
+          <p class="role-sub-line">Find your game. Find your turf.</p>
+
+          <ul class="role-items-list">
+            <li class="role-point">
+              <div class="point-icon-outline blue-tint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <span>Explore turfs near you</span>
+            </li>
+            <li class="role-point">
+              <div class="point-icon-outline blue-tint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+              </div>
+              <span>Check facilities & photos</span>
+            </li>
+            <li class="role-point">
+              <div class="point-icon-outline blue-tint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <span>View real-time availability</span>
+            </li>
+            <li class="role-point">
+              <div class="point-icon-outline blue-tint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <span>Book your slot & start playing</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="role-vertical-photo">
+          <img src="images/about-player-boots.jpg" alt="Soccer cleats standing on turf grass with a soccer ball" loading="lazy">
+        </div>
+      </article>
+    </div>
+
+    <!-- 3. Trust & Value Section -->
+    <div class="trust-row-pill">
+      <div class="trust-col-box">
+        <div class="trust-col-icon green-soft">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+        </div>
+        <div class="trust-col-text">
+          <h4 class="trust-col-headline hl-green">TRUST &amp; SAFETY</h4>
+          <p class="trust-col-desc">Verified turfs and secure bookings for a worry-free experience.</p>
+        </div>
+      </div>
+
+      <div class="trust-col-box">
+        <div class="trust-col-icon blue-soft">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+        </div>
+        <div class="trust-col-text">
+          <h4 class="trust-col-headline hl-blue">EASY &amp; CONVENIENT</h4>
+          <p class="trust-col-desc">Simple steps to list, discover and book your perfect turf in no time.</p>
+        </div>
+      </div>
+
+      <div class="trust-col-box">
+        <div class="trust-col-icon green-soft">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div class="trust-col-text">
+          <h4 class="trust-col-headline hl-green">QUALITY EXPERIENCE</h4>
+          <p class="trust-col-desc">Great turfs, better games and unforgettable memories.</p>
+        </div>
+      </div>
+
+      <div class="trust-col-box">
+        <div class="trust-col-icon blue-soft">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="trust-col-text">
+          <h4 class="trust-col-headline hl-blue">BUILT FOR COMMUNITY</h4>
+          <p class="trust-col-desc">Connecting players and owners to grow the love for the game.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Bottom CTA Bar -->
+    <div class="bottom-cta-pill">
+      <div class="cta-left-slogan">
+        One Platform. Two Experiences. One Goal.
+      </div>
+
+      <div class="cta-vert-sep"></div>
+
+      <div class="cta-mid-group">
+        <div class="cta-sub-item">
+          <div class="cta-sub-icon-square">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </div>
+          <div class="cta-sub-texts">
+            <span class="cta-sub-bold">You Own It.</span>
+            <span class="cta-sub-gray">We Help You Grow.</span>
+          </div>
+        </div>
+
+        <div class="cta-sub-item">
+          <div class="cta-sub-icon-circle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="5" r="2.5"></circle>
+              <path d="M10 22l3-7 3-3-2-3-4 2"></path>
+              <path d="M17 17l-3-3"></path>
+            </svg>
+          </div>
+          <div class="cta-sub-texts">
+            <span class="cta-sub-bold">You Play.</span>
+            <span class="cta-sub-gray">We Find You the Best.</span>
+          </div>
+        </div>
+      </div>
+
+      <a href="#search-section" class="cta-green-pill-btn">
+        <span class="btn-script-text">Play More. Grow More. Together.</span>
+      </a>
+    </div>
+
+  </section>         </svg>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       8. BOTTOM PROMOTIONAL BANNER
+       ========================================================================== -->
+  <section class="bottom-cta-section">
+    <div class="container">
+      <div class="banner-gradient-cta">
+        <div class="banner-left-group">
+          <div class="banner-gift-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 12 20 22 4 22 4 12"></polyline>
+              <rect x="2" y="7" width="20" height="5"></rect>
+              <line x1="12" y1="22" x2="12" y2="7"></line>
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+            </svg>
+          </div>
+          <div class="banner-title-text">
+            <h3 class="banner-main-title">New to Turfify?</h3>
+            <p class="banner-sub-text">Register now and get exclusive offers on your first booking!</p>
+          </div>
+        </div>
+
+        <button class="btn-white-account" id="btn-bottom-cta">
+          <span>Create an Account</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       INTERACTIVE MODALS
+       ========================================================================== -->
+
+  <!-- Slot Booking Modal -->
+  <div class="modal-overlay" id="modal-booking">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="booking-modal-title">Book Slot</h3>
+          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;" id="booking-modal-sub">Bangalore</p>
+        </div>
+        <button class="btn-close-modal" id="btn-close-booking" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Select Date</label>
+          <input type="date" class="form-control" id="booking-date" value="2026-09-03">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Available Slots</label>
+          <div class="slots-grid">
+            <button type="button" class="slot-btn" data-slot="06:00 - 07:00 AM">06:00 - 07:00 AM</button>
+            <button type="button" class="slot-btn booked" disabled>07:00 - 08:00 AM</button>
+            <button type="button" class="slot-btn" data-slot="08:00 - 09:00 AM">08:00 - 09:00 AM</button>
+            <button type="button" class="slot-btn" data-slot="05:00 - 06:00 PM">05:00 - 06:00 PM</button>
+            <button type="button" class="slot-btn selected" data-slot="06:00 - 07:00 PM">06:00 - 07:00 PM</button>
+            <button type="button" class="slot-btn" data-slot="07:00 - 08:00 PM">07:00 - 08:00 PM</button>
+            <button type="button" class="slot-btn" data-slot="08:00 - 09:00 PM">08:00 - 09:00 PM</button>
+            <button type="button" class="slot-btn" data-slot="09:00 - 10:00 PM">09:00 - 10:00 PM</button>
+            <button type="button" class="slot-btn" data-slot="10:00 - 11:00 PM">10:00 - 11:00 PM</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Player Name & WhatsApp</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" class="form-control" placeholder="Full Name" value="Rahul Sharma">
+            <input type="tel" class="form-control" placeholder="+91 98765 43210" value="+91 98765 43210">
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-line">
+            <span>Turf Rate (1 Hour)</span>
+            <span id="modal-base-rate">₹1,200</span>
+          </div>
+          <div class="summary-line">
+            <span>Platform Fee</span>
+            <span style="color: var(--primary-green); font-weight: 700;">FREE</span>
+          </div>
+          <div class="summary-line total">
+            <span>Total Payable</span>
+            <span id="modal-total-rate">₹1,200</span>
+          </div>
+        </div>
+
+        <button class="btn-modal-action" id="btn-confirm-slot">
+          Confirm & Pay Securely
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Turf Owner Modal -->
+  <div class="modal-overlay" id="modal-owner">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">List Your Turf Facility</h3>
+          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;">Join 1000+ owners growing with Turfify</p>
+        </div>
+        <button class="btn-close-modal" id="btn-close-owner" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="owner-form">
+          <div class="form-group">
+            <label class="form-label">Facility Name</label>
+            <input type="text" class="form-control" placeholder="e.g. Champions Sports Hub" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">City & Area</label>
+            <input type="text" class="form-control" placeholder="e.g. Bengaluru, Whitefield" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Number</label>
+            <input type="tel" class="form-control" placeholder="+91 98765 43210" required>
+          </div>
+          <button type="submit" class="btn-modal-action" style="margin-top: 10px;">
+            Submit Facility
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="modal-auth">
+    <div class="modal-container" style="max-width: 440px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="auth-title">Login to Turfify</h3>
+          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;">Choose your account type to continue</p>
+        </div>
+        <button class="btn-close-modal" id="btn-close-auth" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Dual Role Selection Switcher -->
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label">Sign in as:</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
+            <label style="border: 2px solid var(--primary-green); background: var(--primary-green-subtle); padding: 12px 10px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.85rem; color: var(--navy-900);">
+              <input type="radio" name="auth-role" value="player" checked style="accent-color: var(--primary-green);">
+              <span>⚽ Player</span>
+            </label>
+            <label style="border: 1px solid var(--slate-200); background: var(--slate-50); padding: 12px 10px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.85rem; color: var(--navy-900);">
+              <input type="radio" name="auth-role" value="owner" style="accent-color: var(--warm-orange);">
+              <span>🏟️ Turf Owner</span>
+            </label>
+          </div>
+        </div>
+
+        <form id="auth-submit-form">
+          <div class="form-group">
+            <label class="form-label">Mobile Number</label>
+            <input type="tel" class="form-control" placeholder="+91 98765 43210" value="+91 98765 43210" required>
+          </div>
+          <button type="submit" class="btn-modal-action" style="margin-top: 5px;">
+            Sign In to Portal
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="store.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

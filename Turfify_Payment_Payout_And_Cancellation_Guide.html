@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Turfify — Payment Gateway, Marketplace Payout & Cancellation Architecture</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root {
+      --primary: #059669;
+      --primary-dark: #065F46;
+      --primary-light: #D1FAE5;
+      --indigo: #4F46E5;
+      --indigo-dark: #3730A3;
+      --indigo-light: #EEF2FF;
+      --accent-orange: #EA580C;
+      --accent-orange-light: #FFEDD5;
+      --navy-950: #090D16;
+      --navy-900: #0F172A;
+      --navy-800: #1E293B;
+      --slate-700: #334155;
+      --slate-500: #64748B;
+      --slate-300: #CBD5E1;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --white: #FFFFFF;
+      --blue-600: #0284C7;
+      --blue-50: #E0F2FE;
+      --red-600: #DC2626;
+      --red-50: #FEF2F2;
+      --emerald-600: #059669;
+      --emerald-50: #ECFDF5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--navy-800);
+      background-color: var(--white);
+      line-height: 1.42;
+      font-size: 11px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    @page {
+      size: A4;
+      margin: 10mm 12mm 10mm 12mm;
+    }
+
+    .page {
+      page-break-after: always;
+      break-after: page;
+      position: relative;
+      height: 1055px;
+      max-height: 1055px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1mm 1mm;
+    }
+
+    .page:last-child {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    /* Running Header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--slate-100);
+      padding-bottom: 6px;
+      margin-bottom: 11px;
+      font-size: 9.5px;
+      color: var(--slate-500);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .page-header-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    /* Running Footer */
+    .page-footer {
+      border-top: 1px solid var(--slate-200);
+      padding-top: 6px;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8.5px;
+      color: var(--slate-500);
+    }
+
+    .page-footer-tag {
+      font-weight: 600;
+      color: var(--navy-800);
+    }
+
+    /* Typography */
+    h1 { font-size: 20px; line-height: 1.25; margin-bottom: 5px; color: var(--navy-900); font-weight: 800; letter-spacing: -0.02em; }
+    h2 { font-size: 14.5px; line-height: 1.3; margin-bottom: 4px; color: var(--navy-900); font-weight: 800; letter-spacing: -0.01em; }
+    h3 { font-size: 12px; line-height: 1.35; margin-bottom: 3px; color: var(--navy-900); font-weight: 700; }
+    h4 { font-size: 11px; line-height: 1.35; margin-bottom: 2px; color: var(--navy-900); font-weight: 700; }
+    p { margin-bottom: 4px; color: var(--slate-700); font-size: 10.5px; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-size: 8.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-green { background: var(--primary-light); color: var(--primary-dark); }
+    .badge-indigo { background: var(--indigo-light); color: var(--indigo-dark); }
+    .badge-orange { background: var(--accent-orange-light); color: var(--accent-orange); }
+    .badge-blue { background: var(--blue-50); color: var(--blue-600); }
+    .badge-red { background: var(--red-50); color: var(--red-600); }
+    .badge-dark { background: var(--navy-900); color: var(--white); }
+
+    /* Callouts */
+    .callout {
+      border-left: 3.5px solid var(--primary);
+      background: var(--slate-50);
+      border-radius: 0 6px 6px 0;
+      padding: 7px 11px;
+      margin: 7px 0;
+      font-size: 10.5px;
+    }
+
+    .callout-indigo { border-left-color: var(--indigo); background: #F5F3FF; }
+    .callout-orange { border-left-color: var(--accent-orange); background: #FFF7ED; }
+    .callout-blue { border-left-color: var(--blue-600); background: #F0F9FF; }
+    .callout-red { border-left-color: var(--red-600); background: #FEF2F2; }
+    .callout-green { border-left-color: var(--primary); background: #ECFDF5; }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10.8px;
+    }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 6px 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin: 6px 0;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 7px;
+      margin: 6px 0;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 6px;
+      padding: 8px 10px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+    }
+
+    .card-accent-green { border-top: 3px solid var(--primary); }
+    .card-accent-indigo { border-top: 3px solid var(--indigo); }
+    .card-accent-orange { border-top: 3px solid var(--accent-orange); }
+    .card-accent-blue { border-top: 3px solid var(--blue-600); }
+    .card-accent-red { border-top: 3px solid var(--red-600); }
+
+    /* Tables */
+    table.spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6px 0 8px 0;
+      font-size: 10px;
+    }
+
+    table.spec-table th {
+      background: var(--navy-900);
+      color: var(--white);
+      text-align: left;
+      padding: 5px 8px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    table.spec-table th:first-child { border-top-left-radius: 4px; }
+    table.spec-table th:last-child { border-top-right-radius: 4px; }
+
+    table.spec-table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid var(--slate-200);
+      vertical-align: top;
+      line-height: 1.36;
+    }
+
+    table.spec-table tr:nth-child(even) { background: var(--slate-50); }
+
+    .tag-key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      background: #F1F5F9;
+      color: #0F172A;
+      padding: 1px 4px;
+      border-radius: 3px;
+      border: 1px solid #CBD5E1;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Preformatted Code Block */
+    pre.code-block {
+      background: #0F172A;
+      color: #E2E8F0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      line-height: 1.45;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin: 5px 0;
+      border: 1px solid #334155;
+      overflow: hidden;
+      white-space: pre;
+    }
+
+    .c-cmt { color: #94A3B8; font-style: italic; }
+    .c-kw  { color: #38BDF8; font-weight: 700; }
+    .c-fn  { color: #A78BFA; }
+    .c-str { color: #34D399; }
+    .c-num { color: #FBBF24; }
+
+    /* Timeline Steps */
+    .timeline-step {
+      display: flex;
+      gap: 9px;
+      margin-bottom: 6px;
+      position: relative;
+    }
+
+    .timeline-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 10.5px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .timeline-num-indigo { background: var(--indigo); }
+    .timeline-num-orange { background: var(--accent-orange); }
+
+    .timeline-content {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 5px;
+      padding: 5px 8px;
+      flex: 1;
+    }
+
+    /* Cover Styling */
+    .cover-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cover-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cover-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 24px;
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.25);
+    }
+
+    .cover-hero {
+      margin-top: 10px;
+      padding: 20px;
+      background: linear-gradient(145deg, #0F172A 0%, #1E293B 100%);
+      border-radius: 10px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+    }
+
+    .cover-hero::after {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0) 70%);
+    }
+
+    .stat-box {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 5px;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--navy-900);
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 8px;
+      color: var(--slate-500);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .flow-arrow-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin: 6px 0;
+    }
+
+    .flow-node {
+      text-align: center;
+      flex: 1;
+    }
+
+    .flow-sep {
+      font-size: 16px;
+      color: var(--slate-400);
+      font-weight: 800;
+      padding: 0 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================= -->
+  <!-- PAGE 1: EXECUTIVE COVER & ARCHITECTURE OVERVIEW                           -->
+  <!-- ========================================================================= -->
+  <div class="page">
+    <div>
+      <div class="cover-top">
+        <div class="cover-brand">
+          <div class="cover-icon">⚽</div>
+          <div>
+            <div style="font-size: 23px; font-weight: 800; color: var(--navy-900); letter-spacing: -0.03em;">Turfify</div>
+            <div style="font-size: 9.5px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Sports Venue Infrastructure & Fintech Protocol</div>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge badge-dark">FINTECH ARCHITECTURE</span>
+          <div style="font-size: 8.5px; color: var(--slate-500); font-weight: 600; margin-top: 3px;">REF: TF-PAY-SETTLE-2026</div>
+        </div>
+      </div>
+
+      <div class="cover-hero">
+        <span class="badge badge-green" style="margin-bottom: 7px;">ENTERPRISE ARCHITECTURE MANUAL</span>
+        <h1 style="color: white; font-size: 20px; margin-bottom: 5px; line-height: 1.25;">
+          Marketplace Payouts, Razorpay Settlement Cycles & Zero-Balance Cancellation Architecture
+        </h1>
+        <p style="color: #94A3B8; font-size: 10.5px; max-width: 630px; line-height: 1.45;">
+          A rigorous architectural and operational manual detailing the end-to-end payment lifecycle: 90/10 automated escrow splits, scheduled banking settlement rails, zero-balance negative auto-offsets, and the Turfify 4-Tier dynamic cancellation matrix.
+        </p>
+        <div style="display: flex; gap: 7px; margin-top: 10px;">
+          <span class="badge" style="background: rgba(255,255,255,0.15); color: white;">Razorpay Route 90/10</span>
+          <span class="badge" style="background: rgba(255,255,255,0.15); color: white;">TDS Sec 194-O (1%)</span>
+          <span class="badge" style="background: rgba(255,255,255,0.15); color: white;">Zero-Balance Auto-Offset</span>
+          <span class="badge" style="background: rgba(255,255,255,0.15); color: white;">In-App Wallet Credits</span>
+        </div>
+      </div>
+
+      <!-- Metadata Grid -->
+      <div class="grid-4" style="margin-top: 10px;">
+        <div class="stat-box">
+          <div class="stat-label">Platform Stack</div>
+          <div class="stat-val" style="color: var(--primary); font-size: 11.5px; margin-top: 2px;">Razorpay + Route</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Marketplace Split</div>
+          <div class="stat-val" style="color: var(--indigo); font-size: 11.5px; margin-top: 2px;">90% Owner / 10% App</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Settlement Mode</div>
+          <div class="stat-val" style="color: var(--navy-900); font-size: 11.5px; margin-top: 2px;">T+1 / Escrow Hold</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Cancellation Matrix</div>
+          <div class="stat-val" style="color: var(--accent-orange); font-size: 11.5px; margin-top: 2px;">4-Tier Dynamic</div>
+        </div>
+      </div>
+
+      <!-- The Core Question Addressed -->
+      <div class="callout callout-indigo" style="margin-top: 10px;">
+        <div class="callout-title" style="color: var(--indigo-dark);">
+          📌 The Primary Operational Dilemma Answered in This Document:
+        </div>
+        <p style="color: var(--navy-900); font-size: 10.5px; margin-bottom: 3px; font-weight: 600;">
+          "A customer books on Wednesday for a Saturday slot (₹1,500). By Friday, Razorpay has already settled the payout into the turf owner's bank account, leaving the Razorpay gateway balance at ₹0. When the customer cancels on Saturday, how does Turfify issue the refund without incurring out-of-pocket deficit or cash flow disruption?"
+        </p>
+        <p style="color: var(--slate-700); font-size: 9.8px; margin-bottom: 0;">
+          This document resolves this query across three layers: (1) Razorpay's native negative-balance auto-deduction rail, (2) the venue cancellation policy (why Saturday is non-refundable), and (3) Turfify In-App Wallet credits providing instant ₹0-cost resolution.
+        </p>
+      </div>
+
+      <div style="margin-top: 8px;">
+        <h2>Architectural Pillars of the Turfify Payment Engine</h2>
+        <div class="grid-2">
+          <div class="card card-accent-green">
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 11px; margin-bottom: 2px;">1. Automated Marketplace Splits (Razorpay Route)</div>
+            <p style="font-size: 10px; color: var(--slate-700); margin: 0;">
+              Zero manual banking transfers. The moment a ₹1,500 booking is authorized, Razorpay Route programmatically carves 90% (₹1,335 net after 1% TDS) to the turf owner's linked bank account and retains 10% (₹150) in Turfify's platform treasury.
+            </p>
+          </div>
+          <div class="card card-accent-indigo">
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 11px; margin-bottom: 2px;">2. Zero-Balance Negative Offset Mechanism</div>
+            <p style="font-size: 10px; color: var(--slate-700); margin: 0;">
+              If a refund is authorized when the merchant balance is ₹0, Razorpay automatically creates a negative merchant balance (e.g. -₹1,500) and reconciles it against incoming weekend transactions automatically, eliminating manual replenishment.
+            </p>
+          </div>
+          <div class="card card-accent-orange">
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 11px; margin-bottom: 2px;">3. Time-Decayed 4-Tier Cancellation Matrix</div>
+            <p style="font-size: 10px; color: var(--slate-700); margin: 0;">
+              Protects turf owners from catastrophic last-minute slot abandonment. Cancellations made within 6 hours of kickoff are strictly non-refundable (0%), ensuring owners keep their earnings even if funds have already settled.
+            </p>
+          </div>
+          <div class="card card-accent-blue">
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 11px; margin-bottom: 2px;">4. In-App Wallet Credit Optimization (₹0 Gateway Cost)</div>
+            <p style="font-size: 10px; color: var(--slate-700); margin: 0;">
+              Encourages players to take refunds as 100% Turfify Wallet credits. Cash never leaves the platform, zero payment gateway fees are burned, and 100% of customer spending remains locked in the Turfify sports ecosystem.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Turfify Platform Architecture — Confidential & Proprietary</span>
+      <span class="page-footer-tag">Page 1 of 5</span>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- PAGE 2: COMPLETE PAYOUT & SETTLEMENT FLOW (WEDNESDAY TO SATURDAY)          -->
+  <!-- ========================================================================= -->
+  <div class="page">
+    <div>
+      <div class="page-header">
+        <div class="page-header-brand">⚽ Turfify Fintech Architecture</div>
+        <div>Section 1: Marketplace Payout Lifecycle</div>
+      </div>
+
+      <h2>The End-to-End Payout & Settlement Flow (Wednesday to Saturday)</h2>
+      <p style="font-size: 10.5px; color: var(--slate-700); margin-bottom: 8px;">
+        A complete chronological trace of a ₹1,500 booking: from player UPI checkout on Wednesday to bank settlement on Friday, illustrating exactly how and when funds migrate between escrow and vendor accounts.
+      </p>
+
+      <!-- Step-by-Step Visual Timeline -->
+      <div class="timeline-step">
+        <div class="timeline-num">1</div>
+        <div class="timeline-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 10.5px;">Day 0 (Wednesday 14:00) — Player Checkout & Payment Authorization</div>
+            <span class="badge badge-green">payment.captured</span>
+          </div>
+          <p style="font-size: 9.8px; color: var(--slate-700); margin: 0;">
+            Player selects Saturday 20:00–21:00 slot. Backend creates a Razorpay Order with programmatic Route transfers. Player authorizes ₹1,500 via UPI Intent (GPay/PhonePe). Razorpay captures the payment and fires an idempotent webhook to the Turfify server.
+          </p>
+        </div>
+      </div>
+
+      <div class="timeline-step">
+        <div class="timeline-num timeline-num-indigo">2</div>
+        <div class="timeline-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 10.5px;">Day 0 (Wednesday 14:02) — Razorpay Route Marketplace Split & Tax Escrow</div>
+            <span class="badge badge-indigo">90% / 10% Split</span>
+          </div>
+          <p style="font-size: 9.8px; color: var(--slate-700); margin: 0;">
+            Razorpay Route automatically splits the transaction inside the gateway:
+            <br>• <strong>10% Platform Fee:</strong> ₹150.00 retained in Turfify platform balance.
+            <br>• <strong>1% Section 194-O TDS:</strong> ₹15.00 auto-withheld for quarterly government e-filing (Form 16A).
+            <br>• <strong>90% Owner Net Share:</strong> ₹1,335.00 credited to the turf owner's linked nodal account (<span class="tag-key">acc_owner123</span>).
+          </p>
+        </div>
+      </div>
+
+      <div class="timeline-step">
+        <div class="timeline-num">3</div>
+        <div class="timeline-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 10.5px;">Day 1 to 2 (Thursday 04:00 AM – Friday) — Automated Bank Settlement</div>
+            <span class="badge badge-blue">Settlement T+1</span>
+          </div>
+          <p style="font-size: 9.8px; color: var(--slate-700); margin: 0;">
+            Under standard Razorpay T+1 / T+2 settlement cycles, funds accumulated in the owner's linked account are swept via automated NEFT/IMPS directly to their commercial bank account (e.g. HDFC, ICICI, SBI).
+          </p>
+        </div>
+      </div>
+
+      <div class="timeline-step">
+        <div class="timeline-num timeline-num-orange">4</div>
+        <div class="timeline-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <div style="font-weight: 700; color: var(--navy-900); font-size: 10.5px;">Day 3 (Saturday Morning) — The Balance Status: Gateway Reaches ₹0.00</div>
+            <span class="badge badge-orange">Balance = ₹0.00</span>
+          </div>
+          <p style="font-size: 9.8px; color: var(--slate-700); margin: 0;">
+            Because the automated settlement completed on Friday morning, the turf owner now has the ₹1,335 cash safely in their private bank account, and the Razorpay merchant wallet balance is currently <strong>₹0.00</strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Financial Reconciliation Box -->
+      <div class="card" style="background: var(--slate-50); border: 1.5px solid var(--slate-200); margin-top: 6px;">
+        <div style="font-weight: 800; color: var(--navy-900); font-size: 10.5px; margin-bottom: 4px;">
+          Financial Breakdown of a Single ₹1,500 Booking:
+        </div>
+        <div class="grid-4" style="margin: 0;">
+          <div style="background: white; border: 1px solid var(--slate-200); padding: 5px 7px; border-radius: 4px;">
+            <div style="font-size: 8px; color: var(--slate-500); font-weight: 600;">GROSS BOOKING</div>
+            <div style="font-size: 12.5px; font-weight: 800; color: var(--navy-900);">₹1,500.00</div>
+            <div style="font-size: 7.5px; color: var(--slate-500);">Paid via UPI / Cards</div>
+          </div>
+          <div style="background: white; border: 1px solid var(--slate-200); padding: 5px 7px; border-radius: 4px;">
+            <div style="font-size: 8px; color: var(--slate-500); font-weight: 600;">TURFIFY TAKE-RATE (10%)</div>
+            <div style="font-size: 12.5px; font-weight: 800; color: var(--primary);">₹150.00</div>
+            <div style="font-size: 7.5px; color: var(--primary);">Gross Revenue</div>
+          </div>
+          <div style="background: white; border: 1px solid var(--slate-200); padding: 5px 7px; border-radius: 4px;">
+            <div style="font-size: 8px; color: var(--slate-500); font-weight: 600;">TDS SEC 194-O (1%)</div>
+            <div style="font-size: 12.5px; font-weight: 800; color: var(--accent-orange);">₹15.00</div>
+            <div style="font-size: 7.5px; color: var(--accent-orange);">Automated Tax Deposit</div>
+          </div>
+          <div style="background: white; border: 1px solid var(--slate-200); padding: 5px 7px; border-radius: 4px;">
+            <div style="font-size: 8px; color: var(--slate-500); font-weight: 600;">OWNER PAYOUT (NET)</div>
+            <div style="font-size: 12.5px; font-weight: 800; color: var(--indigo);">₹1,335.00</div>
+            <div style="font-size: 7.5px; color: var(--indigo);">Settled Friday 04:00 AM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparative Table: Standard Settlement vs Escrow Hold -->
+      <div style="margin-top: 8px;">
+        <h3 style="margin-bottom: 3px;">Settlement Schedule Strategies: T+1 Standard vs Hold-Until-Kickoff</h3>
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th style="width: 22%;">SETTLEMENT STRATEGY</th>
+              <th style="width: 24%;">WHEN MONEY HITS BANK</th>
+              <th style="width: 32%;">CANCELLATION IMPACT</th>
+              <th style="width: 22%;">TURFIFY RECOMMENDATION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Standard T+1 Cycle</strong></td>
+              <td>Next business day (Thursday/Friday)</td>
+              <td>Gateway balance reaches ₹0 before game day. Requires negative balance offset or wallet credit.</td>
+              <td><span class="badge badge-blue">Gateway Default</span></td>
+            </tr>
+            <tr>
+              <td><strong>Escrow Hold Settlement (<span class="tag-key">on_hold: 1</span>)</strong></td>
+              <td>Sunday morning (T+1 <em>after</em> the match is played)</td>
+              <td>100% of funds remain in Razorpay escrow until kickoff. Zero balance deficit on cancellation!</td>
+              <td><span class="badge badge-green">Recommended Architecture</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Banking Cutoffs & Batches Card -->
+      <div class="grid-2" style="margin-top: 6px;">
+        <div class="card card-accent-blue">
+          <div style="font-weight: 700; color: var(--navy-900); font-size: 10.5px; margin-bottom: 2px;">Banking Sweep Hours & Bank Holidays</div>
+          <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+            Razorpay initiates nodal bank sweeps in automated batches (04:00 AM, 11:00 AM, 16:00 PM). If Friday is an RBI bank holiday, settlement is deferred to Monday, leaving the ₹1,335 inside the gateway buffer through Saturday.
+          </p>
+        </div>
+        <div class="card card-accent-indigo">
+          <div style="font-weight: 700; color: var(--navy-900); font-size: 10.5px; margin-bottom: 2px;">Architectural Value of Escrow Hold</div>
+          <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+            Holding vendor transfers until match kickoff creates a natural escrow buffer. The turf owner is assured payment will release automatically, while Turfify retains 100% liquidity to refund if weather or emergencies occur.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Turfify Platform Architecture — Confidential & Proprietary</span>
+      <span class="page-footer-tag">Page 2 of 5</span>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- PAGE 3: ZERO-BALANCE CANCELLATION MECHANICS IN RAZORPAY                   -->
+  <!-- ========================================================================= -->
+  <div class="page">
+    <div>
+      <div class="page-header">
+        <div class="page-header-brand">⚽ Turfify Fintech Architecture</div>
+        <div>Section 2: Zero-Balance Gateway Mechanics</div>
+      </div>
+
+      <h2>The Saturday Zero-Balance Problem: How Razorpay Handles It</h2>
+      <p style="font-size: 10.5px; color: var(--slate-700); margin-bottom: 7px;">
+        When an authorized cancellation occurs and your Razorpay gateway balance is strictly <strong>₹0.00</strong> (because the payout already settled into your bank on Friday), here is the exact technical execution path.
+      </p>
+
+      <!-- 3 Real Rails for Zero Balance -->
+      <div class="grid-3" style="margin-top: 4px;">
+        <div class="card card-accent-indigo">
+          <span class="badge badge-indigo" style="margin-bottom: 4px;">RAIL A: AUTOMATIC OFFSET</span>
+          <div style="font-weight: 800; color: var(--navy-900); font-size: 11px; margin-bottom: 2px;">Negative Merchant Balance</div>
+          <p style="font-size: 9.8px; color: var(--slate-700); margin-bottom: 5px;">
+            Razorpay permits the refund to proceed even with ₹0 funds by driving the account balance into the negative (e.g., <strong>-₹1,500.00</strong>).
+          </p>
+          <div style="background: var(--indigo-light); border-radius: 4px; padding: 5px; font-size: 9.2px; color: var(--indigo-dark); line-height: 1.35;">
+            <strong>Auto-Recovery:</strong> Upcoming bookings on Saturday afternoon automatically replenish this deficit. Zero penalties, no manual bank transfers needed.
+          </div>
+        </div>
+
+        <div class="card card-accent-orange">
+          <span class="badge badge-orange" style="margin-bottom: 4px;">RAIL B: QUEUED STATE</span>
+          <div style="font-weight: 800; color: var(--navy-900); font-size: 11px; margin-bottom: 2px;">Queued / Pending Refund</div>
+          <p style="font-size: 9.8px; color: var(--slate-700); margin-bottom: 5px;">
+            If the merchant account has reached its negative balance tolerance limit, Razorpay places the refund in an active <strong>"Queued"</strong> queue.
+          </p>
+          <div style="background: var(--accent-orange-light); border-radius: 4px; padding: 5px; font-size: 9.2px; color: var(--accent-orange); line-height: 1.35;">
+            <strong>Execution:</strong> The very instant the next customer pays for a turf slot, Razorpay intercepts the incoming cash flow and clears the queued refund.
+          </div>
+        </div>
+
+        <div class="card card-accent-green">
+          <span class="badge badge-green" style="margin-bottom: 4px;">RAIL C: MANUAL PRE-FUND</span>
+          <div style="font-weight: 800; color: var(--navy-900); font-size: 11px; margin-bottom: 2px;">Instant Dashboard Top-Up</div>
+          <p style="font-size: 9.8px; color: var(--slate-700); margin-bottom: 5px;">
+            If there are no anticipated weekend transactions, the merchant can instantly top up their Razorpay balance directly via NetBanking, UPI, or NEFT.
+          </p>
+          <div style="background: var(--emerald-50); border-radius: 4px; padding: 5px; font-size: 9.2px; color: var(--emerald-600); line-height: 1.35;">
+            <strong>Operation:</strong> Navigate to <em>Razorpay Dashboard → Balance → Add Funds</em>. Funds reflect instantly to satisfy pending refunds.
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto-Recovery Flow Diagram -->
+      <div style="margin-top: 8px;">
+        <h3 style="margin-bottom: 3px;">The Negative Balance Self-Healing Flowchart</h3>
+        <div class="flow-arrow-box">
+          <div class="flow-node">
+            <div style="font-size: 8px; color: var(--slate-500); font-weight: 700;">STEP 1 (SATURDAY 10:00)</div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--red-600);">Refund Approved</div>
+            <div style="font-size: 8.5px; color: var(--slate-600);">Balance: <strong>-₹1,500.00</strong></div>
+          </div>
+          <div class="flow-sep">→</div>
+          <div class="flow-node">
+            <div style="font-size: 8px; color: var(--slate-500); font-weight: 700;">STEP 2 (SATURDAY 13:00)</div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--primary);">New Booking (+₹1,500)</div>
+            <div style="font-size: 8.5px; color: var(--slate-600);">Incoming Player Checkout</div>
+          </div>
+          <div class="flow-sep">→</div>
+          <div class="flow-node">
+            <div style="font-size: 8px; color: var(--slate-500); font-weight: 700;">STEP 3 (SATURDAY 13:01)</div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--navy-900);">Auto-Reconciliation</div>
+            <div style="font-size: 8.5px; color: var(--slate-600);">Balance Restored to <strong>₹0.00</strong></div>
+          </div>
+          <div class="flow-sep">→</div>
+          <div class="flow-node">
+            <div style="font-size: 8px; color: var(--slate-500); font-weight: 700;">STEP 4 (SUNDAY 04:00 AM)</div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--indigo);">Net Payout Resumes</div>
+            <div style="font-size: 8.5px; color: var(--slate-600);">Fresh Profits Disbursed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Razorpay Route Reversal Architecture -->
+      <div style="margin-top: 6px;">
+        <h3>Reversing the Turf Owner's Split via Razorpay Route</h3>
+        <p style="font-size: 10px; color: var(--slate-700); margin-bottom: 4px;">
+          When an eligible refund occurs, the platform must never bear the turf owner's portion. Razorpay Route provides the <span class="tag-key">reverse_all: 1</span> API instruction to automatically claw back the transfer:
+        </p>
+
+        <pre class="code-block"><span class="c-cmt">// Invoking an Idempotent Refund with Automated Route Transfer Reversal</span>
+<span class="c-kw">const</span> refund = <span class="c-kw">await</span> razorpay.payments.<span class="c-fn">refund</span>(paymentId, {
+  amount: refundAmountInPaise,      <span class="c-cmt">// Full or partial refund amount</span>
+  reverse_all: <span class="c-num">1</span>,                    <span class="c-cmt">// Automatically reverses the turf owner's 90% transfer!</span>
+  notes: { booking_id: <span class="c-str">"TRF_BK_8921"</span>, reason: <span class="c-str">"Customer initiated cancellation"</span> }
+});</pre>
+      </div>
+
+      <!-- Crucial Business Reality Card -->
+      <div class="card card-accent-red" style="background: #FFFDFD; margin-top: 6px;">
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+          <span class="badge badge-red">CRUCIAL BUSINESS REALITY</span>
+          <span style="font-weight: 800; color: var(--red-600); font-size: 10.5px;">Should a Saturday Cancellation Even Get a 100% Refund?</span>
+        </div>
+        <p style="font-size: 9.8px; color: var(--navy-900); margin-bottom: 3px; font-weight: 600;">
+          NO! A customer who books on Wednesday for Saturday has blocked prime venue inventory for 3 days.
+        </p>
+        <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+          If they cancel on Saturday morning (&lt; 6 hours before kickoff), standard industry practice and Turfify's Master Policy classify this as <strong>Strictly Non-Refundable (0% Refund)</strong>. The turf owner keeps their 85% payout because the slot cannot be re-booked on short notice. Therefore, the zero-balance refund issue is prevented by business logic!
+        </p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Turfify Platform Architecture — Confidential & Proprietary</span>
+      <span class="page-footer-tag">Page 3 of 5</span>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- PAGE 4: MASTER CANCELLATION MATRIX & WALLET CREDIT WORKAROUND            -->
+  <!-- ========================================================================= -->
+  <div class="page">
+    <div>
+      <div class="page-header">
+        <div class="page-header-brand">⚽ Turfify Fintech Architecture</div>
+        <div>Section 3: Policy & Liquidity Engineering</div>
+      </div>
+
+      <h2>Turfify Master Dynamic Cancellation Matrix</h2>
+      <p style="font-size: 10.5px; color: var(--slate-700); margin-bottom: 7px;">
+        To balance customer fairness with venue financial security, Turfify implements a multi-tier cancellation protocol. Same-day cancellations protect the owner, while advance cancellations provide generous compensation.
+      </p>
+
+      <!-- Matrix Table -->
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th style="width: 22%;">TIMEFRAME</th>
+            <th style="width: 18%;">STATUS</th>
+            <th style="width: 30%;">PLAYER REFUND OUTCOME</th>
+            <th style="width: 30%;">TURF OWNER COMPENSATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Tier 1: &gt; 24 Hours Notice</strong><br><span style="font-size: 8px; color: var(--slate-500);">E.g., Thursday cancellation</span></td>
+            <td><span class="badge badge-green">Generous</span></td>
+            <td><strong>90% Bank Refund</strong><br><em>OR 100% Turfify Wallet Credits</em><br><span style="font-size: 8px; color: var(--slate-500);">(10% retained for gateway fee)</span></td>
+            <td><strong>₹0 Payout</strong><br>Slot is immediately unlocked and re-published on app for other players.</td>
+          </tr>
+          <tr>
+            <td><strong>Tier 2: 6 to 24 Hours Notice</strong><br><span style="font-size: 8px; color: var(--slate-500);">E.g., Friday night cancellation</span></td>
+            <td><span class="badge badge-indigo">Short Notice</span></td>
+            <td><strong>50% Bank Refund</strong><br><em>OR 60% Turfify Wallet Credits</em><br><span style="font-size: 8px; color: var(--slate-500);">(50% forfeited penalty)</span></td>
+            <td><strong>40% Slot Compensation</strong><br>Owner receives ₹600 as liquidated damages for late abandonment.</td>
+          </tr>
+          <tr>
+            <td><strong>Tier 3: &lt; 6 Hours / Same-Day</strong><br><span style="font-size: 8px; color: var(--slate-500);">E.g., Saturday for Saturday</span></td>
+            <td><span class="badge badge-red">Strict Non-Ref</span></td>
+            <td><strong style="color: var(--red-600);">0% Refund (No Refund)</strong><br>100% booking value forfeited by user.<br><span style="font-size: 8px; color: var(--slate-500);">Protects owner from empty turf!</span></td>
+            <td><strong>85% Payout to Owner</strong><br>Owner retains ₹1,275. Turfify keeps 15% marketplace commission.</td>
+          </tr>
+          <tr>
+            <td><strong>Tier 4: Ground Unplayable / Rain</strong><br><span style="font-size: 8px; color: var(--slate-500);">Force Majeure / Venue Fault</span></td>
+            <td><span class="badge badge-blue">Force Majeure</span></td>
+            <td><strong>100% Immediate Full Refund</strong><br>+ ₹100 Bonus Wallet credit for inconvenience.</td>
+            <td><strong>₹0 Payout</strong><br>Owner penalized on search ranking for venue unreadiness.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- The In-App Wallet Credit Super-Solution -->
+      <div style="margin-top: 8px;">
+        <h2>The Master Workaround: "Turfify Wallet Credits" (₹0 Cash Outflow)</h2>
+        <p style="font-size: 10.2px; color: var(--slate-700); margin-bottom: 5px;">
+          The single most powerful tool for solving the zero-balance dilemma is offering <strong>Turfify In-App Wallet Credits</strong> instead of banking refunds:
+        </p>
+
+        <div class="grid-3" style="margin-top: 3px;">
+          <div class="card card-accent-green">
+            <div style="font-weight: 800; color: var(--primary-dark); font-size: 10.5px; margin-bottom: 2px;">1. Zero Cash Outflow</div>
+            <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+              Zero money leaves your Razorpay account or your company bank account. Your cash balance stays 100% untouched.
+            </p>
+          </div>
+          <div class="card card-accent-indigo">
+            <div style="font-weight: 800; color: var(--indigo-dark); font-size: 10.5px; margin-bottom: 2px;">2. Zero Gateway Fees</div>
+            <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+              Bank refunds forfeit the initial 2% gateway processing fee. Wallet credits carry <strong>₹0 in gateway charges</strong>.
+            </p>
+          </div>
+          <div class="card card-accent-orange">
+            <div style="font-weight: 800; color: var(--accent-orange); font-size: 10.5px; margin-bottom: 2px;">3. 100% Capital Retention</div>
+            <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+              Player receives instant credit and immediately re-books another date, locking customer loyalty inside Turfify.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side-by-Side Refund Rails Comparison -->
+      <div style="margin-top: 8px;">
+        <h3 style="margin-bottom: 3px;">Comparative Analysis of Refund Rails</h3>
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>REFUND RAIL</th>
+              <th>SPEED TO CUSTOMER</th>
+              <th>TRANSACTION COST</th>
+              <th>IMPACT ON MERCHANT CASH</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Original Source (Bank/UPI)</strong></td>
+              <td>5 to 7 Business Days</td>
+              <td>Gateway retains ~2% fee</td>
+              <td>Cash exits gateway; requires balance or offset</td>
+            </tr>
+            <tr>
+              <td><strong>Instant UPI (RazorpayX)</strong></td>
+              <td>Under 60 Seconds</td>
+              <td>Additional ₹4–₹6 API payout fee</td>
+              <td>Cash exits bank instantly via IMPS</td>
+            </tr>
+            <tr style="background: #ECFDF5;">
+              <td><strong style="color: var(--primary-dark);">Turfify Wallet Credits (Recommended)</strong></td>
+              <td><strong style="color: var(--primary-dark);">Instant (0 Seconds)</strong></td>
+              <td><strong style="color: var(--primary-dark);">₹0.00 (Zero Fee)</strong></td>
+              <td><strong style="color: var(--primary-dark);">ZERO Outflow! Capital remains in your bank</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-green" style="margin-top: 4px;">
+        <div class="callout-title" style="color: var(--primary-dark);">⭐ The Win-Win Incentive: Why 82% of Players Choose Wallet Credits</div>
+        <p style="font-size: 9.5px; margin: 0; color: var(--slate-700);">
+          When presented with <em>"Receive 90% via Bank in 5–7 days OR Receive 100% Instantly in Turfify Wallet Credits"</em>, players overwhelmingly choose Wallet Credits. You preserve operating liquidity while providing an instantaneous, frictionless user experience.
+        </p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Turfify Platform Architecture — Confidential & Proprietary</span>
+      <span class="page-footer-tag">Page 4 of 5</span>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- PAGE 5: ARCHITECTURAL SAFEGUARDS & CLIENT TALKING POINTS                 -->
+  <!-- ========================================================================= -->
+  <div class="page">
+    <div>
+      <div class="page-header">
+        <div class="page-header-brand">⚽ Turfify Fintech Architecture</div>
+        <div>Section 4: Engineering & Client Summary</div>
+      </div>
+
+      <h2>Production Safeguards: Escrow Hold Protocol (<span class="tag-key">on_hold: 1</span>)</h2>
+      <p style="font-size: 10.5px; color: var(--slate-700); margin-bottom: 5px;">
+        To permanently eliminate the zero-balance paradox at an architectural level, configure Razorpay Route to hold vendor transfers in escrow until the match is physically played:
+      </p>
+
+      <pre class="code-block"><span class="c-cmt">// 1. Wednesday: Create Route Order with Settlement Held Until Saturday Match</span>
+<span class="c-kw">const</span> order = <span class="c-kw">await</span> razorpay.orders.<span class="c-fn">create</span>({
+  amount: <span class="c-num">150000</span>, currency: <span class="c-str">"INR"</span>,
+  transfers: [{
+    account: turfOwnerAccountId,
+    amount: <span class="c-num">133500</span>, currency: <span class="c-str">"INR"</span>,
+    on_hold: <span class="c-num">1</span>,                           <span class="c-cmt">// FREEZES payout in escrow until released!</span>
+    on_hold_until: matchKickoffTimestamp  <span class="c-cmt">// Auto-releases after game ends</span>
+  }]
+});
+
+<span class="c-cmt">// 2. If Cancelled: Reverse Transfer Directly from Held Escrow (Zero Bank Clawback!)</span>
+<span class="c-kw">await</span> razorpay.transfers.<span class="c-fn">reverse</span>(transferId, { amount: ownerSharePaise });</pre>
+
+      <!-- Complete Payout & Refund Lifecycle State Machine -->
+      <div style="margin-top: 6px;">
+        <h3>Platform State Transition Matrix</h3>
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>STAGE</th>
+              <th>PAYMENT STATE</th>
+              <th>TURF OWNER SPLIT</th>
+              <th>ACTION ON CANCELLATION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Checkout Initiated</td>
+              <td><span class="badge badge-dark">order.created</span></td>
+              <td>Unallocated</td>
+              <td>Order expires; zero deduction</td>
+            </tr>
+            <tr>
+              <td>Payment Captured</td>
+              <td><span class="badge badge-green">captured</span></td>
+              <td>Held in Route Escrow (<span class="tag-key">on_hold: 1</span>)</td>
+              <td>Transfer reversed in escrow; refund issued effortlessly</td>
+            </tr>
+            <tr>
+              <td>Match Finished</td>
+              <td><span class="badge badge-blue">completed</span></td>
+              <td>Released (<span class="tag-key">on_hold: 0</span>)</td>
+              <td>Non-refundable (Service fulfilled)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Executive Client Cheat-Sheet -->
+      <div style="margin-top: 8px;">
+        <h2>Executive Client Cheat-Sheet: 5 Points to Tell Your Client</h2>
+        <div class="grid-2" style="margin-top: 3px;">
+          <div class="card card-accent-green">
+            <div style="font-weight: 800; color: var(--navy-900); font-size: 10.5px; margin-bottom: 2px;">1. Razorpay Protects You with Auto-Offset</div>
+            <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+              If your balance is ₹0, Razorpay executes the refund via a negative balance (-₹1,500) and recovers it from your next bookings without penalties or manual bank transfers.
+            </p>
+          </div>
+          <div class="card card-accent-indigo">
+            <div style="font-weight: 800; color: var(--navy-900); font-size: 10.5px; margin-bottom: 2px;">2. Saturday Cancellations Are Non-Refundable</div>
+            <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+              Clients who cancel on the day of the match (&lt; 6 hours) are non-refundable under platform policy. You keep your 85% payout because the slot cannot be re-booked.
+            </p>
+          </div>
+          <div class="card card-accent-orange">
+            <div style="font-weight: 800; color: var(--navy-900); font-size: 10.5px; margin-bottom: 2px;">3. Route Automatically Pulls Back Splits</div>
+            <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+              If an advance refund is issued, Razorpay Route reverses the turf owner's linked share automatically. The platform never pays refunds out-of-pocket.
+            </p>
+          </div>
+          <div class="card card-accent-blue">
+            <div style="font-weight: 800; color: var(--navy-900); font-size: 10.5px; margin-bottom: 2px;">4. Wallet Credits Keep 100% of the Cash</div>
+            <p style="font-size: 9.5px; color: var(--slate-700); margin: 0;">
+              Offering 100% refunds as Turfify Wallet credits costs ₹0 in gateway fees and zero cash leaves your bank. The player simply reschedules their game.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Direct Verbatim Script for Client -->
+      <div class="callout callout-indigo" style="margin-top: 6px;">
+        <div class="callout-title" style="color: var(--indigo-dark);">💬 Exact Message Script to Forward to Your Client:</div>
+        <p style="font-size: 9.8px; color: var(--navy-900); font-weight: 600; line-height: 1.4; margin: 0;">
+          "If a customer cancels on Saturday when your Razorpay balance is ₹0 because funds already settled to your bank on Friday, you are completely protected on three fronts: First, under venue policy, same-day cancellations are strictly non-refundable or offered as instant Turfify Wallet Credits (costing ₹0 out of pocket). Second, if an eligible refund is authorized, Razorpay natively covers it using a negative balance and automatically deducts it from upcoming weekend bookings. Third, using our Escrow Hold setting, payouts are held until match kickoff, guaranteeing zero cash deficits ever occur."
+        </p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Turfify Platform Architecture — Confidential & Proprietary</span>
+      <span class="page-footer-tag">Page 5 of 5</span>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turfify — Super Admin Management Console</title>
+  <meta name="description" content="Turfify Super Admin Console: Manage turfs, booking slots, player accounts, venue owners, Razorpay revenue analytics, and reports.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <div class="admin-shell">
+
+    <!-- ======================================================================
+         SIDEBAR NAVIGATION
+         ====================================================================== -->
+    <aside class="sidebar">
+      <!-- Brand Logo -->
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor"></circle>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <span>Turfify</span>
+          <span class="brand-tag">Admin Console</span>
+        </div>
+      </div>
+
+      <!-- Super Admin Profile Card -->
+      <div class="admin-badge-card">
+        <div class="admin-avatar">AD</div>
+        <div class="admin-meta">
+          <div class="admin-name">Administrator</div>
+          <div class="admin-role">
+            <span class="admin-role-dot"></span>
+            Super Admin (HQ)
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="sidebar-nav" aria-label="Admin Navigation">
+        <div class="nav-section-label">Core Operations</div>
+        
+        <button class="nav-link-btn active" data-view="overview" id="nav-overview">
+          <span class="nav-icon">📊</span>
+          <span>Overview</span>
+        </button>
+
+        <button class="nav-link-btn" data-view="turfs" id="nav-turfs">
+          <span class="nav-icon">🏟️</span>
+          <span>Manage Turfs</span>
+          <span class="nav-counter">48</span>
+        </button>
+
+        <button class="nav-link-btn" data-view="bookings" id="nav-bookings">
+          <span class="nav-icon">📅</span>
+          <span>Bookings</span>
+          <span class="nav-counter alert">Live</span>
+        </button>
+
+        <button class="nav-link-btn" data-view="users" id="nav-users">
+          <span class="nav-icon">👥</span>
+          <span>Users & Owners</span>
+        </button>
+
+        <div class="nav-section-label">Finance & Growth</div>
+
+        <button class="nav-link-btn" data-view="payments" id="nav-payments">
+          <span class="nav-icon">💳</span>
+          <span>Payments & Payouts</span>
+        </button>
+
+        <button class="nav-link-btn" data-view="reports" id="nav-reports">
+          <span class="nav-icon">📈</span>
+          <span>Reports & Export</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Bottom Shortcuts -->
+      <div class="sidebar-footer">
+        <a href="index.html" class="btn-sidebar-action">
+          <span>🏠</span>
+          <span>Public Marketplace</span>
+        </a>
+        <a href="dashboard.html" class="btn-sidebar-action">
+          <span>🔄</span>
+          <span>Dual Role Portal</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         MAIN CONTENT AREA
+         ====================================================================== -->
+    <main class="admin-main">
+
+      <!-- Sticky Topbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-trigger" aria-label="Toggle menu">☰</button>
+          
+          <div class="topbar-search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="Search turfs, booking ID, or user..." id="global-admin-search">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="topbar-pill-btn">
+            <span style="display:inline-block; width:8px; height:8px; background:var(--green); border-radius:50%;"></span>
+            <span>Razorpay Live</span>
+          </div>
+
+          <a href="index.html" class="topbar-pill-btn" style="text-decoration:none;">
+            <span>🌐 View Site</span>
+          </a>
+
+          <button class="topbar-icon-btn" title="System Notifications">
+            <span>🔔</span>
+            <span class="notif-badge-dot"></span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Dynamic Content Wrapper -->
+      <div class="page-container">
+
+        <!-- ==================================================================
+             SECTION 1: OVERVIEW DASHBOARD
+             ================================================================== -->
+        <section class="view-section active" id="view-overview">
+          <div class="view-header">
+            <div>
+              <h1 class="view-heading">
+                <span>Executive Overview</span>
+                <span style="font-size: 0.9rem; font-weight: 700; color: var(--green); background: var(--green-subtle); padding: 4px 10px; border-radius: 9999px;">
+                  Realtime
+                </span>
+              </h1>
+              <p class="view-subheading">Platform health, booking velocity, and partner settlements for Turfify India.</p>
+            </div>
+            <div class="action-buttons-group">
+              <button class="btn-secondary-light" onclick="window.print()">
+                🖨️ Quick Print
+              </button>
+              <button class="btn-primary-green" id="btn-open-add-turf-hero" onclick="document.getElementById('add-turf-modal').classList.add('active')">
+                + Add New Turf
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 KPI Stats Grid -->
+          <div class="kpi-grid">
+            <!-- Card 1: Revenue -->
+            <div class="kpi-card green">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">₹</div>
+                <div class="kpi-trend positive">↑ 18.4%</div>
+              </div>
+              <div class="kpi-value">₹4,28,500</div>
+              <div class="kpi-label">Total Platform GMV</div>
+              <div class="kpi-footer-text">Oct 2026 Monthly Volume</div>
+            </div>
+
+            <!-- Card 2: Turfs -->
+            <div class="kpi-card blue">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">🏟️</div>
+                <div class="kpi-trend positive">↑ 6 venues</div>
+              </div>
+              <div class="kpi-value">48</div>
+              <div class="kpi-label">Active Turfs Listed</div>
+              <div class="kpi-footer-text">Across Chennai & Bangalore</div>
+            </div>
+
+            <!-- Card 3: Bookings -->
+            <div class="kpi-card amber">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">⚡</div>
+                <div class="kpi-trend positive">↑ 24.2%</div>
+              </div>
+              <div class="kpi-value">1,248</div>
+              <div class="kpi-label">Slots Booked This Month</div>
+              <div class="kpi-footer-text">94.8% completion rate</div>
+            </div>
+
+            <!-- Card 4: Users -->
+            <div class="kpi-card violet">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">👥</div>
+                <div class="kpi-trend positive">↑ 142 new</div>
+              </div>
+              <div class="kpi-value">892</div>
+              <div class="kpi-label">Registered Athletes & Owners</div>
+              <div class="kpi-footer-text">680 Players • 212 Owners</div>
+            </div>
+          </div>
+
+          <!-- Analytics Charts 2-Column Row -->
+          <div class="dashboard-grid-2col">
+            <!-- Left: Weekly GMV Curve -->
+            <div class="analytics-card">
+              <div class="analytics-card-header">
+                <div>
+                  <h3 class="analytics-title">Weekly Revenue Trajectory</h3>
+                  <p class="analytics-subtitle">Gross booking value (INR) over the past 7 days</p>
+                </div>
+                <span class="status-pill confirmed">Updated Just Now</span>
+              </div>
+              
+              <div class="svg-chart-container" id="revenue-curve-svg">
+                <!-- SVG dynamically injected by admin.js -->
+              </div>
+            </div>
+
+            <!-- Right: Sport Category Breakdown -->
+            <div class="analytics-card">
+              <div class="analytics-card-header">
+                <div>
+                  <h3 class="analytics-title">Bookings by Sport</h3>
+                  <p class="analytics-subtitle">Demand distribution by activity</p>
+                </div>
+              </div>
+
+              <div class="donut-stats-container">
+                <!-- Football -->
+                <div class="donut-bar-item">
+                  <div class="donut-bar-header">
+                    <span>⚽ Football 5v5 / 7v7</span>
+                    <strong style="color: var(--green-dark);">48% (599 slots)</strong>
+                  </div>
+                  <div class="donut-bar-track">
+                    <div class="donut-bar-fill" style="width: 48%; background: var(--green);"></div>
+                  </div>
+                </div>
+
+                <!-- Box Cricket -->
+                <div class="donut-bar-item">
+                  <div class="donut-bar-header">
+                    <span>🏏 Box Cricket & Nets</span>
+                    <strong style="color: var(--blue-dark);">28% (349 slots)</strong>
+                  </div>
+                  <div class="donut-bar-track">
+                    <div class="donut-bar-fill" style="width: 28%; background: var(--blue);"></div>
+                  </div>
+                </div>
+
+                <!-- Badminton -->
+                <div class="donut-bar-item">
+                  <div class="donut-bar-header">
+                    <span>🏸 Badminton Wooden/Synthetic</span>
+                    <strong style="color: var(--amber-dark);">14% (175 slots)</strong>
+                  </div>
+                  <div class="donut-bar-track">
+                    <div class="donut-bar-fill" style="width: 14%; background: var(--amber);"></div>
+                  </div>
+                </div>
+
+                <!-- Tennis / Pickleball -->
+                <div class="donut-bar-item">
+                  <div class="donut-bar-header">
+                    <span>🎾 Tennis & Pickleball</span>
+                    <strong style="color: var(--violet-dark);">10% (125 slots)</strong>
+                  </div>
+                  <div class="donut-bar-track">
+                    <div class="donut-bar-fill" style="width: 10%; background: var(--violet);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Banner -->
+          <div class="table-panel">
+            <div style="padding: 20px 24px; border-bottom: 1px solid var(--slate-100); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h3 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--navy-900);">Recent Live Activity Feed</h3>
+                <p style="font-size: 0.8rem; color: var(--slate-400);">Instant transactions flowing through Razorpay gateway</p>
+              </div>
+              <button class="btn-secondary-light" onclick="document.getElementById('nav-bookings').click()">View All Bookings →</button>
+            </div>
+            <div style="padding: 16px 24px; display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--slate-50);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 1.2rem;">⚡</span>
+                  <div>
+                    <div style="font-weight: 700; color: var(--navy-900);">Rahul Sharma booked Greenfield Arena 5v5</div>
+                    <div style="font-size: 0.76rem; color: var(--slate-400);">Slot: Today, 07:00 PM - 08:00 PM • UPI Instant</div>
+                  </div>
+                </div>
+                <span class="status-pill confirmed">₹1,200 Paid</span>
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--slate-50);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 1.2rem;">🏏</span>
+                  <div>
+                    <div style="font-weight: 700; color: var(--navy-900);">Aditi Rao booked Striker's Bay Box Cricket</div>
+                    <div style="font-size: 0.76rem; color: var(--slate-400);">Slot: Today, 08:00 PM - 09:30 PM • Card Payment</div>
+                  </div>
+                </div>
+                <span class="status-pill confirmed">₹2,250 Paid</span>
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 1.2rem;">🚶</span>
+                  <div>
+                    <div style="font-weight: 700; color: var(--navy-900);">Naveen Kumar booked Velocity Badminton Hub</div>
+                    <div style="font-size: 0.76rem; color: var(--slate-400);">Slot: Today, 06:00 PM - 07:00 PM • Cash Walk-in registered</div>
+                  </div>
+                </div>
+                <span class="status-pill walkin">₹800 Walk-in</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 2: MANAGE TURFS
+             ================================================================== -->
+        <section class="view-section" id="view-turfs">
+          <div class="view-header">
+            <div>
+              <h1 class="view-heading">Manage Turfs & Venues</h1>
+              <p class="view-subheading">View, onboard, edit pricing, or toggle active marketplace visibility for all sports facilities.</p>
+            </div>
+            <button class="btn-primary-green" id="btn-open-add-turf">
+              + Onboard New Turf
+            </button>
+          </div>
+
+          <!-- Filters Toolbar -->
+          <div class="filter-toolbar">
+            <div class="filter-group-left">
+              <div class="filter-input-search">
+                <span>🔍</span>
+                <input type="text" id="search-turfs-input" placeholder="Search by name or city...">
+              </div>
+
+              <select class="filter-dropdown-select" id="filter-turf-sport">
+                <option value="all">All Sports</option>
+                <option value="Football">⚽ Football</option>
+                <option value="Cricket">🏏 Cricket</option>
+                <option value="Badminton">🏸 Badminton</option>
+                <option value="Tennis">🎾 Tennis</option>
+                <option value="Multi-sport">🏟️ Multi-sport</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Turfs Cards Grid -->
+          <div class="turf-management-grid" id="turfs-grid-container">
+            <!-- Dynamically populated by admin.js -->
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 3: MANAGE BOOKINGS
+             ================================================================== -->
+        <section class="view-section" id="view-bookings">
+          <div class="view-header">
+            <div>
+              <h1 class="view-heading">Bookings & Reservations</h1>
+              <p class="view-subheading">Realtime slot statuses, player tickets, cancellations, and payment verifications.</p>
+            </div>
+            <div class="action-buttons-group">
+              <button class="btn-secondary-light" id="btn-export-bookings-csv">
+                📥 Export CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div class="filter-toolbar">
+            <div class="filter-group-left">
+              <div class="filter-input-search">
+                <span>🔍</span>
+                <input type="text" id="search-bookings-input" placeholder="Search customer, ID, turf...">
+              </div>
+
+              <select class="filter-dropdown-select" id="filter-booking-status">
+                <option value="all">All Statuses</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="walkin">Walk-in</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Bookings Table Panel -->
+          <div class="table-panel">
+            <div style="overflow-x: auto;">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>Booking ID</th>
+                    <th>Customer</th>
+                    <th>Turf & Slot</th>
+                    <th>Status</th>
+                    <th>Amount & Gateway</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="bookings-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 4: MANAGE USERS & OWNERS
+             ================================================================== -->
+        <section class="view-section" id="view-users">
+          <div class="view-header">
+            <div>
+              <h1 class="view-heading">User Management</h1>
+              <p class="view-subheading">Registered accounts: Turf Owners & Playing Athletes across India.</p>
+            </div>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div class="filter-toolbar">
+            <div class="filter-group-left">
+              <div class="filter-input-search">
+                <span>🔍</span>
+                <input type="text" id="search-users-input" placeholder="Search by name, phone, email...">
+              </div>
+
+              <select class="filter-dropdown-select" id="filter-user-role">
+                <option value="all">All Roles</option>
+                <option value="Player">⚽ Players</option>
+                <option value="Turf Owner">🏟️ Turf Owners</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Users Table Panel -->
+          <div class="table-panel">
+            <div style="overflow-x: auto;">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Email Address</th>
+                    <th>Account Role</th>
+                    <th>Activity / Revenue</th>
+                    <th>Status</th>
+                    <th>Moderation</th>
+                  </tr>
+                </thead>
+                <tbody id="users-table-body">
+                  <!-- Injected by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 5: PAYMENTS & REVENUE
+             ================================================================== -->
+        <section class="view-section" id="view-payments">
+          <div class="view-header">
+            <div>
+              <h1 class="view-heading">Razorpay Settlements & Payouts</h1>
+              <p class="view-subheading">Automated split settlements (T+1/T+2), Turfify commission collection, and refunds.</p>
+            </div>
+          </div>
+
+          <!-- Revenue Hero Banner -->
+          <div class="revenue-banner">
+            <div class="revenue-banner-grid">
+              <div>
+                <div class="rev-headline-label">Platform Gross Settlement</div>
+                <div class="rev-big-val">₹4,28,500</div>
+                <span class="rev-sub-pill">⚡ Razorpay Route Enabled</span>
+              </div>
+
+              <div class="rev-stat-box">
+                <div class="rev-stat-box-label">Owner Payouts Disbursed</div>
+                <div class="rev-stat-box-val" style="color: #6EE7B7;">₹3,85,650</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 4px;">90% net to venue partners</div>
+              </div>
+
+              <div class="rev-stat-box">
+                <div class="rev-stat-box-label">Turfify Commission (10%)</div>
+                <div class="rev-stat-box-val" style="color: #93C5FD;">₹42,850</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 4px;">Platform marketplace fee</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gateway Analytics Grid -->
+          <div class="kpi-grid">
+            <div class="kpi-card green">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">📱</div>
+                <span class="status-pill confirmed">68% Share</span>
+              </div>
+              <div class="kpi-value">₹2,91,380</div>
+              <div class="kpi-label">UPI Transactions</div>
+              <div class="kpi-footer-text">Google Pay, PhonePe, Paytm</div>
+            </div>
+
+            <div class="kpi-card blue">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">💳</div>
+                <span class="status-pill active">22% Share</span>
+              </div>
+              <div class="kpi-value">₹94,270</div>
+              <div class="kpi-label">Credit & Debit Cards</div>
+              <div class="kpi-footer-text">Visa, Mastercard, RuPay</div>
+            </div>
+
+            <div class="kpi-card amber">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">🏦</div>
+                <span class="status-pill pending">10% Share</span>
+              </div>
+              <div class="kpi-value">₹42,850</div>
+              <div class="kpi-label">Netbanking & Desk Cash</div>
+              <div class="kpi-footer-text">HDFC, ICICI, SBI & Walk-ins</div>
+            </div>
+          </div>
+
+          <!-- Recent Payout Ledger -->
+          <div class="table-panel">
+            <div style="padding: 20px 24px; border-bottom: 1px solid var(--slate-100);">
+              <h3 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--navy-900);">Venue Settlement Ledger (T+1 Automated)</h3>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>Settlement Ref</th>
+                    <th>Venue Partner</th>
+                    <th>Bank Account</th>
+                    <th>Gross Amount</th>
+                    <th>Fee (10%)</th>
+                    <th>Net Disbursed</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span style="font-family: monospace; font-weight: 700;">STL-8801</span></td>
+                    <td><strong>Greenfield Arena</strong></td>
+                    <td style="font-family: monospace; font-size: 0.8rem;">HDFC •••• 9102</td>
+                    <td>₹34,800</td>
+                    <td style="color: #64748B;">₹3,480</td>
+                    <td><strong style="color: var(--green-dark);">₹31,320</strong></td>
+                    <td><span class="status-pill confirmed">Disbursed</span></td>
+                  </tr>
+                  <tr>
+                    <td><span style="font-family: monospace; font-weight: 700;">STL-8802</span></td>
+                    <td><strong>Striker's Bay</strong></td>
+                    <td style="font-family: monospace; font-size: 0.8rem;">ICICI •••• 4519</td>
+                    <td>₹45,000</td>
+                    <td style="color: #64748B;">₹4,500</td>
+                    <td><strong style="color: var(--green-dark);">₹40,500</strong></td>
+                    <td><span class="status-pill confirmed">Disbursed</span></td>
+                  </tr>
+                  <tr>
+                    <td><span style="font-family: monospace; font-weight: 700;">STL-8803</span></td>
+                    <td><strong>Velocity Hub</strong></td>
+                    <td style="font-family: monospace; font-size: 0.8rem;">Axis •••• 2891</td>
+                    <td>₹18,400</td>
+                    <td style="color: #64748B;">₹1,840</td>
+                    <td><strong style="color: var(--green-dark);">₹16,560</strong></td>
+                    <td><span class="status-pill pending">Pending T+1</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 6: REPORTS & EXPORT
+             ================================================================== -->
+        <section class="view-section" id="view-reports">
+          <div class="view-header">
+            <div>
+              <h1 class="view-heading">Reports & Exports</h1>
+              <p class="view-subheading">Generate audit-ready statements, GST tax filing ledgers, and venue performance statistics.</p>
+            </div>
+          </div>
+
+          <div class="reports-grid">
+            <!-- Report 1 -->
+            <div class="report-export-card">
+              <div class="report-card-icon" style="background: var(--green-subtle); color: var(--green-dark);">📊</div>
+              <h3 class="report-card-title">Monthly P&L Audit Statement</h3>
+              <p class="report-card-desc">Detailed breakdown of gross customer billing, Razorpay gateway fees, 10% platform commission, and venue payouts.</p>
+              <button class="btn-primary-green" onclick="alert('Monthly P&L generated. Ready for download.')">
+                Download PDF
+              </button>
+            </div>
+
+            <!-- Report 2 -->
+            <div class="report-export-card">
+              <div class="report-card-icon" style="background: var(--blue-subtle); color: var(--blue-dark);">🏟️</div>
+              <h3 class="report-card-title">Turf Utilization & Peak Hours</h3>
+              <p class="report-card-desc">Hourly slot occupancy matrix across weekday evenings and weekends. Highlights high-yield prime-time slots.</p>
+              <button class="btn-secondary-light" onclick="alert('Turf Utilization Excel sheet exported.')">
+                Export Spreadsheet
+              </button>
+            </div>
+
+            <!-- Report 3 -->
+            <div class="report-export-card">
+              <div class="report-card-icon" style="background: var(--amber-subtle); color: var(--amber-dark);">🧾</div>
+              <h3 class="report-card-title">GST Tax Invoices Register</h3>
+              <p class="report-card-desc">Compliant 18% GST tax breakdown on platform convenience fees with SAC codes and business GSTIN records.</p>
+              <button class="btn-secondary-light" onclick="alert('GST Tax summary generated.')">
+                Download CSV
+              </button>
+            </div>
+
+            <!-- Report 4 -->
+            <div class="report-export-card">
+              <div class="report-card-icon" style="background: var(--violet-subtle); color: var(--violet-dark);">👥</div>
+              <h3 class="report-card-title">Player Retention & Cohorts</h3>
+              <p class="report-card-desc">Repeat booking frequency, cancellation rates, favorite time-slots, and player team size analysis.</p>
+              <button class="btn-secondary-light" onclick="alert('Player Retention matrix exported.')">
+                View Cohorts
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ======================================================================
+       ADD NEW TURF MODAL
+       ====================================================================== -->
+  <div class="admin-modal-backdrop" id="add-turf-modal">
+    <div class="admin-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">🏟️ Onboard New Turf Facility</h3>
+        <button class="modal-close-btn" id="btn-close-turf-modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group-item">
+          <label>Facility / Venue Name *</label>
+          <input type="text" id="form-turf-name" class="form-input-field" placeholder="e.g. Apex Arena Football 7v7">
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group-item">
+            <label>Primary Sport *</label>
+            <select id="form-turf-sport" class="form-input-field">
+              <option value="Football">⚽ Football</option>
+              <option value="Cricket">🏏 Cricket</option>
+              <option value="Badminton">🏸 Badminton</option>
+              <option value="Tennis">🎾 Tennis</option>
+              <option value="Multi-sport">🏟️ Multi-sport</option>
+            </select>
+          </div>
+
+          <div class="form-group-item">
+            <label>Hourly Price (INR) *</label>
+            <input type="number" id="form-turf-price" class="form-input-field" placeholder="1200">
+          </div>
+        </div>
+
+        <div class="form-group-item">
+          <label>Location & City *</label>
+          <input type="text" id="form-turf-location" class="form-input-field" placeholder="e.g. T. Nagar, Chennai">
+        </div>
+
+        <div class="form-group-item">
+          <label>Venue Owner Name</label>
+          <input type="text" id="form-turf-owner" class="form-input-field" placeholder="e.g. Rajesh Kannan">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary-light" id="btn-cancel-turf-modal">Cancel</button>
+        <button class="btn-primary-green" id="btn-save-turf">Publish Turf</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Scripts -->
+  <script src="admin.js"></script>
+</body>
+</html>

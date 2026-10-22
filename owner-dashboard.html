@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partner Portal — Turfify Turf Management</title>
+  <meta name="description" content="Manage your sports turf business, slots, walk-ins, and settlements on Turfify.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%23EA580C%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+</head>
+<body class="dash-page">
+
+  <!-- ==========================================================================
+       OWNER NAVIGATION BAR
+       ========================================================================== -->
+  <header class="header" id="navbar" style="box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+    <div class="container nav-container">
+      <a href="index.html" class="brand" aria-label="Turfify Home">
+        <div class="logo-badge" style="background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor"></circle>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title">Turfify</span>
+          <span class="brand-tagline" style="color: #EA580C;">Partner Console</span>
+        </div>
+      </a>
+
+      <!-- Center Nav Links -->
+      <nav aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="#slots" class="nav-link active">Slot Matrix</a></li>
+          <li><a href="#ledger" class="nav-link">Bookings Ledger</a></li>
+          <li><a href="#grounds" class="nav-link">My Grounds</a></li>
+          <li><a href="#settlement" class="nav-link">Payouts</a></li>
+        </ul>
+      </nav>
+
+      <!-- Owner Profile & Logout -->
+      <div class="nav-actions">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80" alt="Suresh" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #EA580C;">
+          <div>
+            <div style="font-weight: 700; font-size: 0.85rem; color: var(--navy-900); line-height: 1.1;">Suresh Kumar</div>
+            <div style="font-size: 0.7rem; color: var(--slate-500);">Arena Sports Facilities</div>
+          </div>
+        </div>
+        <a href="index.html" class="btn-login-outline" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem;">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       TOP WELCOME BANNER
+       ========================================================================== -->
+  <div class="dash-topbar">
+    <div class="container dash-topbar-inner">
+      <div class="dash-welcome">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+          <h1>Arena Sports Dashboard</h1>
+          <span class="role-badge owner">🏟️ Turf Owner</span>
+        </div>
+        <p>Live court status, daily walk-in management, and financial payouts.</p>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-match-action btn-match-primary" id="btn-open-add-turf" style="background: #EA580C;">
+          + Add New Ground
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+
+    <!-- Owner Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card green">
+        <div class="metric-icon green">₹</div>
+        <div class="metric-data">
+          <div class="metric-label">Today's Turnover</div>
+          <div class="metric-val" id="owner-today-rev">₹9,600</div>
+          <div class="metric-sub">+18% vs yesterday</div>
+        </div>
+      </div>
+      <div class="metric-card orange">
+        <div class="metric-icon orange">📊</div>
+        <div class="metric-data">
+          <div class="metric-label">Slot Occupancy</div>
+          <div class="metric-val" id="owner-occupancy">75%</div>
+          <div class="metric-sub">12 of 16 slots booked</div>
+        </div>
+      </div>
+      <div class="metric-card blue">
+        <div class="metric-icon blue">🏟️</div>
+        <div class="metric-data">
+          <div class="metric-label">Active Grounds</div>
+          <div class="metric-val" id="owner-turfs-count">2 Grounds</div>
+          <div class="metric-sub">All pitches operational</div>
+        </div>
+      </div>
+      <div class="metric-card teal">
+        <div class="metric-icon teal">👥</div>
+        <div class="metric-data">
+          <div class="metric-label">Today's Footfall</div>
+          <div class="metric-val">42 Players</div>
+          <div class="metric-sub">Online + Walk-in</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Owner Main Grid -->
+    <div class="dash-grid-main">
+      <!-- Live Slot Management Matrix -->
+      <div class="dash-panel" id="slots">
+        <div class="panel-header">
+          <div class="panel-title">
+            📅 Today's Live Court Schedule
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-mini-action" id="btn-add-walkin" style="background: #FFF7ED; color: #EA580C; border-color: #FED7AA; font-weight: 700;">
+              + Add Walk-In
+            </button>
+            <button class="btn-mini-action" id="btn-block-slot">
+              🚫 Block Slot
+            </button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <p style="font-size: 0.85rem; color: var(--slate-500); margin-bottom: 1rem;">
+            Click any slot to switch status (Available 🟢, Walk-in 🟡, Booked 🔴). Changes reflect instantly to players.
+          </p>
+          <div class="slot-matrix" id="owner-slot-matrix">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Customer Booking Ledger -->
+        <div class="panel-header" id="ledger" style="border-top: 1px solid var(--slate-100);">
+          <div class="panel-title">
+            📋 Customer Booking Ledger
+          </div>
+        </div>
+        <div class="panel-body" style="padding: 0;">
+          <div style="overflow-x: auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Customer</th>
+                  <th>Turf Ground</th>
+                  <th>Date & Time</th>
+                  <th>Amount</th>
+                  <th>Channel</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="owner-ledger-body">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Facilities & Settlements -->
+      <div>
+        <div class="dash-panel" id="grounds" style="margin-bottom: 1.5rem;">
+          <div class="panel-header">
+            <div class="panel-title">
+              🏟️ My Listed Venues
+            </div>
+            <button class="btn-mini-action" id="btn-add-turf-quick" style="background: #ECFDF5; color: #047857; border-color: #A7F3D0; font-weight: 700;">
+              + Add
+            </button>
+          </div>
+          <div class="panel-body" id="owner-turfs-list">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Settlement Box -->
+        <div class="dash-panel" id="settlement">
+          <div class="panel-header">
+            <div class="panel-title">
+              🏦 Direct Payout Account
+            </div>
+          </div>
+          <div class="panel-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <span style="font-size: 0.85rem; color: var(--slate-500);">Next Payout (Tuesday)</span>
+              <span style="font-weight: 800; font-size: 1.2rem; color: var(--primary-green-dark);">₹38,400</span>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--slate-500); line-height: 1.4;">
+              Auto-transfers every Tuesday to HDFC Bank A/C ending in <strong>•4892</strong>. Platform fee: 0% promotional rate.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAL: ADD NEW GROUND
+       ========================================================================== -->
+  <div class="modal-overlay" id="modal-add-turf">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Register New Turf / Court</h3>
+          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;">Expand your business on Turfify</p>
+        </div>
+        <button class="btn-close-modal" id="btn-close-add-turf" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-new-turf">
+          <div class="form-group">
+            <label class="form-label">Ground / Facility Name</label>
+            <input type="text" class="form-control" id="new-turf-name" placeholder="e.g. Apex Sports Arena" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label class="form-label">Primary Sport</label>
+              <select class="form-control" id="new-turf-sport">
+                <option value="Football">Football</option>
+                <option value="Box Cricket">Box Cricket</option>
+                <option value="Badminton">Badminton</option>
+                <option value="Multi-Sport">Multi-Sport</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hourly Rate (₹)</label>
+              <input type="number" class="form-control" id="new-turf-rate" placeholder="1200" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location in Bangalore</label>
+            <input type="text" class="form-control" id="new-turf-loc" placeholder="e.g. Sarjapur Road, Bangalore" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Turf Photo URL / Path</label>
+            <input type="text" class="form-control" id="new-turf-img" value="images/turf-arena.jpg">
+          </div>
+          <button type="submit" class="btn-modal-action" style="margin-top: 10px; background: #EA580C;">
+            Publish Turf to Marketplace
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ensure owner state
+      window.TurfifyStore.switchRole('owner');
+      const user = window.TurfifyStore.getCurrentUser();
+      const ownerTurfs = window.TurfifyStore.getOwnerTurfs(user.id);
+      const ownerBookings = window.TurfifyStore.getOwnerBookings(user.id);
+
+      document.getElementById('owner-turfs-count').textContent = `${ownerTurfs.length} Grounds`;
+
+      // Revenue
+      const totalRev = ownerBookings
+        .filter(b => b.status !== 'Cancelled')
+        .reduce((sum, b) => sum + (b.amount || 0), 0);
+      document.getElementById('owner-today-rev').textContent = `₹${totalRev.toLocaleString()}`;
+
+      // Occupancy
+      const bookedCount = ownerBookings.filter(b => b.status !== 'Cancelled').length;
+      document.getElementById('owner-occupancy').textContent = `${Math.min(100, Math.round((bookedCount / 16) * 100))}%`;
+
+      // Grounds list
+      const turfsList = document.getElementById('owner-turfs-list');
+      turfsList.innerHTML = '';
+      ownerTurfs.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'owner-turf-item';
+        item.innerHTML = `
+          <img src="${t.image}" alt="${t.name}" class="owner-turf-img">
+          <div class="owner-turf-info">
+            <div class="owner-turf-title">${t.name}</div>
+            <div class="owner-turf-meta">
+              <span>${t.sport}</span>
+              <span>₹${t.price_per_hour}/hr</span>
+              <span>⭐ ${t.rating}</span>
+            </div>
+          </div>
+          <button class="btn-mini-action" onclick="deleteTurf('${t.id}')" title="Delete">🗑️</button>
+        `;
+        turfsList.appendChild(item);
+      });
+
+      // Interactive Slot Matrix
+      const slotMatrix = document.getElementById('owner-slot-matrix');
+      slotMatrix.innerHTML = '';
+      const slots = [
+        { time: '04:00 PM', status: 'available', player: null },
+        { time: '05:00 PM', status: 'available', player: null },
+        { time: '06:00 PM', status: 'walkin', player: 'Walk-in Team' },
+        { time: '07:00 PM', status: 'booked', player: 'Rahul Sharma (+91 98765 43210)' },
+        { time: '08:00 PM', status: 'booked', player: 'Vikram Mehta (+91 94455 12345)' },
+        { time: '09:00 PM', status: 'walkin', player: 'Arun & Friends' },
+        { time: '10:00 PM', status: 'available', player: null },
+        { time: '11:00 PM', status: 'available', player: null }
+      ];
+
+      slots.forEach(s => {
+        const el = document.createElement('div');
+        el.className = `slot-item ${s.status}`;
+        el.innerHTML = `
+          <div class="slot-time">${s.time}</div>
+          <span class="slot-badge">${s.status}</span>
+          ${s.player ? `<div style="font-size:0.65rem; color:var(--slate-500); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${s.player.split(' ')[0]}</div>` : ''}
+        `;
+        el.addEventListener('click', () => {
+          if (s.status === 'available') {
+            s.status = 'walkin';
+            alert(`Marked ${s.time} slot as Walk-in / Phone reservation.`);
+          } else if (s.status === 'walkin') {
+            s.status = 'available';
+            alert(`Reopened ${s.time} slot for online player bookings.`);
+          } else {
+            alert(`Slot ${s.time} is booked online by ${s.player}`);
+          }
+          location.reload();
+        });
+        slotMatrix.appendChild(el);
+      });
+
+      // Ledger Table
+      const ledgerBody = document.getElementById('owner-ledger-body');
+      ledgerBody.innerHTML = '';
+      ownerBookings.forEach(b => {
+        const tr = document.createElement('tr');
+        const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
+        tr.innerHTML = `
+          <td><code style="font-size:0.75rem;">${b.id}</code></td>
+          <td><strong>${b.player_name}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.player_phone}</span></td>
+          <td>${b.turf_name}</td>
+          <td>${b.date}<br><span style="font-size:0.75rem; color:var(--slate-500);">${b.time_slot}</span></td>
+          <td><strong>₹${b.amount}</strong></td>
+          <td><span style="font-size:0.8rem; color:var(--slate-600);">${b.payment_status}</span></td>
+          <td><span class="status-pill ${statusClass}">${b.status}</span></td>
+        `;
+        ledgerBody.appendChild(tr);
+      });
+
+      // Modals
+      const modal = document.getElementById('modal-add-turf');
+      document.getElementById('btn-open-add-turf').onclick = () => modal.classList.add('active');
+      document.getElementById('btn-add-turf-quick').onclick = () => modal.classList.add('active');
+      document.getElementById('btn-close-add-turf').onclick = () => modal.classList.remove('active');
+
+      document.getElementById('form-new-turf').onsubmit = (e) => {
+        e.preventDefault();
+        window.TurfifyStore.addTurf({
+          name: document.getElementById('new-turf-name').value,
+          sport: document.getElementById('new-turf-sport').value,
+          price_per_hour: parseInt(document.getElementById('new-turf-rate').value, 10),
+          location: document.getElementById('new-turf-loc').value,
+          image: document.getElementById('new-turf-img').value || 'images/turf-arena.jpg',
+          dimensions: '7v7 Championship Turf',
+          amenities: ['Floodlights', 'Dressing Room', 'Parking']
+        });
+        modal.classList.remove('active');
+        location.reload();
+      };
+
+      document.getElementById('btn-add-walkin').onclick = () => {
+        const name = prompt('Walk-in Customer Name:', 'Manoj (Box Cricket)');
+        if (name) {
+          window.TurfifyStore.createBooking({
+            turf_id: 'turf-1',
+            turf_name: 'The Arena Sports Hub',
+            sport: 'Football',
+            player_id: 'walkin-' + Date.now(),
+            player_name: name,
+            player_phone: '+91 91234 56789',
+            date: new Date().toISOString().split('T')[0],
+            time_slot: '10:00 PM - 11:00 PM',
+            amount: 1200,
+            status: 'Walk-in',
+            payment_status: 'Cash at Counter'
+          });
+          location.reload();
+        }
+      };
+
+      document.getElementById('btn-block-slot').onclick = () => {
+        alert('11:00 PM slot marked as Blocked for regular maintenance.');
+      };
+
+      window.deleteTurf = function(id) {
+        if (confirm('Delete this turf?')) {
+          window.TurfifyStore.deleteTurf(id);
+          location.reload();
+        }
+      };
+    });
+  </script>
+</body>
+</html>

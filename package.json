@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "playwright-chromium": "^1.63.0",
+    "pptxgenjs": "^4.0.1"
+  }
+}

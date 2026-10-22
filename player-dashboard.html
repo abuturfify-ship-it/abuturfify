@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Portal — Turfify</title>
+  <meta name="description" content="Manage your sports bookings, upcoming matches, and passes on Turfify.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+</head>
+<body class="dash-page">
+
+  <!-- ==========================================================================
+       PLAYER NAVIGATION BAR
+       ========================================================================== -->
+  <header class="header" id="navbar" style="box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+    <div class="container nav-container">
+      <a href="index.html" class="brand" aria-label="Turfify Home">
+        <div class="logo-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor"></circle>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title">Turfify</span>
+          <span class="brand-tagline">Player Hub</span>
+        </div>
+      </a>
+
+      <!-- Center Nav Links -->
+      <nav aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="index.html#search-section" class="nav-link">Book Turfs</a></li>
+          <li><a href="#my-matches" class="nav-link active">My Matches</a></li>
+          <li><a href="#saved-venues" class="nav-link">Saved Venues</a></li>
+        </ul>
+      </nav>
+
+      <!-- Player Profile & Logout -->
+      <div class="nav-actions">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&auto=format&fit=crop&q=80" alt="Rahul" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-green);">
+          <span style="font-weight: 700; font-size: 0.85rem; color: var(--navy-900);">Rahul Sharma</span>
+        </div>
+        <a href="index.html" class="btn-login-outline" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem;">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       TOP WELCOME BANNER
+       ========================================================================== -->
+  <div class="dash-topbar">
+    <div class="container dash-topbar-inner">
+      <div class="dash-welcome">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+          <h1>Welcome back, Rahul!</h1>
+          <span class="role-badge player">⚽ Player</span>
+        </div>
+        <p>Ready for kickoff? Track your upcoming games, teammates, and loyalty coins.</p>
+      </div>
+
+      <div>
+        <a href="index.html#popular-turfs" class="btn-match-action btn-match-primary" style="text-decoration: none;">
+          + Book New Slot
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main class="container" id="my-matches">
+
+    <!-- Hero Match Countdown Card -->
+    <div class="hero-match-card">
+      <span class="match-tag">🔥 Next Kickoff in 4 Hours</span>
+      <h2 class="hero-match-title" id="player-hero-turf">The Arena Sports Hub — Pitch A (Football)</h2>
+      <div class="match-details-row">
+        <div class="match-detail-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span id="player-hero-time">Today, 07:00 PM - 08:00 PM</span>
+        </div>
+        <div class="match-detail-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span>Indiranagar 100ft Road, Bangalore</span>
+        </div>
+        <div class="match-detail-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <span>₹1,200 (Paid Online)</span>
+        </div>
+      </div>
+
+      <div class="hero-match-actions">
+        <button class="btn-match-action btn-match-primary" onclick="alert('Google Maps navigation opened to Indiranagar Arena!')">
+          📍 Get Directions
+        </button>
+        <button class="btn-match-action btn-match-secondary" onclick="alert('WhatsApp squad invite code copied!')">
+          📲 Share Squad Link
+        </button>
+        <button class="btn-match-action btn-match-secondary" onclick="alert('Turf Entry Pass downloaded with QR verification.')">
+          🎟️ Download Pass
+        </button>
+      </div>
+    </div>
+
+    <!-- Player Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card green">
+        <div class="metric-icon green">⚽</div>
+        <div class="metric-data">
+          <div class="metric-label">Matches Played</div>
+          <div class="metric-val" id="player-matches-count">18</div>
+          <div class="metric-sub">Top 5% active in Bangalore</div>
+        </div>
+      </div>
+      <div class="metric-card blue">
+        <div class="metric-icon blue">⭐</div>
+        <div class="metric-data">
+          <div class="metric-label">Turfify Coins</div>
+          <div class="metric-val" id="player-loyalty">450 pts</div>
+          <div class="metric-sub">₹200 off next match</div>
+        </div>
+      </div>
+      <div class="metric-card orange">
+        <div class="metric-icon orange">📅</div>
+        <div class="metric-data">
+          <div class="metric-label">Upcoming Games</div>
+          <div class="metric-val" id="player-upcoming-count">2</div>
+          <div class="metric-sub">Next game today</div>
+        </div>
+      </div>
+      <div class="metric-card teal">
+        <div class="metric-icon teal">🏆</div>
+        <div class="metric-data">
+          <div class="metric-label">Favorite Sport</div>
+          <div class="metric-val">Football</div>
+          <div class="metric-sub">FIFA Certified turfs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Split -->
+    <div class="dash-grid-main">
+      <!-- Recent Bookings Table -->
+      <div class="dash-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            My Booked Slots
+          </div>
+          <a href="index.html#popular-turfs" class="btn-mini-action" style="text-decoration: none; font-weight: 700; color: var(--primary-green-dark);">+ Book Another Turf</a>
+        </div>
+        <div class="panel-body" style="padding: 0;">
+          <div style="overflow-x: auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Turf Name</th>
+                  <th>Date & Time</th>
+                  <th>Amount</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="player-bookings-body">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Saved Turfs -->
+      <div class="dash-panel" id="saved-venues">
+        <div class="panel-header">
+          <div class="panel-title">
+            ❤️ Saved Venues
+          </div>
+        </div>
+        <div class="panel-body" id="player-favorites-list">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ensure player state
+      window.TurfifyStore.switchRole('player');
+      const user = window.TurfifyStore.getCurrentUser();
+      const bookings = window.TurfifyStore.getPlayerBookings(user.id);
+      const turfs = window.TurfifyStore.getTurfs();
+
+      // Metrics
+      document.getElementById('player-matches-count').textContent = user.matches_played || 18;
+      document.getElementById('player-loyalty').textContent = `${user.loyalty_pts || 450} pts`;
+      document.getElementById('player-upcoming-count').textContent = bookings.filter(b => b.status === 'Confirmed').length;
+
+      // Hero Card
+      const upcoming = bookings.find(b => b.status === 'Confirmed');
+      if (upcoming) {
+        document.getElementById('player-hero-turf').textContent = `${upcoming.turf_name} — Pitch (${upcoming.sport})`;
+        document.getElementById('player-hero-time').textContent = `${upcoming.date}, ${upcoming.time_slot}`;
+      }
+
+      // Bookings table
+      const tbody = document.getElementById('player-bookings-body');
+      tbody.innerHTML = '';
+      if (bookings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--slate-400);">No bookings yet. Explore Bangalore turfs!</td></tr>`;
+      } else {
+        bookings.forEach(b => {
+          const tr = document.createElement('tr');
+          const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
+          tr.innerHTML = `
+            <td><strong>${b.turf_name}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.sport}</span></td>
+            <td>${b.date}<br><span style="font-size:0.75rem; color:var(--slate-500);">${b.time_slot}</span></td>
+            <td><strong>₹${b.amount}</strong></td>
+            <td><span style="font-size:0.8rem; color:var(--primary-green-dark); font-weight:600;">${b.payment_status}</span></td>
+            <td><span class="status-pill ${statusClass}">${b.status}</span></td>
+            <td>
+              ${b.status === 'Confirmed' ? 
+                `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626;">Cancel</button>` : 
+                `<a href="index.html#popular-turfs" class="btn-mini-action" style="text-decoration:none;">Rebook</a>`
+              }
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Favorites
+      const favList = document.getElementById('player-favorites-list');
+      favList.innerHTML = '';
+      turfs.slice(0, 3).forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'owner-turf-item';
+        item.innerHTML = `
+          <img src="${t.image}" alt="${t.name}" class="owner-turf-img">
+          <div class="owner-turf-info">
+            <div class="owner-turf-title">${t.name}</div>
+            <div class="owner-turf-meta">
+              <span>⭐ ${t.rating}</span>
+              <span>₹${t.price_per_hour}/hr</span>
+            </div>
+          </div>
+          <a href="index.html#popular-turfs" class="btn-mini-action" style="background:var(--primary-green-light); color:var(--primary-green-dark); font-weight:700; text-decoration:none;">
+            Book
+          </a>
+        `;
+        favList.appendChild(item);
+      });
+
+      window.cancelBooking = function(id) {
+        if (confirm('Cancel this match reservation?')) {
+          window.TurfifyStore.cancelBooking(id);
+          location.reload();
+        }
+      };
+    });
+  </script>
+</body>
+</html>
