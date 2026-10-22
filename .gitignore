@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Generated slide previews
+slide_previews/
+slide_previews_*/
+
+# Screenshots
+screenshots/
+
+# PDF preview images
+pdf_*.png
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
