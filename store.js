@@ -177,6 +177,11 @@ window.TurfifyStore = {
   },
 
   switchRole(role) {
+    const cur = this.getCurrentUser();
+    // If an authenticated user is already logged in with this role, keep their real profile
+    if (cur && cur.role === role && cur.id && cur.id !== 'player-1' && cur.id !== 'owner-1') {
+      return;
+    }
     if (role === 'owner') {
       this.setCurrentUser(DEFAULT_USERS.owner);
     } else {

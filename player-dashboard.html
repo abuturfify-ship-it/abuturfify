@@ -196,26 +196,60 @@
       // Ensure player state
       window.TurfifyStore.switchRole('player');
       const user = window.TurfifyStore.getCurrentUser();
+      const isNewUser = (user.id !== 'player-1');
       const bookings = window.TurfifyStore.getPlayerBookings(user.id);
       const turfs = window.TurfifyStore.getTurfs();
 
-      // Metrics
-      document.getElementById('player-matches-count').textContent = user.matches_played || 18;
-      document.getElementById('player-loyalty').textContent = `${user.loyalty_pts || 450} pts`;
+      // Dynamic user name and profile
+      if (user?.name) {
+        const navName = document.getElementById('nav-player-name');
+        if (navName) navName.textContent = user.name;
+        const welcomeTitle = document.querySelector('.dash-welcome h1');
+        if (welcomeTitle) welcomeTitle.textContent = `Welcome back, ${user.name.split(' ')[0]}!`;
+      }
+
+      // Metrics: new users start at 0
+      const matchesPlayed = isNewUser ? (user.matches_played || 0) : 18;
+      const loyaltyPts = isNewUser ? (user.loyalty_pts || 0) : 450;
+      document.getElementById('player-matches-count').textContent = matchesPlayed;
+      document.getElementById('player-loyalty').textContent = `${loyaltyPts} pts`;
       document.getElementById('player-upcoming-count').textContent = bookings.filter(b => b.status === 'Confirmed').length;
 
       // Hero Card
+      const heroCard = document.querySelector('.hero-match-card');
       const upcoming = bookings.find(b => b.status === 'Confirmed');
       if (upcoming) {
         document.getElementById('player-hero-turf').textContent = `${upcoming.turf_name} — Pitch (${upcoming.sport})`;
         document.getElementById('player-hero-time').textContent = `${upcoming.date}, ${upcoming.time_slot}`;
+      } else if (isNewUser && heroCard) {
+        // Attractive clean empty hero for new player
+        heroCard.style.background = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)';
+        heroCard.innerHTML = `
+          <span class="match-tag" style="background: rgba(16, 185, 129, 0.2); color: #34D399;">Ready for Kickoff?</span>
+          <h2 class="hero-match-title" style="margin-bottom: 8px;">No Upcoming Matches Yet</h2>
+          <p style="color: #94A3B8; font-size: 0.95rem; margin-bottom: 20px; max-width: 540px;">
+            You haven't reserved any turf slots yet. Discover premier verified football, cricket, and badminton arenas across Bangalore.
+          </p>
+          <a href="index.html#popular-turfs" class="btn-match-action btn-match-primary" style="display:inline-block; text-decoration:none;">
+            🔍 Explore Venues & Book Slot
+          </a>
+        `;
       }
 
       // Bookings table
       const tbody = document.getElementById('player-bookings-body');
       tbody.innerHTML = '';
       if (bookings.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--slate-400);">No bookings yet. Explore Bangalore turfs!</td></tr>`;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center; padding: 3rem 1rem; color: var(--slate-400);">
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">⚽</div>
+              <strong style="color: var(--navy-900); font-size: 1.05rem;">No Match Bookings Yet</strong><br>
+              <span style="font-size: 0.85rem; color: var(--slate-500); display:inline-block; margin-top:4px;">When you reserve turf slots, your matches and digital passes will appear here in real time.</span><br><br>
+              <a href="index.html#popular-turfs" class="btn-match-action btn-match-primary" style="display:inline-block; text-decoration:none; padding:8px 18px; font-size:0.85rem;">Find Available Turfs</a>
+            </td>
+          </tr>
+        `;
       } else {
         bookings.forEach(b => {
           const tr = document.createElement('tr');
