@@ -46,14 +46,10 @@
       <!-- Owner Profile & Logout -->
       <div class="nav-actions">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80"
-            alt="Owner"
-            style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #EA580C;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(234, 88, 12, 0.15); color: #EA580C; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">🏟️</div>
           <div>
-            <div id="nav-owner-name"
-              style="font-weight: 700; font-size: 0.85rem; color: var(--navy-900); line-height: 1.1;">Suresh Kumar</div>
-            <div id="nav-owner-business" style="font-size: 0.7rem; color: var(--slate-500);">Arena Sports Facilities
-            </div>
+            <div id="nav-owner-name" style="font-weight: 700; font-size: 0.85rem; color: var(--navy-900); line-height: 1.1;">Turf Owner</div>
+            <div id="nav-owner-business" style="font-size: 0.7rem; color: var(--slate-500);">Partner Console</div>
           </div>
         </div>
         <a href="javascript:void(0)" id="btn-owner-logout" class="btn-login-outline"
@@ -91,31 +87,31 @@
         <div class="metric-icon green">₹</div>
         <div class="metric-data">
           <div class="metric-label">Today's Turnover</div>
-          <div class="metric-val" id="owner-today-rev">₹9,600</div>
-          <div class="metric-sub">+18% vs yesterday</div>
+          <div class="metric-val" id="owner-today-rev">₹0</div>
+          <div class="metric-sub" id="owner-rev-sub">Based on live bookings</div>
         </div>
       </div>
       <div class="metric-card orange">
         <div class="metric-icon orange">📊</div>
         <div class="metric-data">
           <div class="metric-label">Slot Occupancy</div>
-          <div class="metric-val" id="owner-occupancy">75%</div>
-          <div class="metric-sub">12 of 16 slots booked</div>
+          <div class="metric-val" id="owner-occupancy">0%</div>
+          <div class="metric-sub" id="owner-occupancy-sub">0 slots booked</div>
         </div>
       </div>
       <div class="metric-card blue">
         <div class="metric-icon blue">🏟️</div>
         <div class="metric-data">
           <div class="metric-label">Active Grounds</div>
-          <div class="metric-val" id="owner-turfs-count">2 Grounds</div>
-          <div class="metric-sub">All pitches operational</div>
+          <div class="metric-val" id="owner-turfs-count">0 Grounds</div>
+          <div class="metric-sub" id="owner-turfs-sub">Operational venues</div>
         </div>
       </div>
       <div class="metric-card teal">
         <div class="metric-icon teal">👥</div>
         <div class="metric-data">
           <div class="metric-label">Today's Footfall</div>
-          <div class="metric-val">42 Players</div>
+          <div class="metric-val" id="owner-footfall">0 Players</div>
           <div class="metric-sub">Online + Walk-in</div>
         </div>
       </div>
@@ -203,11 +199,10 @@
           <div class="panel-body">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
               <span style="font-size: 0.85rem; color: var(--slate-500);">Next Payout (Tuesday)</span>
-              <span style="font-weight: 800; font-size: 1.2rem; color: var(--primary-green-dark);">₹38,400</span>
+              <span id="owner-payout-amount" style="font-weight: 800; font-size: 1.2rem; color: var(--primary-green-dark);">₹0</span>
             </div>
-            <p style="font-size: 0.8rem; color: var(--slate-500); line-height: 1.4;">
-              Auto-transfers every Tuesday to HDFC Bank A/C ending in <strong>•4892</strong>. Platform fee: 0%
-              promotional rate.
+            <p id="owner-payout-desc" style="font-size: 0.8rem; color: var(--slate-500); line-height: 1.4;">
+              No pending payouts. Payouts from online bookings are automatically settled every Tuesday to your registered bank account.
             </p>
           </div>
         </div>
@@ -287,7 +282,34 @@
 
       // Occupancy
       const bookedCount = ownerBookings.filter(b => b.status !== 'Cancelled').length;
-      document.getElementById('owner-occupancy').textContent = `${Math.min(100, Math.round((bookedCount / 16) * 100))}%`;
+      const totalSlots = (ownerTurfs.length || 0) * 16;
+      document.getElementById('owner-occupancy').textContent = ownerTurfs.length > 0
+        ? `${Math.min(100, Math.round((bookedCount / totalSlots) * 100))}%`
+        : '0%';
+      const occSub = document.getElementById('owner-occupancy-sub');
+      if (occSub) occSub.textContent = `${bookedCount} of ${totalSlots} slots booked`;
+
+      // Footfall
+      const footfallEl = document.getElementById('owner-footfall');
+      if (footfallEl) {
+        footfallEl.textContent = `${bookedCount * 10} Players`;
+      }
+
+      // Online Payout Calculation
+      const onlinePaidBookings = ownerBookings.filter(b => b.payment_status === 'Paid Online' && b.status !== 'Cancelled');
+      const payoutAmount = onlinePaidBookings.reduce((sum, b) => sum + (b.amount || 0), 0);
+      const payoutAmountEl = document.getElementById('owner-payout-amount');
+      const payoutDescEl = document.getElementById('owner-payout-desc');
+      if (payoutAmountEl) {
+        payoutAmountEl.textContent = `₹${payoutAmount.toLocaleString()}`;
+      }
+      if (payoutDescEl) {
+        if (payoutAmount > 0) {
+          payoutDescEl.innerHTML = `Auto-transfers next Tuesday (${onlinePaidBookings.length} online transactions). Platform fee: 0% promotional rate.`;
+        } else {
+          payoutDescEl.textContent = 'No pending payouts. Online bookings from players will automatically accumulate here for weekly bank transfer.';
+        }
+      }
 
       // Grounds list
       const turfsList = document.getElementById('owner-turfs-list');

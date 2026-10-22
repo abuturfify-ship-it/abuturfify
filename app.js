@@ -125,27 +125,99 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 4. Booking & Slot Selection
+  // 4. Dynamic Turfs Rendering & Booking
   // --------------------------------------------------------------------------
-  let activeTurfName = 'The Arena Sports';
+  let activeTurfId = 'turf-1';
+  let activeTurfName = 'The Arena Sports Hub';
   let activeTurfRate = 1200;
+  let activeTurfSport = 'Football';
 
-  document.querySelectorAll('.btn-card-book').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const name = btn.dataset.turf || 'The Arena Sports';
-      const rate = btn.dataset.rate || '1200';
-      const loc = btn.dataset.loc || 'Bangalore';
+  function renderMarketplaceTurfs() {
+    const container = document.getElementById('turfs-container');
+    if (!container || !window.TurfifyStore) return;
 
-      activeTurfName = name;
-      activeTurfRate = parseInt(rate, 10);
-      document.getElementById('booking-modal-title').textContent = `Book Slot — ${name}`;
-      document.getElementById('booking-modal-sub').textContent = `${loc}, Bangalore`;
-      document.getElementById('modal-base-rate').textContent = `₹${rate}`;
-      document.getElementById('modal-total-rate').textContent = `₹${rate}`;
+    const turfs = window.TurfifyStore.getTurfs();
+    if (!turfs || turfs.length === 0) return;
 
-      openModal(modalBooking);
+    container.innerHTML = turfs.map(t => {
+      const sportLower = (t.sport || 'football').toLowerCase();
+      let sportKey = 'football';
+      if (sportLower.includes('cricket')) sportKey = 'cricket';
+      else if (sportLower.includes('badminton')) sportKey = 'badminton';
+
+      const locKey = (t.location || 'bangalore').toLowerCase();
+      const amenities = t.amenities && t.amenities.length ? t.amenities.slice(0, 3) : ['Indoor', 'Parking', 'Washroom'];
+
+      return `
+        <div class="turf-listing-card" data-sport="${sportKey}" data-location="${locKey}" data-name="${t.name}" data-rate="${t.price_per_hour}">
+          <div class="turf-media">
+            <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}">
+            <div class="rating-pill-green">★ ${t.rating || 4.9}</div>
+          </div>
+          <div class="turf-details-body">
+            <h3 class="turf-card-title">${t.name}</h3>
+            <div class="turf-card-loc">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>${t.location || 'Bangalore'}</span>
+            </div>
+            <div class="amenities-badges-row">
+              ${amenities.map(a => `<span class="amenity-chip">✓ ${a}</span>`).join('')}
+            </div>
+            <div class="turf-card-actions-row">
+              <div class="price-line">₹${t.price_per_hour} <span class="price-unit">/hr</span></div>
+              <div class="action-btns-group">
+                <button class="btn-card-book" data-turfid="${t.id}" data-turf="${t.name}" data-rate="${t.price_per_hour}" data-loc="${t.location || 'Bangalore'}" data-sport="${t.sport || 'Football'}">Book Now</button>
+                <button class="btn-card-heart" aria-label="Favorite">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    bindTurfCardEvents();
+  }
+
+  function bindTurfCardEvents() {
+    document.querySelectorAll('.btn-card-book').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.turfid || 'turf-1';
+        const name = btn.dataset.turf || 'The Arena Sports Hub';
+        const rate = btn.dataset.rate || '1200';
+        const loc = btn.dataset.loc || 'Bangalore';
+        const sport = btn.dataset.sport || 'Football';
+
+        activeTurfId = id;
+        activeTurfName = name;
+        activeTurfRate = parseInt(rate, 10);
+        activeTurfSport = sport;
+
+        document.getElementById('booking-modal-title').textContent = `Book Slot — ${name}`;
+        document.getElementById('booking-modal-sub').textContent = `${loc}, Bangalore`;
+        document.getElementById('modal-base-rate').textContent = `₹${rate}`;
+        document.getElementById('modal-total-rate').textContent = `₹${rate}`;
+
+        openModal(modalBooking);
+      });
     });
-  });
+
+    document.querySelectorAll('.btn-card-heart').forEach(heart => {
+      heart.addEventListener('click', (e) => {
+        e.stopPropagation();
+        heart.classList.toggle('active');
+        if (heart.classList.contains('active')) {
+          showToast('Saved to your favorites! ❤️');
+        } else {
+          showToast('Removed from favorites.');
+        }
+      });
+    });
+  }
+
+  // Initial render of all turfs from store
+  renderMarketplaceTurfs();
 
   document.querySelectorAll('.slot-btn:not(.booked)').forEach(slot => {
     slot.addEventListener('click', () => {
@@ -156,16 +228,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btn-confirm-slot')?.addEventListener('click', () => {
     const slot = document.querySelector('.slot-btn.selected')?.dataset.slot || '06:00 - 07:00 PM';
-    const date = document.getElementById('booking-date').value || '2026-09-10';
+    const date = document.getElementById('booking-date').value || new Date().toISOString().split('T')[0];
     
     if (window.TurfifyStore) {
+      const curUser = window.TurfifyStore.getCurrentUser() || {};
       window.TurfifyStore.createBooking({
-        turf_id: 'turf-1',
+        turf_id: activeTurfId,
         turf_name: activeTurfName,
-        sport: 'Football',
-        player_id: 'player-1',
-        player_name: 'Rahul Sharma',
-        player_phone: '+91 98765 43210',
+        sport: activeTurfSport,
+        player_id: curUser.id || 'player-' + Date.now(),
+        player_name: curUser.name || 'Player Guest',
+        player_phone: curUser.phone || '+91 98765 43210',
         date: date,
         time_slot: slot,
         amount: activeTurfRate,
@@ -179,33 +252,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 5. Favorite Heart Button
+  // 5. Search & Sport Filters
   // --------------------------------------------------------------------------
-  document.querySelectorAll('.btn-card-heart').forEach(heart => {
-    heart.addEventListener('click', (e) => {
-      e.stopPropagation();
-      heart.classList.toggle('active');
-      if (heart.classList.contains('active')) {
-        showToast('Saved to your favorites! ❤️');
-      } else {
-        showToast('Removed from favorites.');
-      }
-    });
-  });
-
-  // --------------------------------------------------------------------------
-  // 6. Search & Sport Filters
-  // --------------------------------------------------------------------------
-  const cards = document.querySelectorAll('.turf-listing-card');
-
   function filterVenues(sport, location) {
+    const cards = document.querySelectorAll('.turf-listing-card');
     let matches = 0;
     cards.forEach(card => {
-      const cSport = card.dataset.sport;
-      const cLoc = card.dataset.location;
+      const cSport = (card.dataset.sport || '').toLowerCase();
+      const cLoc = (card.dataset.location || '').toLowerCase();
 
-      const matchSport = (sport === 'all' || !sport || cSport === sport);
-      const matchLoc = (location === 'all' || !location || cLoc === location);
+      const matchSport = (sport === 'all' || !sport || cSport.includes(sport.toLowerCase()));
+      const matchLoc = (location === 'all' || !location || cLoc.includes(location.toLowerCase()));
 
       if (matchSport && matchLoc) {
         card.style.display = 'flex';
