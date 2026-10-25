@@ -10,6 +10,54 @@
   <link rel="stylesheet" href="dashboard.css">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%23EA580C%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+  <style>
+    .amenities-toggle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .amenity-toggle-btn {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      color: #475569;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .amenity-toggle-btn:hover {
+      background: #F1F5F9;
+      border-color: #94A3B8;
+    }
+    .amenity-toggle-btn.selected {
+      background: #FFF7ED;
+      border-color: #EA580C;
+      color: #EA580C;
+      box-shadow: 0 0 0 1px #EA580C;
+    }
+    .upload-drop-zone {
+      border: 2px dashed #CBD5E1;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      background: #F8FAFC;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .upload-drop-zone:hover {
+      border-color: #EA580C;
+      background: #FFF7ED;
+    }
+  </style>
 </head>
 
 <body class="dash-page">
@@ -250,8 +298,47 @@
               required>
           </div>
           <div class="form-group">
-            <label class="form-label">Turf Photo URL / Path</label>
-            <input type="text" class="form-control" id="new-turf-img" value="images/turf-arena.jpg">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Available Amenities / Facilities</span>
+              <span style="font-size: 0.72rem; color: var(--slate-400); font-weight: normal;">Click to toggle</span>
+            </label>
+            <div class="amenities-toggle-grid" id="amenities-selector">
+              <button type="button" class="amenity-toggle-btn" data-amenity="Food & Snacks">🍔 Food</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Parking">🚗 Parking</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Cafeteria">☕ Cafeteria</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Floodlights">💡 Floodlights</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Changing Room">🚿 Changing Room</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Drinking Water">💧 Drinking Water</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Free Wi-Fi">📶 Free Wi-Fi</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Equipment Rental">🏏 Equipment</button>
+            </div>
+            <p style="font-size: 0.72rem; color: var(--slate-500); margin-top: 4px;">Only the clicked options will be shown on your turf card.</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Turf Photo</label>
+            <!-- Gallery / Device Upload -->
+            <div class="upload-drop-zone" id="upload-box-owner">
+              <input type="file" id="new-turf-file" accept="image/*" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+              <div id="upload-prompt-owner">
+                <div style="font-size: 1.4rem; margin-bottom: 2px;">📸</div>
+                <div style="font-weight: 600; font-size: 0.85rem; color: #334155;">Click to choose photo from Gallery / Device</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 2px;">PNG, JPG, WEBP (Instant preview)</div>
+              </div>
+              <div id="upload-preview-wrap-owner" style="display:none; align-items:center; justify-content:center; gap:12px;">
+                <img id="upload-preview-owner" src="" alt="Preview" style="max-height: 75px; max-width: 140px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0;">
+                <div style="text-align: left;">
+                  <div id="upload-filename-owner" style="font-size:0.8rem; font-weight:700; color:#047857;">Gallery Photo Loaded ✓</div>
+                  <div style="font-size:0.72rem; color:#64748B;">Click again to change</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Separately: Photo URL -->
+            <div style="margin-top: 10px;">
+              <label class="form-label" style="font-size: 0.78rem; color: var(--slate-500); margin-bottom: 3px;">Or Enter Photo URL Separately (Optional)</label>
+              <input type="url" class="form-control" id="new-turf-url" placeholder="https://images.unsplash.com/... or paste image link">
+            </div>
           </div>
           <button type="submit" class="btn-modal-action" style="margin-top: 10px; background: #EA580C;">
             Publish Turf to Marketplace
@@ -332,8 +419,9 @@
         ownerTurfs.forEach(t => {
           const item = document.createElement('div');
           item.className = 'owner-turf-item';
+          const amenitiesList = Array.isArray(t.amenities) ? t.amenities : [];
           item.innerHTML = `
-            <img src="${t.image}" alt="${t.name}" class="owner-turf-img">
+            <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}" class="owner-turf-img">
             <div class="owner-turf-info">
               <div class="owner-turf-title">${t.name}</div>
               <div class="owner-turf-meta">
@@ -341,6 +429,11 @@
                 <span>₹${t.price_per_hour}/hr</span>
                 <span>⭐ ${t.rating || '5.0'}</span>
               </div>
+              ${amenitiesList.length ? `
+                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;">
+                  ${amenitiesList.map(a => `<span style="background:#FFF7ED;color:#EA580C;font-size:0.68rem;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid #FED7AA;">✓ ${a}</span>`).join('')}
+                </div>
+              ` : ''}
             </div>
             <button class="btn-mini-action" onclick="deleteTurf('${t.id}')" title="Delete">🗑️</button>
           `;
@@ -477,21 +570,37 @@
 
       window.addEventListener('turfify:data_synced', () => renderOwnerDashboard());
       window.addEventListener('turfify:booking_created', () => renderOwnerDashboard());
+      window.addEventListener('turfify:booking_cancelled', () => renderOwnerDashboard());
       window.addEventListener('storage', () => renderOwnerDashboard());
 
-      // Auto-poll server every 2.5 seconds so turf owners receive new bookings in real time
-      let prevCount = null;
+      // Auto-poll server every 2.5 seconds so turf owners receive new bookings/cancellations in real time
+      // Track a status-aware signature (id:status) so cancellations also trigger re-render
+      let prevSignature = null;
       setInterval(async () => {
         if (window.TurfifyStore?.syncWithServer) {
           const changed = await window.TurfifyStore.syncWithServer();
-          if (changed) {
-            const user = window.TurfifyStore.getCurrentUser();
-            const bookings = window.TurfifyStore.getOwnerBookings(user?.id);
-            if (prevCount !== null && bookings.length > prevCount) {
-              const newest = bookings[0];
-              showToast(`🔔 New booking received! ${newest.player_name} booked ${newest.turf_name} (${newest.time_slot})`);
+          const user = window.TurfifyStore.getCurrentUser();
+          const bookings = window.TurfifyStore.getOwnerBookings(user?.id);
+          const signature = bookings.map(b => b.id + ':' + b.status).join('|');
+          if (changed || signature !== prevSignature) {
+            if (prevSignature !== null) {
+              // Detect new bookings
+              const prevIds = (prevSignature || '').split('|').filter(Boolean).map(s => s.split(':')[0]);
+              const newBookings = bookings.filter(b => !prevIds.includes(b.id) && b.status !== 'Cancelled');
+              if (newBookings.length > 0) {
+                const newest = newBookings[0];
+                showToast(`🔔 New booking! ${newest.player_name} booked ${newest.turf_name} (${newest.time_slot})`);
+              }
+              // Detect cancellations
+              const newlyCancelled = bookings.filter(b => {
+                const prev = (prevSignature || '').split('|').find(s => s.startsWith(b.id + ':'));
+                return b.status === 'Cancelled' && prev && !prev.endsWith(':Cancelled');
+              });
+              if (newlyCancelled.length > 0) {
+                showToast(`❌ Booking cancelled: ${newlyCancelled[0].player_name} – ${newlyCancelled[0].time_slot}`);
+              }
             }
-            prevCount = bookings.length;
+            prevSignature = signature;
             renderOwnerDashboard();
           }
         }
@@ -503,16 +612,51 @@
       document.getElementById('btn-add-turf-quick').onclick = () => modal.classList.add('active');
       document.getElementById('btn-close-add-turf').onclick = () => modal.classList.remove('active');
 
+      // File upload handler for gallery photo
+      let uploadedImageData = '';
+      const fileInput = document.getElementById('new-turf-file');
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              uploadedImageData = ev.target.result;
+              document.getElementById('upload-preview-owner').src = uploadedImageData;
+              document.getElementById('upload-preview-wrap-owner').style.display = 'flex';
+              document.getElementById('upload-prompt-owner').style.display = 'none';
+              document.getElementById('upload-filename-owner').textContent = (file.name || 'Photo') + ' ✓';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      // Amenity chips toggle
+      document.querySelectorAll('#amenities-selector .amenity-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('selected');
+        });
+      });
+
       document.getElementById('form-new-turf').onsubmit = (e) => {
         e.preventDefault();
+        // Collect only clicked/selected amenities
+        const selectedAmenities = Array.from(document.querySelectorAll('#amenities-selector .amenity-toggle-btn.selected'))
+          .map(btn => btn.dataset.amenity);
+
+        // Photo: gallery upload has priority, else separate URL, else default fallback
+        const urlInput = document.getElementById('new-turf-url')?.value?.trim();
+        const finalImage = uploadedImageData || urlInput || 'images/turf-arena.jpg';
+
         window.TurfifyStore.addTurf({
-          name: document.getElementById('new-turf-name').value,
+          name: document.getElementById('new-turf-name').value.trim(),
           sport: document.getElementById('new-turf-sport').value,
           price_per_hour: parseInt(document.getElementById('new-turf-rate').value, 10),
-          location: document.getElementById('new-turf-loc').value,
-          image: document.getElementById('new-turf-img').value || 'images/turf-arena.jpg',
+          location: document.getElementById('new-turf-loc').value.trim(),
+          image: finalImage,
           dimensions: '7v7 Championship Turf',
-          amenities: ['Floodlights', 'Dressing Room', 'Parking']
+          amenities: selectedAmenities
         });
         modal.classList.remove('active');
         location.reload();

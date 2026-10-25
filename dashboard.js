@@ -342,23 +342,55 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Slot 11:00 PM blocked for turf maintenance / grass trimming.');
   });
 
+  // File upload handler for gallery photo in dashboard
+  let uploadedImageDataDash = '';
+  const fileInputDash = document.getElementById('new-turf-file-dash');
+  if (fileInputDash) {
+    fileInputDash.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          uploadedImageDataDash = ev.target.result;
+          document.getElementById('upload-preview-dash').src = uploadedImageDataDash;
+          document.getElementById('upload-preview-wrap-dash').style.display = 'flex';
+          document.getElementById('upload-prompt-dash').style.display = 'none';
+          document.getElementById('upload-filename-dash').textContent = (file.name || 'Photo') + ' ✓';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Amenity chips toggle in dashboard
+  document.querySelectorAll('#amenities-selector-dash .amenity-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('selected');
+    });
+  });
+
   // Handle new turf creation form
   formNewTurf?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('new-turf-name').value;
+    const name = document.getElementById('new-turf-name').value.trim();
     const sport = document.getElementById('new-turf-sport').value;
     const rate = parseInt(document.getElementById('new-turf-rate').value, 10);
-    const loc = document.getElementById('new-turf-loc').value;
-    const img = document.getElementById('new-turf-img').value;
+    const loc = document.getElementById('new-turf-loc').value.trim();
+    const urlInput = document.getElementById('new-turf-url-dash')?.value?.trim();
+    const finalImage = uploadedImageDataDash || urlInput || 'images/turf-arena.jpg';
+
+    // Collect clicked amenities only
+    const selectedAmenities = Array.from(document.querySelectorAll('#amenities-selector-dash .amenity-toggle-btn.selected'))
+      .map(btn => btn.dataset.amenity);
 
     window.TurfifyStore.addTurf({
       name,
       sport,
       price_per_hour: rate,
       location: loc,
-      image: img,
+      image: finalImage,
       dimensions: 'Tournament Grade Arena',
-      amenities: ['Floodlights', 'Changing Room', 'Parking', 'Equipment']
+      amenities: selectedAmenities
     });
 
     modalAddTurf.classList.remove('active');
@@ -370,4 +402,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial Boot
   const curUser = window.TurfifyStore.getCurrentUser();
   applyRole(curUser.role || 'player');
+
+  // Re-render on any data change (new bookings, cancellations, server sync, cross-tab storage)
+  window.addEventListener('turfify:booking_created', () => { const u = window.TurfifyStore.getCurrentUser(); applyRole(u.role || 'player'); });
+  window.addEventListener('turfify:booking_cancelled', () => { const u = window.TurfifyStore.getCurrentUser(); applyRole(u.role || 'player'); });
+  window.addEventListener('turfify:data_synced', () => { const u = window.TurfifyStore.getCurrentUser(); applyRole(u.role || 'player'); });
+  window.addEventListener('storage', () => { const u = window.TurfifyStore.getCurrentUser(); applyRole(u.role || 'player'); });
 });

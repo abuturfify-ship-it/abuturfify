@@ -19,68 +19,7 @@ const TURFIFY_STORAGE_KEYS = {
 // No default turfs — only real registered turfs appear on the live site
 const DEFAULT_TURFS = [];
 
-const DEFAULT_BOOKINGS = [
-  {
-    id: 'bk-101',
-    turf_id: 'turf-1',
-    turf_name: 'The Arena Sports Hub',
-    sport: 'Football',
-    player_id: 'player-1',
-    player_name: 'Rahul Sharma',
-    player_phone: '+91 98765 43210',
-    date: '2026-09-10',
-    time_slot: '07:00 PM - 08:00 PM',
-    amount: 1200,
-    status: 'Confirmed',
-    payment_status: 'Paid Online',
-    booking_time: '2026-09-09 18:30'
-  },
-  {
-    id: 'bk-102',
-    turf_id: 'turf-2',
-    turf_name: 'Koramangala Kickoff Arena',
-    sport: 'Box Cricket',
-    player_id: 'player-1',
-    player_name: 'Rahul Sharma',
-    player_phone: '+91 98765 43210',
-    date: '2026-09-12',
-    time_slot: '06:00 PM - 07:00 PM',
-    amount: 1500,
-    status: 'Confirmed',
-    payment_status: 'Paid Online',
-    booking_time: '2026-09-09 21:00'
-  },
-  {
-    id: 'bk-103',
-    turf_id: 'turf-1',
-    turf_name: 'The Arena Sports Hub',
-    sport: 'Football',
-    player_id: 'player-9',
-    player_name: 'Vikram Mehta',
-    player_phone: '+91 94455 12345',
-    date: '2026-09-10',
-    time_slot: '08:00 PM - 09:00 PM',
-    amount: 1200,
-    status: 'Confirmed',
-    payment_status: 'Paid Online',
-    booking_time: '2026-09-08 14:15'
-  },
-  {
-    id: 'bk-104',
-    turf_id: 'turf-1',
-    turf_name: 'The Arena Sports Hub',
-    sport: 'Football',
-    player_id: 'player-8',
-    player_name: 'Local Walk-in Team (Arun)',
-    player_phone: '+91 91234 56789',
-    date: '2026-09-10',
-    time_slot: '09:00 PM - 10:00 PM',
-    amount: 1200,
-    status: 'Walk-in',
-    payment_status: 'Cash at Ground',
-    booking_time: '2026-09-10 17:00'
-  }
-];
+const DEFAULT_BOOKINGS = [];
 
 const DEFAULT_USERS = {
   owner: {
@@ -156,7 +95,7 @@ const DEFAULT_USERS_LIST = [
 
 window.TurfifyStore = {
   init() {
-    // One-time migration: purge legacy fake default turfs from localStorage cache
+    // One-time migration: purge legacy fake default turfs & bookings from localStorage cache
     const FAKE_IDS = ['turf-1', 'turf-2', 'turf-3'];
     try {
       const cached = JSON.parse(localStorage.getItem(TURFIFY_STORAGE_KEYS.TURFS));
@@ -164,13 +103,18 @@ window.TurfifyStore = {
         const cleaned = cached.filter(t => !FAKE_IDS.includes(t.id));
         localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, JSON.stringify(cleaned));
       }
+      const cachedBks = JSON.parse(localStorage.getItem(TURFIFY_STORAGE_KEYS.BOOKINGS));
+      if (Array.isArray(cachedBks)) {
+        const cleanedBks = cachedBks.filter(b => !FAKE_IDS.includes(b.turf_id) && !['bk-101', 'bk-102', 'bk-103', 'bk-104'].includes(b.id));
+        localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(cleanedBks));
+      }
     } catch (e) {}
 
     if (!localStorage.getItem(TURFIFY_STORAGE_KEYS.TURFS)) {
       localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TURFIFY_STORAGE_KEYS.BOOKINGS)) {
-      localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(DEFAULT_BOOKINGS));
+      localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify([]));
     }
     if (!localStorage.getItem(TURFIFY_STORAGE_KEYS.USERS)) {
       localStorage.setItem(TURFIFY_STORAGE_KEYS.USERS, JSON.stringify(DEFAULT_USERS_LIST));
@@ -202,29 +146,32 @@ window.TurfifyStore = {
           }
         }
 
-        // Merge bookings
-        if (Array.isArray(serverData.bookings) && serverData.bookings.length) {
+        // Server is authoritative for bookings — deleted bookings must NOT be resurrected
+        if (Array.isArray(serverData.bookings)) {
           const localBookings = this.getBookings();
           const prevStr = JSON.stringify(localBookings);
-          const mergedBookings = [...serverData.bookings];
-          localBookings.forEach(lb => {
-            if (!mergedBookings.some(sb => sb.id === lb.id)) {
-              mergedBookings.unshift(lb);
-              changed = true;
-            }
-          });
-          const newStr = JSON.stringify(mergedBookings);
+          const newStr = JSON.stringify(serverData.bookings);
           if (prevStr !== newStr) {
             localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, newStr);
             changed = true;
           }
         }
 
-        // Merge users
-        if (Array.isArray(serverData.users) && serverData.users.length) {
-          const localUsers = this.getUsers();
+        // Merge users (ignoring any deleted users)
+        if (Array.isArray(serverData.users)) {
+          let deletedUsers = [];
+          try {
+            deletedUsers = JSON.parse(localStorage.getItem('turfify_deleted_users') || '[]');
+          } catch (e) {}
+          const isDel = (id, email) => {
+            if (!id && !email) return false;
+            return deletedUsers.some(d => (id && d.toLowerCase() === id.toLowerCase()) || (email && d.toLowerCase() === email.toLowerCase()));
+          };
+
+          const cleanServerUsers = serverData.users.filter(su => !isDel(su.id, su.email));
+          const localUsers = this.getUsers().filter(lu => !isDel(lu.id, lu.email));
           const prevStr = JSON.stringify(localUsers);
-          const mergedUsers = [...serverData.users];
+          const mergedUsers = [...cleanServerUsers];
           localUsers.forEach(lu => {
             if (!mergedUsers.some(su => (su.id && su.id === lu.id) || (su.email && lu.email && su.email.toLowerCase() === lu.email.toLowerCase()))) {
               mergedUsers.unshift(lu);
@@ -338,11 +285,32 @@ window.TurfifyStore = {
   },
 
   deleteUser(userId) {
+    if (!userId) return;
     let users = this.getUsers();
-    users = users.filter(u => u.id !== userId);
+    const target = users.find(u => (u.id && u.id.toLowerCase() === userId.toLowerCase()) || (u.email && u.email.toLowerCase() === userId.toLowerCase()));
+    const email = target?.email;
+
+    // 1. Blacklist user so sync/synthesis never brings them back
+    try {
+      const deleted = JSON.parse(localStorage.getItem('turfify_deleted_users') || '[]');
+      if (!deleted.some(d => d.toLowerCase() === userId.toLowerCase())) deleted.push(userId);
+      if (email && !deleted.some(d => d.toLowerCase() === email.toLowerCase())) deleted.push(email);
+      localStorage.setItem('turfify_deleted_users', JSON.stringify(deleted));
+    } catch (e) {}
+
+    // 2. Remove from local store
+    users = users.filter(u =>
+      (u.id && u.id.toLowerCase() !== userId.toLowerCase()) &&
+      (!email || !u.email || u.email.toLowerCase() !== email.toLowerCase())
+    );
     localStorage.setItem(TURFIFY_STORAGE_KEYS.USERS, JSON.stringify(users));
+
+    // 3. Delete from backend server
+    fetch(`/api/user?id=${encodeURIComponent(userId)}`, { method: 'DELETE' }).catch(() => {});
+
     try {
       window.dispatchEvent(new CustomEvent('turfify:users_updated', { detail: { id: userId, deleted: true } }));
+      window.dispatchEvent(new CustomEvent('turfify:data_synced', { detail: { users } }));
     } catch (e) {}
   },
 
@@ -555,7 +523,13 @@ window.TurfifyStore = {
       bks[idx].status = 'Cancelled';
       localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(bks));
 
-      // Push cancellation to server
+      // Dispatch events so all open tabs/windows (owner dashboard, etc.) react immediately
+      try {
+        window.dispatchEvent(new CustomEvent('turfify:booking_cancelled', { detail: { id: bookingId } }));
+        window.dispatchEvent(new CustomEvent('turfify:data_synced', { detail: { bookings: bks } }));
+      } catch (e) {}
+
+      // Push cancellation to server so it persists across reloads
       fetch('/api/cancel-booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
