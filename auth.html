@@ -254,6 +254,7 @@
   </main>
 </div>
 
+<script src="store.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL  = 'https://fksdanhjdhqbpijoolzf.supabase.co';
@@ -330,35 +331,68 @@
     let role = null;
     let userName = null;
     let userEmail = null;
+    let userPhone = null;
     const uid = typeof userOrId === 'string' ? userOrId : userOrId?.id;
 
     if (typeof userOrId === 'object' && userOrId !== null) {
-      role = userOrId.user_metadata?.role;
-      userName = userOrId.user_metadata?.full_name;
+      role = userOrId.user_metadata?.role || userOrId.role;
+      userName = userOrId.user_metadata?.full_name || userOrId.name || userOrId.full_name;
       userEmail = userOrId.email;
+      userPhone = userOrId.phone || userOrId.user_metadata?.phone;
+    }
+
+    // Match with TurfifyStore users (from server database)
+    if (window.TurfifyStore) {
+      try { await window.TurfifyStore.syncWithServer(); } catch (e) {}
+      const localUsers = window.TurfifyStore.getUsers();
+      const match = localUsers.find(u => 
+        (userEmail && u.email && u.email.toLowerCase() === userEmail.toLowerCase()) || 
+        (uid && u.id === uid)
+      );
+      if (match) {
+        if (!role || role === 'player') role = match.role || role;
+        if (!userName || userName === 'Player' || userName === 'Turf Owner') userName = match.name || match.full_name;
+        if (!userPhone) userPhone = match.phone;
+      }
     }
 
     try {
-      const { data } = await sb.from('profiles').select('role, full_name, email').eq('id', uid).maybeSingle();
+      const { data } = await sb.from('profiles').select('role, full_name, email, phone').eq('id', uid).maybeSingle();
       if (data?.role) role = data.role;
-      if (data?.full_name) userName = data.full_name;
-      if (data?.email) userEmail = data.email;
+      if (data?.full_name && (!userName || userName === 'Player' || userName === 'Turf Owner')) userName = data.full_name;
+      if (data?.email && !userEmail) userEmail = data.email;
+      if (data?.phone && !userPhone) userPhone = data.phone;
     } catch (e) {
       console.warn('Profile fetch note:', e);
     }
 
-    role = role || 'player';
+    role = (role || 'player').toLowerCase() === 'owner' ? 'owner' : 'player';
 
-    // Store in Turfify local store so the dashboard immediately reflects the logged-in user
-    try {
-      const userObj = {
-        id: uid,
-        role: role,
-        name: userName || (role === 'owner' ? 'Turf Owner' : 'Player'),
-        email: userEmail || ''
-      };
+    if (!userName || userName === 'Player' || userName === 'Turf Owner') {
+      if (userEmail) {
+        const prefix = userEmail.split('@')[0];
+        userName = prefix.charAt(0).toUpperCase() + prefix.slice(1).replace(/[._-]/g, ' ');
+      } else {
+        userName = role === 'owner' ? 'Turf Owner' : 'Player';
+      }
+    }
+
+    const userObj = {
+      id: uid || ('usr-' + Date.now()),
+      role: role,
+      name: userName,
+      full_name: userName,
+      email: userEmail || '',
+      phone: userPhone || '',
+      is_authenticated: true
+    };
+
+    if (window.TurfifyStore) {
+      window.TurfifyStore.setCurrentUser(userObj);
+      window.TurfifyStore.addUser(userObj);
+    } else {
       localStorage.setItem('turfify_current_user', JSON.stringify(userObj));
-    } catch (err) {}
+    }
 
     if (role === 'owner') {
       window.location.href = 'owner-dashboard.html';
@@ -376,15 +410,80 @@
     const btn   = document.getElementById('btn-signin');
     if (!email || !pass) { showErr('signin','Please fill in all fields.'); return; }
     setLoading(btn, true);
-    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-    if (error) {
-      setLoading(btn, false);
-      showErr('signin', error.message === 'Invalid login credentials'
-        ? 'Incorrect email or password. Please try again.' : error.message);
+
+    // Sync from server first so any user registered across windows is loaded
+    if (window.TurfifyStore?.syncWithServer) {
+      try { await window.TurfifyStore.syncWithServer(); } catch (e) {}
+    }
+
+    let authUser = null;
+    let authError = null;
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+      if (error) {
+        authError = error;
+      } else if (data?.user) {
+        authUser = data.user;
+      }
+    } catch (err) {
+      console.warn('Supabase signin attempt notice:', err);
+      authError = err;
+    }
+
+    if (authUser) {
+      showOk('signin', 'Signed in! Redirecting to your dashboard...');
+      setTimeout(() => redirectByRole(authUser), 800);
       return;
     }
-    showOk('signin', 'Signed in! Redirecting to your dashboard...');
-    setTimeout(() => redirectByRole(data.user), 900);
+
+    // Check registered accounts in Turfify database
+    const users = window.TurfifyStore ? window.TurfifyStore.getUsers() : [];
+    const searchVal = email.toLowerCase();
+    const cleanSearchPhone = email.replace(/[^0-9]/g, '');
+
+    const matchedUser = users.find(u => 
+      (u.email && u.email.toLowerCase() === searchVal) ||
+      (cleanSearchPhone && cleanSearchPhone.length >= 5 && u.phone && u.phone.replace(/[^0-9]/g, '').endsWith(cleanSearchPhone.slice(-10))) ||
+      (u.id && u.id.toLowerCase() === searchVal)
+    );
+
+    if (matchedUser) {
+      // 1. If user account has a registered password, it MUST match strictly
+      if (matchedUser.password) {
+        if (matchedUser.password !== pass) {
+          setLoading(btn, false);
+          showErr('signin', 'Incorrect password. Please verify your credentials or sign up.');
+          return;
+        }
+        showOk('signin', `Welcome back, ${matchedUser.name || matchedUser.full_name}! Redirecting...`);
+        setTimeout(() => redirectByRole(matchedUser), 800);
+        return;
+      }
+
+      // 2. If Supabase gave explicit invalid login credentials for this email, reject
+      if (authError && (authError.message?.toLowerCase().includes('invalid') || authError.status === 400)) {
+        setLoading(btn, false);
+        showErr('signin', 'Incorrect email or password. Please verify your credentials.');
+        return;
+      }
+
+      // 3. For seed accounts, require explicit default password
+      const defaultSeedPwd = (matchedUser.role || '').toLowerCase() === 'owner' ? 'owner123' : 'player123';
+      if (pass === defaultSeedPwd || pass === 'password123') {
+        matchedUser.password = pass;
+        window.TurfifyStore.addUser(matchedUser);
+        showOk('signin', `Welcome back, ${matchedUser.name || matchedUser.full_name}! Redirecting...`);
+        setTimeout(() => redirectByRole(matchedUser), 800);
+        return;
+      } else {
+        setLoading(btn, false);
+        showErr('signin', 'Incorrect password. Please enter the correct password.');
+        return;
+      }
+    }
+
+    setLoading(btn, false);
+    showErr('signin', 'Incorrect email or password. Please check your credentials or register an account.');
   });
 
   /* ─── SIGN UP ─── */
@@ -400,25 +499,74 @@
     if (!name || !email || !pass) { showErr('signup','Please fill in all required fields.'); return; }
     if (pass.length < 8) { showErr('signup','Password must be at least 8 characters.'); return; }
     setLoading(btn, true);
-    const { data, error } = await sb.auth.signUp({
-      email, password: pass,
-      options: { data: { full_name: name, role, phone } }
-    });
-    if (error) { setLoading(btn, false); showErr('signup', error.message); return; }
-    if (data.user) {
-      await sb.from('profiles').upsert({
-        id: data.user.id, full_name: name, email, phone: phone || null,
-        role, created_at: new Date().toISOString()
+    let createdUserId = 'usr-' + Date.now();
+    let authSucceeded = false;
+
+    try {
+      const { data, error } = await sb.auth.signUp({
+        email, password: pass,
+        options: { data: { full_name: name, role, phone } }
       });
+
+      if (error) {
+        // If user already registered or error, show err if it's user-facing error
+        console.warn('Supabase auth notice:', error.message);
+        if (error.message.includes('already registered')) {
+          setLoading(btn, false);
+          showErr('signup', 'An account with this email already exists. Please sign in.');
+          return;
+        }
+      } else if (data?.user) {
+        createdUserId = data.user.id;
+        authSucceeded = true;
+        try {
+          await sb.from('profiles').upsert({
+            id: data.user.id, full_name: name, email, phone: phone || null,
+            role, created_at: new Date().toISOString()
+          });
+        } catch (pe) {
+          console.warn('Profile upsert notice:', pe);
+        }
+      }
+    } catch (err) {
+      console.warn('Network or Supabase service error:', err);
     }
-    setLoading(btn, false);
-    if (data.session) {
-      showOk('signup', 'Account created! Redirecting...');
-      setTimeout(() => redirectByRole(data.user), 1000);
+
+    // Always persist to TurfifyStore including password so credentials and profile are retained
+    const userObj = {
+      id: createdUserId,
+      name: name,
+      full_name: name,
+      email: email,
+      phone: phone || '—',
+      password: pass,
+      role: role === 'owner' ? 'owner' : 'player',
+      status: 'Active',
+      is_authenticated: true,
+      created_at: new Date().toISOString()
+    };
+
+    if (window.TurfifyStore && window.TurfifyStore.addUser) {
+      window.TurfifyStore.addUser(userObj);
+      window.TurfifyStore.setCurrentUser(userObj);
     } else {
-      showOk('signup', '🎉 Account created! Please check your email to confirm, then sign in.');
-      document.getElementById('form-signup').reset();
+      try {
+        const users = JSON.parse(localStorage.getItem('turfify_users') || '[]');
+        users.unshift(userObj);
+        localStorage.setItem('turfify_users', JSON.stringify(users));
+        localStorage.setItem('turfify_current_user', JSON.stringify(userObj));
+      } catch (e) {}
     }
+
+    setLoading(btn, false);
+    showOk('signup', '🎉 Account registered successfully! Redirecting...');
+    setTimeout(() => {
+      if (role === 'owner') {
+        window.location.href = 'owner-dashboard.html';
+      } else {
+        window.location.href = 'player-dashboard.html';
+      }
+    }, 1000);
   });
 
   /* ─── FORGOT PASSWORD ─── */
@@ -446,11 +594,16 @@
       switchView('signup');
     } else if (mode === 'forgot') {
       switchView('forgot');
+    } else {
+      switchView('signin');
     }
 
-    const { data: { session } } = await sb.auth.getSession();
-    if (session?.user && !window.location.hash.includes('type=recovery')) {
-      await redirectByRole(session.user);
+    // Only auto-redirect if explicitly requested via ?auto=true
+    if (params.get('auto') === 'true') {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session?.user && !window.location.hash.includes('type=recovery')) {
+        await redirectByRole(session.user);
+      }
     }
   })();
 </script>

@@ -55,7 +55,7 @@
         <button class="nav-link-btn" data-view="turfs" id="nav-turfs">
           <span class="nav-icon">🏟️</span>
           <span>Manage Turfs</span>
-          <span class="nav-counter">48</span>
+          <span class="nav-counter" id="nav-turfs-counter">0</span>
         </button>
 
         <button class="nav-link-btn" data-view="bookings" id="nav-bookings">
@@ -67,6 +67,7 @@
         <button class="nav-link-btn" data-view="users" id="nav-users">
           <span class="nav-icon">👥</span>
           <span>Users & Owners</span>
+          <span class="nav-counter" id="nav-users-counter">0</span>
         </button>
 
         <div class="nav-section-label">Finance & Growth</div>
@@ -395,6 +396,11 @@
               <h1 class="view-heading">User Management</h1>
               <p class="view-subheading">Registered accounts: Turf Owners & Playing Athletes across India.</p>
             </div>
+            <div class="action-buttons-group">
+              <button class="btn-primary-green" id="btn-open-add-user-modal" onclick="document.getElementById('add-user-modal').classList.add('active')">
+                + Onboard User / Owner
+              </button>
+            </div>
           </div>
 
           <!-- Filter Toolbar -->
@@ -652,7 +658,58 @@
     </div>
   </div>
 
+  <!-- ======================================================================
+       ADD NEW USER / OWNER MODAL
+       ====================================================================== -->
+  <div class="admin-modal-backdrop" id="add-user-modal">
+    <div class="admin-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">👥 Register New User / Venue Owner</h3>
+        <button class="modal-close-btn" id="btn-close-user-modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group-item">
+          <label>Full Name *</label>
+          <input type="text" id="form-user-name" class="form-input-field" placeholder="e.g. Rajesh Kannan">
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group-item">
+            <label>Account Role *</label>
+            <select id="form-user-role" class="form-input-field">
+              <option value="Turf Owner">🏟️ Turf Owner</option>
+              <option value="Player">⚽ Player</option>
+            </select>
+          </div>
+
+          <div class="form-group-item">
+            <label>Contact Phone / WhatsApp *</label>
+            <input type="tel" id="form-user-phone" class="form-input-field" placeholder="+91 98765 43210">
+          </div>
+        </div>
+
+        <div class="form-group-item">
+          <label>Email Address</label>
+          <input type="email" id="form-user-email" class="form-input-field" placeholder="owner@example.com">
+        </div>
+
+        <div class="form-group-item" id="form-user-business-group">
+          <label>Business / Facility Name</label>
+          <input type="text" id="form-user-business" class="form-input-field" placeholder="e.g. Apex Sports Facilities Pvt Ltd">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary-light" id="btn-cancel-user-modal">Cancel</button>
+        <button class="btn-primary-green" id="btn-save-user">Create Account</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Interactive Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="store.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>

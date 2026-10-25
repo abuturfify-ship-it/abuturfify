@@ -1204,8 +1204,8 @@
         <div class="form-group">
           <label class="form-label">Player Name & WhatsApp</label>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input type="text" class="form-control" placeholder="Full Name" value="Rahul Sharma">
-            <input type="tel" class="form-control" placeholder="+91 98765 43210" value="+91 98765 43210">
+            <input type="text" class="form-control" id="booking-player-name" placeholder="Your Full Name">
+            <input type="tel" class="form-control" id="booking-player-phone" placeholder="+91 Contact Phone">
           </div>
         </div>
 
@@ -1245,19 +1245,23 @@
       <div class="modal-body">
         <form id="owner-form">
           <div class="form-group">
-            <label class="form-label">Facility Name</label>
-            <input type="text" class="form-control" placeholder="e.g. Champions Sports Hub" required>
+            <label class="form-label">Owner Full Name</label>
+            <input type="text" id="owner-contact-name" class="form-control" placeholder="e.g. Ramesh Kumar" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Facility / Turf Name</label>
+            <input type="text" id="owner-facility-name" class="form-control" placeholder="e.g. Champions Sports Hub" required>
           </div>
           <div class="form-group">
             <label class="form-label">City & Area</label>
-            <input type="text" class="form-control" placeholder="e.g. Bengaluru, Whitefield" required>
+            <input type="text" id="owner-facility-loc" class="form-control" placeholder="e.g. Bengaluru, Whitefield" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Contact Number</label>
-            <input type="tel" class="form-control" placeholder="+91 98765 43210" required>
+            <label class="form-label">Contact Mobile / WhatsApp</label>
+            <input type="tel" id="owner-facility-phone" class="form-control" placeholder="+91 98765 43210" required>
           </div>
           <button type="submit" class="btn-modal-action" style="margin-top: 10px;">
-            Submit Facility
+            Submit Facility & Register
           </button>
         </form>
       </div>

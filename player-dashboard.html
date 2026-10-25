@@ -192,25 +192,27 @@
 
   <script src="store.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Ensure player state
-      window.TurfifyStore.switchRole('player');
+    function renderPlayerDashboard() {
       const user = window.TurfifyStore.getCurrentUser();
-      const isNewUser = (user.id !== 'player-1');
-      const bookings = window.TurfifyStore.getPlayerBookings(user.id);
+      if (!user) {
+        window.TurfifyStore.switchRole('player');
+      }
+      const activeUser = window.TurfifyStore.getCurrentUser();
+      const isNewUser = (activeUser?.id !== 'player-1');
+      const bookings = window.TurfifyStore.getPlayerBookings(activeUser?.id);
       const turfs = window.TurfifyStore.getTurfs();
 
       // Dynamic user name and profile
-      if (user?.name) {
+      if (activeUser?.name) {
         const navName = document.getElementById('nav-player-name');
-        if (navName) navName.textContent = user.name;
+        if (navName) navName.textContent = activeUser.name;
         const welcomeTitle = document.querySelector('.dash-welcome h1');
-        if (welcomeTitle) welcomeTitle.textContent = `Welcome back, ${user.name.split(' ')[0]}!`;
+        if (welcomeTitle) welcomeTitle.textContent = `Welcome back, ${activeUser.name}!`;
       }
 
       // Metrics: new users start at 0
-      const matchesPlayed = isNewUser ? (user.matches_played || 0) : 18;
-      const loyaltyPts = isNewUser ? (user.loyalty_pts || 0) : 450;
+      const matchesPlayed = isNewUser ? (user.matches_played || bookings.length) : 18;
+      const loyaltyPts = isNewUser ? (user.loyalty_pts || (bookings.length * 25)) : 450;
       document.getElementById('player-matches-count').textContent = matchesPlayed;
       document.getElementById('player-loyalty').textContent = `${loyaltyPts} pts`;
       document.getElementById('player-upcoming-count').textContent = bookings.filter(b => b.status === 'Confirmed').length;
@@ -221,8 +223,7 @@
       if (upcoming) {
         document.getElementById('player-hero-turf').textContent = `${upcoming.turf_name} — Pitch (${upcoming.sport})`;
         document.getElementById('player-hero-time').textContent = `${upcoming.date}, ${upcoming.time_slot}`;
-      } else if (isNewUser && heroCard) {
-        // Attractive clean empty hero for new player
+      } else if (heroCard) {
         heroCard.style.background = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)';
         heroCard.innerHTML = `
           <span class="match-tag" style="background: rgba(16, 185, 129, 0.2); color: #34D399;">Ready for Kickoff?</span>
@@ -255,7 +256,7 @@
           const tr = document.createElement('tr');
           const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
           tr.innerHTML = `
-            <td><strong>${b.turf_name}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.sport}</span></td>
+            <td><strong>${b.turf_name}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.sport || 'Sports'}</span></td>
             <td>${b.date}<br><span style="font-size:0.75rem; color:var(--slate-500);">${b.time_slot}</span></td>
             <td><strong>₹${b.amount}</strong></td>
             <td><span style="font-size:0.8rem; color:var(--primary-green-dark); font-weight:600;">${b.payment_status}</span></td>
@@ -282,7 +283,7 @@
           <div class="owner-turf-info">
             <div class="owner-turf-title">${t.name}</div>
             <div class="owner-turf-meta">
-              <span>⭐ ${t.rating}</span>
+              <span>⭐ ${t.rating || '4.9'}</span>
               <span>₹${t.price_per_hour}/hr</span>
             </div>
           </div>
@@ -292,14 +293,19 @@
         `;
         favList.appendChild(item);
       });
+    }
 
-      // Dynamic user name if present
-      if (user?.name) {
-        const navName = document.getElementById('nav-player-name');
-        if (navName) navName.textContent = user.name;
-        const welcomeTitle = document.querySelector('.dash-welcome h1');
-        if (welcomeTitle) welcomeTitle.textContent = `Welcome back, ${user.name.split(' ')[0]}!`;
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderPlayerDashboard();
+
+      // Sync latest server records for cross-window consistency
+      if (window.TurfifyStore?.syncWithServer) {
+        await window.TurfifyStore.syncWithServer();
+        renderPlayerDashboard();
       }
+
+      window.addEventListener('turfify:data_synced', () => renderPlayerDashboard());
+      window.addEventListener('storage', () => renderPlayerDashboard());
 
       window.cancelBooking = function(id) {
         if (confirm('Cancel this match reservation?')) {

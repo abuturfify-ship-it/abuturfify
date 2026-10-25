@@ -87,9 +87,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('owner-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
+    const ownerName = document.getElementById('owner-contact-name')?.value?.trim() || 'Venue Owner';
+    const facilityName = document.getElementById('owner-facility-name')?.value?.trim() || 'New Sports Hub';
+    const location = document.getElementById('owner-facility-loc')?.value?.trim() || 'Bengaluru';
+    const phone = document.getElementById('owner-facility-phone')?.value?.trim() || '—';
+    const ownerId = 'owner-' + Date.now();
+
+    if (window.TurfifyStore) {
+      // 1. Add owner user account
+      window.TurfifyStore.addUser({
+        id: ownerId,
+        name: ownerName,
+        phone: phone,
+        role: 'owner',
+        business_name: facilityName,
+        status: 'Active',
+        created_at: new Date().toISOString()
+      });
+
+      // 2. Add facility turf
+      window.TurfifyStore.addTurf({
+        owner_id: ownerId,
+        owner_name: ownerName,
+        owner_phone: phone,
+        name: facilityName,
+        sport: 'Football',
+        location: location,
+        price_per_hour: 1200
+      });
+    }
+
     closeModal(modalOwner);
-    showToast('Facility submitted! Our verification team will reach out within 2 hours.');
+    showToast(`🎉 "${facilityName}" & owner profile registered! Now live in Admin Console.`);
+    document.getElementById('owner-form')?.reset();
   });
+
+  // Update Navbar Auth display if user is logged in
+  function updateNavbarAuth() {
+    const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+    if (curUser && curUser.name && curUser.is_authenticated) {
+      const isOwner = (curUser.role || '').toLowerCase() === 'owner';
+      const targetDashboard = isOwner ? 'owner-dashboard.html' : 'player-dashboard.html';
+
+      // Update center Dashboard link
+      const centerDashLink = document.querySelector('a[href="dashboard.html"]');
+      if (centerDashLink) {
+        centerDashLink.href = targetDashboard;
+        centerDashLink.textContent = isOwner ? 'Owner Dashboard' : 'Player Dashboard';
+      }
+
+      // Replace Login & Register with User Profile button & Logout
+      const btnLogin = document.getElementById('btn-open-login');
+      const btnReg = document.getElementById('btn-open-register');
+      if (btnLogin) {
+        btnLogin.textContent = `👤 ${curUser.name}`;
+        btnLogin.title = `Go to Dashboard (${curUser.role})`;
+        btnLogin.onclick = (e) => {
+          e.preventDefault();
+          window.location.href = targetDashboard;
+        };
+      }
+      if (btnReg) {
+        btnReg.textContent = 'Logout';
+        btnReg.style.background = '#64748B';
+        btnReg.onclick = (e) => {
+          e.preventDefault();
+          localStorage.removeItem('turfify_current_user');
+          window.location.reload();
+        };
+      }
+    }
+  }
+
+  updateNavbarAuth();
 
   // Auth triggers - Redirect to Supabase Auth Page
   document.getElementById('btn-open-login')?.addEventListener('click', () => {
@@ -137,7 +207,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container || !window.TurfifyStore) return;
 
     const turfs = window.TurfifyStore.getTurfs();
-    if (!turfs || turfs.length === 0) return;
+
+    if (!turfs || turfs.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:64px 24px;">
+          <div style="font-size:3rem;margin-bottom:16px;">🏟️</div>
+          <h3 style="color:#e8eaf6;font-size:1.4rem;margin-bottom:8px;">No Turfs Listed Yet</h3>
+          <p style="color:#9fa8da;margin-bottom:24px;">Be the first to register your turf and start earning!</p>
+          <button onclick="document.getElementById('btn-hero-owner').click()" style="background:linear-gradient(135deg,#7c4dff,#ff6d00);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:1rem;cursor:pointer;">
+            List Your Turf 🚀
+          </button>
+        </div>
+      `;
+      return;
+    }
 
     container.innerHTML = turfs.map(t => {
       const sportLower = (t.sport || 'football').toLowerCase();
@@ -205,6 +288,17 @@ document.addEventListener('DOMContentLoaded', () => {
           dateInput.value = new Date().toISOString().split('T')[0];
         }
 
+        // Prefill player contact details if authenticated user is logged in
+        const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+        const nameInput = document.getElementById('booking-player-name');
+        const phoneInput = document.getElementById('booking-player-phone');
+        if (nameInput) {
+          nameInput.value = (curUser && curUser.name && curUser.name !== 'Player Guest') ? curUser.name : (nameInput.value || '');
+        }
+        if (phoneInput) {
+          phoneInput.value = (curUser && curUser.phone && curUser.phone !== '—') ? curUser.phone : (phoneInput.value || '');
+        }
+
         openModal(modalBooking);
         // Refresh slot colours based on actual bookings
         refreshSlotAvailability();
@@ -226,6 +320,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial render of all turfs from store
   renderMarketplaceTurfs();
+
+  // Live sync: re-render marketplace when turf list changes (deletion, new registration, etc.)
+  // Poll server every 3 seconds to detect cross-tab deletions
+  setInterval(() => {
+    if (window.TurfifyStore) {
+      window.TurfifyStore.syncWithServer().then(() => {
+        renderMarketplaceTurfs();
+      }).catch(() => {});
+    }
+  }, 3000);
+
+  // Also re-render immediately on turf-deleted or data-synced events (same tab)
+  window.addEventListener('turfify:turf_deleted', () => renderMarketplaceTurfs());
+  window.addEventListener('turfify:data_synced', () => renderMarketplaceTurfs());
+  // Re-render when localStorage changes in another tab
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'turfify_turfs') renderMarketplaceTurfs();
+  });
 
   // --------------------------------------------------------------------------
   // Slot Availability: Mark booked slots as red/disabled for all users
@@ -278,15 +390,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const slot = selectedBtn.dataset.slot;
     const date = document.getElementById('booking-date').value || new Date().toISOString().split('T')[0];
     
+    const curUser = (window.TurfifyStore && window.TurfifyStore.getCurrentUser()) || {};
+    const inputName = document.getElementById('booking-player-name')?.value.trim();
+    const inputPhone = document.getElementById('booking-player-phone')?.value.trim();
+    const finalPlayerName = inputName || curUser.name || 'Player Guest';
+    const finalPlayerPhone = inputPhone || curUser.phone || '+91 98765 43210';
+
     if (window.TurfifyStore) {
-      const curUser = window.TurfifyStore.getCurrentUser() || {};
       window.TurfifyStore.createBooking({
         turf_id: activeTurfId,
         turf_name: activeTurfName,
         sport: activeTurfSport,
-        player_id: curUser.id || 'player-' + Date.now(),
-        player_name: curUser.name || 'Player Guest',
-        player_phone: curUser.phone || '+91 98765 43210',
+        player_id: curUser.id || ('player-' + Date.now()),
+        player_name: finalPlayerName,
+        player_phone: finalPlayerPhone,
+        player_email: curUser.email || '',
         date: date,
         time_slot: slot,
         amount: activeTurfRate,
@@ -296,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     closeModal(modalBooking);
-    showToast(`Slot reserved at ${activeTurfName} for ${date} (${slot})! View in Dashboard.`);
+    showToast(`Slot reserved at ${activeTurfName} for ${date} (${slot}) under ${finalPlayerName}! View in Dashboard.`);
   });
 
   // --------------------------------------------------------------------------

@@ -179,41 +179,82 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Owner Slots Matrix (Simulating 12 PM - 11 PM)
+    // Owner Slots Matrix - dynamic from actual bookings
     const slotMatrix = document.getElementById('owner-slot-matrix');
     slotMatrix.innerHTML = '';
-    const mockSlots = [
-      { time: '04:00 PM', status: 'available', player: null },
-      { time: '05:00 PM', status: 'available', player: null },
-      { time: '06:00 PM', status: 'walkin', player: 'Walk-in Team' },
-      { time: '07:00 PM', status: 'booked', player: 'Rahul Sharma (+91 98765 43210)' },
-      { time: '08:00 PM', status: 'booked', player: 'Vikram Mehta (+91 94455 12345)' },
-      { time: '09:00 PM', status: 'walkin', player: 'Arun & Friends' },
-      { time: '10:00 PM', status: 'available', player: null },
-      { time: '11:00 PM', status: 'available', player: null }
+    const timeSlots = [
+      '06:00 - 07:00 AM',
+      '07:00 - 08:00 AM',
+      '08:00 - 09:00 AM',
+      '04:00 - 05:00 PM',
+      '05:00 - 06:00 PM',
+      '06:00 - 07:00 PM',
+      '07:00 - 08:00 PM',
+      '08:00 - 09:00 PM',
+      '09:00 - 10:00 PM',
+      '10:00 - 11:00 PM'
     ];
 
-    mockSlots.forEach(s => {
+    const slots = timeSlots.map(timeLabel => {
+      const booking = ownerBookings.find(b => {
+        if (b.status === 'Cancelled') return false;
+        const slotStr = (b.time_slot || '').trim();
+        return slotStr === timeLabel || slotStr.startsWith(timeLabel.slice(0, 5));
+      });
+
+      if (booking) {
+        return {
+          time: timeLabel,
+          status: booking.status === 'Walk-in' ? 'walkin' : 'booked',
+          player: booking.player_name || 'Player',
+          booking: booking
+        };
+      }
+      return {
+        time: timeLabel,
+        status: 'available',
+        player: null,
+        booking: null
+      };
+    });
+
+    slots.forEach(s => {
       const el = document.createElement('div');
       el.className = `slot-item ${s.status}`;
       el.innerHTML = `
         <div class="slot-time">${s.time}</div>
         <span class="slot-badge">${s.status}</span>
-        ${s.player ? `<div style="font-size:0.65rem; color:var(--slate-500); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${s.player.split(' ')[0]}</div>` : ''}
+        ${s.player ? `<div style="font-size:0.68rem; font-weight:600; color:var(--slate-700); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${s.player}">${s.player}</div>` : ''}
       `;
       el.addEventListener('click', () => {
         if (s.status === 'available') {
-          s.status = 'walkin';
-          s.player = 'Offline Walk-in';
-          showToast(`Marked ${s.time} as Walk-in customer!`);
-        } else if (s.status === 'walkin') {
-          s.status = 'available';
-          s.player = null;
-          showToast(`Reopened ${s.time} slot for online bookings!`);
-        } else {
-          alert(`Slot ${s.time}:\nBooked by: ${s.player}\nStatus: Paid Online.`);
+          const customerName = prompt(`Enter customer name for walk-in slot (${s.time}):`);
+          if (customerName) {
+            const primaryTurf = ownerTurfs[0] || { id: 'turf-1', name: 'The Arena Sports Hub' };
+            window.TurfifyStore.createBooking({
+              turf_id: primaryTurf.id,
+              turf_name: primaryTurf.name,
+              sport: primaryTurf.sport || 'Football',
+              player_name: customerName,
+              player_phone: '+91 Walk-in',
+              date: new Date().toISOString().split('T')[0],
+              time_slot: s.time,
+              amount: primaryTurf.price_per_hour || 1200,
+              status: 'Walk-in',
+              payment_status: 'Cash at Counter'
+            });
+            showToast(`Walk-in booked for ${customerName}!`);
+            renderOwnerDashboard();
+          }
+        } else if (s.status === 'walkin' && s.booking) {
+          if (confirm(`Cancel walk-in reservation for ${s.player}?`)) {
+            window.TurfifyStore.cancelBooking(s.booking.id);
+            showToast('Walk-in booking cancelled.');
+            renderOwnerDashboard();
+          }
+        } else if (s.booking) {
+          alert(`Slot ${s.time} reserved online:\nPlayer: ${s.booking.player_name}\nPhone: ${s.booking.player_phone || 'Online reservation'}\nTurf: ${s.booking.turf_name}\nAmount: ₹${s.booking.amount}\nStatus: ${s.booking.payment_status}`);
         }
-        renderOwnerDashboard();
       });
       slotMatrix.appendChild(el);
     });

@@ -35,6 +35,34 @@ function getAvatarColor(name) {
   return colors[hash % colors.length];
 }
 
+// ─── Supabase Client & Profiles Sync ──────────────────────────────────────────
+const SUPABASE_URL  = 'https://fksdanhjdhqbpijoolzf.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0';
+let sbAdmin = null;
+let cachedSupabaseProfiles = [];
+
+try {
+  if (window.supabase) {
+    sbAdmin = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  }
+} catch (e) {
+  console.warn('Supabase initialization note:', e);
+}
+
+async function fetchSupabaseProfiles() {
+  if (!sbAdmin) return;
+  try {
+    const { data, error } = await sbAdmin.from('profiles').select('*').order('created_at', { ascending: false });
+    if (!error && Array.isArray(data)) {
+      cachedSupabaseProfiles = data;
+      renderKPIs();
+      renderUsersTable();
+    }
+  } catch (err) {
+    console.warn('Could not fetch Supabase profiles in Admin:', err);
+  }
+}
+
 // ─── TurfifyStore accessors ──────────────────────────────────────────────────
 function getLiveBookings() {
   return window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
@@ -47,61 +75,126 @@ function getLiveTurfs() {
 function getLiveUsers() {
   const bookings = getLiveBookings();
   const turfs = getLiveTurfs();
+  const storeUsers = window.TurfifyStore ? window.TurfifyStore.getUsers() : [];
 
-  // Build players from booking records
-  const playerMap = {};
-  bookings.forEach(b => {
-    if (!b.player_id) return;
-    if (!playerMap[b.player_id]) {
-      playerMap[b.player_id] = {
-        id: b.player_id,
-        name: b.player_name || 'Player',
-        phone: b.player_phone || '—',
-        email: '—',
-        role: 'Player',
+  const userMap = {};
+
+  // 1. Ingest registered users from TurfifyStore
+  storeUsers.forEach(u => {
+    const key = (u.id || u.email || Math.random().toString()).toLowerCase();
+    const isOwner = (u.role || '').toLowerCase() === 'owner' || (u.role || '').toLowerCase() === 'turf owner';
+    userMap[key] = {
+      id: u.id || key,
+      name: u.name || u.full_name || (isOwner ? 'Turf Owner' : 'Player'),
+      phone: u.phone || '—',
+      email: u.email || '—',
+      role: isOwner ? 'Turf Owner' : 'Player',
+      bookings: 0,
+      spent: 0,
+      turfsManaged: 0,
+      totalRevenue: 0,
+      joined: u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently',
+      status: u.status || 'Active'
+    };
+  });
+
+  // 2. Merge with Supabase Profiles (if online)
+  cachedSupabaseProfiles.forEach(p => {
+    const key = (p.id || p.email || '').toLowerCase();
+    if (!key) return;
+    const isOwner = (p.role || '').toLowerCase() === 'owner' || (p.role || '').toLowerCase() === 'turf owner';
+    if (!userMap[key]) {
+      userMap[key] = {
+        id: p.id,
+        name: p.full_name || p.name || (isOwner ? 'Turf Owner' : 'Player'),
+        phone: p.phone || '—',
+        email: p.email || '—',
+        role: isOwner ? 'Turf Owner' : 'Player',
         bookings: 0,
         spent: 0,
-        joined: b.date || '—'
+        turfsManaged: 0,
+        totalRevenue: 0,
+        joined: p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently',
+        status: 'Active'
       };
-    }
-    if (b.status !== 'Cancelled') {
-      playerMap[b.player_id].bookings++;
-      playerMap[b.player_id].spent += (b.amount || 0);
+    } else {
+      if (p.full_name) userMap[key].name = p.full_name;
+      if (p.phone && userMap[key].phone === '—') userMap[key].phone = p.phone;
+      if (p.email && userMap[key].email === '—') userMap[key].email = p.email;
     }
   });
 
-  // Build owners from turfs
-  const ownerMap = {};
+  // 3. Connect Turfs to Owners (and create owner entry if not yet registered)
   turfs.forEach(t => {
     if (!t.owner_id) return;
-    if (!ownerMap[t.owner_id]) {
-      ownerMap[t.owner_id] = {
+    const matchKey = Object.keys(userMap).find(k => k === t.owner_id.toLowerCase() || (userMap[k].id && userMap[k].id.toLowerCase() === t.owner_id.toLowerCase()));
+    if (matchKey) {
+      userMap[matchKey].turfsManaged++;
+      if (t.owner_name && (!userMap[matchKey].name || userMap[matchKey].name === 'Turf Owner')) {
+        userMap[matchKey].name = t.owner_name;
+      }
+      if (t.owner_phone && userMap[matchKey].phone === '—') {
+        userMap[matchKey].phone = t.owner_phone;
+      }
+      if (t.owner_email && userMap[matchKey].email === '—') {
+        userMap[matchKey].email = t.owner_email;
+      }
+    } else {
+      const oid = t.owner_id.toLowerCase();
+      userMap[oid] = {
         id: t.owner_id,
-        name: t.owner_name || 'Owner (' + t.owner_id + ')',
+        name: t.owner_name || ('Owner (' + t.owner_id + ')'),
         phone: t.owner_phone || '—',
         email: t.owner_email || '—',
         role: 'Turf Owner',
-        turfsManaged: 0,
+        turfsManaged: 1,
         totalRevenue: 0,
-        joined: '—'
+        bookings: 0,
+        spent: 0,
+        joined: 'Venue Partner',
+        status: 'Active'
       };
     }
-    ownerMap[t.owner_id].turfsManaged++;
   });
 
-  // Add booking revenue to owners
+  // 4. Connect Bookings to Players and calculate revenue for Owners
   bookings.forEach(b => {
+    if (b.player_id) {
+      const matchKey = Object.keys(userMap).find(k => k === b.player_id.toLowerCase() || (userMap[k].id && userMap[k].id.toLowerCase() === b.player_id.toLowerCase()));
+      if (matchKey) {
+        if (b.status !== 'Cancelled') {
+          userMap[matchKey].bookings++;
+          userMap[matchKey].spent += (b.amount || 0);
+        }
+      } else {
+        const pid = b.player_id.toLowerCase();
+        userMap[pid] = {
+          id: b.player_id,
+          name: b.player_name || 'Player',
+          phone: b.player_phone || '—',
+          email: '—',
+          role: 'Player',
+          bookings: b.status !== 'Cancelled' ? 1 : 0,
+          spent: b.status !== 'Cancelled' ? (b.amount || 0) : 0,
+          turfsManaged: 0,
+          totalRevenue: 0,
+          joined: b.date || 'Recently',
+          status: 'Active'
+        };
+      }
+    }
+
+    // Owner side revenue split
     const turf = turfs.find(t => t.id === b.turf_id);
-    if (!turf || !turf.owner_id || !ownerMap[turf.owner_id]) return;
-    if (b.status !== 'Cancelled') {
-      ownerMap[turf.owner_id].totalRevenue += (b.amount || 0);
-      if (ownerMap[turf.owner_id].joined === '—') {
-        ownerMap[turf.owner_id].joined = b.date || '—';
+    if (turf && turf.owner_id) {
+      const ownerKey = Object.keys(userMap).find(k => k === turf.owner_id.toLowerCase() || (userMap[k].id && userMap[k].id.toLowerCase() === turf.owner_id.toLowerCase()));
+      if (ownerKey && b.status !== 'Cancelled') {
+        userMap[ownerKey].totalRevenue += (b.amount || 0);
       }
     }
   });
 
-  return [...Object.values(playerMap), ...Object.values(ownerMap)];
+  return Object.values(userMap);
 }
 
 // Application Controller
@@ -114,6 +207,40 @@ document.addEventListener('DOMContentLoaded', () => {
   renderUsersTable();
   initFilters();
   initExportButtons();
+  initModals();
+
+  // Load cloud profiles and server database
+  fetchSupabaseProfiles();
+  if (window.TurfifyStore?.syncWithServer) {
+    window.TurfifyStore.syncWithServer().then(() => {
+      renderKPIs();
+      renderTurfsList();
+      renderBookingsTable();
+      renderUsersTable();
+    }).catch(() => {});
+  }
+
+  // Listen for real-time registrations and server sync across tabs and windows
+  window.addEventListener('storage', (e) => {
+    if (!e.key || e.key.startsWith('turfify_')) {
+      renderKPIs();
+      renderTurfsList();
+      renderBookingsTable();
+      renderUsersTable();
+    }
+  });
+
+  window.addEventListener('turfify:data_synced', () => {
+    renderKPIs();
+    renderTurfsList();
+    renderBookingsTable();
+    renderUsersTable();
+  });
+
+  window.addEventListener('turfify:users_updated', () => {
+    renderKPIs();
+    renderUsersTable();
+  });
 });
 
 // ─── KPI Stats ───────────────────────────────────────────────────────────────
@@ -132,8 +259,10 @@ function renderKPIs() {
 
   set('kpi-gmv',           fmt(totalGMV));
   set('kpi-turfs',         turfs.length);
+  set('nav-turfs-counter', turfs.length);
   set('kpi-bookings',      confirmed.length);
   set('kpi-users',         users.length);
+  set('nav-users-counter', users.length);
   set('kpi-users-footer',  `${players} Players • ${owners} Owners`);
   set('kpi-admin-revenue', fmt(adminRev));
 
@@ -446,16 +575,20 @@ function renderUsersTable(filterRole = 'all', searchQuery = '') {
   }
   if (searchQuery.trim()) {
     const q = searchQuery.toLowerCase();
-    users = users.filter(u => (u.name || '').toLowerCase().includes(q) || (u.phone || '').toLowerCase().includes(q));
+    users = users.filter(u =>
+      (u.name || '').toLowerCase().includes(q) ||
+      (u.phone || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q)
+    );
   }
 
   if (!users.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:#94A3B8;">No registrations yet. Users appear here once they sign up and book a slot.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:36px;color:#94A3B8;">No accounts match the current filter. New registrations will automatically appear here.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = users.map(u => `
-    <tr>
+    <tr id="user-row-${u.id}">
       <td>
         <div class="user-info-cell">
           <div class="cell-avatar" style="background:${getAvatarColor(u.name)}">${(u.name || 'US').substring(0,2).toUpperCase()}</div>
@@ -467,13 +600,13 @@ function renderUsersTable(filterRole = 'all', searchQuery = '') {
       </td>
       <td><span style="font-size:0.82rem;font-weight:600;color:#475569;">${u.email || '—'}</span></td>
       <td>
-        <span class="status-pill ${u.role === 'Turf Owner' ? 'active' : 'walkin'}">${u.role}</span>
+        <span class="status-pill ${u.role === 'Turf Owner' ? 'active' : 'walkin'}">${u.role === 'Turf Owner' ? '🏟️ Turf Owner' : '⚽ Player'}</span>
       </td>
       <td>
         <div style="font-weight:700;">
           ${u.role === 'Turf Owner'
-            ? `${fmt(Math.round((u.totalRevenue || 0) * OWNER_SHARE))} <span style="font-size:0.72rem;color:#94A3B8;">(70% share)</span>`
-            : `${u.bookings || 0} slots`}
+            ? `${fmt(Math.round((u.totalRevenue || 0) * OWNER_SHARE))} <span style="font-size:0.72rem;color:#94A3B8;">(70% payout)</span>`
+            : `${u.bookings || 0} slots booked`}
         </div>
         <div style="font-size:0.74rem;color:#64748B;">
           ${u.role === 'Turf Owner'
@@ -481,8 +614,13 @@ function renderUsersTable(filterRole = 'all', searchQuery = '') {
             : `Total spent: ${fmt(u.spent || 0)}`}
         </div>
       </td>
-      <td><span class="status-pill active">active</span></td>
-      <td style="font-size:0.78rem;color:#64748B;">${u.joined || '—'}</td>
+      <td><span class="status-pill active">${u.status || 'Active'}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:0.76rem;color:#64748B;">${u.joined || '—'}</span>
+          <button class="table-action-btn delete" onclick="adminDeleteUser('${u.id}')" title="Remove account">🗑️ Remove</button>
+        </div>
+      </td>
     </tr>
   `).join('');
 }
@@ -538,6 +676,103 @@ window.adminCancelBooking = function(bookingId) {
     showToast(`Booking ${bookingId} cancelled.`);
   }
 };
+
+window.adminDeleteUser = function(userId) {
+  if (confirm(`Remove this user account (${userId}) from Turfify?`)) {
+    if (window.TurfifyStore) {
+      window.TurfifyStore.deleteUser(userId);
+    }
+    cachedSupabaseProfiles = cachedSupabaseProfiles.filter(p => p.id !== userId);
+    renderUsersTable();
+    renderKPIs();
+    showToast('Account removed from database.');
+  }
+};
+
+// Modal handlers for Onboarding Turf and Users
+function initModals() {
+  // Turf Modal
+  const turfModal = document.getElementById('add-turf-modal');
+  const closeTurfModal = () => turfModal?.classList.remove('active');
+  document.getElementById('btn-close-turf-modal')?.addEventListener('click', closeTurfModal);
+  document.getElementById('btn-cancel-turf-modal')?.addEventListener('click', closeTurfModal);
+
+  document.getElementById('btn-save-turf')?.addEventListener('click', () => {
+    const name = document.getElementById('form-turf-name')?.value?.trim();
+    const sport = document.getElementById('form-turf-sport')?.value;
+    const price = parseInt(document.getElementById('form-turf-price')?.value, 10);
+    const location = document.getElementById('form-turf-location')?.value?.trim();
+    const ownerName = document.getElementById('form-turf-owner')?.value?.trim() || 'Venue Owner';
+
+    if (!name || !price || !location) {
+      alert('Please fill in the turf name, hourly rate, and location.');
+      return;
+    }
+
+    if (window.TurfifyStore) {
+      window.TurfifyStore.addTurf({
+        name,
+        sport,
+        price_per_hour: price,
+        location,
+        owner_name: ownerName
+      });
+    }
+
+    closeTurfModal();
+    renderTurfsList();
+    renderKPIs();
+    showToast(`Turf "${name}" added to marketplace.`);
+    if (document.getElementById('form-turf-name')) document.getElementById('form-turf-name').value = '';
+    if (document.getElementById('form-turf-price')) document.getElementById('form-turf-price').value = '';
+    if (document.getElementById('form-turf-location')) document.getElementById('form-turf-location').value = '';
+    if (document.getElementById('form-turf-owner')) document.getElementById('form-turf-owner').value = '';
+  });
+
+  // User Modal
+  const userModal = document.getElementById('add-user-modal');
+  const closeUserModal = () => userModal?.classList.remove('active');
+  document.getElementById('btn-close-user-modal')?.addEventListener('click', closeUserModal);
+  document.getElementById('btn-cancel-user-modal')?.addEventListener('click', closeUserModal);
+
+  document.getElementById('btn-save-user')?.addEventListener('click', () => {
+    const name = document.getElementById('form-user-name')?.value?.trim();
+    const role = document.getElementById('form-user-role')?.value;
+    const phone = document.getElementById('form-user-phone')?.value?.trim();
+    const email = document.getElementById('form-user-email')?.value?.trim();
+    const business = document.getElementById('form-user-business')?.value?.trim();
+
+    if (!name) {
+      alert('Please enter user full name.');
+      return;
+    }
+
+    const isOwner = role === 'Turf Owner';
+    const newUser = {
+      id: (isOwner ? 'owner-' : 'player-') + Date.now(),
+      name,
+      role: isOwner ? 'owner' : 'player',
+      phone: phone || '—',
+      email: email || `${name.toLowerCase().replace(/\s+/g, '')}@example.com`,
+      business_name: business || '',
+      status: 'Active',
+      created_at: new Date().toISOString()
+    };
+
+    if (window.TurfifyStore) {
+      window.TurfifyStore.addUser(newUser);
+    }
+
+    closeUserModal();
+    renderUsersTable();
+    renderKPIs();
+    showToast(`Account for ${name} (${role}) registered!`);
+    if (document.getElementById('form-user-name')) document.getElementById('form-user-name').value = '';
+    if (document.getElementById('form-user-phone')) document.getElementById('form-user-phone').value = '';
+    if (document.getElementById('form-user-email')) document.getElementById('form-user-email').value = '';
+    if (document.getElementById('form-user-business')) document.getElementById('form-user-business').value = '';
+  });
+}
 
 // Export Functionality
 function initExportButtons() {

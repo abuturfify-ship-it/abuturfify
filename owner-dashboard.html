@@ -265,14 +265,26 @@
 
   <script src="store.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Ensure owner state
-      window.TurfifyStore.switchRole('owner');
+    function renderOwnerDashboard() {
       const user = window.TurfifyStore.getCurrentUser();
-      const ownerTurfs = window.TurfifyStore.getOwnerTurfs(user.id);
-      const ownerBookings = window.TurfifyStore.getOwnerBookings(user.id);
+      if (!user) {
+        window.TurfifyStore.switchRole('owner');
+      }
+      const activeUser = window.TurfifyStore.getCurrentUser();
+      const ownerTurfs = window.TurfifyStore.getOwnerTurfs(activeUser?.id);
+      const ownerBookings = window.TurfifyStore.getOwnerBookings(activeUser?.id);
 
       document.getElementById('owner-turfs-count').textContent = `${ownerTurfs.length} Grounds`;
+
+      // Dynamic owner name and business title
+      if (activeUser?.name) {
+        const ownerNameEl = document.getElementById('nav-owner-name');
+        if (ownerNameEl) ownerNameEl.textContent = activeUser.name;
+        const bannerTitle = document.querySelector('.dash-welcome h1');
+        if (bannerTitle) bannerTitle.textContent = `Welcome, ${activeUser.name}!`;
+        const ownerBizEl = document.getElementById('nav-owner-business');
+        if (ownerBizEl && activeUser.business_name) ownerBizEl.textContent = activeUser.business_name;
+      }
 
       // Revenue
       const totalRev = ownerBookings
@@ -314,37 +326,70 @@
       // Grounds list
       const turfsList = document.getElementById('owner-turfs-list');
       turfsList.innerHTML = '';
-      ownerTurfs.forEach(t => {
-        const item = document.createElement('div');
-        item.className = 'owner-turf-item';
-        item.innerHTML = `
-          <img src="${t.image}" alt="${t.name}" class="owner-turf-img">
-          <div class="owner-turf-info">
-            <div class="owner-turf-title">${t.name}</div>
-            <div class="owner-turf-meta">
-              <span>${t.sport}</span>
-              <span>₹${t.price_per_hour}/hr</span>
-              <span>⭐ ${t.rating}</span>
+      if (!ownerTurfs.length) {
+        turfsList.innerHTML = `<div style="padding:28px;text-align:center;color:#64748B;font-size:0.9rem;border:1px dashed #CBD5E1;border-radius:12px;margin:12px 0;">No facilities listed yet. Click "+ Add Ground" above to register your sports turf!</div>`;
+      } else {
+        ownerTurfs.forEach(t => {
+          const item = document.createElement('div');
+          item.className = 'owner-turf-item';
+          item.innerHTML = `
+            <img src="${t.image}" alt="${t.name}" class="owner-turf-img">
+            <div class="owner-turf-info">
+              <div class="owner-turf-title">${t.name}</div>
+              <div class="owner-turf-meta">
+                <span>${t.sport}</span>
+                <span>₹${t.price_per_hour}/hr</span>
+                <span>⭐ ${t.rating || '5.0'}</span>
+              </div>
             </div>
-          </div>
-          <button class="btn-mini-action" onclick="deleteTurf('${t.id}')" title="Delete">🗑️</button>
-        `;
-        turfsList.appendChild(item);
-      });
+            <button class="btn-mini-action" onclick="deleteTurf('${t.id}')" title="Delete">🗑️</button>
+          `;
+          turfsList.appendChild(item);
+        });
+      }
 
-      // Interactive Slot Matrix
+      // Interactive Slot Matrix - dynamically reads real bookings
       const slotMatrix = document.getElementById('owner-slot-matrix');
       slotMatrix.innerHTML = '';
-      const slots = [
-        { time: '04:00 PM', status: 'available', player: null },
-        { time: '05:00 PM', status: 'available', player: null },
-        { time: '06:00 PM', status: 'walkin', player: 'Walk-in Team' },
-        { time: '07:00 PM', status: 'booked', player: 'Rahul Sharma (+91 98765 43210)' },
-        { time: '08:00 PM', status: 'booked', player: 'Vikram Mehta (+91 94455 12345)' },
-        { time: '09:00 PM', status: 'walkin', player: 'Arun & Friends' },
-        { time: '10:00 PM', status: 'available', player: null },
-        { time: '11:00 PM', status: 'available', player: null }
+      
+      const timeSlots = [
+        '06:00 - 07:00 AM',
+        '07:00 - 08:00 AM',
+        '08:00 - 09:00 AM',
+        '04:00 - 05:00 PM',
+        '05:00 - 06:00 PM',
+        '06:00 - 07:00 PM',
+        '07:00 - 08:00 PM',
+        '08:00 - 09:00 PM',
+        '09:00 - 10:00 PM',
+        '10:00 - 11:00 PM'
       ];
+
+      const slots = timeSlots.map(timeLabel => {
+        // Match booking for this owner's grounds
+        const booking = ownerBookings.find(b => {
+          if (b.status === 'Cancelled') return false;
+          const slotStr = (b.time_slot || '').trim();
+          return slotStr === timeLabel || slotStr.startsWith(timeLabel.slice(0, 5));
+        });
+
+        if (booking) {
+          const isWalkin = booking.status === 'Walk-in';
+          return {
+            time: timeLabel,
+            status: isWalkin ? 'walkin' : 'booked',
+            player: booking.player_name || 'Player',
+            booking: booking
+          };
+        }
+
+        return {
+          time: timeLabel,
+          status: 'available',
+          player: null,
+          booking: null
+        };
+      });
 
       slots.forEach(s => {
         const el = document.createElement('div');
@@ -352,19 +397,35 @@
         el.innerHTML = `
           <div class="slot-time">${s.time}</div>
           <span class="slot-badge">${s.status}</span>
-          ${s.player ? `<div style="font-size:0.65rem; color:var(--slate-500); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${s.player.split(' ')[0]}</div>` : ''}
+          ${s.player ? `<div style="font-size:0.68rem; font-weight:600; color:var(--slate-700); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${s.player}">${s.player}</div>` : ''}
         `;
         el.addEventListener('click', () => {
           if (s.status === 'available') {
-            s.status = 'walkin';
-            alert(`Marked ${s.time} slot as Walk-in / Phone reservation.`);
-          } else if (s.status === 'walkin') {
-            s.status = 'available';
-            alert(`Reopened ${s.time} slot for online player bookings.`);
-          } else {
-            alert(`Slot ${s.time} is booked online by ${s.player}`);
+            const customerName = prompt(`Enter customer name for walk-in slot (${s.time}):`);
+            if (customerName) {
+              const primaryTurf = ownerTurfs[0] || { id: 'turf-1', name: 'Arena Sports' };
+              window.TurfifyStore.createBooking({
+                turf_id: primaryTurf.id,
+                turf_name: primaryTurf.name,
+                sport: primaryTurf.sport || 'Football',
+                player_name: customerName,
+                player_phone: '+91 Walk-in',
+                date: new Date().toISOString().split('T')[0],
+                time_slot: s.time,
+                amount: primaryTurf.price_per_hour || 1200,
+                status: 'Walk-in',
+                payment_status: 'Cash at Counter'
+              });
+              renderOwnerDashboard();
+            }
+          } else if (s.status === 'walkin' && s.booking) {
+            if (confirm(`Cancel walk-in reservation for ${s.player}?`)) {
+              window.TurfifyStore.cancelBooking(s.booking.id);
+              renderOwnerDashboard();
+            }
+          } else if (s.booking) {
+            alert(`Slot ${s.time} reserved online:\nPlayer: ${s.booking.player_name}\nPhone: ${s.booking.player_phone || 'Online reservation'}\nTurf: ${s.booking.turf_name}\nAmount: ₹${s.booking.amount}\nStatus: ${s.booking.payment_status}`);
           }
-          location.reload();
         });
         slotMatrix.appendChild(el);
       });
@@ -372,20 +433,69 @@
       // Ledger Table
       const ledgerBody = document.getElementById('owner-ledger-body');
       ledgerBody.innerHTML = '';
-      ownerBookings.forEach(b => {
-        const tr = document.createElement('tr');
-        const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
-        tr.innerHTML = `
-          <td><code style="font-size:0.75rem;">${b.id}</code></td>
-          <td><strong>${b.player_name}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.player_phone}</span></td>
-          <td>${b.turf_name}</td>
-          <td>${b.date}<br><span style="font-size:0.75rem; color:var(--slate-500);">${b.time_slot}</span></td>
-          <td><strong>₹${b.amount}</strong></td>
-          <td><span style="font-size:0.8rem; color:var(--slate-600);">${b.payment_status}</span></td>
-          <td><span class="status-pill ${statusClass}">${b.status}</span></td>
-        `;
-        ledgerBody.appendChild(tr);
-      });
+      if (!ownerBookings.length) {
+        ledgerBody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94A3B8;">No booking transactions yet for your turfs.</td></tr>`;
+      } else {
+        ownerBookings.forEach(b => {
+          const tr = document.createElement('tr');
+          const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
+          tr.innerHTML = `
+            <td><code style="font-size:0.75rem;">${b.id}</code></td>
+            <td><strong>${b.player_name || 'Player'}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.player_phone || '—'}</span></td>
+            <td>${b.turf_name}</td>
+            <td>${b.date}<br><span style="font-size:0.75rem; color:var(--slate-500);">${b.time_slot}</span></td>
+            <td><strong>₹${b.amount}</strong></td>
+            <td><span style="font-size:0.8rem; color:var(--slate-600);">${b.payment_status}</span></td>
+            <td><span class="status-pill ${statusClass}">${b.status}</span></td>
+          `;
+          ledgerBody.appendChild(tr);
+        });
+      }
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const t = document.createElement('div');
+      t.style.cssText = 'background:#0F172A; color:#F8FAFC; padding:12px 18px; border-radius:10px; margin-top:10px; box-shadow:0 10px 25px rgba(0,0,0,0.25); display:flex; align-items:center; gap:10px; font-size:0.9rem; border-left:4px solid #10B981; transition:opacity 0.3s ease;';
+      t.innerHTML = `<span>${msg}</span>`;
+      container.appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = '0';
+        setTimeout(() => t.remove(), 300);
+      }, 4500);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderOwnerDashboard();
+
+      // Sync latest server records for cross-window consistency
+      if (window.TurfifyStore?.syncWithServer) {
+        await window.TurfifyStore.syncWithServer();
+        renderOwnerDashboard();
+      }
+
+      window.addEventListener('turfify:data_synced', () => renderOwnerDashboard());
+      window.addEventListener('turfify:booking_created', () => renderOwnerDashboard());
+      window.addEventListener('storage', () => renderOwnerDashboard());
+
+      // Auto-poll server every 2.5 seconds so turf owners receive new bookings in real time
+      let prevCount = null;
+      setInterval(async () => {
+        if (window.TurfifyStore?.syncWithServer) {
+          const changed = await window.TurfifyStore.syncWithServer();
+          if (changed) {
+            const user = window.TurfifyStore.getCurrentUser();
+            const bookings = window.TurfifyStore.getOwnerBookings(user?.id);
+            if (prevCount !== null && bookings.length > prevCount) {
+              const newest = bookings[0];
+              showToast(`🔔 New booking received! ${newest.player_name} booked ${newest.turf_name} (${newest.time_slot})`);
+            }
+            prevCount = bookings.length;
+            renderOwnerDashboard();
+          }
+        }
+      }, 2500);
 
       // Modals
       const modal = document.getElementById('modal-add-turf');
