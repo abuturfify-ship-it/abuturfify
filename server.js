@@ -20,71 +20,7 @@ const MIME_TYPES = {
 // Seed initial database if not existing (no fake defaults)
 const DEFAULT_TURFS = [];
 
-const DEFAULT_BOOKINGS = [
-  {
-    id: 'bk-101',
-    turf_id: 'turf-1',
-    turf_name: 'The Arena Sports Hub',
-    sport: 'Football',
-    player_id: 'player-1',
-    player_name: 'Rahul Sharma',
-    player_email: 'rahul.sharma@example.com',
-    player_phone: '+91 98765 43210',
-    date: '2026-09-10',
-    time_slot: '07:00 PM - 08:00 PM',
-    amount: 1200,
-    status: 'Confirmed',
-    payment_status: 'Paid Online',
-    booking_time: '2026-09-09 18:30'
-  },
-  {
-    id: 'bk-102',
-    turf_id: 'turf-2',
-    turf_name: 'Koramangala Kickoff Arena',
-    sport: 'Box Cricket',
-    player_id: 'player-1',
-    player_name: 'Rahul Sharma',
-    player_email: 'rahul.sharma@example.com',
-    player_phone: '+91 98765 43210',
-    date: '2026-09-12',
-    time_slot: '06:00 PM - 07:00 PM',
-    amount: 1500,
-    status: 'Confirmed',
-    payment_status: 'Paid Online',
-    booking_time: '2026-09-09 21:00'
-  },
-  {
-    id: 'bk-103',
-    turf_id: 'turf-1',
-    turf_name: 'The Arena Sports Hub',
-    sport: 'Football',
-    player_id: 'player-9',
-    player_name: 'Vikram Mehta',
-    player_email: 'vikram.m@example.com',
-    player_phone: '+91 94455 12345',
-    date: '2026-09-10',
-    time_slot: '08:00 PM - 09:00 PM',
-    amount: 1200,
-    status: 'Confirmed',
-    payment_status: 'Paid Online',
-    booking_time: '2026-09-08 14:15'
-  },
-  {
-    id: 'bk-104',
-    turf_id: 'turf-1',
-    turf_name: 'The Arena Sports Hub',
-    sport: 'Football',
-    player_id: 'player-8',
-    player_name: 'Local Walk-in Team (Arun)',
-    player_phone: '+91 91234 56789',
-    date: '2026-09-10',
-    time_slot: '09:00 PM - 10:00 PM',
-    amount: 1200,
-    status: 'Walk-in',
-    payment_status: 'Cash at Ground',
-    booking_time: '2026-09-10 17:00'
-  }
-];
+const DEFAULT_BOOKINGS = [];
 
 const DEFAULT_USERS_LIST = [
   {
@@ -300,6 +236,21 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 200, { success: true, user });
       }
       return sendJson(res, 400, { error: 'Invalid user data' });
+    }
+
+    // 7.1 DELETE /api/user -> Delete user
+    if (pathname === '/api/user' && req.method === 'DELETE') {
+      const userId = parsedUrl.searchParams.get('id');
+      if (userId) {
+        const idLower = userId.toLowerCase();
+        db.users = (db.users || []).filter(u =>
+          (u.id && u.id.toLowerCase() !== idLower) &&
+          (!u.email || u.email.toLowerCase() !== idLower)
+        );
+        saveDatabase(db);
+        return sendJson(res, 200, { success: true, id: userId });
+      }
+      return sendJson(res, 400, { error: 'Missing user id' });
     }
 
     // 8. GET /api/user-data -> Fetch user profile and their associated turfs and bookings

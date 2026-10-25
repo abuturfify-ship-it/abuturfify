@@ -8,6 +8,54 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="dashboard.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+  <style>
+    .amenities-toggle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .amenity-toggle-btn {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      color: #475569;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .amenity-toggle-btn:hover {
+      background: #F1F5F9;
+      border-color: #94A3B8;
+    }
+    .amenity-toggle-btn.selected {
+      background: #ECFDF5;
+      border-color: #10B981;
+      color: #047857;
+      box-shadow: 0 0 0 1px #10B981;
+    }
+    .upload-drop-zone {
+      border: 2px dashed #CBD5E1;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      background: #F8FAFC;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .upload-drop-zone:hover {
+      border-color: #10B981;
+      background: #ECFDF5;
+    }
+  </style>
 </head>
 <body class="dash-page">
 
@@ -366,8 +414,47 @@
             <input type="text" class="form-control" id="new-turf-loc" placeholder="e.g. Sarjapur Road, Bangalore" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Turf Photo URL</label>
-            <input type="url" class="form-control" id="new-turf-img" value="https://images.unsplash.com/photo-1529900245534-47fbf8c3f4be?w=800&auto=format&fit=crop&q=80">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Available Amenities / Facilities</span>
+              <span style="font-size: 0.72rem; color: var(--slate-400); font-weight: normal;">Click to toggle</span>
+            </label>
+            <div class="amenities-toggle-grid" id="amenities-selector-dash">
+              <button type="button" class="amenity-toggle-btn" data-amenity="Food & Snacks">🍔 Food</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Parking">🚗 Parking</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Cafeteria">☕ Cafeteria</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Floodlights">💡 Floodlights</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Changing Room">🚿 Changing Room</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Drinking Water">💧 Drinking Water</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Free Wi-Fi">📶 Free Wi-Fi</button>
+              <button type="button" class="amenity-toggle-btn" data-amenity="Equipment Rental">🏏 Equipment</button>
+            </div>
+            <p style="font-size: 0.72rem; color: var(--slate-500); margin-top: 4px;">Only the clicked options will be shown on your turf card.</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Turf Photo</label>
+            <!-- Gallery / Device Upload -->
+            <div class="upload-drop-zone" id="upload-box-dash">
+              <input type="file" id="new-turf-file-dash" accept="image/*" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+              <div id="upload-prompt-dash">
+                <div style="font-size: 1.4rem; margin-bottom: 2px;">📸</div>
+                <div style="font-weight: 600; font-size: 0.85rem; color: #334155;">Click to choose photo from Gallery / Device</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 2px;">PNG, JPG, WEBP (Instant preview)</div>
+              </div>
+              <div id="upload-preview-wrap-dash" style="display:none; align-items:center; justify-content:center; gap:12px;">
+                <img id="upload-preview-dash" src="" alt="Preview" style="max-height: 75px; max-width: 140px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0;">
+                <div style="text-align: left;">
+                  <div id="upload-filename-dash" style="font-size:0.8rem; font-weight:700; color:#047857;">Gallery Photo Loaded ✓</div>
+                  <div style="font-size:0.72rem; color:#64748B;">Click again to change</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Separately: Photo URL -->
+            <div style="margin-top: 10px;">
+              <label class="form-label" style="font-size: 0.78rem; color: var(--slate-500); margin-bottom: 3px;">Or Enter Photo URL Separately (Optional)</label>
+              <input type="url" class="form-control" id="new-turf-url-dash" placeholder="https://images.unsplash.com/... or paste image link">
+            </div>
           </div>
           <button type="submit" class="btn-modal-action" style="margin-top: 10px;">
             Publish Turf to Marketplace

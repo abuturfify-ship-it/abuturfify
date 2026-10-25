@@ -8,6 +8,54 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="admin.css">
+  <style>
+    .amenities-toggle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+      gap: 7px;
+      margin-top: 6px;
+    }
+    .amenity-toggle-btn {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      color: #475569;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .amenity-toggle-btn:hover {
+      background: #F1F5F9;
+      border-color: #94A3B8;
+    }
+    .amenity-toggle-btn.selected {
+      background: #ECFDF5;
+      border-color: #10B981;
+      color: #047857;
+      box-shadow: 0 0 0 1px #10B981;
+    }
+    .upload-drop-zone {
+      border: 2px dashed #CBD5E1;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      background: #F8FAFC;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .upload-drop-zone:hover {
+      border-color: #10B981;
+      background: #ECFDF5;
+    }
+  </style>
 </head>
 <body>
 
@@ -457,19 +505,19 @@
             <div class="revenue-banner-grid">
               <div>
                 <div class="rev-headline-label">Platform Gross Settlement</div>
-                <div class="rev-big-val">₹4,28,500</div>
+                <div class="rev-big-val" id="payouts-gross-val">₹0</div>
                 <span class="rev-sub-pill">⚡ Razorpay Route Enabled</span>
               </div>
 
               <div class="rev-stat-box">
                 <div class="rev-stat-box-label">Owner Payouts Disbursed</div>
-                <div class="rev-stat-box-val" style="color: #6EE7B7;">₹3,85,650</div>
-                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 4px;">90% net to venue partners</div>
+                <div class="rev-stat-box-val" id="payouts-owner-val" style="color: #6EE7B7;">₹0</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 4px;">70% net to venue partners</div>
               </div>
 
               <div class="rev-stat-box">
-                <div class="rev-stat-box-label">Turfify Commission (10%)</div>
-                <div class="rev-stat-box-val" style="color: #93C5FD;">₹42,850</div>
+                <div class="rev-stat-box-label">Turfify Commission (30%)</div>
+                <div class="rev-stat-box-val" id="payouts-platform-val" style="color: #93C5FD;">₹0</div>
                 <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 4px;">Platform marketplace fee</div>
               </div>
             </div>
@@ -480,9 +528,9 @@
             <div class="kpi-card green">
               <div class="kpi-top">
                 <div class="kpi-icon-wrap">📱</div>
-                <span class="status-pill confirmed">68% Share</span>
+                <span class="status-pill confirmed" id="payouts-upi-share">0% Share</span>
               </div>
-              <div class="kpi-value">₹2,91,380</div>
+              <div class="kpi-value" id="payouts-upi-val">₹0</div>
               <div class="kpi-label">UPI Transactions</div>
               <div class="kpi-footer-text">Google Pay, PhonePe, Paytm</div>
             </div>
@@ -490,9 +538,9 @@
             <div class="kpi-card blue">
               <div class="kpi-top">
                 <div class="kpi-icon-wrap">💳</div>
-                <span class="status-pill active">22% Share</span>
+                <span class="status-pill active" id="payouts-card-share">0% Share</span>
               </div>
-              <div class="kpi-value">₹94,270</div>
+              <div class="kpi-value" id="payouts-card-val">₹0</div>
               <div class="kpi-label">Credit & Debit Cards</div>
               <div class="kpi-footer-text">Visa, Mastercard, RuPay</div>
             </div>
@@ -500,9 +548,9 @@
             <div class="kpi-card amber">
               <div class="kpi-top">
                 <div class="kpi-icon-wrap">🏦</div>
-                <span class="status-pill pending">10% Share</span>
+                <span class="status-pill pending" id="payouts-cash-share">0% Share</span>
               </div>
-              <div class="kpi-value">₹42,850</div>
+              <div class="kpi-value" id="payouts-cash-val">₹0</div>
               <div class="kpi-label">Netbanking & Desk Cash</div>
               <div class="kpi-footer-text">HDFC, ICICI, SBI & Walk-ins</div>
             </div>
@@ -648,6 +696,50 @@
         <div class="form-group-item">
           <label>Venue Owner Name</label>
           <input type="text" id="form-turf-owner" class="form-input-field" placeholder="e.g. Rajesh Kannan">
+        </div>
+
+        <div class="form-group-item">
+          <label style="display:flex;justify-content:space-between;align-items:center;">
+            <span>Available Amenities / Facilities</span>
+            <span style="font-size:0.72rem;color:var(--slate-400);font-weight:normal;">Click to toggle</span>
+          </label>
+          <div class="amenities-toggle-grid" id="amenities-selector-admin">
+            <button type="button" class="amenity-toggle-btn" data-amenity="Food & Snacks">🍔 Food</button>
+            <button type="button" class="amenity-toggle-btn" data-amenity="Parking">🚗 Parking</button>
+            <button type="button" class="amenity-toggle-btn" data-amenity="Cafeteria">☕ Cafeteria</button>
+            <button type="button" class="amenity-toggle-btn" data-amenity="Floodlights">💡 Floodlights</button>
+            <button type="button" class="amenity-toggle-btn" data-amenity="Changing Room">🚿 Changing Room</button>
+            <button type="button" class="amenity-toggle-btn" data-amenity="Drinking Water">💧 Drinking Water</button>
+            <button type="button" class="amenity-toggle-btn" data-amenity="Free Wi-Fi">📶 Free Wi-Fi</button>
+            <button type="button" class="amenity-toggle-btn" data-amenity="Equipment Rental">🏏 Equipment</button>
+          </div>
+          <p style="font-size:0.72rem;color:#64748B;margin-top:4px;">Only the clicked options will be shown on the turf card.</p>
+        </div>
+
+        <div class="form-group-item">
+          <label>Turf Photo</label>
+          <!-- Gallery / Device Upload -->
+          <div class="upload-drop-zone" id="upload-box-admin">
+            <input type="file" id="form-turf-file" accept="image/*" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+            <div id="upload-prompt-admin">
+              <div style="font-size: 1.3rem; margin-bottom: 2px;">📸</div>
+              <div style="font-weight: 600; font-size: 0.82rem; color: #334155;">Click to choose photo from Gallery / Device</div>
+              <div style="font-size: 0.7rem; color: #94A3B8; margin-top: 1px;">PNG, JPG, WEBP (Instant preview)</div>
+            </div>
+            <div id="upload-preview-wrap-admin" style="display:none; align-items:center; justify-content:center; gap:12px;">
+              <img id="upload-preview-admin" src="" alt="Preview" style="max-height: 70px; max-width: 130px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0;">
+              <div style="text-align: left;">
+                <div id="upload-filename-admin" style="font-size:0.8rem; font-weight:700; color:#047857;">Gallery Photo Loaded ✓</div>
+                <div style="font-size:0.7rem; color:#64748B;">Click again to change</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Separately: Photo URL -->
+          <div style="margin-top: 8px;">
+            <label style="font-size: 0.78rem; color: #64748B; margin-bottom: 3px; display:block;">Or Enter Photo URL Separately (Optional)</label>
+            <input type="url" id="form-turf-url" class="form-input-field" placeholder="https://images.unsplash.com/... or paste image link">
+          </div>
         </div>
       </div>
 

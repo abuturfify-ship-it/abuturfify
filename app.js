@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Owner registration triggers
+  // Owner registration triggers — redirect to login page
   [
     document.getElementById('btn-hero-owner'),
     document.getElementById('btn-owner-orange-cta'),
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ].forEach(btn => {
     btn?.addEventListener('click', (e) => {
       e.preventDefault();
-      openModal(modalOwner);
+      window.location.href = 'auth.html?role=owner';
     });
   });
 
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (sportLower.includes('badminton')) sportKey = 'badminton';
 
       const locKey = (t.location || 'bangalore').toLowerCase();
-      const amenities = t.amenities && t.amenities.length ? t.amenities.slice(0, 3) : ['Indoor', 'Parking', 'Washroom'];
+      const amenities = Array.isArray(t.amenities) ? t.amenities : [];
 
       return `
         <div class="turf-listing-card" data-sport="${sportKey}" data-location="${locKey}" data-name="${t.name}" data-rate="${t.price_per_hour}">
@@ -243,9 +243,11 @@ document.addEventListener('DOMContentLoaded', () => {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span>${t.location || 'Bangalore'}</span>
             </div>
-            <div class="amenities-badges-row">
-              ${amenities.map(a => `<span class="amenity-chip">✓ ${a}</span>`).join('')}
-            </div>
+            ${amenities.length ? `
+              <div class="amenities-badges-row">
+                ${amenities.map(a => `<span class="amenity-chip">✓ ${a}</span>`).join('')}
+              </div>
+            ` : ''}
             <div class="turf-card-actions-row">
               <div class="price-line">₹${t.price_per_hour} <span class="price-unit">/hr</span></div>
               <div class="action-btns-group">
@@ -272,6 +274,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const loc = btn.dataset.loc || 'Bangalore';
         const sport = btn.dataset.sport || 'Football';
 
+        // Check if user is logged in
+        const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+        const isAuthenticated = !!(curUser && curUser.is_authenticated === true);
+
+        if (!isAuthenticated) {
+          // Save pending booking so player can resume immediately after signing in
+          sessionStorage.setItem('turfify_pending_booking', JSON.stringify({
+            id, name, rate, loc, sport
+          }));
+          window.location.href = `auth.html?mode=signin&redirect=booking&turf=${encodeURIComponent(name)}&turfId=${encodeURIComponent(id)}`;
+          return;
+        }
+
         activeTurfId = id;
         activeTurfName = name;
         activeTurfRate = parseInt(rate, 10);
@@ -288,8 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
           dateInput.value = new Date().toISOString().split('T')[0];
         }
 
-        // Prefill player contact details if authenticated user is logged in
-        const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+        // Prefill player contact details from authenticated user
         const nameInput = document.getElementById('booking-player-name');
         const phoneInput = document.getElementById('booking-player-phone');
         if (nameInput) {
@@ -318,8 +332,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Resume booking if returning after successful login
+  function checkPendingBooking() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldOpen = urlParams.get('openBooking') === 'true';
+    const pendingJson = sessionStorage.getItem('turfify_pending_booking');
+
+    const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+    const isAuthenticated = !!(curUser && curUser.is_authenticated === true);
+
+    if (isAuthenticated && (shouldOpen || pendingJson)) {
+      try {
+        const pending = pendingJson ? JSON.parse(pendingJson) : null;
+        if (pending && pending.name) {
+          sessionStorage.removeItem('turfify_pending_booking');
+          activeTurfId = pending.id || 'turf-1';
+          activeTurfName = pending.name;
+          activeTurfRate = parseInt(pending.rate || '1200', 10);
+          activeTurfSport = pending.sport || 'Football';
+
+          const titleEl = document.getElementById('booking-modal-title');
+          const subEl = document.getElementById('booking-modal-sub');
+          const baseEl = document.getElementById('modal-base-rate');
+          const totalEl = document.getElementById('modal-total-rate');
+          if (titleEl) titleEl.textContent = `Book Slot — ${pending.name}`;
+          if (subEl) subEl.textContent = `${pending.loc || 'Bangalore'}, Bangalore`;
+          if (baseEl) baseEl.textContent = `₹${pending.rate || '1200'}`;
+          if (totalEl) totalEl.textContent = `₹${pending.rate || '1200'}`;
+
+          const dateInput = document.getElementById('booking-date');
+          if (dateInput && !dateInput.value) {
+            dateInput.value = new Date().toISOString().split('T')[0];
+          }
+          const nameInput = document.getElementById('booking-player-name');
+          const phoneInput = document.getElementById('booking-player-phone');
+          if (nameInput) nameInput.value = curUser.name || '';
+          if (phoneInput) phoneInput.value = (curUser.phone && curUser.phone !== '—') ? curUser.phone : '';
+
+          openModal(modalBooking);
+          refreshSlotAvailability();
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } catch (e) {}
+    }
+  }
+
   // Initial render of all turfs from store
   renderMarketplaceTurfs();
+  checkPendingBooking();
 
   // Live sync: re-render marketplace when turf list changes (deletion, new registration, etc.)
   // Poll server every 3 seconds to detect cross-tab deletions

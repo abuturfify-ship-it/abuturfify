@@ -148,6 +148,11 @@
         <p class="auth-card-sub" id="auth-page-sub">Sign in to your Turfify account</p>
       </div>
 
+      <div id="booking-login-banner" style="display:none;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:10px;padding:12px 14px;margin-bottom:16px;color:#065F46;font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:1.15rem;">⚡</span>
+        <span id="booking-login-text">Please sign in or create an account to complete your booking.</span>
+      </div>
+
       <div class="auth-tabs" id="auth-tabs">
         <button class="auth-tab active" id="tab-signin" onclick="switchView('signin')">Sign In</button>
         <button class="auth-tab" id="tab-signup" onclick="switchView('signup')">Sign Up</button>
@@ -394,6 +399,14 @@
       localStorage.setItem('turfify_current_user', JSON.stringify(userObj));
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const isBookingRedirect = urlParams.get('redirect') === 'booking' || sessionStorage.getItem('turfify_pending_booking');
+
+    if (isBookingRedirect && role !== 'owner') {
+      window.location.href = 'index.html?openBooking=true';
+      return;
+    }
+
     if (role === 'owner') {
       window.location.href = 'owner-dashboard.html';
     } else {
@@ -558,9 +571,16 @@
       } catch (e) {}
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const isBookingRedirect = urlParams.get('redirect') === 'booking' || sessionStorage.getItem('turfify_pending_booking');
+
     setLoading(btn, false);
     showOk('signup', '🎉 Account registered successfully! Redirecting...');
     setTimeout(() => {
+      if (isBookingRedirect && role !== 'owner') {
+        window.location.href = 'index.html?openBooking=true';
+        return;
+      }
       if (role === 'owner') {
         window.location.href = 'owner-dashboard.html';
       } else {
@@ -589,6 +609,19 @@
   /* ─── INITIALIZE FROM URL QUERY / SESSION ─── */
   (async () => {
     const params = new URLSearchParams(window.location.search);
+    const redirectParam = params.get('redirect');
+    const turfName = params.get('turf');
+    if (redirectParam === 'booking' || sessionStorage.getItem('turfify_pending_booking')) {
+      const banner = document.getElementById('booking-login-banner');
+      const bannerText = document.getElementById('booking-login-text');
+      if (banner && bannerText) {
+        banner.style.display = 'flex';
+        if (turfName) {
+          bannerText.textContent = `Please sign in or create an account to book your slot at ${decodeURIComponent(turfName)}.`;
+        }
+      }
+    }
+
     const mode = params.get('mode') || params.get('view');
     if (mode === 'signup' || mode === 'register') {
       switchView('signup');

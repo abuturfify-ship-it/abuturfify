@@ -77,10 +77,23 @@ function getLiveUsers() {
   const turfs = getLiveTurfs();
   const storeUsers = window.TurfifyStore ? window.TurfifyStore.getUsers() : [];
 
+  let deletedUsers = [];
+  try {
+    deletedUsers = JSON.parse(localStorage.getItem('turfify_deleted_users') || '[]');
+  } catch (e) {}
+  const isDeleted = (id, email) => {
+    if (!id && !email) return false;
+    return deletedUsers.some(d =>
+      (id && d.toLowerCase() === id.toLowerCase()) ||
+      (email && d.toLowerCase() === email.toLowerCase())
+    );
+  };
+
   const userMap = {};
 
   // 1. Ingest registered users from TurfifyStore
   storeUsers.forEach(u => {
+    if (isDeleted(u.id, u.email)) return;
     const key = (u.id || u.email || Math.random().toString()).toLowerCase();
     const isOwner = (u.role || '').toLowerCase() === 'owner' || (u.role || '').toLowerCase() === 'turf owner';
     userMap[key] = {
@@ -100,6 +113,7 @@ function getLiveUsers() {
 
   // 2. Merge with Supabase Profiles (if online)
   cachedSupabaseProfiles.forEach(p => {
+    if (isDeleted(p.id, p.email)) return;
     const key = (p.id || p.email || '').toLowerCase();
     if (!key) return;
     const isOwner = (p.role || '').toLowerCase() === 'owner' || (p.role || '').toLowerCase() === 'turf owner';
@@ -124,9 +138,9 @@ function getLiveUsers() {
     }
   });
 
-  // 3. Connect Turfs to Owners (and create owner entry if not yet registered)
+  // 3. Connect Turfs to Owners (skip deleted owners)
   turfs.forEach(t => {
-    if (!t.owner_id) return;
+    if (!t.owner_id || isDeleted(t.owner_id, t.owner_email)) return;
     const matchKey = Object.keys(userMap).find(k => k === t.owner_id.toLowerCase() || (userMap[k].id && userMap[k].id.toLowerCase() === t.owner_id.toLowerCase()));
     if (matchKey) {
       userMap[matchKey].turfsManaged++;
@@ -159,7 +173,7 @@ function getLiveUsers() {
 
   // 4. Connect Bookings to Players and calculate revenue for Owners
   bookings.forEach(b => {
-    if (b.player_id) {
+    if (b.player_id && !isDeleted(b.player_id, b.player_email)) {
       const matchKey = Object.keys(userMap).find(k => k === b.player_id.toLowerCase() || (userMap[k].id && userMap[k].id.toLowerCase() === b.player_id.toLowerCase()));
       if (matchKey) {
         if (b.status !== 'Cancelled') {
@@ -186,7 +200,7 @@ function getLiveUsers() {
 
     // Owner side revenue split
     const turf = turfs.find(t => t.id === b.turf_id);
-    if (turf && turf.owner_id) {
+    if (turf && turf.owner_id && !isDeleted(turf.owner_id, turf.owner_email)) {
       const ownerKey = Object.keys(userMap).find(k => k === turf.owner_id.toLowerCase() || (userMap[k].id && userMap[k].id.toLowerCase() === turf.owner_id.toLowerCase()));
       if (ownerKey && b.status !== 'Cancelled') {
         userMap[ownerKey].totalRevenue += (b.amount || 0);
@@ -194,7 +208,7 @@ function getLiveUsers() {
     }
   });
 
-  return Object.values(userMap);
+  return Object.values(userMap).filter(u => !isDeleted(u.id, u.email));
 }
 
 // Application Controller
@@ -295,57 +309,92 @@ function renderActivityFeed(bookings) {
 // ─── Payments / Revenue Split ─────────────────────────────────────────────
 function renderPaymentsSplit(confirmed, turfs) {
   const el = document.getElementById('payments-split-body');
-  if (!el) return;
+  const summEl = document.getElementById('owner-payout-summary');
 
-  if (!confirmed.length) {
-    el.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94A3B8;">No confirmed bookings yet.</td></tr>`;
-    return;
-  }
+  const totalGMV = confirmed.reduce((sum, b) => sum + (b.amount || 0), 0);
+  const ownerPayoutTotal = Math.round(totalGMV * OWNER_SHARE);
+  const platformFeeTotal = Math.round(totalGMV * ADMIN_SHARE);
 
-  // Per-booking rows
-  el.innerHTML = confirmed.map(b => {
-    const ownerAmt = Math.round((b.amount || 0) * OWNER_SHARE);
-    const adminAmt = Math.round((b.amount || 0) * ADMIN_SHARE);
-    const turf     = turfs.find(t => t.id === b.turf_id);
-    const ownerName = turf?.owner_name || 'Owner';
-    return `
-      <tr>
-        <td><span style="font-family:monospace;font-weight:700;color:#2563EB;">${b.id}</span></td>
-        <td><div style="font-weight:600;">${b.player_name || '—'}</div><div style="font-size:0.74rem;color:#64748B;">${b.turf_name || '—'}</div></td>
-        <td style="font-size:0.8rem;color:#64748B;">${b.date || '—'}<br><small>${b.time_slot || ''}</small></td>
-        <td style="font-weight:700;">${fmt(b.amount || 0)}</td>
-        <td><div style="font-weight:700;color:#10B981;">${fmt(ownerAmt)}</div><div style="font-size:0.72rem;color:#64748B;">${ownerName} (70%)</div></td>
-        <td><div style="font-weight:700;color:#3B82F6;">${fmt(adminAmt)}</div><div style="font-size:0.72rem;color:#64748B;">Platform (30%)</div></td>
-        <td><span class="status-pill confirmed">Paid</span></td>
-      </tr>`;
-  }).join('');
-
-  // Owner payout summary
-  const ownerTotals = {};
+  // Dynamic Gateway breakdowns
+  let upiAmt = 0, cardAmt = 0, cashAmt = 0;
   confirmed.forEach(b => {
-    const turf = turfs.find(t => t.id === b.turf_id);
-    const oid  = turf?.owner_id || b.turf_id;
-    const oname = turf?.owner_name || 'Owner';
-    if (!ownerTotals[oid]) ownerTotals[oid] = { name: oname, total: 0, count: 0 };
-    ownerTotals[oid].total += (b.amount || 0);
-    ownerTotals[oid].count++;
+    const status = (b.payment_status || '').toLowerCase();
+    if (status.includes('upi') || status.includes('online')) {
+      upiAmt += (b.amount || 0);
+    } else if (status.includes('card')) {
+      cardAmt += (b.amount || 0);
+    } else {
+      cashAmt += (b.amount || 0);
+    }
   });
 
-  const summEl = document.getElementById('owner-payout-summary');
+  const upiPct = totalGMV > 0 ? Math.round((upiAmt / totalGMV) * 100) : 0;
+  const cardPct = totalGMV > 0 ? Math.round((cardAmt / totalGMV) * 100) : 0;
+  const cashPct = totalGMV > 0 ? Math.max(0, 100 - upiPct - cardPct) : 0;
+
+  const set = (id, val) => { const elem = document.getElementById(id); if (elem) elem.textContent = val; };
+  set('payouts-gross-val', fmt(totalGMV));
+  set('payouts-owner-val', fmt(ownerPayoutTotal));
+  set('payouts-platform-val', fmt(platformFeeTotal));
+  set('payouts-upi-val', fmt(upiAmt));
+  set('payouts-upi-share', `${upiPct}% Share`);
+  set('payouts-card-val', fmt(cardAmt));
+  set('payouts-card-share', `${cardPct}% Share`);
+  set('payouts-cash-val', fmt(cashAmt));
+  set('payouts-cash-share', `${cashPct}% Share`);
+
+  if (el) {
+    if (!confirmed.length) {
+      el.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94A3B8;">No payments or payouts recorded yet. Real bookings will automatically appear here.</td></tr>`;
+    } else {
+      // Per-booking rows
+      el.innerHTML = confirmed.map(b => {
+        const ownerAmt = Math.round((b.amount || 0) * OWNER_SHARE);
+        const adminAmt = Math.round((b.amount || 0) * ADMIN_SHARE);
+        const turf     = turfs.find(t => t.id === b.turf_id);
+        const ownerName = turf?.owner_name || 'Owner';
+        return `
+          <tr>
+            <td><span style="font-family:monospace;font-weight:700;color:#2563EB;">${b.id}</span></td>
+            <td><div style="font-weight:600;">${b.player_name || '—'}</div><div style="font-size:0.74rem;color:#64748B;">${b.turf_name || '—'}</div></td>
+            <td style="font-size:0.8rem;color:#64748B;">${b.date || '—'}<br><small>${b.time_slot || ''}</small></td>
+            <td style="font-weight:700;">${fmt(b.amount || 0)}</td>
+            <td><div style="font-weight:700;color:#10B981;">${fmt(ownerAmt)}</div><div style="font-size:0.72rem;color:#64748B;">${ownerName} (70%)</div></td>
+            <td><div style="font-weight:700;color:#3B82F6;">${fmt(adminAmt)}</div><div style="font-size:0.72rem;color:#64748B;">Platform (30%)</div></td>
+            <td><span class="status-pill confirmed">Paid</span></td>
+          </tr>`;
+      }).join('');
+    }
+  }
+
+  // Owner payout summary
   if (summEl) {
-    const entries = Object.values(ownerTotals);
-    summEl.innerHTML = entries.length ? entries.map(o => `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--slate-50);">
-        <div>
-          <div style="font-weight:700;color:var(--navy-900);">${o.name}</div>
-          <div style="font-size:0.76rem;color:var(--slate-400);">${o.count} booking(s) &bull; GMV: ${fmt(o.total)}</div>
+    if (!confirmed.length) {
+      summEl.innerHTML = `<div style="text-align:center;padding:24px;color:#94A3B8;">No owner payouts pending. Real bookings will automatically appear here.</div>`;
+    } else {
+      const ownerTotals = {};
+      confirmed.forEach(b => {
+        const turf = turfs.find(t => t.id === b.turf_id);
+        const oid  = turf?.owner_id || b.turf_id;
+        const oname = turf?.owner_name || 'Owner';
+        if (!ownerTotals[oid]) ownerTotals[oid] = { name: oname, total: 0, count: 0 };
+        ownerTotals[oid].total += (b.amount || 0);
+        ownerTotals[oid].count++;
+      });
+      const entries = Object.values(ownerTotals);
+      summEl.innerHTML = entries.length ? entries.map(o => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--slate-50);">
+          <div>
+            <div style="font-weight:700;color:var(--navy-900);">${o.name}</div>
+            <div style="font-size:0.76rem;color:var(--slate-400);">${o.count} booking(s) &bull; GMV: ${fmt(o.total)}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:800;color:#10B981;font-size:1.05rem;">${fmt(Math.round(o.total * OWNER_SHARE))}</div>
+            <div style="font-size:0.72rem;color:#64748B;">Owner Payout (70%)</div>
+          </div>
         </div>
-        <div style="text-align:right;">
-          <div style="font-weight:800;color:#10B981;font-size:1.05rem;">${fmt(Math.round(o.total * OWNER_SHARE))}</div>
-          <div style="font-size:0.72rem;color:#64748B;">Owner Payout (70%)</div>
-        </div>
-      </div>
-    `).join('') : `<div style="text-align:center;padding:20px;color:#94A3B8;">No payouts yet.</div>`;
+      `).join('') : `<div style="text-align:center;padding:24px;color:#94A3B8;">No owner payouts pending. Real bookings will automatically appear here.</div>`;
+    }
   }
 }
 
@@ -498,6 +547,11 @@ function renderTurfsList(filterSport = 'all', searchQuery = '') {
           <div><div class="turf-metric-unit">Reviews</div><div class="turf-metric-num">${t.reviews_count || 0}</div></div>
         </div>
         <div style="font-size:0.78rem;color:#64748B;margin-bottom:8px;">Owner ID: <strong>${t.owner_id || '—'}</strong></div>
+        ${Array.isArray(t.amenities) && t.amenities.length ? `
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0 10px 0;">
+            ${t.amenities.map(a => `<span style="background:#ECFDF5;color:#047857;font-size:0.68rem;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid #A7F3D0;">✓ ${a}</span>`).join('')}
+          </div>
+        ` : ''}
         <div class="turf-card-actions">
           <button class="table-action-btn delete" onclick="adminDeleteTurf('${t.id}')">🗑️ Remove</button>
         </div>
@@ -677,12 +731,35 @@ window.adminCancelBooking = function(bookingId) {
   }
 };
 
-window.adminDeleteUser = function(userId) {
+window.adminDeleteUser = async function(userId) {
   if (confirm(`Remove this user account (${userId}) from Turfify?`)) {
+    // 1. Add to blacklist in localStorage so synthesis never revives it
+    try {
+      const deleted = JSON.parse(localStorage.getItem('turfify_deleted_users') || '[]');
+      if (!deleted.some(d => d.toLowerCase() === userId.toLowerCase())) {
+        deleted.push(userId);
+      }
+      localStorage.setItem('turfify_deleted_users', JSON.stringify(deleted));
+    } catch (e) {}
+
+    // 2. Remove from TurfifyStore & server
     if (window.TurfifyStore) {
       window.TurfifyStore.deleteUser(userId);
+    } else {
+      fetch(`/api/user?id=${encodeURIComponent(userId)}`, { method: 'DELETE' }).catch(() => {});
     }
-    cachedSupabaseProfiles = cachedSupabaseProfiles.filter(p => p.id !== userId);
+
+    // 3. Delete from Supabase profiles if client is initialized
+    if (sbAdmin) {
+      try {
+        await sbAdmin.from('profiles').delete().eq('id', userId);
+      } catch (err) {
+        console.warn('Supabase delete profile note:', err);
+      }
+    }
+
+    // 4. Clean cached profiles & re-render immediately
+    cachedSupabaseProfiles = cachedSupabaseProfiles.filter(p => p.id !== userId && p.email !== userId);
     renderUsersTable();
     renderKPIs();
     showToast('Account removed from database.');
@@ -697,12 +774,45 @@ function initModals() {
   document.getElementById('btn-close-turf-modal')?.addEventListener('click', closeTurfModal);
   document.getElementById('btn-cancel-turf-modal')?.addEventListener('click', closeTurfModal);
 
+  // Gallery file upload for Admin
+  let uploadedAdminPhoto = '';
+  const adminFileInput = document.getElementById('form-turf-file');
+  if (adminFileInput) {
+    adminFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          uploadedAdminPhoto = ev.target.result;
+          document.getElementById('upload-preview-admin').src = uploadedAdminPhoto;
+          document.getElementById('upload-preview-wrap-admin').style.display = 'flex';
+          document.getElementById('upload-prompt-admin').style.display = 'none';
+          document.getElementById('upload-filename-admin').textContent = (file.name || 'Photo') + ' ✓';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Amenity chips toggle for Admin
+  document.querySelectorAll('#amenities-selector-admin .amenity-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('selected');
+    });
+  });
+
   document.getElementById('btn-save-turf')?.addEventListener('click', () => {
     const name = document.getElementById('form-turf-name')?.value?.trim();
     const sport = document.getElementById('form-turf-sport')?.value;
     const price = parseInt(document.getElementById('form-turf-price')?.value, 10);
     const location = document.getElementById('form-turf-location')?.value?.trim();
     const ownerName = document.getElementById('form-turf-owner')?.value?.trim() || 'Venue Owner';
+    const urlInput = document.getElementById('form-turf-url')?.value?.trim();
+    const finalImage = uploadedAdminPhoto || urlInput || 'images/turf-arena.jpg';
+
+    // Collect clicked amenities only
+    const selectedAmenities = Array.from(document.querySelectorAll('#amenities-selector-admin .amenity-toggle-btn.selected'))
+      .map(btn => btn.dataset.amenity);
 
     if (!name || !price || !location) {
       alert('Please fill in the turf name, hourly rate, and location.');
@@ -715,7 +825,9 @@ function initModals() {
         sport,
         price_per_hour: price,
         location,
-        owner_name: ownerName
+        owner_name: ownerName,
+        image: finalImage,
+        amenities: selectedAmenities
       });
     }
 
@@ -727,6 +839,11 @@ function initModals() {
     if (document.getElementById('form-turf-price')) document.getElementById('form-turf-price').value = '';
     if (document.getElementById('form-turf-location')) document.getElementById('form-turf-location').value = '';
     if (document.getElementById('form-turf-owner')) document.getElementById('form-turf-owner').value = '';
+    if (document.getElementById('form-turf-url')) document.getElementById('form-turf-url').value = '';
+    uploadedAdminPhoto = '';
+    if (document.getElementById('upload-preview-wrap-admin')) document.getElementById('upload-preview-wrap-admin').style.display = 'none';
+    if (document.getElementById('upload-prompt-admin')) document.getElementById('upload-prompt-admin').style.display = 'block';
+    document.querySelectorAll('#amenities-selector-admin .amenity-toggle-btn').forEach(b => b.classList.remove('selected'));
   });
 
   // User Modal
