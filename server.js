@@ -2,8 +2,10 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000;
-const DB_FILE = path.join(__dirname, 'turfify_database.json');
+const PORT = process.env.PORT || 3000;
+const DB_FILE = process.env.VERCEL
+  ? path.join('/tmp', 'turfify_database.json')
+  : path.join(__dirname, 'turfify_database.json');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -68,6 +70,12 @@ const DEFAULT_USERS_LIST = [
 
 function loadDatabase() {
   try {
+    if (process.env.VERCEL && !fs.existsSync(DB_FILE)) {
+      const seed = path.join(__dirname, 'turfify_database.json');
+      if (fs.existsSync(seed)) {
+        try { fs.copyFileSync(seed, DB_FILE); } catch (e) {}
+      }
+    }
     if (fs.existsSync(DB_FILE)) {
       const content = fs.readFileSync(DB_FILE, 'utf-8');
       return JSON.parse(content);
@@ -315,6 +323,11 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Turfify server running at http://localhost:${PORT}/ with cross-window database sync`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`Turfify server running at http://localhost:${PORT}/ with cross-window database sync`);
+  });
+}
+
+module.exports = server;
+
