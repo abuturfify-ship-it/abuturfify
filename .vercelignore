@@ -1,0 +1,19 @@
+# Node server for local development only
+server.js
+
+# Local PPT and screenshot generation scripts
+capture_*.js
+capture_*.ps1
+generate_*.js
+crop.ps1
+export_*.ps1
+take_screenshots.js
+run_all_screens.js
+
+# Generated presentation & document files
+*.pptx
+*.pdf
+slide_previews/
+slide_previews_*/
+screenshots/
+pdf_*.png

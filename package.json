@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
+    "dev": "node server.js"
   },
   "devDependencies": {
     "playwright-chromium": "^1.63.0",
