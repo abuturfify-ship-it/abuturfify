@@ -1,7 +1,17 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.js" }
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
   ]
 }

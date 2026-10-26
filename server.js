@@ -126,7 +126,7 @@ function sendJson(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
-const server = http.createServer(async (req, res) => {
+async function handleRequest(req, res) {
   // Handle CORS Preflight
   if (req.method === 'OPTIONS') {
     res.writeHead(200, {
@@ -321,7 +321,9 @@ const server = http.createServer(async (req, res) => {
     const stream = fs.createReadStream(filePath);
     stream.pipe(res);
   });
-});
+}
+
+const server = http.createServer(handleRequest);
 
 if (require.main === module) {
   server.listen(PORT, () => {
@@ -329,5 +331,7 @@ if (require.main === module) {
   });
 }
 
-module.exports = server;
+handleRequest.server = server;
+module.exports = handleRequest;
+
 
