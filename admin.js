@@ -255,6 +255,20 @@ document.addEventListener('DOMContentLoaded', () => {
     renderKPIs();
     renderUsersTable();
   });
+
+  window.addEventListener('turfify:booking_created', () => {
+    renderKPIs();
+    renderTurfsList();
+    renderBookingsTable();
+    renderUsersTable();
+  });
+
+  window.addEventListener('turfify:booking_cancelled', () => {
+    renderKPIs();
+    renderTurfsList();
+    renderBookingsTable();
+    renderUsersTable();
+  });
 });
 
 // ─── KPI Stats ───────────────────────────────────────────────────────────────

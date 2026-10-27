@@ -354,7 +354,7 @@
   <script>
     function renderOwnerDashboard() {
       const user = window.TurfifyStore.getCurrentUser();
-      if (!user) {
+      if (!user || user.role !== 'owner') {
         window.TurfifyStore.switchRole('owner');
       }
       const activeUser = window.TurfifyStore.getCurrentUser();

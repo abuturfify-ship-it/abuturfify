@@ -194,7 +194,7 @@
   <script>
     function renderPlayerDashboard() {
       const user = window.TurfifyStore.getCurrentUser();
-      if (!user) {
+      if (!user || user.role !== 'player') {
         window.TurfifyStore.switchRole('player');
       }
       const activeUser = window.TurfifyStore.getCurrentUser();

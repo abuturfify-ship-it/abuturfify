@@ -457,6 +457,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const finalPlayerPhone = inputPhone || curUser.phone || '+91 98765 43210';
 
     if (window.TurfifyStore) {
+      if (!curUser.is_authenticated) {
+        curUser.name = finalPlayerName;
+        curUser.phone = finalPlayerPhone;
+        window.TurfifyStore.setCurrentUser(curUser);
+      }
+
       window.TurfifyStore.createBooking({
         turf_id: activeTurfId,
         turf_name: activeTurfName,

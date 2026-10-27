@@ -138,30 +138,49 @@ window.TurfifyStore = {
         const serverData = await res.json();
         let changed = false;
 
-        // Server is authoritative for turfs — populate if local is empty or different
+        // 1. MERGE TURFS: Keep all locally created/updated turfs, add any missing server turfs
         if (Array.isArray(serverData.turfs) && serverData.turfs.length > 0) {
           const localTurfs = this.getTurfs();
-          const prevStr = JSON.stringify(localTurfs);
-          const newStr = JSON.stringify(serverData.turfs);
-          if (localTurfs.length === 0 || prevStr !== newStr) {
-            localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, newStr);
-            changed = true;
+          let deletedTurfs = [];
+          try {
+            deletedTurfs = JSON.parse(localStorage.getItem('turfify_deleted_turfs') || '[]');
+          } catch (e) {}
+
+          const mergedTurfs = [...localTurfs];
+          serverData.turfs.forEach(st => {
+            if (deletedTurfs.includes(st.id)) return;
+            const exists = mergedTurfs.some(lt => lt.id === st.id);
+            if (!exists) {
+              mergedTurfs.push(st);
+              changed = true;
+            }
+          });
+
+          if (localTurfs.length === 0 || changed) {
+            localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, JSON.stringify(mergedTurfs));
           }
         }
 
-        // Server is authoritative for bookings — populate if local is empty or different
+        // 2. MERGE BOOKINGS: Keep all locally created bookings, add any missing server bookings
         if (Array.isArray(serverData.bookings) && serverData.bookings.length > 0) {
           const localBookings = this.getBookings();
-          const prevStr = JSON.stringify(localBookings);
-          const newStr = JSON.stringify(serverData.bookings);
-          if (localBookings.length === 0 || prevStr !== newStr) {
-            localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, newStr);
-            changed = true;
+          const mergedBookings = [...localBookings];
+
+          serverData.bookings.forEach(sb => {
+            const exists = mergedBookings.some(lb => lb.id === sb.id);
+            if (!exists) {
+              mergedBookings.push(sb);
+              changed = true;
+            }
+          });
+
+          if (localBookings.length === 0 || changed) {
+            localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(mergedBookings));
           }
         }
 
-        // Merge users (ignoring any deleted users)
-        if (Array.isArray(serverData.users)) {
+        // 3. MERGE USERS: Keep all locally registered users, add any missing server users
+        if (Array.isArray(serverData.users) && serverData.users.length > 0) {
           let deletedUsers = [];
           try {
             deletedUsers = JSON.parse(localStorage.getItem('turfify_deleted_users') || '[]');
@@ -173,18 +192,21 @@ window.TurfifyStore = {
 
           const cleanServerUsers = serverData.users.filter(su => !isDel(su.id, su.email));
           const localUsers = this.getUsers().filter(lu => !isDel(lu.id, lu.email));
-          const prevStr = JSON.stringify(localUsers);
-          const mergedUsers = [...cleanServerUsers];
-          localUsers.forEach(lu => {
-            if (!mergedUsers.some(su => (su.id && su.id === lu.id) || (su.email && lu.email && su.email.toLowerCase() === lu.email.toLowerCase()))) {
-              mergedUsers.unshift(lu);
+          const mergedUsers = [...localUsers];
+
+          cleanServerUsers.forEach(su => {
+            const exists = mergedUsers.some(lu => 
+              (su.id && lu.id && su.id === lu.id) || 
+              (su.email && lu.email && su.email.toLowerCase() === lu.email.toLowerCase())
+            );
+            if (!exists) {
+              mergedUsers.push(su);
               changed = true;
             }
           });
-          const newStr = JSON.stringify(mergedUsers);
-          if (prevStr !== newStr) {
-            localStorage.setItem(TURFIFY_STORAGE_KEYS.USERS, newStr);
-            changed = true;
+
+          if (localUsers.length === 0 || changed) {
+            localStorage.setItem(TURFIFY_STORAGE_KEYS.USERS, JSON.stringify(mergedUsers));
           }
         }
 
@@ -347,7 +369,7 @@ window.TurfifyStore = {
     const targetEmail = cur?.email ? cur.email.toLowerCase() : null;
     const targetName = cur?.name ? cur.name.toLowerCase() : null;
 
-    return turfs.filter(t => {
+    const matched = turfs.filter(t => {
       // Direct ID match
       if (targetId && t.owner_id === targetId) return true;
       // Email match across windows & sessions
@@ -356,6 +378,12 @@ window.TurfifyStore = {
       if (targetName && t.owner_name && t.owner_name.toLowerCase() === targetName && targetName !== 'turf owner') return true;
       return false;
     });
+
+    // In demo mode or if default owner, show all registered turfs
+    if (matched.length === 0 && (!cur?.is_authenticated || targetId === 'owner-1') && turfs.length > 0) {
+      return turfs;
+    }
+    return matched;
   },
 
   addTurf(newTurf) {
@@ -424,7 +452,7 @@ window.TurfifyStore = {
     const targetPhone = cur?.phone ? cur.phone.replace(/[^0-9]/g, '') : null;
     const targetName = cur?.name ? cur.name.toLowerCase() : null;
 
-    return bks.filter(b => {
+    const matched = bks.filter(b => {
       // Direct ID match
       if (targetId && b.player_id === targetId) return true;
       // Email match across windows
@@ -436,8 +464,16 @@ window.TurfifyStore = {
       }
       // Name match
       if (targetName && b.player_name && b.player_name.toLowerCase() === targetName && targetName !== 'player') return true;
+      // If default demo player or unauthenticated session, match any guest booking
+      if ((!cur || !cur.is_authenticated || targetId === 'player-1') && (b.player_id === 'player-1' || (b.player_id && b.player_id.startsWith('player-')))) return true;
       return false;
     });
+
+    // If unauthenticated or default demo player and no strict match found, show all local bookings
+    if (matched.length === 0 && (!cur?.is_authenticated || targetId === 'player-1') && bks.length > 0) {
+      return bks;
+    }
+    return matched;
   },
 
   getOwnerBookings(ownerId) {
@@ -452,7 +488,7 @@ window.TurfifyStore = {
     const ownerTurfNames = ownerTurfs.map(t => (t.name || '').toLowerCase().trim()).filter(Boolean);
     const bks = this.getBookings();
 
-    return bks.filter(b => {
+    const matched = bks.filter(b => {
       // 1. Direct turf ID match
       if (b.turf_id && ownerTurfIds.includes(b.turf_id)) return true;
       // 2. Direct turf name match
@@ -465,10 +501,14 @@ window.TurfifyStore = {
       if (ownerPhone && b.owner_phone && b.owner_phone.replace(/[^0-9]/g, '').endsWith(ownerPhone.slice(-10))) return true;
       // 6. Direct owner_name match on booking
       if (ownerName && b.owner_name && b.owner_name.toLowerCase() === ownerName && ownerName !== 'turf owner') return true;
-      // 7. If default demo owner
-      if ((!effectiveOwnerId || effectiveOwnerId === 'owner-1') && (b.turf_id === 'turf-1' || b.turf_id === 'turf-2')) return true;
       return false;
     });
+
+    // If demo mode or default owner and no strict match, show all bookings
+    if (matched.length === 0 && (!effectiveOwnerId || effectiveOwnerId === 'owner-1' || !cur?.is_authenticated) && bks.length > 0) {
+      return bks;
+    }
+    return matched;
   },
 
   createBooking(bookingData) {
@@ -478,7 +518,7 @@ window.TurfifyStore = {
     // Look up turf to attach owner information directly onto the booking
     const turfs = this.getTurfs();
     const turf = turfs.find(t => 
-      (bookingData.turf_id && t.id === bookingData.turf_id) || 
+      (bookingData.turf_id && String(t.id) === String(bookingData.turf_id)) || 
       (bookingData.turf_name && t.name && t.name.toLowerCase().trim() === bookingData.turf_name.toLowerCase().trim())
     );
 
@@ -486,10 +526,6 @@ window.TurfifyStore = {
       id: 'bk-' + Math.floor(100 + Math.random() * 900),
       turf_id: bookingData.turf_id || turf?.id || 'turf-1',
       turf_name: bookingData.turf_name || turf?.name || 'Turf Arena',
-      owner_id: turf?.owner_id || bookingData.owner_id || '',
-      owner_name: turf?.owner_name || bookingData.owner_name || '',
-      owner_email: turf?.owner_email || bookingData.owner_email || '',
-      owner_phone: turf?.owner_phone || bookingData.owner_phone || '',
       sport: bookingData.sport || turf?.sport || 'Football',
       player_id: bookingData.player_id || cur?.id || ('player-' + Date.now()),
       player_name: bookingData.player_name || cur?.name || 'Guest Player',
@@ -498,18 +534,29 @@ window.TurfifyStore = {
       status: bookingData.status || 'Confirmed',
       payment_status: bookingData.payment_status || 'Paid Online',
       booking_time: new Date().toLocaleString(),
-      ...bookingData
+      ...bookingData,
+      // Ensure owner attributes are reliably populated from turf
+      owner_id: turf?.owner_id || bookingData.owner_id || '',
+      owner_name: turf?.owner_name || bookingData.owner_name || '',
+      owner_email: turf?.owner_email || bookingData.owner_email || '',
+      owner_phone: turf?.owner_phone || bookingData.owner_phone || ''
     };
     bks.unshift(newBooking);
     localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(bks));
 
-    // Immediately push to server database for all cross-window sessions
+    // Also update current player match stats
+    if (cur && (!cur.role || cur.role === 'player')) {
+      cur.matches_played = (cur.matches_played || 0) + 1;
+      cur.loyalty_pts = (cur.loyalty_pts || 0) + 25;
+      this.setCurrentUser(cur);
+      this.addUser(cur);
+    }
+
+    // Try posting to backend if available
     fetch('/api/booking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newBooking)
-    }).then(() => {
-      this.syncWithServer().catch(() => {});
     }).catch(() => {});
 
     try {
