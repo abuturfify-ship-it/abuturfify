@@ -379,8 +379,8 @@ window.TurfifyStore = {
       return false;
     });
 
-    // In demo mode or if default owner, show all registered turfs
-    if (matched.length === 0 && (!cur?.is_authenticated || targetId === 'owner-1') && turfs.length > 0) {
+    // ONLY in pure guest/unauthenticated demo mode (never for real signed-in users), show all turfs
+    if (matched.length === 0 && !cur?.is_authenticated && turfs.length > 0) {
       return turfs;
     }
     return matched;
@@ -464,13 +464,13 @@ window.TurfifyStore = {
       }
       // Name match
       if (targetName && b.player_name && b.player_name.toLowerCase() === targetName && targetName !== 'player') return true;
-      // If default demo player or unauthenticated session, match any guest booking
-      if ((!cur || !cur.is_authenticated || targetId === 'player-1') && (b.player_id === 'player-1' || (b.player_id && b.player_id.startsWith('player-')))) return true;
+      // ONLY in pure guest/unauthenticated mode, match any guest-style player-xxx booking
+      if (!cur?.is_authenticated && (b.player_id === 'player-1' || (b.player_id && b.player_id.startsWith('player-')))) return true;
       return false;
     });
 
-    // If unauthenticated or default demo player and no strict match found, show all local bookings
-    if (matched.length === 0 && (!cur?.is_authenticated || targetId === 'player-1') && bks.length > 0) {
+    // ONLY for unauthenticated guest sessions: if no match found, show all bookings for demo purposes
+    if (matched.length === 0 && !cur?.is_authenticated && bks.length > 0) {
       return bks;
     }
     return matched;
@@ -504,8 +504,8 @@ window.TurfifyStore = {
       return false;
     });
 
-    // If demo mode or default owner and no strict match, show all bookings
-    if (matched.length === 0 && (!effectiveOwnerId || effectiveOwnerId === 'owner-1' || !cur?.is_authenticated) && bks.length > 0) {
+    // ONLY for unauthenticated guest/demo sessions: show all bookings if no match found
+    if (matched.length === 0 && !cur?.is_authenticated && bks.length > 0) {
       return bks;
     }
     return matched;
