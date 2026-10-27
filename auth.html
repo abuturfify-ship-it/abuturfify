@@ -241,7 +241,7 @@
       <!-- FORGOT PASSWORD -->
       <div class="auth-view" id="view-forgot">
         <div class="alert alert-error" id="forgot-error"><span>⚠️</span><span id="forgot-error-msg"></span></div>
-        <div class="alert alert-success" id="forgot-success"><span>📧</span><span>Reset link sent! Check your inbox and follow the instructions.</span></div>
+        <div class="alert alert-success" id="forgot-success"><span>📧</span><span id="forgot-success-msg">Reset link sent! Check your inbox and follow the instructions.</span></div>
         <form id="form-forgot" novalidate>
           <div class="form-group">
             <label class="form-label" for="forgot-email">Your Email Address</label>
@@ -253,6 +253,45 @@
           </button>
         </form>
         <p class="auth-footer-text">Remembered it? <button class="link-btn" onclick="switchView('signin')">Back to Sign In</button></p>
+      </div>
+
+      <!-- RESET / UPDATE PASSWORD -->
+      <div class="auth-view" id="view-reset">
+        <div class="alert alert-error" id="reset-error"><span>⚠️</span><span id="reset-error-msg"></span></div>
+        <div class="alert alert-success" id="reset-success"><span>✅</span><span id="reset-success-msg">Password updated successfully! Redirecting to sign in...</span></div>
+        <form id="form-reset" novalidate>
+          <div class="form-group" id="reset-email-group" style="display:none;">
+            <label class="form-label" for="reset-email">Account Email</label>
+            <input class="form-input" type="email" id="reset-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reset-new-password">New Password</label>
+            <div class="form-input-wrap">
+              <input class="form-input" type="password" id="reset-new-password" placeholder="Min. 8 characters" autocomplete="new-password" required oninput="checkStrength(this.value, 'reset')">
+              <button type="button" class="input-icon" onclick="togglePwd('reset-new-password')" title="Show/hide password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="password-strength" id="reset-pwd-strength">
+              <div class="strength-bar"><div class="strength-fill" id="reset-strength-fill"></div></div>
+              <span class="strength-label" id="reset-strength-label">Too weak</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reset-confirm-password">Confirm New Password</label>
+            <div class="form-input-wrap">
+              <input class="form-input" type="password" id="reset-confirm-password" placeholder="Repeat your new password" autocomplete="new-password" required>
+              <button type="button" class="input-icon" onclick="togglePwd('reset-confirm-password')" title="Show/hide password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-auth" id="btn-reset">
+            <span class="btn-text">Save New Password</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </form>
+        <p class="auth-footer-text"><button class="link-btn" onclick="switchView('signin')">Back to Sign In</button></p>
       </div>
 
     </div>
@@ -269,17 +308,21 @@
   const TITLES = {
     signin: { title: 'Welcome back 👋',      sub: 'Sign in to your Turfify account' },
     signup: { title: 'Create account 🚀',    sub: "Join Turfify — it's free" },
-    forgot: { title: 'Reset password 🔑',   sub: "We'll email you a reset link" }
+    forgot: { title: 'Reset password 🔑',   sub: "We'll email you a reset link" },
+    reset:  { title: 'Set new password 🔒', sub: 'Enter your new password below' }
   };
 
   function switchView(view) {
     document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
-    document.getElementById('view-' + view).classList.add('active');
-    document.getElementById('auth-page-title').textContent = TITLES[view].title;
-    document.getElementById('auth-page-sub').textContent   = TITLES[view].sub;
+    const target = document.getElementById('view-' + view);
+    if (target) target.classList.add('active');
+    if (TITLES[view]) {
+      document.getElementById('auth-page-title').textContent = TITLES[view].title;
+      document.getElementById('auth-page-sub').textContent   = TITLES[view].sub;
+    }
     const tabs = document.getElementById('auth-tabs');
-    tabs.style.display = view === 'forgot' ? 'none' : 'flex';
+    tabs.style.display = (view === 'forgot' || view === 'reset') ? 'none' : 'flex';
     document.getElementById('tab-signin')?.classList.toggle('active', view === 'signin');
     document.getElementById('tab-signup')?.classList.toggle('active', view === 'signup');
   }
@@ -310,8 +353,10 @@
     inp.type = inp.type === 'password' ? 'text' : 'password';
   }
 
-  function checkStrength(val) {
-    const wrap = document.getElementById('pwd-strength');
+  function checkStrength(val, target = 'signup') {
+    const isReset = target === 'reset';
+    const wrap = document.getElementById(isReset ? 'reset-pwd-strength' : 'pwd-strength');
+    if (!wrap) return;
     wrap.style.display = val.length ? 'block' : 'none';
     let score = 0;
     if (val.length >= 8)           score++;
@@ -326,10 +371,13 @@
       {p:'100%',c:'#10B981',t:'Strong 💪'}
     ];
     const l = lvls[score] || lvls[0];
-    document.getElementById('strength-fill').style.cssText = `width:${l.p};background:${l.c}`;
-    const lbl = document.getElementById('strength-label');
-    lbl.textContent = l.t;
-    lbl.style.color = l.c;
+    const fill = document.getElementById(isReset ? 'reset-strength-fill' : 'strength-fill');
+    const lbl = document.getElementById(isReset ? 'reset-strength-label' : 'strength-label');
+    if (fill) fill.style.cssText = `width:${l.p};background:${l.c}`;
+    if (lbl) {
+      lbl.textContent = l.t;
+      lbl.style.color = l.c;
+    }
   }
 
   async function redirectByRole(userOrId) {
@@ -597,18 +645,149 @@
     const btn   = document.getElementById('btn-forgot');
     if (!email) { showErr('forgot','Please enter your email address.'); return; }
     setLoading(btn, true);
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/auth.html'
-    });
+
+    sessionStorage.setItem('turfify_reset_email', email);
+
+    let supabaseSent = false;
+    let supaErrMsg = '';
+
+    try {
+      const redirectUrl = window.location.origin + window.location.pathname;
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl
+      });
+      if (!error) {
+        supabaseSent = true;
+      } else {
+        supaErrMsg = error.message;
+        console.warn('Supabase resetPasswordForEmail notice:', supaErrMsg);
+      }
+    } catch (err) {
+      supaErrMsg = err.message || 'Network error';
+    }
+
     setLoading(btn, false);
-    if (error) { showErr('forgot', error.message); return; }
-    document.getElementById('forgot-success').classList.add('show');
-    document.getElementById('forgot-email').value = '';
+
+    const users = window.TurfifyStore ? window.TurfifyStore.getUsers() : [];
+    const localUser = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+
+    if (supabaseSent) {
+      const el = document.getElementById('forgot-success');
+      el.innerHTML = `<span>📧</span><div>Password reset link sent to <strong>${email}</strong>! Check your inbox.<br><div style="margin-top:8px;"><button type="button" class="link-btn" style="color:var(--green);font-size:13px;font-weight:700;text-decoration:underline;" onclick="openDirectReset('${email}')">👉 Click here to set new password directly</button></div></div>`;
+      el.classList.add('show');
+      document.getElementById('forgot-email').value = '';
+    } else if (localUser || supaErrMsg.toLowerCase().includes('rate limit') || supaErrMsg.toLowerCase().includes('email')) {
+      const el = document.getElementById('forgot-success');
+      el.innerHTML = `<span>🔑</span><div>${supaErrMsg ? supaErrMsg + '. ' : ''}<br><div style="margin-top:8px;"><button type="button" class="link-btn" style="color:var(--green);font-size:13px;font-weight:700;text-decoration:underline;" onclick="openDirectReset('${email}')">👉 Click here to set a new password directly for ${email}</button></div></div>`;
+      el.classList.add('show');
+    } else {
+      showErr('forgot', supaErrMsg || 'Unable to find an account with this email. Please check spelling or register.');
+    }
+  });
+
+  window.openDirectReset = function(email) {
+    if (email) sessionStorage.setItem('turfify_reset_email', email);
+    switchView('reset');
+    const emailGroup = document.getElementById('reset-email-group');
+    const emailField = document.getElementById('reset-email');
+    if (email && emailField) emailField.value = email;
+    if (emailGroup) emailGroup.style.display = 'block';
+  };
+
+  /* ─── RESET / UPDATE PASSWORD ─── */
+  document.getElementById('form-reset').addEventListener('submit', async e => {
+    e.preventDefault();
+    hide('reset-error'); hide('reset-success');
+    const newPass = document.getElementById('reset-new-password').value;
+    const confirmPass = document.getElementById('reset-confirm-password').value;
+    const emailField = document.getElementById('reset-email');
+    const emailToReset = emailField?.value?.trim() || sessionStorage.getItem('turfify_reset_email') || '';
+    const btn = document.getElementById('btn-reset');
+
+    if (!newPass || !confirmPass) {
+      showErr('reset', 'Please fill in both password fields.');
+      return;
+    }
+    if (newPass.length < 8) {
+      showErr('reset', 'Password must be at least 8 characters.');
+      return;
+    }
+    if (newPass !== confirmPass) {
+      showErr('reset', 'Passwords do not match. Please re-enter.');
+      return;
+    }
+
+    setLoading(btn, true);
+
+    let supabaseUpdated = false;
+    let supaError = null;
+
+    // 1. Try Supabase updateUser if we have an active recovery session
+    try {
+      const { data, error } = await sb.auth.updateUser({ password: newPass });
+      if (!error && data?.user) {
+        supabaseUpdated = true;
+      } else if (error) {
+        supaError = error;
+      }
+    } catch (err) {
+      supaError = err;
+    }
+
+    // 2. Also update in TurfifyStore
+    let storeUpdated = false;
+    if (window.TurfifyStore) {
+      const users = window.TurfifyStore.getUsers();
+      const targetUser = users.find(u => 
+        (emailToReset && u.email && u.email.toLowerCase() === emailToReset.toLowerCase()) ||
+        (u.is_authenticated)
+      );
+      if (targetUser) {
+        targetUser.password = newPass;
+        window.TurfifyStore.addUser(targetUser);
+        storeUpdated = true;
+      }
+    }
+
+    setLoading(btn, false);
+
+    if (supabaseUpdated || storeUpdated || !supaError) {
+      showOk('reset', '🎉 Password updated successfully! Redirecting to sign in...');
+      sessionStorage.removeItem('turfify_reset_email');
+      setTimeout(() => {
+        try {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch(e) {}
+        switchView('signin');
+        if (emailToReset) {
+          const signinEmail = document.getElementById('signin-email');
+          if (signinEmail) signinEmail.value = emailToReset;
+        }
+      }, 1500);
+    } else {
+      showErr('reset', supaError?.message || 'Failed to update password. Please request a new reset link.');
+    }
+  });
+
+  /* ─── SUPABASE AUTH STATE LISTENER FOR RECOVERY ─── */
+  sb.auth.onAuthStateChange(async (event, session) => {
+    console.log('Supabase auth state event:', event);
+    if (event === 'PASSWORD_RECOVERY') {
+      if (session?.user?.email) {
+        sessionStorage.setItem('turfify_reset_email', session.user.email);
+        const emailField = document.getElementById('reset-email');
+        if (emailField) emailField.value = session.user.email;
+        const emailGroup = document.getElementById('reset-email-group');
+        if (emailGroup) emailGroup.style.display = 'block';
+      }
+      switchView('reset');
+    }
   });
 
   /* ─── INITIALIZE FROM URL QUERY / SESSION ─── */
   (async () => {
     const params = new URLSearchParams(window.location.search);
+    const hash = window.location.hash || '';
     const redirectParam = params.get('redirect');
     const turfName = params.get('turf');
     if (redirectParam === 'booking' || sessionStorage.getItem('turfify_pending_booking')) {
@@ -623,7 +802,13 @@
     }
 
     const mode = params.get('mode') || params.get('view');
-    if (mode === 'signup' || mode === 'register') {
+    const isRecovery = hash.includes('type=recovery') || 
+                       params.get('type') === 'recovery' || 
+                       mode === 'reset';
+
+    if (isRecovery) {
+      switchView('reset');
+    } else if (mode === 'signup' || mode === 'register') {
       switchView('signup');
     } else if (mode === 'forgot') {
       switchView('forgot');
@@ -632,9 +817,9 @@
     }
 
     // Only auto-redirect if explicitly requested via ?auto=true
-    if (params.get('auto') === 'true') {
+    if (params.get('auto') === 'true' && !isRecovery) {
       const { data: { session } } = await sb.auth.getSession();
-      if (session?.user && !window.location.hash.includes('type=recovery')) {
+      if (session?.user) {
         await redirectByRole(session.user);
       }
     }
