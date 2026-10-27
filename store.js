@@ -130,28 +130,31 @@ window.TurfifyStore = {
 
   async syncWithServer() {
     try {
-      const res = await fetch('/api/data');
+      let res = await fetch('/api/data');
+      if (!res.ok) {
+        res = await fetch('/turfify_database.json');
+      }
       if (res.ok) {
         const serverData = await res.json();
         let changed = false;
 
-        // Server is authoritative for turfs — deleted turfs must NOT be resurrected
-        if (Array.isArray(serverData.turfs)) {
+        // Server is authoritative for turfs — populate if local is empty or different
+        if (Array.isArray(serverData.turfs) && serverData.turfs.length > 0) {
           const localTurfs = this.getTurfs();
           const prevStr = JSON.stringify(localTurfs);
           const newStr = JSON.stringify(serverData.turfs);
-          if (prevStr !== newStr) {
+          if (localTurfs.length === 0 || prevStr !== newStr) {
             localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, newStr);
             changed = true;
           }
         }
 
-        // Server is authoritative for bookings — deleted bookings must NOT be resurrected
-        if (Array.isArray(serverData.bookings)) {
+        // Server is authoritative for bookings — populate if local is empty or different
+        if (Array.isArray(serverData.bookings) && serverData.bookings.length > 0) {
           const localBookings = this.getBookings();
           const prevStr = JSON.stringify(localBookings);
           const newStr = JSON.stringify(serverData.bookings);
-          if (prevStr !== newStr) {
+          if (localBookings.length === 0 || prevStr !== newStr) {
             localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, newStr);
             changed = true;
           }
