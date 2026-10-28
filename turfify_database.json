@@ -576,6 +576,26 @@
   ],
   "inquiries": [
     {
+      "id": "inq-1793198742200",
+      "name": "Sajaruth Mahjabeen M",
+      "email": "salihathasneem3@gmail.com",
+      "phone": "+919384797751",
+      "subject": "Corporate Tournament Booking",
+      "message": "for booking",
+      "target_email": "abu.turfify@gmail.com",
+      "received_at": "2026-10-28T14:45:42.201Z"
+    },
+    {
+      "id": "inq-1793198472891",
+      "name": "Sajaruth Mahjabeen M",
+      "email": "salihathasneem3@gmail.com",
+      "phone": "+919384797751",
+      "subject": "Player Slot Booking Assistance",
+      "message": "hi",
+      "target_email": "abu.turfify@gmail.com",
+      "received_at": "2026-10-28T14:41:12.891Z"
+    },
+    {
       "id": "inq-1793198277293",
       "name": "Player Verification",
       "email": "player@turfify.in",
