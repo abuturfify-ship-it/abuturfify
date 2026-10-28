@@ -137,6 +137,105 @@ async function handleRequest(req, res) {
       return sendJson(res, 200, db);
     }
 
+    if (pathname === '/api/contact' && req.method === 'POST') {
+      const data = await readBody(req);
+      const { name, email, phone, subject, message } = data;
+      const targetEmail = 'apex.turfify@gmail.com';
+
+      const inquiry = {
+        id: 'inq-' + Date.now(),
+        name: name || 'Guest',
+        email: email || '',
+        phone: phone || '',
+        subject: subject || 'General Inquiry',
+        message: message || '',
+        target_email: targetEmail,
+        received_at: new Date().toISOString()
+      };
+
+      if (!Array.isArray(db.inquiries)) db.inquiries = [];
+      db.inquiries.unshift(inquiry);
+      saveDatabase(db);
+
+      const resendApiKey = process.env.RESEND_API_KEY || data.resendApiKey;
+      let emailSent = false;
+      let resendDetail = null;
+
+      if (resendApiKey) {
+        try {
+          const https = require('https');
+          const resendPayload = JSON.stringify({
+            from: 'Turfify Support <onboarding@resend.dev>',
+            to: [targetEmail],
+            reply_to: email || undefined,
+            subject: `[Turfify Support] ${subject || 'New Contact'} from ${name || 'User'}`,
+            html: `
+              <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #10B981; border-radius: 12px; background: #0B1329; color: #F8FAFC;">
+                <h2 style="color: #10B981; margin-top: 0; font-size: 22px;">⚡ New Turfify Support Request</h2>
+                <p style="color: #94A3B8; font-size: 14px;">An inquiry was submitted via the Turfify Contact Us page.</p>
+                <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10B981;">
+                  <p style="margin: 6px 0;"><strong>👤 Name:</strong> ${name || 'N/A'}</p>
+                  <p style="margin: 6px 0;"><strong>✉️ Email:</strong> <a href="mailto:${email}" style="color: #38BDF8;">${email || 'N/A'}</a></p>
+                  <p style="margin: 6px 0;"><strong>📞 Phone:</strong> <a href="tel:${phone}" style="color: #38BDF8;">${phone || 'N/A'}</a></p>
+                  <p style="margin: 6px 0;"><strong>📌 Topic:</strong> ${subject || 'General'}</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.08); padding: 16px; border-radius: 8px; margin: 20px 0;">
+                  <h4 style="margin: 0 0 8px; color: #34D399; font-size: 13px; text-transform: uppercase;">Customer Message:</h4>
+                  <p style="margin: 0; white-space: pre-wrap; font-size: 15px; line-height: 1.6; color: #E2E8F0;">${message || 'No message provided'}</p>
+                </div>
+                <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 24px 0;" />
+                <p style="font-size: 12px; color: #64748B; margin: 0;">Turfify Sports Infrastructure Platform • Destination: ${targetEmail}</p>
+              </div>
+            `
+          });
+
+          await new Promise((resolve) => {
+            const rReq = https.request('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${resendApiKey}`,
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(resendPayload)
+              }
+            }, (rRes) => {
+              let rBody = '';
+              rRes.on('data', chunk => rBody += chunk);
+              rRes.on('end', () => {
+                try {
+                  resendDetail = JSON.parse(rBody);
+                  if (rRes.statusCode >= 200 && rRes.statusCode < 300) {
+                    emailSent = true;
+                  }
+                } catch(e) {
+                  resendDetail = rBody;
+                }
+                resolve();
+              });
+            });
+            rReq.on('error', (err) => {
+              console.error('Resend API request error:', err);
+              resolve();
+            });
+            rReq.write(resendPayload);
+            rReq.end();
+          });
+        } catch (e) {
+          console.error('Resend dispatch failed:', e);
+        }
+      }
+
+      return sendJson(res, 200, {
+        success: true,
+        emailSent,
+        inquiryId: inquiry.id,
+        targetEmail,
+        detail: resendDetail,
+        message: emailSent
+          ? `Inquiry successfully sent to ${targetEmail} via Resend!`
+          : `Inquiry logged successfully for ${targetEmail}.`
+      });
+    }
+
     if (pathname === '/api/sync' && req.method === 'POST') {
       const clientData = await readBody(req);
       if (Array.isArray(clientData.users)) {

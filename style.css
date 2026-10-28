@@ -1599,35 +1599,298 @@ body.dark-mode .btn-sun-toggle {
   color: #38BDF8 !important;
 }
 
-body.dark-mode #contact {
-  background: #0F172A !important;
+/* ==========================================================================
+   UV DESIGN SYSTEM - CONTACT US SECTION (#contact)
+   ========================================================================== */
+.uv-contact-section {
+  padding: 90px 0 100px;
+  background: radial-gradient(1200px circle at 15% 10%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+              radial-gradient(900px circle at 85% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+              #F8FAFC;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease;
 }
 
-body.dark-mode #contact h2 {
+.uv-contact-section::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.uv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #047857;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.18);
+  transition: all 0.3s ease;
+}
+
+.uv-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 12px #10B981;
+  animation: uvPulse 2s infinite ease-in-out;
+}
+
+@keyframes uvPulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 14px #10B981; }
+  50% { opacity: 0.35; transform: scale(0.85); box-shadow: 0 0 4px #10B981; }
+}
+
+.uv-title {
+  font-size: 2.5rem;
+  font-weight: 850;
+  color: #0F172A;
+  letter-spacing: -0.8px;
+  margin-bottom: 14px;
+}
+
+.uv-gradient-text {
+  background: linear-gradient(135deg, #10B981 0%, #06B6D4 50%, #6366F1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.uv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 36px;
+  align-items: start;
+}
+
+.uv-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid #E2E8F0;
+  padding: 24px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.uv-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px -8px rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.uv-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.uv-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.uv-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.uv-pill-btn-primary {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+.uv-pill-btn-primary:hover {
+  background: #10B981;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.uv-pill-btn-secondary {
+  background: #F1F5F9;
+  color: #475569;
+  border-color: #E2E8F0;
+}
+.uv-pill-btn-secondary:hover {
+  background: #E2E8F0;
+  color: #0F172A;
+}
+
+.uv-form-container {
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 1px solid #E2E8F0;
+  padding: 36px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.uv-form-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10B981 0%, #06B6D4 50%, #8B5CF6 100%);
+}
+
+.uv-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 750;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 7px;
+}
+
+.uv-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  background: #FFFFFF;
+  color: #0F172A;
+  transition: all 0.25s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+.uv-input:focus {
+  border-color: #10B981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), 0 0 20px rgba(16, 185, 129, 0.18);
+}
+
+.uv-submit-btn {
+  width: 100%;
+  padding: 15px 24px;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  border: none;
+  border-radius: 14px;
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.98rem;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.4px;
+}
+
+.uv-submit-btn:hover {
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.55);
+  transform: translateY(-2px);
+}
+
+.uv-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Dark Mode UV Aesthetics */
+body.dark-mode .uv-contact-section {
+  background: radial-gradient(1000px circle at 15% 15%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
+              radial-gradient(1000px circle at 85% 85%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
+              #0B1120 !important;
+}
+
+body.dark-mode .uv-badge {
+  background: rgba(16, 185, 129, 0.16) !important;
+  border-color: rgba(16, 185, 129, 0.55) !important;
+  color: #34D399 !important;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.35) !important;
+}
+
+body.dark-mode .uv-title {
   color: #F8FAFC !important;
 }
 
-body.dark-mode #contact div[style*="background: #fff;"] {
-  background: #1E293B !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  color: #F1F5F9 !important;
+body.dark-mode .uv-card {
+  background: rgba(15, 23, 42, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(16px);
 }
 
-body.dark-mode #contact h3,
-body.dark-mode #contact div[style*="color: #0F172A;"] {
+body.dark-mode .uv-card:hover {
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  box-shadow: 0 16px 36px -8px rgba(16, 185, 129, 0.28) !important;
+}
+
+body.dark-mode .uv-form-container {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border-color: rgba(16, 185, 129, 0.25) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(16, 185, 129, 0.12) !important;
+  backdrop-filter: blur(16px);
+}
+
+body.dark-mode .uv-label {
+  color: #94A3B8 !important;
+}
+
+body.dark-mode .uv-input {
+  background: #0B1329 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
   color: #F8FAFC !important;
 }
 
-body.dark-mode #contact input,
-body.dark-mode #contact select,
-body.dark-mode #contact textarea {
-  background: #0F172A !important;
+body.dark-mode .uv-input:focus {
+  border-color: #10B981 !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25), 0 0 25px rgba(16, 185, 129, 0.35) !important;
+}
+
+body.dark-mode .uv-pill-btn-secondary {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #CBD5E1 !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
-  color: #F1F5F9 !important;
+}
+
+body.dark-mode .uv-pill-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #F8FAFC !important;
 }
 
 @media (max-width: 900px) {
-  #contact div[style*="grid-template-columns: 1fr 1.3fr"] {
+  .uv-grid {
     grid-template-columns: 1fr !important;
+    gap: 28px;
   }
 }

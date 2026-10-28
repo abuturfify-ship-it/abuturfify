@@ -573,5 +573,17 @@
       "created_at": "2026-09-01T09:15:00Z",
       "status": "Active"
     }
+  ],
+  "inquiries": [
+    {
+      "id": "inq-1793194508503",
+      "name": "Test Athlete",
+      "email": "test@example.com",
+      "phone": "+1 (919) 407-0555",
+      "subject": "Booking Question",
+      "message": "How can our Turfify team help you?",
+      "target_email": "apex.turfify@gmail.com",
+      "received_at": "2026-10-28T13:35:08.503Z"
+    }
   ]
 }
