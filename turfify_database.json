@@ -576,6 +576,26 @@
   ],
   "inquiries": [
     {
+      "id": "inq-1793196044252",
+      "name": "Apex Athlete",
+      "email": "athlete@example.com",
+      "phone": "+1 (919) 407-0555",
+      "subject": "Turf Booking Inquiry",
+      "message": "Testing automatic email dispatch to apex.turfify@gmail.com via SA consultant edge API!",
+      "target_email": "apex.turfify@gmail.com",
+      "received_at": "2026-10-28T14:00:44.252Z"
+    },
+    {
+      "id": "inq-1793194840858",
+      "name": "Sajaruth Mahjabeen M",
+      "email": "salihathasneem3@gmail.com",
+      "phone": "+919384797751",
+      "subject": "Turf Owner Partnership",
+      "message": "hi",
+      "target_email": "apex.turfify@gmail.com",
+      "received_at": "2026-10-28T13:40:40.858Z"
+    },
+    {
       "id": "inq-1793194508503",
       "name": "Test Athlete",
       "email": "test@example.com",
