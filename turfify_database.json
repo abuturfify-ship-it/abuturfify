@@ -576,6 +576,16 @@
   ],
   "inquiries": [
     {
+      "id": "inq-1793198277293",
+      "name": "Player Verification",
+      "email": "player@turfify.in",
+      "phone": "+1 (919) 407-0555",
+      "subject": "Tournament Inquiry",
+      "message": "Confirming server-side Resend API live dispatch.",
+      "target_email": "abu.turfify@gmail.com",
+      "received_at": "2026-10-28T14:37:57.293Z"
+    },
+    {
       "id": "inq-1793197250699",
       "name": "Shameer",
       "email": "shameer@example.com",
