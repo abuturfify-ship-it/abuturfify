@@ -212,7 +212,7 @@ function getLiveUsers() {
 }
 
 // ─── Admin Authentication Gate ──────────────────────────────────────────────
-const ADMIN_ALLOWED_USERS = ['admin', 'admin@turfify.com', 'superadmin'];
+const ADMIN_PASSWORD = 'ApexTurfify6872@';
 
 function checkAdminAuth() {
   const isAuth = sessionStorage.getItem('turfify_admin_authenticated') === 'true';
@@ -232,13 +232,9 @@ function initAdminAuthGate() {
 
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const username = (document.getElementById('admin-gate-username')?.value || '').trim().toLowerCase();
     const pass = (document.getElementById('admin-gate-password')?.value || '').trim();
 
-    const isValidUser = ADMIN_ALLOWED_USERS.includes(username) || username.includes('admin');
-    const isValidPass = (pass === 'admin123' || pass === 'admin' || pass === 'turfify2026');
-
-    if (isValidUser && isValidPass) {
+    if (pass === ADMIN_PASSWORD) {
       sessionStorage.setItem('turfify_admin_authenticated', 'true');
       if (errBox) errBox.style.display = 'none';
       checkAdminAuth();
@@ -246,8 +242,11 @@ function initAdminAuthGate() {
     } else {
       if (errBox) {
         errBox.style.display = 'flex';
-        if (errMsg) errMsg.textContent = 'Invalid administrator credentials. Access restricted.';
+        if (errMsg) errMsg.textContent = 'Incorrect password. Access restricted.';
       }
+      // Clear wrong password
+      document.getElementById('admin-gate-password').value = '';
+      document.getElementById('admin-gate-password').focus();
     }
   });
 
