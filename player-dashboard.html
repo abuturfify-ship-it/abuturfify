@@ -32,6 +32,7 @@
       <!-- Center Nav Links -->
       <nav aria-label="Main Navigation">
         <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
           <li><a href="index.html#search-section" class="nav-link">Book Turfs</a></li>
           <li><a href="#my-matches" class="nav-link active">My Matches</a></li>
           <li><a href="#saved-venues" class="nav-link">Saved Venues</a></li>
@@ -56,7 +57,7 @@
     <div class="container dash-topbar-inner">
       <div class="dash-welcome">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-          <h1>Welcome back, Rahul!</h1>
+          <h1 id="player-welcome-title">Welcome back!</h1>
           <span class="role-badge player">⚽ Player</span>
         </div>
         <p>Ready for kickoff? Track your upcoming games, teammates, and loyalty coins.</p>
@@ -83,7 +84,7 @@
         </div>
         <div class="match-detail-item">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-          <span>Indiranagar 100ft Road, Bangalore</span>
+          <span id="player-hero-location">Anna Nagar, Chennai</span>
         </div>
         <div class="match-detail-item">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
@@ -92,7 +93,7 @@
       </div>
 
       <div class="hero-match-actions">
-        <button class="btn-match-action btn-match-primary" onclick="alert('Google Maps navigation opened to Indiranagar Arena!')">
+        <button class="btn-match-action btn-match-primary" onclick="alert('Google Maps navigation opened!')">
           📍 Get Directions
         </button>
         <button class="btn-match-action btn-match-secondary" onclick="alert('WhatsApp squad invite code copied!')">
@@ -111,7 +112,7 @@
         <div class="metric-data">
           <div class="metric-label">Matches Played</div>
           <div class="metric-val" id="player-matches-count">18</div>
-          <div class="metric-sub">Top 5% active in Bangalore</div>
+          <div class="metric-sub">Top 5% active in Tamil Nadu</div>
         </div>
       </div>
       <div class="metric-card blue">
@@ -193,11 +194,12 @@
   <script src="store.js"></script>
   <script>
     function renderPlayerDashboard() {
-      const user = window.TurfifyStore.getCurrentUser();
-      if (!user || user.role !== 'player') {
-        window.TurfifyStore.switchRole('player');
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      if (!user || !user.is_authenticated) {
+        window.location.replace('auth.html?mode=signin&redirect=player-dashboard');
+        return;
       }
-      const activeUser = window.TurfifyStore.getCurrentUser();
+      const activeUser = user;
       const isNewUser = (activeUser?.id !== 'player-1');
       const bookings = window.TurfifyStore.getPlayerBookings(activeUser?.id);
       const turfs = window.TurfifyStore.getTurfs();
@@ -206,7 +208,7 @@
       if (activeUser?.name) {
         const navName = document.getElementById('nav-player-name');
         if (navName) navName.textContent = activeUser.name;
-        const welcomeTitle = document.querySelector('.dash-welcome h1');
+        const welcomeTitle = document.getElementById('player-welcome-title') || document.querySelector('.dash-welcome h1');
         if (welcomeTitle) welcomeTitle.textContent = `Welcome back, ${activeUser.name}!`;
       }
 
@@ -229,9 +231,9 @@
           <span class="match-tag" style="background: rgba(16, 185, 129, 0.2); color: #34D399;">Ready for Kickoff?</span>
           <h2 class="hero-match-title" style="margin-bottom: 8px;">No Upcoming Matches Yet</h2>
           <p style="color: #94A3B8; font-size: 0.95rem; margin-bottom: 20px; max-width: 540px;">
-            You haven't reserved any turf slots yet. Discover premier verified football, cricket, and badminton arenas across Bangalore.
+            You haven't reserved any turf slots yet. Discover premier verified football, cricket, and badminton arenas across Tamil Nadu.
           </p>
-          <a href="index.html#popular-turfs" class="btn-match-action btn-match-primary" style="display:inline-block; text-decoration:none;">
+          <a href="index.html#search-section" class="btn-match-action btn-match-primary" style="display:inline-block; text-decoration:none;">
             🔍 Explore Venues & Book Slot
           </a>
         `;

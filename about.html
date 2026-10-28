@@ -5,12 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Us — Turfify | Where Turf Owners Meet Players</title>
   <meta name="description" content="Discover Turfify, the two-sided sports turf marketplace connecting turf owners and players. List. Discover. Book. Play.">
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="about.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2358C900%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
 </head>
 <body>
 
-  <main class="about-ref-container" id="about-us-section">
+  <!-- ==========================================================================
+       NAVIGATION BAR - 1-Click Back to Home
+       ========================================================================== -->
+  <header class="header" id="navbar" style="position: sticky; top: 0; z-index: 1000; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+    <div class="container nav-container" style="display:flex; justify-content:space-between; align-items:center; padding:12px 24px;">
+      <a href="index.html" class="brand" aria-label="Turfify Home" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
+        <div class="logo-badge" style="width:38px; height:38px; background:linear-gradient(135deg, #10B981, #059669); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor"></circle>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title" style="font-size:1.3rem; font-weight:800; color:#0F172A;">Turfify</span>
+          <span class="brand-tagline" style="display:block; font-size:0.7rem; color:#10B981; font-weight:600;">Play. Book. Enjoy.</span>
+        </div>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-menu" style="display:flex; gap:20px; list-style:none; margin:0; padding:0; align-items:center;">
+          <li><a href="index.html" class="nav-link" style="text-decoration:none; color:#334155; font-weight:600;">Home</a></li>
+          <li><a href="index.html#search-section" class="nav-link" style="text-decoration:none; color:#334155; font-weight:600;">Find Turfs</a></li>
+          <li><a href="about.html" class="nav-link active" style="text-decoration:none; color:#10B981; font-weight:700;">About Us</a></li>
+          <li><a href="index.html#contact" class="nav-link" style="text-decoration:none; color:#334155; font-weight:600;">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="index.html" class="btn-login-outline" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:1px solid #10B981; border-radius:8px; color:#10B981; font-weight:700; font-size:0.85rem;">
+          <span>← Back to Home</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="about-ref-container" id="about-us-section" style="margin-top: 10px;">
 
     <!-- ==========================================================================
          1. TOP HERO SECTION (TITLE & STATS ON LEFT, TURF BRUSH PHOTO ON RIGHT)

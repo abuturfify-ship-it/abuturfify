@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Turfify — Play. Book. Enjoy. | Premium Sports Turf Marketplace</title>
-  <meta name="description" content="Book verified football turfs, cricket arenas, and badminton courts in Bangalore. Instant confirmation, real-time slots, and secure payments.">
+  <meta name="description" content="Book verified football turfs, cricket arenas, and badminton courts in Tamil Nadu (Chennai, Coimbatore, Madurai, Trichy). Instant confirmation, real-time slots, and secure payments.">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="about.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
@@ -16,8 +16,8 @@
        ========================================================================== -->
   <header class="header" id="navbar">
     <div class="container nav-container">
-      <!-- Logo: Stylized lowercase 't' badge + Turfify -->
-      <a href="#home" class="brand" aria-label="Turfify Home">
+      <!-- Logo: 1-Click to Home -->
+      <a href="index.html" class="brand" aria-label="Turfify Home">
         <div class="logo-badge">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
@@ -46,7 +46,7 @@
 
       <!-- Right Nav Buttons -->
       <div class="nav-actions">
-        <button class="btn-sun-toggle" id="btn-theme-toggle" aria-label="Toggle Theme" title="Daylight Theme">
+        <button class="btn-sun-toggle" id="btn-theme-toggle" aria-label="Toggle Theme" title="Toggle Theme (Light / Dark Mode)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -186,23 +186,43 @@
     <!-- Integrated Search Booking Bar at bottom of Hero Viewport -->
     <div class="container hero-search-container" id="search-section">
       <form class="search-pill-card" id="search-form">
-        <!-- 1. Location -->
+        <!-- 1. State (Tamil Nadu) -->
         <div class="search-col">
-          <div class="search-col-icon">
+          <div class="search-col-icon" style="color: var(--primary-green);">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
           </div>
           <div class="search-col-text">
-            <span class="search-col-label">Location</span>
+            <span class="search-col-label">State</span>
+            <select class="search-col-select" id="select-state" style="font-weight: 700; color: var(--navy-900);">
+              <option value="tamilnadu" selected>Tamil Nadu</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 2. City (Tamil Nadu Cities) -->
+        <div class="search-col">
+          <div class="search-col-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+              <path d="M9 22v-4h6v4"></path>
+              <path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"></path>
+            </svg>
+          </div>
+          <div class="search-col-text">
+            <span class="search-col-label">City</span>
             <select class="search-col-select" id="select-location">
-              <option value="all">Select Location</option>
-              <option value="koramangala">Koramangala</option>
-              <option value="hsr">HSR Layout</option>
-              <option value="indiranagar">Indiranagar</option>
-              <option value="jayanagar">Jayanagar</option>
-              <option value="whitefield">Whitefield</option>
+              <option value="all">All Cities</option>
+              <option value="chennai">Chennai</option>
+              <option value="coimbatore">Coimbatore</option>
+              <option value="madurai">Madurai</option>
+              <option value="trichy">Tiruchirappalli (Trichy)</option>
+              <option value="salem">Salem</option>
+              <option value="tirunelveli">Tirunelveli</option>
+              <option value="vellore">Vellore</option>
+              <option value="erode">Erode</option>
             </select>
           </div>
         </div>
@@ -462,16 +482,17 @@
       <div class="turf-cards-row-wrapper">
         <div class="turfs-cards-grid" id="turfs-container">
           <!-- Turf 1: The Arena Sports -->
-          <div class="turf-listing-card" data-sport="football" data-location="koramangala" data-name="The Arena Sports" data-rate="1200">
+          <!-- Turf 1: The Arena Sports -->
+          <div class="turf-listing-card" data-sport="football" data-location="chennai" data-name="The Arena Sports" data-rate="1200">
             <div class="turf-media">
-              <img src="images/turf-arena.jpg" alt="The Arena Sports Koramangala">
+              <img src="images/turf-arena.jpg" alt="The Arena Sports Chennai">
               <div class="rating-pill-green">★ 4.8</div>
             </div>
             <div class="turf-details-body">
               <h3 class="turf-card-title">The Arena Sports</h3>
               <div class="turf-card-loc">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>Koramangala, Bangalore</span>
+                <span>Anna Nagar, Chennai</span>
               </div>
               <div class="amenities-badges-row">
                 <span class="amenity-chip">🏠 Indoor</span>
@@ -481,7 +502,7 @@
               <div class="turf-card-actions-row">
                 <div class="price-line">₹1200 <span class="price-unit">/hr</span></div>
                 <div class="action-btns-group">
-                  <button class="btn-card-book" data-turf="The Arena Sports" data-rate="1200" data-loc="Koramangala">Book Now</button>
+                  <button class="btn-card-book" data-turf="The Arena Sports" data-rate="1200" data-loc="Chennai">Book Now</button>
                   <button class="btn-card-heart" aria-label="Favorite">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                   </button>
@@ -491,16 +512,16 @@
           </div>
 
           <!-- Turf 2: Kickoff Hub -->
-          <div class="turf-listing-card" data-sport="cricket" data-location="hsr" data-name="Kickoff Hub" data-rate="1000">
+          <div class="turf-listing-card" data-sport="cricket" data-location="coimbatore" data-name="Kickoff Hub" data-rate="1000">
             <div class="turf-media">
-              <img src="images/turf-kickoff.jpg" alt="Kickoff Hub HSR Layout">
+              <img src="images/turf-kickoff.jpg" alt="Kickoff Hub Coimbatore">
               <div class="rating-pill-green">★ 4.7</div>
             </div>
             <div class="turf-details-body">
               <h3 class="turf-card-title">Kickoff Hub</h3>
               <div class="turf-card-loc">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>HSR Layout, Bangalore</span>
+                <span>RS Puram, Coimbatore</span>
               </div>
               <div class="amenities-badges-row">
                 <span class="amenity-chip">🌳 Outdoor</span>
@@ -510,7 +531,7 @@
               <div class="turf-card-actions-row">
                 <div class="price-line">₹1000 <span class="price-unit">/hr</span></div>
                 <div class="action-btns-group">
-                  <button class="btn-card-book" data-turf="Kickoff Hub" data-rate="1000" data-loc="HSR Layout">Book Now</button>
+                  <button class="btn-card-book" data-turf="Kickoff Hub" data-rate="1000" data-loc="Coimbatore">Book Now</button>
                   <button class="btn-card-heart" aria-label="Favorite">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                   </button>
@@ -520,16 +541,16 @@
           </div>
 
           <!-- Turf 3: Game On Turf -->
-          <div class="turf-listing-card" data-sport="badminton" data-location="indiranagar" data-name="Game On Turf" data-rate="900">
+          <div class="turf-listing-card" data-sport="badminton" data-location="madurai" data-name="Game On Turf" data-rate="900">
             <div class="turf-media">
-              <img src="images/turf-gameon.jpg" alt="Game On Turf Indiranagar">
+              <img src="images/turf-gameon.jpg" alt="Game On Turf Madurai">
               <div class="rating-pill-green">★ 4.9</div>
             </div>
             <div class="turf-details-body">
               <h3 class="turf-card-title">Game On Turf</h3>
               <div class="turf-card-loc">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>Indiranagar, Bangalore</span>
+                <span>KK Nagar, Madurai</span>
               </div>
               <div class="amenities-badges-row">
                 <span class="amenity-chip">🏠 Indoor</span>
@@ -539,7 +560,7 @@
               <div class="turf-card-actions-row">
                 <div class="price-line">₹900 <span class="price-unit">/hr</span></div>
                 <div class="action-btns-group">
-                  <button class="btn-card-book" data-turf="Game On Turf" data-rate="900" data-loc="Indiranagar">Book Now</button>
+                  <button class="btn-card-book" data-turf="Game On Turf" data-rate="900" data-loc="Madurai">Book Now</button>
                   <button class="btn-card-heart" aria-label="Favorite">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                   </button>
@@ -549,16 +570,16 @@
           </div>
 
           <!-- Turf 4: Playground Pro -->
-          <div class="turf-listing-card" data-sport="football" data-location="jayanagar" data-name="Playground Pro" data-rate="1500">
+          <div class="turf-listing-card" data-sport="football" data-location="trichy" data-name="Playground Pro" data-rate="1500">
             <div class="turf-media">
-              <img src="images/turf-playground.jpg" alt="Playground Pro Jayanagar">
+              <img src="images/turf-playground.jpg" alt="Playground Pro Trichy">
               <div class="rating-pill-green">★ 4.6</div>
             </div>
             <div class="turf-details-body">
               <h3 class="turf-card-title">Playground Pro</h3>
               <div class="turf-card-loc">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>Jayanagar, Bangalore</span>
+                <span>Thillai Nagar, Trichy</span>
               </div>
               <div class="amenities-badges-row">
                 <span class="amenity-chip">🌳 Outdoor</span>
@@ -568,7 +589,7 @@
               <div class="turf-card-actions-row">
                 <div class="price-line">₹1500 <span class="price-unit">/hr</span></div>
                 <div class="action-btns-group">
-                  <button class="btn-card-book" data-turf="Playground Pro" data-rate="1500" data-loc="Jayanagar">Book Now</button>
+                  <button class="btn-card-book" data-turf="Playground Pro" data-rate="1500" data-loc="Trichy">Book Now</button>
                   <button class="btn-card-heart" aria-label="Favorite">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                   </button>
@@ -1123,12 +1144,104 @@
         <span class="btn-script-text">Play More. Grow More. Together.</span>
       </a>
     </div>
+  </section>
 
-  </section>         </svg>
-          </div>
-        </a>
+  <!-- ==========================================================================
+       CONTACT US SECTION (#contact)
+       ========================================================================== -->
+  <section class="contact-section" id="contact" style="padding: 80px 0; background: linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 100%);">
+    <div class="container">
+      <div style="text-align: center; max-width: 640px; margin: 0 auto 50px;">
+        <span style="display: inline-block; padding: 6px 14px; background: rgba(16, 185, 129, 0.12); color: #047857; border-radius: 20px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px;">Get In Touch</span>
+        <h2 style="font-size: 2.2rem; font-weight: 800; color: #0F172A; letter-spacing: -0.5px; margin-bottom: 12px;">Contact Our Support Team</h2>
+        <p style="color: #64748B; font-size: 1rem; line-height: 1.6;">Have questions about slot bookings, turf owner partnerships, or payment settlements? We're available across Tamil Nadu to assist you.</p>
       </div>
 
+      <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 40px; align-items: start;">
+        <!-- Left: Contact Details & Info Cards -->
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <!-- Card 1: Phone / WhatsApp -->
+          <div style="background: #fff; padding: 22px 24px; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 16px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 18px;">
+            <div style="width: 50px; height: 50px; border-radius: 14px; background: #ECFDF5; color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;">
+              📞
+            </div>
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748B; letter-spacing: 0.5px;">Phone &amp; WhatsApp Support</div>
+              <div style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin-top: 2px;">+91 94440 12345 / +91 93847 97751</div>
+              <div style="font-size: 0.75rem; color: #10B981; font-weight: 600; margin-top: 2px;">● Mon–Sun: 6:00 AM – 11:00 PM</div>
+            </div>
+          </div>
+
+          <!-- Card 2: Email -->
+          <div style="background: #fff; padding: 22px 24px; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 16px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 18px;">
+            <div style="width: 50px; height: 50px; border-radius: 14px; background: #EFF6FF; color: #3B82F6; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;">
+              ✉️
+            </div>
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748B; letter-spacing: 0.5px;">Official Email</div>
+              <div style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin-top: 2px;">support@turfify.in</div>
+              <div style="font-size: 0.75rem; color: #64748B; margin-top: 2px;">Owner inquiries: partners@turfify.in</div>
+            </div>
+          </div>
+
+          <!-- Card 3: Regional Hub -->
+          <div style="background: #fff; padding: 22px 24px; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 16px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 18px;">
+            <div style="width: 50px; height: 50px; border-radius: 14px; background: #FFF7ED; color: #EA580C; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;">
+              📍
+            </div>
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748B; letter-spacing: 0.5px;">Tamil Nadu Hub</div>
+              <div style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin-top: 2px;">Chennai &amp; Coimbatore, Tamil Nadu</div>
+              <div style="font-size: 0.75rem; color: #64748B; margin-top: 2px;">Serving all 38 districts across Tamil Nadu</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Contact Form -->
+        <div style="background: #fff; padding: 34px; border-radius: 20px; border: 1px solid #E2E8F0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin-bottom: 6px;">Send us a Direct Message</h3>
+          <p style="font-size: 0.85rem; color: #64748B; margin-bottom: 22px;">We typically respond to inquiries within 30 minutes.</p>
+
+          <form id="contact-us-form">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+              <div>
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Your Name *</label>
+                <input type="text" id="contact-name" class="form-control" placeholder="Full Name" required style="width:100%; padding:11px 14px; border:1px solid #CBD5E1; border-radius:10px; font-size:0.9rem;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Mobile / WhatsApp *</label>
+                <input type="tel" id="contact-phone" class="form-control" placeholder="+91 98765 43210" required style="width:100%; padding:11px 14px; border:1px solid #CBD5E1; border-radius:10px; font-size:0.9rem;">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+              <div>
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Email Address *</label>
+                <input type="email" id="contact-email" class="form-control" placeholder="you@example.com" required style="width:100%; padding:11px 14px; border:1px solid #CBD5E1; border-radius:10px; font-size:0.9rem;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Inquiry Type</label>
+                <select id="contact-subject" class="form-control" style="width:100%; padding:11px 14px; border:1px solid #CBD5E1; border-radius:10px; font-size:0.9rem; background:#fff;">
+                  <option value="Player Booking Assistance">⚽ Player Booking Assistance</option>
+                  <option value="Turf Owner Partnership">🏟️ List My Turf / Partnership</option>
+                  <option value="Payment or Refund">💳 Payment or Refund Inquiry</option>
+                  <option value="General Support">💬 General Support</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Your Message *</label>
+              <textarea id="contact-message" rows="4" class="form-control" placeholder="How can our Tamil Nadu sports team help you?" required style="width:100%; padding:12px 14px; border:1px solid #CBD5E1; border-radius:10px; font-size:0.9rem; font-family:inherit; resize:vertical;"></textarea>
+            </div>
+
+            <button type="submit" id="btn-submit-contact" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #10B981, #059669); border: none; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <span>Send Message</span>
+              <span>✉️</span>
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1175,7 +1288,7 @@
       <div class="modal-header">
         <div>
           <h3 class="modal-title" id="booking-modal-title">Book Slot</h3>
-          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;" id="booking-modal-sub">Bangalore</p>
+          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;" id="booking-modal-sub">Tamil Nadu</p>
         </div>
         <button class="btn-close-modal" id="btn-close-booking" aria-label="Close">✕</button>
       </div>

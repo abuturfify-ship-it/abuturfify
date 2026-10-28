@@ -119,9 +119,6 @@ window.TurfifyStore = {
     if (!localStorage.getItem(TURFIFY_STORAGE_KEYS.USERS)) {
       localStorage.setItem(TURFIFY_STORAGE_KEYS.USERS, JSON.stringify(DEFAULT_USERS_LIST));
     }
-    if (!localStorage.getItem(TURFIFY_STORAGE_KEYS.CURRENT_USER)) {
-      localStorage.setItem(TURFIFY_STORAGE_KEYS.CURRENT_USER, JSON.stringify(DEFAULT_USERS.player));
-    }
 
     // Immediately trigger server sync across windows
     this.syncWithServer().catch(() => {});
@@ -244,9 +241,9 @@ window.TurfifyStore = {
   getCurrentUser() {
     try {
       const u = localStorage.getItem(TURFIFY_STORAGE_KEYS.CURRENT_USER);
-      return u ? JSON.parse(u) : DEFAULT_USERS.player;
+      return u ? JSON.parse(u) : null;
     } catch {
-      return DEFAULT_USERS.player;
+      return null;
     }
   },
 
@@ -341,17 +338,9 @@ window.TurfifyStore = {
 
   switchRole(role) {
     const cur = this.getCurrentUser();
-    // If an authenticated user is logged in, preserve their real name, id, and profile
-    if (cur && (cur.is_authenticated || (cur.id && cur.id !== 'player-1' && cur.id !== 'owner-1'))) {
-      cur.role = role;
-      this.setCurrentUser(cur);
-      return;
-    }
-    if (role === 'owner') {
-      this.setCurrentUser(DEFAULT_USERS.owner);
-    } else {
-      this.setCurrentUser(DEFAULT_USERS.player);
-    }
+    if (!cur) return;
+    cur.role = role;
+    this.setCurrentUser(cur);
   },
 
   getTurfs() {

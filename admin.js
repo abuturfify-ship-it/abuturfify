@@ -211,8 +211,55 @@ function getLiveUsers() {
   return Object.values(userMap).filter(u => !isDeleted(u.id, u.email));
 }
 
+// ─── Admin Authentication Gate ──────────────────────────────────────────────
+const ADMIN_ALLOWED_USERS = ['admin', 'admin@turfify.com', 'superadmin'];
+
+function checkAdminAuth() {
+  const isAuth = sessionStorage.getItem('turfify_admin_authenticated') === 'true';
+  const gate = document.getElementById('admin-auth-gate');
+  if (gate) {
+    gate.style.display = isAuth ? 'none' : 'flex';
+  }
+  return isAuth;
+}
+
+function initAdminAuthGate() {
+  checkAdminAuth();
+
+  const form = document.getElementById('admin-gate-form');
+  const errBox = document.getElementById('admin-gate-error');
+  const errMsg = document.getElementById('admin-gate-error-msg');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const username = (document.getElementById('admin-gate-username')?.value || '').trim().toLowerCase();
+    const pass = (document.getElementById('admin-gate-password')?.value || '').trim();
+
+    const isValidUser = ADMIN_ALLOWED_USERS.includes(username) || username.includes('admin');
+    const isValidPass = (pass === 'admin123' || pass === 'admin' || pass === 'turfify2026');
+
+    if (isValidUser && isValidPass) {
+      sessionStorage.setItem('turfify_admin_authenticated', 'true');
+      if (errBox) errBox.style.display = 'none';
+      checkAdminAuth();
+      showToast('Super Admin console unlocked.');
+    } else {
+      if (errBox) {
+        errBox.style.display = 'flex';
+        if (errMsg) errMsg.textContent = 'Invalid administrator credentials. Access restricted.';
+      }
+    }
+  });
+
+  document.getElementById('btn-admin-logout')?.addEventListener('click', () => {
+    sessionStorage.removeItem('turfify_admin_authenticated');
+    window.location.href = 'index.html';
+  });
+}
+
 // Application Controller
 document.addEventListener('DOMContentLoaded', () => {
+  initAdminAuthGate();
   initNavigation();
   renderKPIs();
   initDashboardCharts();

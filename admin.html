@@ -59,14 +59,59 @@
 </head>
 <body>
 
+  <!-- ======================================================================
+       ADMIN AUTHENTICATION GATE OVERLAY
+       ====================================================================== -->
+  <div id="admin-auth-gate" style="position:fixed;inset:0;background:#0A0F1D;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:inherit;">
+    <div style="background:#131B2E;border:1px solid rgba(255,255,255,0.1);box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);border-radius:18px;max-width:420px;width:100%;padding:36px;color:#F8FAFC;">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg, #10B981, #059669);border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 8px 24px rgba(16,185,129,0.35);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h2 style="font-size:1.4rem;font-weight:800;letter-spacing:-0.5px;color:#fff;margin-bottom:6px;">Turfify Super Admin</h2>
+        <p style="color:#94A3B8;font-size:0.85rem;">Restricted Management Console. Please authenticate to continue.</p>
+      </div>
+
+      <div id="admin-gate-error" style="display:none;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5;padding:10px 14px;border-radius:10px;font-size:0.82rem;margin-bottom:16px;align-items:center;gap:8px;">
+        <span>⚠️</span>
+        <span id="admin-gate-error-msg">Invalid administrator credentials.</span>
+      </div>
+
+      <form id="admin-gate-form">
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:0.75rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Admin ID / Email</label>
+          <input type="text" id="admin-gate-username" placeholder="admin@turfify.com" autocomplete="username" required
+            style="width:100%;padding:12px 14px;background:#0D1527;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:0.9rem;outline:none;">
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <label style="display:block;font-size:0.75rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Password</label>
+          <input type="password" id="admin-gate-password" placeholder="••••••••" autocomplete="current-password" required
+            style="width:100%;padding:12px 14px;background:#0D1527;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:0.9rem;outline:none;">
+        </div>
+
+        <button type="submit" id="btn-admin-gate-login" style="width:100%;padding:13px;background:#10B981;border:none;border-radius:10px;color:#fff;font-weight:700;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(16,185,129,0.35);transition:opacity 0.2s;">
+          <span>Unlock Admin Console</span>
+          <span>⚡</span>
+        </button>
+      </form>
+
+      <div style="text-align:center;margin-top:20px;border-top:1px solid rgba(255,255,255,0.08);padding-top:18px;">
+        <a href="index.html" style="color:#94A3B8;text-decoration:none;font-size:0.85rem;display:inline-flex;align-items:center;gap:6px;transition:color 0.2s;">
+          <span>← Return to Home Page</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
   <div class="admin-shell">
 
     <!-- ======================================================================
          SIDEBAR NAVIGATION
          ====================================================================== -->
     <aside class="sidebar">
-      <!-- Brand Logo -->
-      <div class="sidebar-brand">
+      <!-- Brand Logo - 1-Click to Home -->
+      <a href="index.html" class="sidebar-brand" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;" title="← Return to Turfify Home">
         <div class="brand-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
@@ -77,7 +122,7 @@
           <span>Turfify</span>
           <span class="brand-tag">Admin Console</span>
         </div>
-      </div>
+      </a>
 
       <!-- Super Admin Profile Card -->
       <div class="admin-badge-card">
@@ -166,13 +211,12 @@
             <span>Razorpay Live</span>
           </div>
 
-          <a href="index.html" class="topbar-pill-btn" style="text-decoration:none;">
-            <span>🌐 View Site</span>
+          <a href="index.html" class="topbar-pill-btn" style="text-decoration:none; font-weight: 700; color: #10B981;" title="Go to Turfify Home">
+            <span>🏠 Home</span>
           </a>
 
-          <button class="topbar-icon-btn" title="System Notifications">
-            <span>🔔</span>
-            <span class="notif-badge-dot"></span>
+          <button id="btn-admin-logout" class="topbar-pill-btn" style="background: rgba(239, 68, 68, 0.1); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.25); cursor: pointer; font-weight: 700;" title="Logout Admin">
+            <span>🚪 Logout</span>
           </button>
         </div>
       </header>

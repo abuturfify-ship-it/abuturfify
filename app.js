@@ -125,12 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Update Navbar Auth display if user is logged in
   function updateNavbarAuth() {
     const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+    const centerDashLink = document.querySelector('a[href="dashboard.html"]') || document.getElementById('nav-dashboard-link');
+
     if (curUser && curUser.name && curUser.is_authenticated) {
       const isOwner = (curUser.role || '').toLowerCase() === 'owner';
       const targetDashboard = isOwner ? 'owner-dashboard.html' : 'player-dashboard.html';
 
       // Update center Dashboard link
-      const centerDashLink = document.querySelector('a[href="dashboard.html"]');
       if (centerDashLink) {
         centerDashLink.href = targetDashboard;
         centerDashLink.textContent = isOwner ? 'Owner Dashboard' : 'Player Dashboard';
@@ -154,6 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
           e.preventDefault();
           localStorage.removeItem('turfify_current_user');
           window.location.reload();
+        };
+      }
+    } else {
+      // Unauthenticated visitor guard on Dashboard link
+      if (centerDashLink) {
+        centerDashLink.onclick = (e) => {
+          e.preventDefault();
+          window.location.href = 'auth.html?mode=signin&redirect=dashboard';
         };
       }
     }
@@ -189,9 +198,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 700);
   });
 
-  // Theme toggle
+  // Theme toggle (Daylight / Dark Mode)
+  const savedTheme = localStorage.getItem('turfify_theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+  }
+
   document.getElementById('btn-theme-toggle')?.addEventListener('click', () => {
-    showToast('Switched to Daylight mode.');
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('turfify_theme', isDark ? 'dark' : 'light');
+    showToast(isDark ? '🌙 Switched to Dark Theme.' : '☀️ Switched to Daylight Theme.');
+  });
+
+  // Contact Us Form Handler
+  document.getElementById('contact-us-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('contact-name')?.value || 'Guest';
+    const phone = document.getElementById('contact-phone')?.value || '';
+    const email = document.getElementById('contact-email')?.value || '';
+    showToast(`🎉 Thank you ${name}! Your message has been received. Our Tamil Nadu team will contact you at ${phone || email} shortly.`);
+    document.getElementById('contact-us-form')?.reset();
   });
 
   // --------------------------------------------------------------------------
@@ -228,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sportLower.includes('cricket')) sportKey = 'cricket';
       else if (sportLower.includes('badminton')) sportKey = 'badminton';
 
-      const locKey = (t.location || 'bangalore').toLowerCase();
+      const locKey = (t.location || 'chennai').toLowerCase();
       const amenities = Array.isArray(t.amenities) ? t.amenities : [];
 
       return `
@@ -241,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 class="turf-card-title">${t.name}</h3>
             <div class="turf-card-loc">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-              <span>${t.location || 'Bangalore'}</span>
+              <span>${t.location || 'Chennai, Tamil Nadu'}</span>
             </div>
             ${amenities.length ? `
               <div class="amenities-badges-row">
@@ -251,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="turf-card-actions-row">
               <div class="price-line">₹${t.price_per_hour} <span class="price-unit">/hr</span></div>
               <div class="action-btns-group">
-                <button class="btn-card-book" data-turfid="${t.id}" data-turf="${t.name}" data-rate="${t.price_per_hour}" data-loc="${t.location || 'Bangalore'}" data-sport="${t.sport || 'Football'}">Book Now</button>
+                <button class="btn-card-book" data-turfid="${t.id}" data-turf="${t.name}" data-rate="${t.price_per_hour}" data-loc="${t.location || 'Chennai, Tamil Nadu'}" data-sport="${t.sport || 'Football'}">Book Now</button>
                 <button class="btn-card-heart" aria-label="Favorite">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                 </button>
@@ -271,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const id = btn.dataset.turfid || 'turf-1';
         const name = btn.dataset.turf || 'The Arena Sports Hub';
         const rate = btn.dataset.rate || '1200';
-        const loc = btn.dataset.loc || 'Bangalore';
+        const loc = btn.dataset.loc || 'Chennai, Tamil Nadu';
         const sport = btn.dataset.sport || 'Football';
 
         // Check if user is logged in
@@ -293,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeTurfSport = sport;
 
         document.getElementById('booking-modal-title').textContent = `Book Slot — ${name}`;
-        document.getElementById('booking-modal-sub').textContent = `${loc}, Bangalore`;
+        document.getElementById('booking-modal-sub').textContent = loc;
         document.getElementById('modal-base-rate').textContent = `₹${rate}`;
         document.getElementById('modal-total-rate').textContent = `₹${rate}`;
 
@@ -356,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const baseEl = document.getElementById('modal-base-rate');
           const totalEl = document.getElementById('modal-total-rate');
           if (titleEl) titleEl.textContent = `Book Slot — ${pending.name}`;
-          if (subEl) subEl.textContent = `${pending.loc || 'Bangalore'}, Bangalore`;
+          if (subEl) subEl.textContent = pending.loc || 'Chennai, Tamil Nadu';
           if (baseEl) baseEl.textContent = `₹${pending.rate || '1200'}`;
           if (totalEl) totalEl.textContent = `₹${pending.rate || '1200'}`;
 
@@ -489,12 +515,32 @@ document.addEventListener('DOMContentLoaded', () => {
   function filterVenues(sport, location) {
     const cards = document.querySelectorAll('.turf-listing-card');
     let matches = 0;
+
+    // City-to-area mapping: "chennai" dropdown also matches Pallavaram, Tambaram, etc.
+    const CITY_AREA_MAP = {
+      chennai: ['pallavaram', 'tambaram', 'velachery', 'anna nagar', 'adyar', 'porur', 'perambur', 'sholinganallur', 'chrompet', 'chromepet', 'guduvanchery', 't.nagar', 'tnagar', 'chennai', 'west mambalam', 'mylapore', 'nungambakkam', 'kilpauk', 'kodambakkam'],
+      coimbatore: ['coimbatore', 'rs puram', 'gandhipuram', 'saibaba colony', 'peelamedu'],
+      madurai: ['madurai', 'anna nagar madurai', 'koodal nagar'],
+      trichy: ['trichy', 'tiruchirappalli', 'srirangam', 'ariyamangalam'],
+      salem: ['salem', 'junction main road'],
+      tirunelveli: ['tirunelveli', 'palayamkottai'],
+      vellore: ['vellore', 'katpadi'],
+      erode: ['erode', 'perundurai']
+    };
+
     cards.forEach(card => {
       const cSport = (card.dataset.sport || '').toLowerCase();
       const cLoc = (card.dataset.location || '').toLowerCase();
 
       const matchSport = (sport === 'all' || !sport || cSport.includes(sport.toLowerCase()));
-      const matchLoc = (location === 'all' || !location || cLoc.includes(location.toLowerCase()));
+
+      let matchLoc;
+      if (location === 'all' || !location) {
+        matchLoc = true;
+      } else {
+        const areas = CITY_AREA_MAP[location.toLowerCase()] || [location.toLowerCase()];
+        matchLoc = areas.some(area => cLoc.includes(area));
+      }
 
       if (matchSport && matchLoc) {
         card.style.display = 'flex';
@@ -531,6 +577,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Carousel arrow feedback
   document.getElementById('btn-next-turfs')?.addEventListener('click', () => {
-    showToast('Browsing more verified turfs in Bangalore.');
+    showToast('Browsing more verified turfs in Tamil Nadu.');
   });
 });

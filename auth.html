@@ -112,17 +112,18 @@
   <!-- LEFT BRAND PANEL -->
   <aside class="auth-brand">
     <div class="brand-grid"></div>
-    <div class="brand-logo">
+    <!-- Brand Logo - 1-Click to Home -->
+    <a href="index.html" class="brand-logo" style="text-decoration:none; color:inherit;" title="← Return to Turfify Home">
       <div class="brand-logo-badge">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round">
           <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"/><circle cx="12" cy="4" r="1.5" fill="#fff"/>
         </svg>
       </div>
       <span class="brand-logo-text">Turfi<span>fy</span></span>
-    </div>
+    </a>
     <div class="brand-center">
       <h1 class="brand-headline">The Premium<br>Sports Booking<br><span class="highlight">Platform.</span></h1>
-      <p class="brand-desc">Join thousands of players and turf owners on Bangalore's most trusted sports marketplace. Real-time slots, instant confirmation, secure payments.</p>
+      <p class="brand-desc">Join thousands of players and turf owners on Tamil Nadu's premier sports marketplace. Real-time slots, instant confirmation, secure payments across Chennai, Coimbatore, Madurai &amp; beyond.</p>
       <div class="brand-stats">
         <div><span class="stat-number">1,200+</span><span class="stat-label">Turfs Listed</span></div>
         <div><span class="stat-number">48K+</span><span class="stat-label">Players</span></div>
@@ -139,9 +140,9 @@
   <!-- RIGHT AUTH PANEL -->
   <main class="auth-panel">
     <div class="auth-card">
-      <a href="index.html" class="back-home">
+      <a href="index.html" class="back-home" title="Return to Turfify Home">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Back to Turfify
+        Back to Turfify Home
       </a>
       <div class="auth-card-header">
         <h2 class="auth-card-title" id="auth-page-title">Welcome back 👋</h2>
@@ -154,8 +155,8 @@
       </div>
 
       <div class="auth-tabs" id="auth-tabs">
-        <button class="auth-tab active" id="tab-signin" onclick="switchView('signin')">Sign In</button>
-        <button class="auth-tab" id="tab-signup" onclick="switchView('signup')">Sign Up</button>
+        <button type="button" class="auth-tab active" id="tab-signin" onclick="switchView('signin', event)">Sign In</button>
+        <button type="button" class="auth-tab" id="tab-signup" onclick="switchView('signup', event)">Sign Up</button>
       </div>
 
       <!-- SIGN IN -->
@@ -184,7 +185,7 @@
             <div class="btn-spinner"></div>
           </button>
         </form>
-        <p class="auth-footer-text">Don't have an account? <button class="link-btn" onclick="switchView('signup')">Create one free</button></p>
+        <p class="auth-footer-text">Don't have an account? <button type="button" class="link-btn" onclick="switchView('signup', event)">Create one free</button></p>
       </div>
 
       <!-- SIGN UP -->
@@ -235,7 +236,7 @@
             <div class="btn-spinner"></div>
           </button>
         </form>
-        <p class="auth-footer-text">Already have an account? <button class="link-btn" onclick="switchView('signin')">Sign in</button></p>
+        <p class="auth-footer-text">Already have an account? <button type="button" class="link-btn" onclick="switchView('signin', event)">Sign in</button></p>
       </div>
 
       <!-- FORGOT PASSWORD -->
@@ -252,7 +253,7 @@
             <div class="btn-spinner"></div>
           </button>
         </form>
-        <p class="auth-footer-text">Remembered it? <button class="link-btn" onclick="switchView('signin')">Back to Sign In</button></p>
+        <p class="auth-footer-text">Remembered it? <button type="button" class="link-btn" onclick="switchView('signin', event)">Back to Sign In</button></p>
       </div>
 
       <!-- RESET / UPDATE PASSWORD -->
@@ -312,7 +313,9 @@
     reset:  { title: 'Set new password 🔒', sub: 'Enter your new password below' }
   };
 
-  function switchView(view) {
+  function switchView(view, evt) {
+    if (evt && evt.preventDefault) evt.preventDefault();
+    if (window.event && window.event.preventDefault) window.event.preventDefault();
     document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
     const target = document.getElementById('view-' + view);

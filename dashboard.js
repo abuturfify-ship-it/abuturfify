@@ -4,6 +4,13 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Authentication Guard: Ensure user is signed in
+  const initialUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+  if (!initialUser || !initialUser.is_authenticated) {
+    window.location.replace('auth.html?mode=signin&redirect=dashboard');
+    return;
+  }
+
   // Elements
   const navBtnPlayer = document.getElementById('nav-btn-player');
   const navBtnOwner = document.getElementById('nav-btn-owner');

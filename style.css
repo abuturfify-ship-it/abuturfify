@@ -1534,3 +1534,100 @@ button {
   .banner-left-group { flex-direction: column; }
   .nav-menu { display: none; }
 }
+
+/* ==========================================================================
+   THEME SUPPORT (DAYLIGHT / DARK MODE)
+   ========================================================================== */
+body.dark-mode {
+  background: #0B1120 !important;
+  color: #F1F5F9 !important;
+}
+
+body.dark-mode .header {
+  background: rgba(15, 23, 42, 0.96) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-mode .brand-title {
+  color: #FFFFFF !important;
+}
+
+body.dark-mode .nav-link {
+  color: #94A3B8 !important;
+}
+
+body.dark-mode .nav-link:hover,
+body.dark-mode .nav-link.active {
+  color: #10B981 !important;
+}
+
+body.dark-mode .hero-wrapper {
+  background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.08) 0%, #0B1120 70%) !important;
+}
+
+body.dark-mode .hero-main-title .word-navy {
+  color: #F8FAFC !important;
+}
+
+body.dark-mode .search-pill-card,
+body.dark-mode .turf-listing-card,
+body.dark-mode .sport-pill-card {
+  background: #131D31 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F1F5F9 !important;
+}
+
+body.dark-mode .turf-details-body {
+  background: #131D31 !important;
+}
+
+body.dark-mode .turf-card-title {
+  color: #F8FAFC !important;
+}
+
+body.dark-mode .search-col-label {
+  color: #94A3B8 !important;
+}
+
+body.dark-mode .search-col-select {
+  color: #F1F5F9 !important;
+  background: transparent !important;
+}
+
+body.dark-mode .btn-sun-toggle {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #38BDF8 !important;
+}
+
+body.dark-mode #contact {
+  background: #0F172A !important;
+}
+
+body.dark-mode #contact h2 {
+  color: #F8FAFC !important;
+}
+
+body.dark-mode #contact div[style*="background: #fff;"] {
+  background: #1E293B !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F1F5F9 !important;
+}
+
+body.dark-mode #contact h3,
+body.dark-mode #contact div[style*="color: #0F172A;"] {
+  color: #F8FAFC !important;
+}
+
+body.dark-mode #contact input,
+body.dark-mode #contact select,
+body.dark-mode #contact textarea {
+  background: #0F172A !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F1F5F9 !important;
+}
+
+@media (max-width: 900px) {
+  #contact div[style*="grid-template-columns: 1fr 1.3fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}

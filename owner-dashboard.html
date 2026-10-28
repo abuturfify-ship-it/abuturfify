@@ -84,6 +84,7 @@
       <!-- Center Nav Links -->
       <nav aria-label="Main Navigation">
         <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
           <li><a href="#slots" class="nav-link active">Slot Matrix</a></li>
           <li><a href="#ledger" class="nav-link">Bookings Ledger</a></li>
           <li><a href="#grounds" class="nav-link">My Grounds</a></li>
@@ -293,8 +294,8 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Location in Bangalore</label>
-            <input type="text" class="form-control" id="new-turf-loc" placeholder="e.g. Sarjapur Road, Bangalore"
+            <label class="form-label">Location in Tamil Nadu</label>
+            <input type="text" class="form-control" id="new-turf-loc" placeholder="e.g. Anna Nagar, Chennai or RS Puram, Coimbatore"
               required>
           </div>
           <div class="form-group">
@@ -353,11 +354,12 @@
   <script src="store.js"></script>
   <script>
     function renderOwnerDashboard() {
-      const user = window.TurfifyStore.getCurrentUser();
-      if (!user || user.role !== 'owner') {
-        window.TurfifyStore.switchRole('owner');
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      if (!user || !user.is_authenticated || user.role !== 'owner') {
+        window.location.replace('auth.html?mode=signin&redirect=owner-dashboard');
+        return;
       }
-      const activeUser = window.TurfifyStore.getCurrentUser();
+      const activeUser = user;
       const ownerTurfs = window.TurfifyStore.getOwnerTurfs(activeUser?.id);
       const ownerBookings = window.TurfifyStore.getOwnerBookings(activeUser?.id);
 
