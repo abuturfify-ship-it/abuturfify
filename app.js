@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // Contact Us Form Handler - Resend API Dispatcher to apex.turfify@gmail.com
+  // Contact Us Form Handler - Resend API Dispatcher to abu.turfify@gmail.com
   // --------------------------------------------------------------------------
   document.getElementById('contact-us-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
