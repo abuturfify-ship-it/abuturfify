@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>
             ${b.status === 'Confirmed' ? 
               `<button class="btn-mini-action" onclick="window.cancelPlayerBooking('${b.id}')" style="color:#DC2626;">Cancel</button>` : 
-              `<a href="index.html#popular-turfs" class="btn-mini-action" style="text-decoration:none;">Rebook</a>`
+              `<button type="button" class="btn-mini-action" onclick="window.openDashBookingModal('${b.turf_id || ''}')" style="cursor:pointer;">Rebook</button>`
             }
           </td>
         `;
@@ -133,9 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>₹${t.price_per_hour}/hr</span>
           </div>
         </div>
-        <a href="index.html#popular-turfs" class="btn-mini-action" style="background:var(--primary-green-light); color:var(--primary-green-dark); font-weight:700; text-decoration:none;">
+        <button type="button" class="btn-mini-action" onclick="window.openDashBookingModal('${t.id}')" style="background:var(--primary-green-light); color:var(--primary-green-dark); font-weight:700; cursor:pointer; border:1px solid #A7F3D0;">
           Book
-        </a>
+        </button>
       `;
       favList.appendChild(item);
     });
@@ -320,8 +320,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user.role === 'owner') {
       modalAddTurf.classList.add('active');
     } else {
-      window.location.href = 'index.html#popular-turfs';
+      window.openDashBookingModal();
     }
+  });
+
+  // Topbar and Panel Book Slot triggers
+  document.getElementById('btn-topbar-book-turf')?.addEventListener('click', () => {
+    window.openDashBookingModal();
+  });
+
+  document.getElementById('btn-dash-book-turf')?.addEventListener('click', () => {
+    window.openDashBookingModal();
   });
 
   document.getElementById('btn-add-walkin')?.addEventListener('click', () => {
@@ -404,6 +413,204 @@ document.addEventListener('DOMContentLoaded', () => {
     formNewTurf.reset();
     showToast(`Turf "${name}" successfully registered and live!`);
     renderOwnerDashboard();
+  });
+
+  // --------------------------------------------------------------------------
+  // IN-DASHBOARD TURF BOOKING ENGINE
+  // --------------------------------------------------------------------------
+  const modalDashBooking = document.getElementById('modal-dash-booking');
+  const btnCloseDashBooking = document.getElementById('btn-close-dash-booking');
+  const turfSelect = document.getElementById('dash-booking-turf-select');
+  const dateInput = document.getElementById('dash-booking-date');
+  const nameInput = document.getElementById('dash-booking-player-name');
+  const phoneInput = document.getElementById('dash-booking-player-phone');
+  const btnConfirmDash = document.getElementById('btn-confirm-dash-booking');
+
+  // Close modal handlers
+  btnCloseDashBooking?.addEventListener('click', () => {
+    modalDashBooking?.classList.remove('active');
+  });
+
+  modalDashBooking?.addEventListener('click', (e) => {
+    if (e.target === modalDashBooking) {
+      modalDashBooking.classList.remove('active');
+    }
+  });
+
+  // Payment method pills
+  let selectedPaymentMethod = 'UPI (Instant)';
+  document.querySelectorAll('#dash-payment-methods .payment-pill-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#dash-payment-methods .payment-pill-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedPaymentMethod = btn.dataset.method || 'UPI (Instant)';
+    });
+  });
+
+  // Slot buttons selection
+  document.querySelectorAll('#dash-booking-slots-grid .slot-btn').forEach(slotBtn => {
+    slotBtn.addEventListener('click', () => {
+      if (slotBtn.disabled || slotBtn.classList.contains('booked')) return;
+      document.querySelectorAll('#dash-booking-slots-grid .slot-btn').forEach(s => s.classList.remove('selected'));
+      slotBtn.classList.add('selected');
+    });
+  });
+
+  // Function to refresh slot availability for selected turf & date
+  function refreshDashSlotAvailability() {
+    if (!turfSelect || !dateInput) return;
+    const curTurfId = turfSelect.value;
+    const curDate = dateInput.value;
+    const allBookings = window.TurfifyStore.getBookings() || [];
+
+    const bookedSlots = allBookings
+      .filter(b => 
+        String(b.turf_id) === String(curTurfId) &&
+        b.date === curDate &&
+        b.status !== 'Cancelled'
+      )
+      .map(b => (b.time_slot || '').trim());
+
+    const slotButtons = document.querySelectorAll('#dash-booking-slots-grid .slot-btn');
+    let hasSelected = false;
+
+    slotButtons.forEach(btn => {
+      const slotLabel = (btn.dataset.slot || '').trim();
+      btn.classList.remove('booked');
+      btn.disabled = false;
+
+      if (slotLabel && bookedSlots.includes(slotLabel)) {
+        btn.classList.add('booked');
+        btn.disabled = true;
+        btn.classList.remove('selected');
+      } else if (!hasSelected && !btn.disabled) {
+        if (btn.classList.contains('selected')) {
+          hasSelected = true;
+        }
+      }
+    });
+
+    // If previously selected slot is now booked, select first available slot
+    if (!document.querySelector('#dash-booking-slots-grid .slot-btn.selected:not([disabled])')) {
+      const firstAvailable = document.querySelector('#dash-booking-slots-grid .slot-btn:not([disabled])');
+      if (firstAvailable) {
+        firstAvailable.classList.add('selected');
+      }
+    }
+  }
+
+  // Update preview card and pricing when turf is changed
+  function updateSelectedTurfDetails() {
+    const turfs = window.TurfifyStore.getTurfs() || [];
+    const turf = turfs.find(t => String(t.id) === String(turfSelect.value)) || turfs[0];
+    if (!turf) return;
+
+    const imgEl = document.getElementById('dash-turf-preview-img');
+    const nameEl = document.getElementById('dash-turf-preview-name');
+    const metaEl = document.getElementById('dash-turf-preview-meta');
+    const rateEl = document.getElementById('dash-turf-preview-rate');
+    const baseRateEl = document.getElementById('dash-modal-base-rate');
+    const totalRateEl = document.getElementById('dash-modal-total-rate');
+
+    if (imgEl) imgEl.src = turf.image || 'images/turf-arena.jpg';
+    if (nameEl) nameEl.textContent = turf.name;
+    if (metaEl) metaEl.textContent = `${turf.sport} • ${turf.location}`;
+    if (rateEl) rateEl.textContent = `₹${turf.price_per_hour}`;
+    if (baseRateEl) baseRateEl.textContent = `₹${turf.price_per_hour}`;
+    if (totalRateEl) totalRateEl.textContent = `₹${turf.price_per_hour}`;
+
+    refreshDashSlotAvailability();
+  }
+
+  turfSelect?.addEventListener('change', updateSelectedTurfDetails);
+  dateInput?.addEventListener('change', refreshDashSlotAvailability);
+
+  // Global trigger to open in-dashboard booking modal
+  window.openDashBookingModal = function(turfId) {
+    const turfs = window.TurfifyStore.getTurfs() || [];
+    if (!turfs.length) {
+      showToast('No turfs available for booking yet.');
+      return;
+    }
+
+    // Populate turf dropdown
+    if (turfSelect) {
+      turfSelect.innerHTML = '';
+      turfs.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = `${t.name} (${t.sport} — ₹${t.price_per_hour}/hr — ${t.location})`;
+        turfSelect.appendChild(opt);
+      });
+
+      if (turfId) {
+        turfSelect.value = turfId;
+      } else {
+        turfSelect.value = turfs[0].id;
+      }
+    }
+
+    // Set today's date (or tomorrow if past 10 PM)
+    if (dateInput) {
+      const now = new Date();
+      if (now.getHours() >= 22) {
+        now.setDate(now.getDate() + 1);
+      }
+      const yyyyMmDd = now.toISOString().split('T')[0];
+      dateInput.value = yyyyMmDd;
+      dateInput.min = new Date().toISOString().split('T')[0];
+    }
+
+    // Pre-fill user contact info
+    const cur = window.TurfifyStore.getCurrentUser();
+    if (nameInput) nameInput.value = cur?.name || '';
+    if (phoneInput) phoneInput.value = (cur?.phone && cur?.phone !== '—') ? cur.phone : '+91 ';
+
+    updateSelectedTurfDetails();
+    modalDashBooking?.classList.add('active');
+  };
+
+  // Confirm booking inside dashboard
+  btnConfirmDash?.addEventListener('click', () => {
+    const selectedSlotBtn = document.querySelector('#dash-booking-slots-grid .slot-btn.selected:not([disabled])');
+    if (!selectedSlotBtn) {
+      showToast('⚠️ Please select an available match slot.');
+      return;
+    }
+
+    const turfs = window.TurfifyStore.getTurfs() || [];
+    const turf = turfs.find(t => String(t.id) === String(turfSelect.value)) || turfs[0];
+    const slot = selectedSlotBtn.dataset.slot;
+    const date = dateInput.value || new Date().toISOString().split('T')[0];
+    const playerName = nameInput.value.trim() || 'Player Guest';
+    const playerPhone = phoneInput.value.trim() || '+91 98765 43210';
+    const cur = window.TurfifyStore.getCurrentUser();
+
+    // Create booking via store
+    const newBooking = window.TurfifyStore.createBooking({
+      turf_id: turf.id,
+      turf_name: turf.name,
+      sport: turf.sport,
+      date: date,
+      time_slot: slot,
+      amount: turf.price_per_hour,
+      player_id: cur?.id || ('player-' + Date.now()),
+      player_name: playerName,
+      player_phone: playerPhone,
+      player_email: cur?.email || '',
+      status: 'Confirmed',
+      payment_status: 'Paid Online',
+      payment_method: selectedPaymentMethod
+    });
+
+    // Close modal
+    modalDashBooking?.classList.remove('active');
+
+    // Show celebratory toast
+    showToast(`🎉 Match booked at ${turf.name} for ${date} (${slot})! Check your upcoming games below.`);
+
+    // Re-render dashboard
+    renderPlayerDashboard();
   });
 
   // Initial Boot
