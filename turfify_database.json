@@ -576,6 +576,26 @@
   ],
   "inquiries": [
     {
+      "id": "inq-1793197250699",
+      "name": "Shameer",
+      "email": "shameer@example.com",
+      "phone": "+1 (919) 407-0555",
+      "subject": "Booking Slot Inquiry",
+      "message": "Hello Turfify! Testing Resend API live delivery.",
+      "target_email": "abu.turfify@gmail.com",
+      "received_at": "2026-10-28T14:20:50.699Z"
+    },
+    {
+      "id": "inq-1793196143926",
+      "name": "Sajaruth Mahjabeen M",
+      "email": "salihathasneem3@gmail.com",
+      "phone": "+919384797751",
+      "subject": "Payment & Settlement Inquiry",
+      "message": "hi",
+      "target_email": "apex.turfify@gmail.com",
+      "received_at": "2026-10-28T14:02:23.926Z"
+    },
+    {
       "id": "inq-1793196044252",
       "name": "Apex Athlete",
       "email": "athlete@example.com",

@@ -2,8 +2,26 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
 const ROOT_DIR = path.join(__dirname, '..');
+
+// Load .env variables
+try {
+  const envPath = path.join(ROOT_DIR, '.env');
+  if (fs.existsSync(envPath)) {
+    const envLines = fs.readFileSync(envPath, 'utf8').split('\n');
+    envLines.forEach(l => {
+      const idx = l.indexOf('=');
+      if (idx > 0) {
+        const k = l.substring(0, idx).trim();
+        let v = l.substring(idx + 1).trim();
+        if (v.startsWith('"') && v.endsWith('"')) v = v.slice(1, -1);
+        if (k && !process.env[k]) process.env[k] = v;
+      }
+    });
+  }
+} catch (e) {}
+
+const PORT = process.env.PORT || 3000;
 const DB_FILE = path.join(ROOT_DIR, 'turfify_database.json');
 
 const MIME_TYPES = {
@@ -140,7 +158,8 @@ async function handleRequest(req, res) {
     if (pathname === '/api/contact' && req.method === 'POST') {
       const data = await readBody(req);
       const { name, email, phone, subject, message } = data;
-      const targetEmail = 'apex.turfify@gmail.com';
+      const resendApiKey = process.env.RESEND_API_KEY;
+      const targetEmail = process.env.TURFIFY_TARGET_EMAIL || 'abu.turfify@gmail.com';
 
       const inquiry = {
         id: 'inq-' + Date.now(),
@@ -160,66 +179,70 @@ async function handleRequest(req, res) {
       let emailSent = false;
       let emailDetail = null;
 
-      // Dispatch via SA Consultant send-email Edge Function directly to apex.turfify@gmail.com
-      const edgeUrl = 'https://hqonpbkoutnkffjtshxw.supabase.co/functions/v1/send-email';
-      const edgeAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxb25wYmtvdXRua2ZmanRzaHh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDE4NTUsImV4cCI6MjA5MDI3Nzg1NX0.jN5AYaZRse3SEA51XTh1TL-d0hDb48jLXIkxH3iQN-k';
-
+      // Dispatch directly via Resend API
       try {
         const https = require('https');
-        const edgePayload = JSON.stringify({
-          recipients: [targetEmail],
+        const resendPayload = JSON.stringify({
+          from: 'Turfify Support <onboarding@resend.dev>',
+          to: [targetEmail],
+          reply_to: email || undefined,
           subject: `[Turfify Inquiry] ${subject || 'New Contact'} from ${name || 'User'}`,
-          text: `Name: ${name}\nPhone: ${phone}\nEmail: ${email}\nCategory: ${subject}\n\nMessage:\n${message}`,
           html: `
-            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1.5px solid #10B981; border-radius: 12px; background: #0B1329; color: #F8FAFC;">
-              <h2 style="color: #10B981; margin-top: 0; font-size: 22px;">⚡ New Turfify Support Request</h2>
-              <p style="color: #94A3B8; font-size: 14px;">An inquiry was submitted via the Turfify Contact Us page.</p>
-              <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10B981;">
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 2px solid #10B981; border-radius: 14px; background: #0B1329; color: #F8FAFC;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <h2 style="color: #10B981; margin: 0; font-size: 22px;">⚡ New Turfify Support Inquiry</h2>
+              </div>
+              <p style="color: #94A3B8; font-size: 14px; margin-top: 0;">An inquiry was submitted via the Turfify Contact Us page.</p>
+              
+              <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #10B981;">
                 <p style="margin: 6px 0;"><strong>👤 Name:</strong> ${name || 'N/A'}</p>
-                <p style="margin: 6px 0;"><strong>✉️ Customer Email:</strong> <a href="mailto:${email}" style="color: #38BDF8;">${email || 'N/A'}</a></p>
-                <p style="margin: 6px 0;"><strong>📞 Phone / WhatsApp:</strong> <a href="tel:${phone}" style="color: #38BDF8;">${phone || 'N/A'}</a></p>
+                <p style="margin: 6px 0;"><strong>✉️ Customer Email:</strong> <a href="mailto:${email}" style="color: #38BDF8; text-decoration: none;">${email || 'N/A'}</a></p>
+                <p style="margin: 6px 0;"><strong>📞 Phone / WhatsApp:</strong> <a href="tel:${phone}" style="color: #38BDF8; text-decoration: none;">${phone || 'N/A'}</a></p>
                 <p style="margin: 6px 0;"><strong>📌 Category:</strong> ${subject || 'General'}</p>
               </div>
-              <div style="background: rgba(16, 185, 129, 0.08); padding: 16px; border-radius: 8px; margin: 20px 0;">
-                <h4 style="margin: 0 0 8px; color: #34D399; font-size: 13px; text-transform: uppercase;">Message:</h4>
+
+              <div style="background: rgba(16, 185, 129, 0.08); padding: 18px; border-radius: 10px; margin: 20px 0; border: 1px solid rgba(16, 185, 129, 0.2);">
+                <h4 style="margin: 0 0 8px; color: #34D399; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Customer Message:</h4>
                 <p style="margin: 0; white-space: pre-wrap; font-size: 15px; line-height: 1.6; color: #E2E8F0;">${message || 'No message provided'}</p>
               </div>
+
               <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 24px 0;" />
-              <p style="font-size: 12px; color: #64748B; margin: 0;">Turfify Sports Infrastructure Platform • Destination: ${targetEmail}</p>
+              <p style="font-size: 12px; color: #64748B; margin: 0;">Turfify Sports Infrastructure Platform • Secured via Resend API • Delivered to: ${targetEmail}</p>
             </div>
           `
         });
 
         await new Promise((resolve) => {
-          const eReq = https.request(edgeUrl, {
+          const rReq = https.request('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
+              'Authorization': `Bearer ${resendApiKey}`,
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + edgeAnonKey,
-              'apikey': edgeAnonKey,
-              'Content-Length': Buffer.byteLength(edgePayload)
+              'Content-Length': Buffer.byteLength(resendPayload)
             }
-          }, (eRes) => {
-            let eBody = '';
-            eRes.on('data', chunk => eBody += chunk);
-            eRes.on('end', () => {
+          }, (rRes) => {
+            let rBody = '';
+            rRes.on('data', chunk => rBody += chunk);
+            rRes.on('end', () => {
               try {
-                emailDetail = JSON.parse(eBody);
-                if (eRes.statusCode >= 200 && eRes.statusCode < 300) {
+                emailDetail = JSON.parse(rBody);
+                if (rRes.statusCode >= 200 && rRes.statusCode < 300) {
                   emailSent = true;
                 }
               } catch(e) {
-                emailDetail = eBody;
+                emailDetail = rBody;
               }
               resolve();
             });
           });
-          eReq.on('error', (err) => {
-            console.error('Edge send-email error:', err);
+
+          rReq.on('error', (err) => {
+            console.error('Resend API request error:', err);
             resolve();
           });
-          eReq.write(edgePayload);
-          eReq.end();
+
+          rReq.write(resendPayload);
+          rReq.end();
         });
       } catch (e) {
         console.error('Email dispatch error:', e);

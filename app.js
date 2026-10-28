@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const subject = document.getElementById('contact-subject')?.value || 'General Inquiry';
     const message = document.getElementById('contact-message')?.value?.trim() || '';
 
-    const targetEmail = 'apex.turfify@gmail.com';
+    const targetEmail = 'abu.turfify@gmail.com';
 
     // Set Loading State
     if (btn) btn.disabled = true;
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fallback direct mail URL
     const mailtoSubject = encodeURIComponent(`[Turfify Inquiry] ${subject} - from ${name}`);
     const mailtoBody = encodeURIComponent(
-      `Hello Apex Turfify Team,\n\nName: ${name}\nPhone/WhatsApp: ${phone}\nEmail: ${email}\nInquiry Type: ${subject}\n\nMessage:\n${message}\n\n--\nSent via Turfify Contact Desk`
+      `Hello Turfify Team,\n\nName: ${name}\nPhone/WhatsApp: ${phone}\nEmail: ${email}\nInquiry Type: ${subject}\n\nMessage:\n${message}\n\n--\nSent via Turfify Contact Desk`
     );
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${mailtoSubject}&body=${mailtoBody}`;
     const directMailto = `mailto:${targetEmail}?subject=${mailtoSubject}&body=${mailtoBody}`;
@@ -248,43 +248,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      let sent = false;
+      // Dispatch via backend contact route (which securely calls Resend API using process.env.RESEND_API_KEY)
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email, subject, message })
+      });
 
-      // 1. Dispatch via local server contact route
-      try {
-        const res = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, phone, email, subject, message })
-        });
-        const result = await res.json().catch(() => ({}));
-        if (result && result.emailSent) sent = true;
-      } catch (serverErr) {
-        console.warn('Server contact route offline, trying direct edge invocation...');
-      }
-
-      // 2. Direct client fallback via SA Consultant send-email Edge Function
-      if (!sent) {
-        try {
-          const edgeRes = await fetch('https://hqonpbkoutnkffjtshxw.supabase.co/functions/v1/send-email', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxb25wYmtvdXRua2ZmanRzaHh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDE4NTUsImV4cCI6MjA5MDI3Nzg1NX0.jN5AYaZRse3SEA51XTh1TL-d0hDb48jLXIkxH3iQN-k',
-              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxb25wYmtvdXRua2ZmanRzaHh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDE4NTUsImV4cCI6MjA5MDI3Nzg1NX0.jN5AYaZRse3SEA51XTh1TL-d0hDb48jLXIkxH3iQN-k'
-            },
-            body: JSON.stringify({
-              recipients: [targetEmail],
-              subject: `[Turfify Inquiry] ${subject} from ${name}`,
-              text: `Name: ${name}\nPhone: ${phone}\nEmail: ${email}\nCategory: ${subject}\n\nMessage:\n${message}`,
-              html: `<div style="font-family:sans-serif;padding:24px;border:1.5px solid #10B981;border-radius:12px;background:#0B1329;color:#F8FAFC;"><h2 style="color:#10B981;">⚡ New Turfify Support Request</h2><p><strong>Name:</strong> ${name}</p><p><strong>Phone:</strong> ${phone}</p><p><strong>Email:</strong> ${email}</p><p><strong>Category:</strong> ${subject}</p><hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:16px 0;"/><p><strong>Message:</strong></p><p style="white-space:pre-wrap;">${message}</p></div>`
-            })
-          });
-          if (edgeRes.ok) sent = true;
-        } catch (edgeErr) {
-          console.warn('Edge email error:', edgeErr);
-        }
-      }
+      const result = await res.json().catch(() => ({ success: true }));
 
       // Show Success Toast & Banner
       showToast(`🎉 Message dispatched! Delivered to ${targetEmail}.`);
@@ -292,7 +263,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (banner) {
         banner.style.display = 'block';
         if (successMsg) {
-          successMsg.innerHTML = `Your message was delivered directly to <strong>${targetEmail}</strong>.`;
+          successMsg.innerHTML = result.emailSent
+            ? `Your message was delivered directly to <strong>${targetEmail}</strong> via Resend API.`
+            : `Your inquiry has been registered for <strong>${targetEmail}</strong>.`;
         }
       }
 
@@ -303,13 +276,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (banner) {
         banner.style.display = 'block';
         if (successMsg) {
-          successMsg.innerHTML = `Inquiry recorded for <strong>${targetEmail}</strong>.`;
+          successMsg.innerHTML = `Inquiry recorded for <strong>${targetEmail}</strong>. You can also view it in Gmail below.`;
         }
       }
     } finally {
       if (btn) btn.disabled = false;
       if (btnText) btnText.textContent = 'Send Message to Turfify Team';
-      if (btnIcon) btnIcon.textContent = '⚡';
     }
   });
 
