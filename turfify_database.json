@@ -51,6 +51,53 @@
   ],
   "bookings": [
     {
+      "id": "bk-592",
+      "turf_id": "turf-1792951304211",
+      "turf_name": "Mauji Sports turf 2",
+      "sport": "Box Cricket",
+      "player_id": "usr-1793626465585",
+      "player_name": "Sajaruth Mahjabeen M",
+      "player_email": "salihathasneem3@gmail.com",
+      "player_phone": "6380639179",
+      "status": "Confirmed",
+      "payment_status": "Paid Online",
+      "booking_time": "2/11/2026, 7:19:22 pm",
+      "date": "2026-11-05",
+      "time_slot": "08:00 - 09:00 AM, 07:00 - 08:00 PM",
+      "time_slots": [
+        "08:00 - 09:00 AM",
+        "07:00 - 08:00 PM"
+      ],
+      "amount": 3000,
+      "payment_method": "UPI (Instant)",
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_phone": "+919384797751"
+    },
+    {
+      "id": "bk-630",
+      "turf_id": "turf-1792951220428",
+      "turf_name": "Mauji Sports Turf",
+      "sport": "Box Cricket",
+      "player_id": "usr-1793626465585",
+      "player_name": "Sajaruth Mahjabeen M",
+      "player_email": "salihathasneem3@gmail.com",
+      "player_phone": "6380639179",
+      "status": "Cancelled",
+      "payment_status": "Paid Online",
+      "booking_time": "2/11/2026, 7:10:23 pm",
+      "date": "2026-11-02",
+      "time_slot": "07:00 - 08:00 AM",
+      "amount": 1300,
+      "payment_method": "UPI (Instant)",
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_phone": "+919384797751",
+      "cancelled_at": "2026-11-02T19:54:48.927Z"
+    },
+    {
       "id": "bk-991",
       "turf_id": "turf-1792951304211",
       "turf_name": "Mauji Sports turf 2",
@@ -63,12 +110,13 @@
       "player_name": "Sajaruth Mahjabeen M",
       "player_email": "salihathasneem3@gmail.com",
       "player_phone": "+919384797751",
-      "status": "Confirmed",
+      "status": "Cancelled",
       "payment_status": "Paid Online",
       "booking_time": "26/10/2026, 7:36:35 pm",
       "date": "2026-10-28",
       "time_slot": "09:00 - 10:00 PM",
-      "amount": 1500
+      "amount": 1500,
+      "cancelled_at": "2026-11-02T13:39:53.519Z"
     },
     {
       "id": "bk-541",
@@ -123,7 +171,11 @@
       "player_phone": "+91 98765 43210",
       "date": "2026-09-05",
       "time_slot": "09:00 - 10:00 PM",
-      "amount": 1500
+      "amount": 1500,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-304",
@@ -138,7 +190,11 @@
       "player_phone": "+91 98765 43210",
       "date": "2026-09-05",
       "time_slot": "07:00 - 08:00 PM",
-      "amount": 1500
+      "amount": 1500,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-163",
@@ -154,7 +210,11 @@
       "date": "2026-09-03",
       "time_slot": "10:00 - 11:00 PM",
       "amount": 1300,
-      "player_email": "sajaruthmahjabeen@gmail.com"
+      "player_email": "sajaruthmahjabeen@gmail.com",
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-781",
@@ -169,7 +229,11 @@
       "player_phone": "+91 98765 43210",
       "date": "2026-09-23",
       "time_slot": "06:00 - 07:00 PM",
-      "amount": 1500
+      "amount": 1500,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-650",
@@ -184,7 +248,11 @@
       "player_phone": "+91 98765 43210",
       "date": "2026-09-03",
       "time_slot": "06:00 - 07:00 AM",
-      "amount": 1300
+      "amount": 1300,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-994",
@@ -200,7 +268,11 @@
       "sport": "Football",
       "date": "2026-10-03",
       "time_slot": "06:00 - 07:00 PM",
-      "amount": 1500
+      "amount": 1500,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-417",
@@ -216,7 +288,11 @@
       "sport": "Football",
       "date": "2026-09-18",
       "time_slot": "10:00 - 11:00 PM",
-      "amount": 1500
+      "amount": 1500,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-649",
@@ -232,7 +308,11 @@
       "sport": "Football",
       "date": "2026-09-03",
       "time_slot": "06:00 - 07:00 PM",
-      "amount": 1300
+      "amount": 1300,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-606",
@@ -248,7 +328,11 @@
       "sport": "Football",
       "date": "2026-09-03",
       "time_slot": "07:00 - 08:00 PM",
-      "amount": 1300
+      "amount": 1300,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-637",
@@ -264,7 +348,11 @@
       "sport": "Football",
       "date": "2026-09-03",
       "time_slot": "08:00 - 09:00 PM",
-      "amount": 1300
+      "amount": 1300,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-712",
@@ -280,7 +368,11 @@
       "sport": "Football",
       "date": "2026-09-03",
       "time_slot": "06:00 - 07:00 AM",
-      "amount": 1300
+      "amount": 1300,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-208",
@@ -296,7 +388,11 @@
       "sport": "Badminton",
       "date": "2026-09-03",
       "time_slot": "08:00 - 09:00 PM",
-      "amount": 1300
+      "amount": 1300,
+      "owner_id": "c228e9a9-0b43-4ca0-ae4c-09869cd8e1df",
+      "owner_email": "sajaruthmahjabeen@gmail.com",
+      "owner_name": "Sajaruth Mahjabeen M",
+      "owner_phone": "+919384797751"
     },
     {
       "id": "bk-893",
@@ -455,16 +551,66 @@
   ],
   "users": [
     {
-      "id": "1d3b2033-c3f7-4948-ba01-89cfe29f9b2c",
+      "id": "usr-1793626465585",
       "name": "Sajaruth Mahjabeen M",
+      "full_name": "Sajaruth Mahjabeen M",
       "email": "salihathasneem3@gmail.com",
+      "phone": "6380639179",
+      "role": "player",
+      "password": "sajumauji23",
+      "status": "Active",
+      "email_verified": true,
+      "is_authenticated": true,
+      "created_at": "2026-11-02T19:54:48.910Z",
+      "business_name": "",
+      "has_logged_in_before": true,
+      "login_count": 4,
+      "matches_played": 1,
+      "loyalty_pts": 25,
+      "last_login": "2026-11-02T19:54:25.356Z"
+    },
+    {
+      "id": "usr-1793620083251",
+      "name": "Sajaruth Mahjabeen M",
+      "full_name": "Sajaruth Mahjabeen M",
+      "email": "shameed892@gmail.com",
+      "phone": "6380639179",
+      "role": "player",
+      "password": "sajumauji23",
+      "status": "Active",
+      "email_verified": true,
+      "is_authenticated": true,
+      "created_at": "2026-11-02T11:48:03.259Z",
+      "business_name": ""
+    },
+    {
+      "id": "usr-1793619684618",
+      "name": "saju",
+      "full_name": "saju",
+      "email": "vjk5382@gmail.com",
       "phone": "+919384797751",
       "role": "player",
-      "business_name": "",
-      "created_at": "2026-10-28T09:05:38.685Z",
+      "password": "sajumauji23",
       "status": "Active",
-      "full_name": "Sajaruth Mahjabeen M",
-      "is_authenticated": true
+      "email_verified": true,
+      "is_authenticated": true,
+      "created_at": "2026-11-02T11:41:25.762Z",
+      "business_name": ""
+    },
+    {
+      "id": "usr-1793605988228",
+      "name": "safa",
+      "email": "safadreamcraftdiaries@gmail.com",
+      "phone": "7092304986",
+      "role": "owner",
+      "business_name": "",
+      "created_at": "2026-11-02T11:50:01.132Z",
+      "status": "Active",
+      "full_name": "safa",
+      "password": "sajumauji23",
+      "email_verified": true,
+      "is_authenticated": true,
+      "last_login": "2026-11-02T11:49:59.572Z"
     },
     {
       "id": "owner-1792860514595",
@@ -483,10 +629,13 @@
       "phone": "+919384797751",
       "role": "owner",
       "business_name": "",
-      "created_at": "2026-10-26T17:04:35.140Z",
+      "created_at": "2026-11-02T19:56:21.021Z",
       "status": "Active",
       "full_name": "Sajaruth Mahjabeen M",
-      "is_authenticated": true
+      "is_authenticated": true,
+      "last_login": "2026-11-02T19:56:19.996Z",
+      "has_logged_in_before": true,
+      "login_count": 7
     },
     {
       "id": "72b89b58-16fe-4bd1-bf8e-c7fef5c2404c",
@@ -540,7 +689,8 @@
       "phone": "+91 98860 11223",
       "business_name": "Arena Sports Facilities Pvt Ltd",
       "created_at": "2026-08-15T10:00:00Z",
-      "status": "Active"
+      "status": "Active",
+      "password": "owner123"
     },
     {
       "id": "owner-2",
@@ -550,7 +700,8 @@
       "phone": "+91 98450 67890",
       "business_name": "GameOn Sports LLP",
       "created_at": "2026-08-20T11:30:00Z",
-      "status": "Active"
+      "status": "Active",
+      "password": "owner123"
     },
     {
       "id": "player-1",
@@ -562,7 +713,8 @@
       "matches_played": 18,
       "loyalty_pts": 450,
       "created_at": "2026-08-25T14:20:00Z",
-      "status": "Active"
+      "status": "Active",
+      "password": "player123"
     },
     {
       "id": "player-9",
@@ -665,5 +817,28 @@
       "target_email": "apex.turfify@gmail.com",
       "received_at": "2026-10-28T13:35:08.503Z"
     }
+  ],
+  "pending_otps": {
+    "sajaruthmahjabeen23@outlook.com": {
+      "otp": "862325",
+      "expiresAt": 1793620438447,
+      "type": "signup",
+      "createdAt": "2026-11-02T11:43:58.447Z",
+      "userData": {
+        "name": "Sajaruth Mahjabeen M",
+        "email": "sajaruthmahjabeen23@outlook.com",
+        "phone": "+919384797751",
+        "role": "owner",
+        "password": "sajumauji23"
+      }
+    }
+  },
+  "deleted_emails": [
+    "1d3b2033-c3f7-4948-ba01-89cfe29f9b2c",
+    "usr-1793626370119"
+  ],
+  "deleted_turfs": [
+    "turf-1793646838313",
+    "turf-test-delete-123"
   ]
 }

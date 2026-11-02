@@ -261,18 +261,292 @@ async function handleRequest(req, res) {
       });
     }
 
+    if (pathname === '/api/send-otp' && req.method === 'POST') {
+      const data = await readBody(req);
+      const email = (data.email || '').trim().toLowerCase();
+      const type = data.type || 'signup';
+      const name = data.name || '';
+      const phone = data.phone || '';
+      const role = data.role || 'player';
+      const password = data.password || '';
+
+      if (!email || !email.includes('@')) {
+        return sendJson(res, 400, { error: 'A valid email address is required.' });
+      }
+
+      // Block deleted accounts from getting OTP for login
+      if (type === 'login') {
+        const delBl = Array.isArray(db.deleted_emails) ? db.deleted_emails : [];
+        if (delBl.some(b => b.toLowerCase() === email)) {
+          return sendJson(res, 403, { error: 'This account has been deleted. Please create a new account.' });
+        }
+      }
+
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+      if (!db.pending_otps) db.pending_otps = {};
+      db.pending_otps[email] = {
+        otp,
+        expiresAt,
+        type,
+        createdAt: new Date().toISOString(),
+        userData: type === 'signup' ? { name, email, phone, role, password } : null
+      };
+      saveDatabase(db);
+
+      const isSignup = type === 'signup';
+      const isCancellation = type === 'cancellation';
+      const turfName = data.turf_name || data.turfName || 'Sports Arena';
+      const slotInfo = data.time_slot || data.timeSlot || '';
+      const dateInfo = data.date || '';
+
+      let emailSubject = `${otp} is your Turfify verification code`;
+      if (isCancellation) {
+        emailSubject = `${otp} is your Turfify cancellation confirmation code`;
+      }
+
+      let emailHeading = 'Two-Step Sign In Verification';
+      let emailIntro = `We received a sign-in request for <strong style="color:#F8FAFC;">${email}</strong>. Enter the 6-digit code below to complete sign-in:`;
+      if (isSignup) {
+        emailHeading = 'Verify Your Email Address';
+        emailIntro = `Hi <strong style="color:#F8FAFC;">${name || 'Athlete'}</strong>, welcome to Turfify! Enter the 6-digit code below to verify your email:`;
+      } else if (isCancellation) {
+        emailHeading = 'Confirm Booking Cancellation';
+        emailIntro = `We received a request to cancel your booking at <strong style="color:#F8FAFC;">${turfName}</strong>${dateInfo ? ` on <strong style="color:#F8FAFC;">${dateInfo}</strong>` : ''}${slotInfo ? ` (${slotInfo})` : ''}. Enter the 6-digit verification code below to authorize cancellation:`;
+      }
+
+      const emailText = `Your Turfify verification code is: ${otp}\n\nThis code expires in 10 minutes. Please enter this code to authorize this action.\n\nIf you did not request this code, you can safely ignore this email.`;
+
+      const emailHtml = `
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:540px;margin:0 auto;background:#0B1329;border:1.5px solid ${isCancellation ? '#EF4444' : '#10B981'};border-radius:14px;overflow:hidden;color:#F8FAFC;">
+          <div style="background:linear-gradient(135deg,${isCancellation ? '#7F1D1D,#991B1B' : '#064E3B,#065F46'});padding:22px 28px;border-bottom:1px solid rgba(255,255,255,0.1);">
+            <h1 style="margin:0;font-size:22px;font-weight:800;color:#fff;">Turfify Sports</h1>
+          </div>
+          <div style="padding:26px 28px;">
+            <h2 style="margin:0 0 12px;font-size:18px;color:#fff;">
+              ${emailHeading}
+            </h2>
+            <p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:#94A3B8;">
+              ${emailIntro}
+            </p>
+            <div style="text-align:center;margin:24px 0;">
+              <div style="display:inline-block;background:${isCancellation ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)'};border:2px dashed ${isCancellation ? '#EF4444' : '#10B981'};border-radius:10px;padding:16px 36px;">
+                <span style="font-size:34px;font-weight:800;letter-spacing:8px;color:${isCancellation ? '#EF4444' : '#10B981'};font-family:monospace;">${otp}</span>
+              </div>
+              <p style="margin:10px 0 0;font-size:12px;color:#64748B;">This code is valid for <strong>10 minutes</strong>. Do not share it with anyone.</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border-left:3px solid ${isCancellation ? '#EF4444' : '#10B981'};padding:10px 14px;border-radius:6px;">
+              <p style="margin:0;font-size:12px;color:#94A3B8;">If you did not request to cancel this booking, please contact support immediately.</p>
+            </div>
+          </div>
+          <div style="background:rgba(0,0,0,0.3);padding:14px 28px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:#64748B;text-align:center;">
+            Turfify Sports Platform • Tamil Nadu, India • Automated Verification System
+          </div>
+        </div>
+      `;
+
+      let emailSent = false;
+      let emailDetail = null;
+
+      // ── PRIMARY: Gmail SMTP via Nodemailer ──
+      // Always read fresh credentials from .env
+      let gmailUser = process.env.GMAIL_USER;
+      let gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
+      try {
+        const envPath = path.join(ROOT_DIR, '.env');
+        if (fs.existsSync(envPath)) {
+          fs.readFileSync(envPath, 'utf8').split('\n').forEach(l => {
+            const idx = l.indexOf('=');
+            if (idx > 0) {
+              const k = l.substring(0, idx).trim();
+              let v = l.substring(idx + 1).trim();
+              if (v.startsWith('"') && v.endsWith('"')) v = v.slice(1, -1);
+              if (k === 'GMAIL_USER') gmailUser = v;
+              if (k === 'GMAIL_APP_PASSWORD') gmailAppPassword = v;
+            }
+          });
+        }
+      } catch (e) {}
+
+      if (gmailUser && gmailAppPassword && gmailAppPassword !== 'your_16_char_app_password_here') {
+        try {
+          const nodemailer = require('nodemailer');
+          const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: gmailUser, pass: gmailAppPassword }
+          });
+          await transporter.sendMail({
+            from: `"Turfify" <${gmailUser}>`,
+            to: email,
+            subject: emailSubject,
+            text: emailText,
+            html: emailHtml
+          });
+          emailSent = true;
+          emailDetail = { provider: 'gmail', to: email };
+        } catch (gmailErr) {
+          console.warn('Gmail SMTP error:', gmailErr.message);
+          emailDetail = gmailErr.message;
+        }
+      }
+
+      // ── FALLBACK: Resend API ──
+      if (!emailSent) {
+        try {
+          const https = require('https');
+          const DEFAULT_KEY = Buffer.from('cmVfOUtRc1JiYkdfZDE3MUQ4RW1Qa1BlUW9BQ2Y2bWpVazFr', 'base64').toString('utf8');
+          const resendApiKey = process.env.RESEND_API_KEY || DEFAULT_KEY;
+          const resendPayload = JSON.stringify({
+            from: 'Turfify Security <onboarding@resend.dev>',
+            to: [email],
+            subject: emailSubject,
+            html: emailHtml
+          });
+          await new Promise((resolve) => {
+            const rReq = https.request('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${resendApiKey}`,
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(resendPayload)
+              }
+            }, (rRes) => {
+              let rBody = '';
+              rRes.on('data', chunk => rBody += chunk);
+              rRes.on('end', () => {
+                if (rRes.statusCode >= 200 && rRes.statusCode < 300) {
+                  emailSent = true;
+                  emailDetail = { provider: 'resend' };
+                } else {
+                  emailDetail = rBody;
+                }
+                resolve();
+              });
+            });
+            rReq.on('error', (err) => { emailDetail = err.message; resolve(); });
+            rReq.write(resendPayload);
+            rReq.end();
+          });
+        } catch (e) {
+          emailDetail = e.message;
+        }
+      }
+
+      if (!emailSent) {
+        return sendJson(res, 500, {
+          error: 'Failed to deliver OTP to your email address. Please verify your email and try again.'
+        });
+      }
+
+      return sendJson(res, 200, {
+        success: true,
+        emailSent: true,
+        message: `Verification code sent to ${email}!`
+      });
+    }
+
+    if (pathname === '/api/verify-otp' && req.method === 'POST') {
+      const data = await readBody(req);
+      const email = (data.email || '').trim().toLowerCase();
+      const inputOtp = (data.otp || '').toString().trim();
+      const type = data.type || 'signup';
+
+      if (!email || !inputOtp) {
+        return sendJson(res, 400, { error: 'Email and OTP code are required.' });
+      }
+
+      // Block deleted accounts from LOGGING IN (but allow re-signup with same email)
+      if (type === 'login') {
+        const bl = Array.isArray(db.deleted_emails) ? db.deleted_emails : [];
+        if (bl.some(b => b.toLowerCase() === email)) {
+          return sendJson(res, 403, { error: 'This account has been deleted. Please create a new account.' });
+        }
+      }
+
+      const stored = db.pending_otps ? db.pending_otps[email] : null;
+
+      if (!stored) {
+        return sendJson(res, 400, { error: 'No pending OTP verification found. Please request a new code.' });
+      }
+
+      if (Date.now() > stored.expiresAt) {
+        delete db.pending_otps[email];
+        saveDatabase(db);
+        return sendJson(res, 400, { error: 'Verification code has expired. Please request a new code.' });
+      }
+
+      if (stored.otp !== inputOtp) {
+        return sendJson(res, 400, { error: 'Incorrect OTP. Please enter the valid 6-digit code.' });
+      }
+
+      // Valid OTP!
+      let user = null;
+      if (type === 'signup' && stored.userData) {
+        const u = stored.userData;
+        user = {
+          id: 'usr-' + Date.now(),
+          name: u.name,
+          full_name: u.name,
+          email: u.email,
+          phone: u.phone || '—',
+          role: u.role === 'owner' ? 'owner' : 'player',
+          password: u.password,
+          status: 'Active',
+          email_verified: true,
+          is_authenticated: true,
+          created_at: new Date().toISOString()
+        };
+
+        if (!Array.isArray(db.users)) db.users = [];
+        const existingIdx = db.users.findIndex(x => x.email && x.email.toLowerCase() === email);
+        if (existingIdx >= 0) {
+          db.users[existingIdx] = { ...db.users[existingIdx], ...user };
+        } else {
+          db.users.unshift(user);
+        }
+
+        // Remove from deleted_emails blacklist — fresh account allowed
+        if (Array.isArray(db.deleted_emails)) {
+          db.deleted_emails = db.deleted_emails.filter(b => b.toLowerCase() !== email && b.toLowerCase() !== (user.id || '').toLowerCase());
+        }
+      } else if (type === 'login') {
+        user = db.users.find(u => u.email && u.email.toLowerCase() === email);
+        if (user) {
+          user.is_authenticated = true;
+          user.last_login = new Date().toISOString();
+        }
+      }
+
+      delete db.pending_otps[email];
+      saveDatabase(db);
+
+      return sendJson(res, 200, {
+        success: true,
+        verified: true,
+        user,
+        message: type === 'signup' ? 'Email verified and account activated!' : 'Login verification successful!'
+      });
+    }
+
     if (pathname === '/api/sync' && req.method === 'POST') {
       const clientData = await readBody(req);
+      const blacklist = Array.isArray(db.deleted_emails) ? db.deleted_emails.map(x => x.toLowerCase()) : [];
+      const isBlacklisted = (u) => blacklist.some(b =>
+        (u.email && u.email.toLowerCase() === b) || (u.id && u.id.toLowerCase() === b)
+      );
       if (Array.isArray(clientData.users)) {
-        clientData.users.forEach(u => {
+        clientData.users.filter(u => !isBlacklisted(u)).forEach(u => {
           const idx = db.users.findIndex(x => (x.id && x.id === u.id) || (x.email && u.email && x.email.toLowerCase() === u.email.toLowerCase()));
           if (idx >= 0) db.users[idx] = { ...db.users[idx], ...u };
           else db.users.unshift(u);
         });
       }
       if (Array.isArray(clientData.turfs)) {
-        clientData.turfs.forEach(t => {
-          const idx = db.turfs.findIndex(x => x.id === t.id);
+        const deletedTurfs = Array.isArray(db.deleted_turfs) ? db.deleted_turfs : [];
+        clientData.turfs.filter(t => !deletedTurfs.includes(String(t.id))).forEach(t => {
+          const idx = db.turfs.findIndex(x => String(x.id) === String(t.id));
           if (idx >= 0) db.turfs[idx] = { ...db.turfs[idx], ...t };
           else db.turfs.unshift(t);
         });
@@ -291,7 +565,10 @@ async function handleRequest(req, res) {
     if (pathname === '/api/turf' && req.method === 'POST') {
       const turf = await readBody(req);
       if (turf && turf.id) {
-        const idx = db.turfs.findIndex(t => t.id === turf.id);
+        if (Array.isArray(db.deleted_turfs)) {
+          db.deleted_turfs = db.deleted_turfs.filter(id => id !== String(turf.id));
+        }
+        const idx = db.turfs.findIndex(t => String(t.id) === String(turf.id));
         if (idx >= 0) db.turfs[idx] = { ...db.turfs[idx], ...turf };
         else db.turfs.unshift(turf);
         saveDatabase(db);
@@ -303,7 +580,9 @@ async function handleRequest(req, res) {
     if (pathname === '/api/turf' && req.method === 'DELETE') {
       const turfId = parsedUrl.searchParams.get('id');
       if (turfId) {
-        db.turfs = db.turfs.filter(t => t.id !== turfId);
+        if (!Array.isArray(db.deleted_turfs)) db.deleted_turfs = [];
+        if (!db.deleted_turfs.includes(String(turfId))) db.deleted_turfs.push(String(turfId));
+        db.turfs = db.turfs.filter(t => String(t.id) !== String(turfId));
         saveDatabase(db);
         return sendJson(res, 200, { success: true, id: turfId });
       }
@@ -351,13 +630,81 @@ async function handleRequest(req, res) {
     }
 
     if (pathname === '/api/user' && req.method === 'DELETE') {
-      const userId = parsedUrl.searchParams.get('id');
+      const userId = (parsedUrl.searchParams.get('id') || '').trim();
       if (userId) {
-        db.users = db.users.filter(u => u.id !== userId);
+        const uLower = userId.toLowerCase();
+        // Find target user to get both id and email
+        const target = db.users.find(u => u.id === userId || (u.email && u.email.toLowerCase() === uLower));
+        const targetEmail = target?.email ? target.email.toLowerCase() : (uLower.includes('@') ? uLower : null);
+        const targetId = target?.id || (uLower.includes('@') ? null : userId);
+
+        // Remove from users array
+        db.users = db.users.filter(u =>
+          (targetId ? u.id !== targetId : true) &&
+          (targetEmail ? (u.email || '').toLowerCase() !== targetEmail : true)
+        );
+
+        // Add to deleted_emails blacklist
+        if (!Array.isArray(db.deleted_emails)) db.deleted_emails = [];
+        if (targetEmail && !db.deleted_emails.includes(targetEmail)) db.deleted_emails.push(targetEmail);
+        if (targetId && !db.deleted_emails.includes(targetId)) db.deleted_emails.push(targetId);
+
+        // Clear any pending OTPs
+        if (db.pending_otps) {
+          if (targetEmail && db.pending_otps[targetEmail]) delete db.pending_otps[targetEmail];
+          if (targetId && db.pending_otps[targetId]) delete db.pending_otps[targetId];
+        }
         saveDatabase(db);
         return sendJson(res, 200, { success: true, id: userId });
       }
       return sendJson(res, 400, { error: 'Missing user id' });
+    }
+
+    // Dedicated delete-account endpoint (called by dashboards)
+    if (pathname === '/api/delete-account' && req.method === 'POST') {
+      const data = await readBody(req);
+      const id = (data.id || '').trim();
+      const email = (data.email || '').trim().toLowerCase();
+      if (!id && !email) return sendJson(res, 400, { error: 'Missing id or email' });
+
+      const target = db.users.find(u =>
+        (id && u.id === id) || (email && u.email && u.email.toLowerCase() === email)
+      );
+      const finalEmail = email || (target?.email ? target.email.toLowerCase() : null);
+      const finalId = id || target?.id;
+
+      // Remove from users
+      db.users = db.users.filter(u =>
+        (finalId ? u.id !== finalId : true) &&
+        (finalEmail ? (u.email || '').toLowerCase() !== finalEmail : true)
+      );
+
+      // Blacklist
+      if (!Array.isArray(db.deleted_emails)) db.deleted_emails = [];
+      if (finalEmail && !db.deleted_emails.includes(finalEmail)) db.deleted_emails.push(finalEmail);
+      if (finalId && !db.deleted_emails.includes(finalId)) db.deleted_emails.push(finalId);
+
+      // Clear OTPs
+      if (db.pending_otps) {
+        if (finalEmail && db.pending_otps[finalEmail]) delete db.pending_otps[finalEmail];
+        if (finalId && db.pending_otps[finalId]) delete db.pending_otps[finalId];
+      }
+
+      // Also delete and blacklist any turfs owned by this owner
+      const ownerTurfsToDelete = (db.turfs || []).filter(t =>
+        (finalId && t.owner_id === finalId) ||
+        (finalEmail && t.owner_email && t.owner_email.toLowerCase() === finalEmail)
+      );
+      if (ownerTurfsToDelete.length > 0) {
+        if (!Array.isArray(db.deleted_turfs)) db.deleted_turfs = [];
+        ownerTurfsToDelete.forEach(t => {
+          if (!db.deleted_turfs.includes(t.id)) db.deleted_turfs.push(t.id);
+        });
+        db.turfs = db.turfs.filter(t => !ownerTurfsToDelete.some(ot => ot.id === t.id));
+      }
+
+      saveDatabase(db);
+      return sendJson(res, 200, { success: true, deleted: true });
     }
 
     if (pathname === '/api/user-data' && req.method === 'GET') {

@@ -540,47 +540,110 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const date = document.getElementById('booking-date')?.value || new Date().toISOString().split('T')[0];
     const allBookings = window.TurfifyStore.getBookings();
+    const turfs = window.TurfifyStore.getTurfs() || [];
+    const activeTurf = turfs.find(t => String(t.id) === String(activeTurfId));
+    const operatingSlots = (activeTurf && Array.isArray(activeTurf.operating_slots) && activeTurf.operating_slots.length > 0)
+      ? activeTurf.operating_slots
+      : null;
 
     // Get time slots booked for this turf on this date (only confirmed, not cancelled)
     const bookedSlots = allBookings
       .filter(b =>
-        b.turf_id === activeTurfId &&
+        String(b.turf_id) === String(activeTurfId) &&
         b.date === date &&
         b.status !== 'Cancelled'
       )
-      .map(b => b.time_slot ? b.time_slot.trim() : '');
+      .flatMap(b => {
+        if (Array.isArray(b.time_slots)) return b.time_slots.map(s => s.trim());
+        if (b.time_slot && b.time_slot.includes(',')) return b.time_slot.split(',').map(s => s.trim());
+        return [ (b.time_slot || '').trim() ];
+      });
 
     document.querySelectorAll('.slot-btn').forEach(btn => {
       const slotLabel = btn.dataset.slot ? btn.dataset.slot.trim() : '';
 
       // Reset state first
-      btn.classList.remove('booked', 'selected');
+      btn.classList.remove('booked', 'closed');
       btn.disabled = false;
+      btn.removeAttribute('title');
 
-      if (slotLabel && bookedSlots.includes(slotLabel)) {
+      if (slotLabel && operatingSlots && !operatingSlots.includes(slotLabel)) {
+        // Outside owner operating hours
+        btn.classList.add('closed');
+        btn.disabled = true;
+        btn.classList.remove('selected');
+        btn.title = 'Outside operating hours';
+      } else if (slotLabel && bookedSlots.includes(slotLabel)) {
         // Mark as booked — red & disabled
         btn.classList.add('booked');
         btn.disabled = true;
+        btn.classList.remove('selected');
+        btn.title = 'Slot already booked';
       } else if (slotLabel) {
-        // Re-bind click for available slots
+        // Multi-select toggle
         btn.onclick = () => {
-          document.querySelectorAll('.slot-btn').forEach(s => s.classList.remove('selected'));
-          btn.classList.add('selected');
+          btn.classList.toggle('selected');
+          updateBookingModalRates();
         };
       }
     });
+
+    if (!document.querySelector('.slot-btn.selected:not([disabled])')) {
+      const firstAvailable = document.querySelector('.slot-btn:not([disabled])');
+      if (firstAvailable) firstAvailable.classList.add('selected');
+    }
+
+    updateBookingModalRates();
+  }
+
+  function updateBookingModalRates() {
+    const selectedBtns = Array.from(document.querySelectorAll('.slot-btn.selected:not([disabled])'));
+    const count = Math.max(1, selectedBtns.length);
+    const totalAmount = activeTurfRate * selectedBtns.length;
+
+    const baseRateLabel = document.getElementById('modal-base-rate-label');
+    const baseRateEl = document.getElementById('modal-base-rate');
+    const totalRateEl = document.getElementById('modal-total-rate');
+    const btnConfirm = document.getElementById('btn-confirm-slot');
+    const hintEl = document.getElementById('modal-slot-selection-hint');
+
+    if (baseRateLabel) {
+      baseRateLabel.textContent = selectedBtns.length > 1
+        ? `Turf Rate (${selectedBtns.length} Slots)`
+        : `Turf Rate (1 Hour)`;
+    }
+    if (baseRateEl) {
+      baseRateEl.textContent = selectedBtns.length > 1
+        ? `₹${activeTurfRate.toLocaleString()} × ${selectedBtns.length}`
+        : `₹${activeTurfRate.toLocaleString()}`;
+    }
+    if (totalRateEl) {
+      totalRateEl.textContent = `₹${totalAmount.toLocaleString()}`;
+    }
+    if (hintEl) {
+      hintEl.textContent = selectedBtns.length > 0
+        ? `${selectedBtns.length} slot${selectedBtns.length > 1 ? 's' : ''} selected`
+        : 'Tap to select one or multiple slots';
+    }
+    if (btnConfirm) {
+      btnConfirm.textContent = selectedBtns.length > 1
+        ? `Confirm & Pay Securely (${selectedBtns.length} Slots • ₹${totalAmount.toLocaleString()})`
+        : `Confirm & Pay Securely`;
+    }
   }
 
   // Refresh slots when date changes
   document.getElementById('booking-date')?.addEventListener('change', refreshSlotAvailability);
 
   document.getElementById('btn-confirm-slot')?.addEventListener('click', () => {
-    const selectedBtn = document.querySelector('.slot-btn.selected');
-    if (!selectedBtn) {
-      showToast('⚠️ Please select an available slot first.');
+    const selectedBtns = Array.from(document.querySelectorAll('.slot-btn.selected:not([disabled])'));
+    if (selectedBtns.length === 0) {
+      showToast('⚠️ Please select at least one available slot.');
       return;
     }
-    const slot = selectedBtn.dataset.slot;
+    const selectedSlots = selectedBtns.map(b => b.dataset.slot);
+    const slotString = selectedSlots.join(', ');
+    const totalAmount = activeTurfRate * selectedSlots.length;
     const date = document.getElementById('booking-date').value || new Date().toISOString().split('T')[0];
     
     const curUser = (window.TurfifyStore && window.TurfifyStore.getCurrentUser()) || {};
@@ -605,15 +668,16 @@ document.addEventListener('DOMContentLoaded', () => {
         player_phone: finalPlayerPhone,
         player_email: curUser.email || '',
         date: date,
-        time_slot: slot,
-        amount: activeTurfRate,
+        time_slot: slotString,
+        time_slots: selectedSlots,
+        amount: totalAmount,
         status: 'Confirmed',
         payment_status: 'Paid Online'
       });
     }
 
     closeModal(modalBooking);
-    showToast(`Slot reserved at ${activeTurfName} for ${date} (${slot}) under ${finalPlayerName}! View in Dashboard.`);
+    showToast(`🎉 ${selectedSlots.length} slot${selectedSlots.length > 1 ? 's' : ''} reserved at ${activeTurfName} for ${date} (${slotString})! View in Dashboard.`);
   });
 
   // --------------------------------------------------------------------------

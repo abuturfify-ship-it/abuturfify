@@ -57,6 +57,175 @@
       border-color: #EA580C;
       background: #FFF7ED;
     }
+    .owner-master-detail-grid {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+      margin-bottom: 3rem;
+    }
+    @media (max-width: 1024px) {
+      .owner-master-detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .owner-turf-card {
+      border: 1.5px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.85rem;
+      background: #FFFFFF;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .owner-turf-card:hover {
+      border-color: #FDBA74;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.08);
+      transform: translateY(-1px);
+    }
+    .owner-turf-card.active-venue {
+      border-color: #EA580C;
+      background: #FFFBF7;
+      box-shadow: 0 4px 16px rgba(234, 88, 12, 0.12);
+      border-left: 4px solid #EA580C;
+    }
+    .turf-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .turf-card-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid #E2E8F0;
+      background: #F8FAFC;
+    }
+    .turf-card-main {
+      flex: 1;
+      min-width: 0;
+    }
+    .turf-card-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+    .turf-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .badge-active-venue {
+      font-size: 0.65rem;
+      background: #EA580C;
+      color: #FFFFFF;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+    .turf-card-location {
+      font-size: 0.76rem;
+      color: #64748B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-delete-venue {
+      background: #FEF2F2;
+      border: 1px solid #FCA5A5;
+      color: #DC2626;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+      padding: 0;
+      font-size: 0.8rem;
+    }
+    .btn-delete-venue:hover {
+      background: #FEE2E2;
+      color: #B91C1C;
+      transform: scale(1.05);
+    }
+    .turf-card-badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .turf-card-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .turf-card-pill.sport {
+      background: #F1F5F9;
+      color: #334155;
+    }
+    .turf-card-pill.rate {
+      background: #ECFDF5;
+      color: #047857;
+      border: 1px solid #A7F3D0;
+    }
+    .turf-card-pill.slots {
+      background: #EFF6FF;
+      color: #1D4ED8;
+    }
+    .turf-card-amenities-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 1px;
+    }
+    .amenity-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: #FFF7ED;
+      color: #C2410C;
+      border: 1px solid #FED7AA;
+    }
+    .amenity-tag-more {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #EA580C;
+      background: #FFF7ED;
+      border: 1px dashed #FED7AA;
+      padding: 1px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      align-self: center;
+      transition: all 0.15s ease;
+      line-height: 1.2;
+    }
+    .amenity-tag-more:hover {
+      background: #EA580C;
+      color: #FFFFFF;
+      border-color: #EA580C;
+      border-style: solid;
+    }
   </style>
 </head>
 
@@ -105,8 +274,10 @@
             <div id="nav-owner-business" style="font-size: 0.7rem; color: var(--slate-500);">Partner Console</div>
           </div>
         </div>
-        <a href="javascript:void(0)" id="btn-owner-logout" class="btn-login-outline"
-          style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem;">Logout</a>
+        <a href="javascript:void(0)" id="btn-owner-logout" onclick="window.handleOwnerLogout(event)" class="btn-login-outline"
+          style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; cursor: pointer;">Logout</a>
+        <button type="button" id="btn-owner-delete-account" onclick="window.handleOwnerDeleteAccount(event)" class="btn-login-outline"
+          style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; border-color: #EF4444; color: #EF4444; background: rgba(239, 68, 68, 0.05); cursor: pointer;" title="Permanently delete your account">Delete Account</button>
       </div>
     </div>
   </header>
@@ -174,70 +345,21 @@
       </div>
     </div>
 
-    <!-- Owner Main Grid -->
-    <div class="dash-grid-main">
-      <!-- Live Slot Management Matrix -->
-      <div class="dash-panel" id="slots">
-        <div class="panel-header">
-          <div class="panel-title">
-            📅 Today's Live Court Schedule
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn-mini-action" id="btn-add-walkin"
-              style="background: #FFF7ED; color: #EA580C; border-color: #FED7AA; font-weight: 700;">
-              + Add Walk-In
-            </button>
-            <button class="btn-mini-action" id="btn-block-slot">
-              🚫 Block Slot
-            </button>
-          </div>
-        </div>
-        <div class="panel-body">
-          <p style="font-size: 0.85rem; color: var(--slate-500); margin-bottom: 1rem;">
-            Click any slot to switch status (Available 🟢, Walk-in 🟡, Booked 🔴). Changes reflect instantly to players.
-          </p>
-          <div class="slot-matrix" id="owner-slot-matrix">
-            <!-- Injected via JavaScript -->
-          </div>
-        </div>
+    <!-- Owner Main Grid: Venues on Left (360px), Schedule on Right -->
+    <div class="owner-master-detail-grid">
 
-        <!-- Customer Booking Ledger -->
-        <div class="panel-header" id="ledger" style="border-top: 1px solid var(--slate-100);">
-          <div class="panel-title">
-            📋 Customer Booking Ledger
-          </div>
-        </div>
-        <div class="panel-body" style="padding: 0;">
-          <div style="overflow-x: auto;">
-            <table class="dash-table">
-              <thead>
-                <tr>
-                  <th>Booking ID</th>
-                  <th>Customer</th>
-                  <th>Turf Ground</th>
-                  <th>Date & Time</th>
-                  <th>Amount</th>
-                  <th>Channel</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="owner-ledger-body">
-                <!-- Injected via JavaScript -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column: Facilities & Settlements -->
+      <!-- LEFT COLUMN: MY LISTED VENUES & PAYOUTS -->
       <div>
         <div class="dash-panel" id="grounds" style="margin-bottom: 1.5rem;">
           <div class="panel-header">
-            <div class="panel-title">
-              🏟️ My Listed Venues
+            <div>
+              <div class="panel-title">
+                🏟️ My Listed Venues
+              </div>
+              <span style="font-size: 0.75rem; color: var(--slate-400);">Select a venue to view its court schedule</span>
             </div>
             <button class="btn-mini-action" id="btn-add-turf-quick"
-              style="background: #ECFDF5; color: #047857; border-color: #A7F3D0; font-weight: 700;">
+              style="background: #FFF7ED; color: #EA580C; border-color: #FED7AA; font-weight: 700;">
               + Add
             </button>
           </div>
@@ -264,6 +386,72 @@
           </div>
         </div>
       </div>
+
+      <!-- RIGHT COLUMN: SELECTED VENUE COURT SCHEDULE & TRANSACTIONS -->
+      <div>
+        <!-- Live Slot Management Matrix -->
+        <div class="dash-panel" id="slots">
+          <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
+            <div>
+              <div class="panel-title" id="selected-venue-schedule-title">
+                📅 Court Schedule
+              </div>
+              <span id="selected-venue-subtitle" style="font-size: 0.78rem; color: var(--slate-500);">
+                Select a venue on the left to view live slots
+              </span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <input type="date" id="owner-schedule-date" class="form-control" style="padding: 5px 10px; font-size: 0.82rem; width: auto; font-weight: 600;" title="Select date to view slots">
+              <button class="btn-mini-action" id="btn-add-walkin"
+                style="background: #FFF7ED; color: #EA580C; border-color: #FED7AA; font-weight: 700;">
+                + Add Walk-In
+              </button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <p style="font-size: 0.82rem; color: var(--slate-500); margin-bottom: 1rem;">
+              Click any slot to switch status (Available 🟢, Walk-in 🟡, Booked 🔴). Changes reflect instantly to players.
+            </p>
+            <div class="slot-matrix" id="owner-slot-matrix">
+              <!-- Injected via JavaScript for selected venue and date -->
+            </div>
+          </div>
+
+          <!-- Customer Booking Ledger -->
+          <div class="panel-header" id="ledger" style="border-top: 1px solid var(--slate-100); flex-wrap: wrap; gap: 10px; align-items: center;">
+            <div>
+              <div class="panel-title" id="selected-venue-ledger-title">
+                📋 Customer Booking Ledger
+              </div>
+              <span id="selected-venue-ledger-subtitle" style="font-size: 0.75rem; color: var(--slate-400);">Transactions for this venue</span>
+            </div>
+            <div id="ledger-filter-tabs" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+              <!-- Filter Tabs injected via JS -->
+            </div>
+          </div>
+          <div class="panel-body" style="padding: 0;">
+            <div style="overflow-x: auto;">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Booking ID</th>
+                    <th>Customer</th>
+                    <th>Turf Ground</th>
+                    <th>Date & Time</th>
+                    <th>Amount</th>
+                    <th>Channel</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="owner-ledger-body">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </main>
@@ -309,7 +497,7 @@
           <div class="form-group">
             <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
               <span>Available Amenities / Facilities</span>
-              <span style="font-size: 0.72rem; color: var(--slate-400); font-weight: normal;">Click to toggle</span>
+              <span style="font-size: 0.72rem; color: var(--slate-400); font-weight: normal;">Click to toggle or add custom</span>
             </label>
             <div class="amenities-toggle-grid" id="amenities-selector">
               <button type="button" class="amenity-toggle-btn" data-amenity="Food & Snacks">🍔 Food</button>
@@ -321,7 +509,51 @@
               <button type="button" class="amenity-toggle-btn" data-amenity="Free Wi-Fi">📶 Free Wi-Fi</button>
               <button type="button" class="amenity-toggle-btn" data-amenity="Equipment Rental">🏏 Equipment</button>
             </div>
-            <p style="font-size: 0.72rem; color: var(--slate-500); margin-top: 4px;">Only the clicked options will be shown on your turf card.</p>
+
+            <!-- Custom Additional Amenity Input -->
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+              <input type="text" id="custom-amenity-input" class="form-control" placeholder="+ Add custom amenity (e.g. AC Lounge, Shower, Ball Boy)" style="font-size: 0.8rem; padding: 7px 12px;">
+              <button type="button" id="btn-add-custom-amenity" style="background: #FFF7ED; color: #EA580C; border: 1.5px solid #FED7AA; border-radius: 8px; padding: 7px 16px; font-weight: 700; font-size: 0.82rem; cursor: pointer; white-space: nowrap; transition: background 0.15s ease;">
+                + Add
+              </button>
+            </div>
+            <p style="font-size: 0.72rem; color: var(--slate-500); margin-top: 5px;">Select from standard amenities above or type custom facilities for your turf.</p>
+          </div>
+
+          <!-- Available Operating Time Slots -->
+          <div class="form-group">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Available Operating Time Slots</span>
+              <span id="new-turf-slots-count" style="font-size: 0.72rem; color: var(--primary-green-dark); font-weight: 700;">11 slots open</span>
+            </label>
+
+            <!-- Quick Slot Presets -->
+            <div style="display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-mini-action" id="btn-slots-all" style="font-size: 0.72rem; padding: 4px 10px; background: #FFF7ED; color: #EA580C; border-color: #FED7AA; font-weight: 700; cursor: pointer;">
+                ✓ Select All (6 AM - 11 PM)
+              </button>
+              <button type="button" class="btn-mini-action" id="btn-slots-peak" style="font-size: 0.72rem; padding: 4px 10px; background: #F8FAFC; color: #475569; border-color: #CBD5E1; font-weight: 600; cursor: pointer;">
+                ⚡ Peak (Morning + Evening)
+              </button>
+              <button type="button" class="btn-mini-action" id="btn-slots-clear" style="font-size: 0.72rem; padding: 4px 10px; background: #F8FAFC; color: #64748B; border-color: #CBD5E1; font-weight: 600; cursor: pointer;">
+                ✕ Clear
+              </button>
+            </div>
+
+            <div class="amenities-toggle-grid" id="new-turf-slots-grid" style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));">
+              <button type="button" class="amenity-toggle-btn selected" data-slot="06:00 - 07:00 AM">06:00 - 07:00 AM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="07:00 - 08:00 AM">07:00 - 08:00 AM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="08:00 - 09:00 AM">08:00 - 09:00 AM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="09:00 - 10:00 AM">09:00 - 10:00 AM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="04:00 - 05:00 PM">04:00 - 05:00 PM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="05:00 - 06:00 PM">05:00 - 06:00 PM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="06:00 - 07:00 PM">06:00 - 07:00 PM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="07:00 - 08:00 PM">07:00 - 08:00 PM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="08:00 - 09:00 PM">08:00 - 09:00 PM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="09:00 - 10:00 PM">09:00 - 10:00 PM</button>
+              <button type="button" class="amenity-toggle-btn selected" data-slot="10:00 - 11:00 PM">10:00 - 11:00 PM</button>
+            </div>
+            <p style="font-size: 0.72rem; color: var(--slate-500); margin-top: 4px;">Players will only be able to book the slots you enable above.</p>
           </div>
 
           <div class="form-group">
@@ -361,6 +593,130 @@
 
   <script src="store.js"></script>
   <script>
+    let selectedTurfId = null;
+    let selectedScheduleDate = new Date().toISOString().split('T')[0];
+    let ledgerFilterMode = 'all';
+
+    window.handleOwnerLogout = async function (e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      try {
+        if (window.supabase) {
+          const sb = supabase.createClient('https://fksdanhjdhqbpijoolzf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0');
+          await Promise.race([
+            sb.auth.signOut(),
+            new Promise(resolve => setTimeout(resolve, 600))
+          ]);
+        }
+      } catch (err) { }
+      localStorage.removeItem('turfify_current_user');
+      sessionStorage.removeItem('turfify_current_user');
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    };
+
+    window.handleOwnerDeleteAccount = async function (e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const curUser = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+                      JSON.parse(localStorage.getItem('turfify_current_user') || 'null');
+
+      const confirmDelete = confirm('⚠️ Are you sure you want to permanently delete your Turfify owner account?\n\nThis will remove your account profile, turf listings, and data. This action cannot be undone.');
+      if (!confirmDelete) return;
+
+      const userId = curUser?.id || '';
+      const userEmail = curUser?.email || '';
+
+      try {
+        // 1. Delete and blacklist on backend server
+        if (userId || userEmail) {
+          await Promise.race([
+            fetch('/api/delete-account', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: userId, email: userEmail })
+            }),
+            new Promise(r => setTimeout(r, 1200))
+          ]).catch(() => {});
+        }
+
+        // 2. Delete all owner turfs locally
+        if (window.TurfifyStore && userId) {
+          const ownerTurfs = window.TurfifyStore.getOwnerTurfs(userId) || [];
+          for (const t of ownerTurfs) {
+            try { await window.TurfifyStore.deleteTurf(t.id); } catch (te) {}
+          }
+        }
+
+        // 3. Remove user from local store and blacklist
+        if (window.TurfifyStore && window.TurfifyStore.deleteUser && (userId || userEmail)) {
+          window.TurfifyStore.deleteUser(userId || userEmail);
+        }
+
+        // 4. Sign out from Supabase (with timeout race)
+        if (window.supabase) {
+          const sb = window.supabase.createClient('https://fksdanhjdhqbpijoolzf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0');
+          await Promise.race([
+            sb.auth.signOut(),
+            new Promise(r => setTimeout(r, 600))
+          ]).catch(() => {});
+        }
+      } catch (err) { }
+
+      // 5. Clear all storage
+      localStorage.removeItem('turfify_current_user');
+      sessionStorage.removeItem('turfify_current_user');
+      sessionStorage.clear();
+      alert('Your owner account and associated turf listings have been permanently deleted.');
+      window.location.href = 'index.html';
+    };
+
+    window.deleteTurf = async function (id, e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (!confirm('Are you sure you want to permanently delete this turf venue?')) return;
+
+      if (window.TurfifyStore && window.TurfifyStore.deleteTurf) {
+        await window.TurfifyStore.deleteTurf(id);
+      }
+      if (selectedTurfId === id) {
+        selectedTurfId = null;
+      }
+      renderOwnerDashboard();
+      if (typeof showToast === 'function') {
+        showToast('🗑️ Turf facility deleted successfully.');
+      }
+    };
+
+    window.toggleCardAmenities = function (turfId, e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const container = document.getElementById(`amenities-row-${turfId}`);
+      if (!container) return;
+      const hiddenTags = container.querySelectorAll('.amenity-tag-hidden');
+      const btn = container.querySelector('.amenity-tag-more');
+      if (!hiddenTags.length || !btn) return;
+
+      const isExpanded = btn.classList.contains('expanded');
+      if (isExpanded) {
+        hiddenTags.forEach(el => el.style.display = 'none');
+        btn.classList.remove('expanded');
+        btn.textContent = `+${hiddenTags.length} more`;
+      } else {
+        hiddenTags.forEach(el => el.style.display = 'inline-block');
+        btn.classList.add('expanded');
+        btn.textContent = 'Less ▲';
+      }
+    };
+
     function renderOwnerDashboard() {
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
       if (!user || !user.is_authenticated || user.role !== 'owner') {
@@ -370,6 +726,15 @@
       const activeUser = user;
       const ownerTurfs = window.TurfifyStore.getOwnerTurfs(activeUser?.id);
       const ownerBookings = window.TurfifyStore.getOwnerBookings(activeUser?.id);
+
+      // Default selected turf to first available if not set or deleted
+      if (ownerTurfs.length > 0) {
+        if (!selectedTurfId || !ownerTurfs.some(t => t.id === selectedTurfId)) {
+          selectedTurfId = ownerTurfs[0].id;
+        }
+      } else {
+        selectedTurfId = null;
+      }
 
       document.getElementById('owner-turfs-count').textContent = `${ownerTurfs.length} Grounds`;
 
@@ -390,7 +755,9 @@
       document.getElementById('owner-today-rev').textContent = `₹${totalRev.toLocaleString()}`;
 
       // Occupancy
-      const bookedCount = ownerBookings.filter(b => b.status !== 'Cancelled').length;
+      const bookedCount = ownerBookings
+        .filter(b => b.status !== 'Cancelled')
+        .reduce((sum, b) => sum + (Array.isArray(b.time_slots) ? b.time_slots.length : (b.time_slot && b.time_slot.includes(',') ? b.time_slot.split(',').length : 1)), 0);
       const totalSlots = (ownerTurfs.length || 0) * 16;
       document.getElementById('owner-occupancy').textContent = ownerTurfs.length > 0
         ? `${Math.min(100, Math.round((bookedCount / totalSlots) * 100))}%`
@@ -420,45 +787,126 @@
         }
       }
 
-      // Grounds list
+      // Set date selector value
+      const dateEl = document.getElementById('owner-schedule-date');
+      if (dateEl) {
+        dateEl.value = selectedScheduleDate;
+        dateEl.onchange = (e) => {
+          selectedScheduleDate = e.target.value;
+          renderSelectedVenueSchedule(ownerTurfs, ownerBookings);
+        };
+      }
+
+      // 1. Render Left Column: Grounds list
       const turfsList = document.getElementById('owner-turfs-list');
       turfsList.innerHTML = '';
       if (!ownerTurfs.length) {
-        turfsList.innerHTML = `<div style="padding:28px;text-align:center;color:#64748B;font-size:0.9rem;border:1px dashed #CBD5E1;border-radius:12px;margin:12px 0;">No facilities listed yet. Click "+ Add Ground" above to register your sports turf!</div>`;
+        turfsList.innerHTML = `<div style="padding:24px 16px;text-align:center;color:#64748B;font-size:0.85rem;border:1.5px dashed #CBD5E1;border-radius:12px;margin:8px 0;">No facilities listed yet. Click <strong>"+ Add"</strong> above to register your sports turf!</div>`;
       } else {
         ownerTurfs.forEach(t => {
           const item = document.createElement('div');
-          item.className = 'owner-turf-item';
+          const isSelected = (t.id === selectedTurfId);
+          item.className = 'owner-turf-card' + (isSelected ? ' active-venue' : '');
+          item.dataset.turfId = t.id;
+
           const amenitiesList = Array.isArray(t.amenities) ? t.amenities : [];
+          const slotsCount = Array.isArray(t.operating_slots) && t.operating_slots.length > 0 ? t.operating_slots.length : 11;
+
           item.innerHTML = `
-            <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}" class="owner-turf-img">
-            <div class="owner-turf-info">
-              <div class="owner-turf-title">${t.name}</div>
-              <div class="owner-turf-meta">
-                <span>${t.sport}</span>
-                <span>₹${t.price_per_hour}/hr</span>
-                <span>⭐ ${t.rating || '5.0'}</span>
-              </div>
-              ${amenitiesList.length ? `
-                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;">
-                  ${amenitiesList.map(a => `<span style="background:#FFF7ED;color:#EA580C;font-size:0.68rem;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid #FED7AA;">✓ ${a}</span>`).join('')}
+            <div class="turf-card-header">
+              <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}" class="turf-card-thumb" onerror="this.src='images/turf-arena.jpg'">
+              <div class="turf-card-main">
+                <div class="turf-card-title-row">
+                  <span class="turf-card-title" title="${t.name}">${t.name}</span>
+                  ${isSelected ? `<span class="badge-active-venue">Active</span>` : ''}
                 </div>
-              ` : ''}
+                <div class="turf-card-location">📍 ${t.location || 'Tamil Nadu'}</div>
+              </div>
+              <button type="button" class="btn-delete-venue" onclick="window.deleteTurf('${t.id}', event)" title="Delete this venue" aria-label="Delete">🗑️</button>
             </div>
-            <button class="btn-mini-action" onclick="deleteTurf('${t.id}')" title="Delete">🗑️</button>
+            <div class="turf-card-badges-row">
+              <span class="turf-card-pill sport">⚽ ${t.sport}</span>
+              <span class="turf-card-pill rate">₹${t.price_per_hour}/hr</span>
+              <span class="turf-card-pill slots">⚡ ${slotsCount} Slots</span>
+            </div>
+            ${amenitiesList.length ? `
+              <div class="turf-card-amenities-row" id="amenities-row-${t.id}">
+                ${amenitiesList.slice(0, 3).map(a => `<span class="amenity-tag">✓ ${a}</span>`).join('')}
+                ${amenitiesList.slice(3).map(a => `<span class="amenity-tag amenity-tag-hidden" style="display:none;">✓ ${a}</span>`).join('')}
+                ${amenitiesList.length > 3 ? `
+                  <button type="button" class="amenity-tag-more" onclick="window.toggleCardAmenities('${t.id}', event)" title="Click to view all amenities (${amenitiesList.slice(3).join(', ')})">
+                    +${amenitiesList.length - 3} more
+                  </button>
+                ` : ''}
+              </div>
+            ` : ''}
           `;
+
+          // Click on turf item to select venue
+          item.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-delete-venue') || e.target.closest('.amenity-tag-more')) return;
+            selectedTurfId = t.id;
+            document.querySelectorAll('#owner-turfs-list .owner-turf-card').forEach(el => el.classList.remove('active-venue'));
+            item.classList.add('active-venue');
+            renderSelectedVenueSchedule(ownerTurfs, ownerBookings);
+          });
+
           turfsList.appendChild(item);
         });
       }
 
-      // Interactive Slot Matrix - dynamically reads real bookings
+      // 2. Render Right Column: Selected Venue Schedule & Ledger
+      renderSelectedVenueSchedule(ownerTurfs, ownerBookings);
+    }
+
+    function renderSelectedVenueSchedule(ownerTurfs, ownerBookings) {
       const slotMatrix = document.getElementById('owner-slot-matrix');
+      const scheduleTitle = document.getElementById('selected-venue-schedule-title');
+      const scheduleSubtitle = document.getElementById('selected-venue-subtitle');
+      const ledgerTitle = document.getElementById('selected-venue-ledger-title');
+      const ledgerSubtitle = document.getElementById('selected-venue-ledger-subtitle');
+      const ledgerBody = document.getElementById('owner-ledger-body');
+
       slotMatrix.innerHTML = '';
-      
-      const timeSlots = [
+      ledgerBody.innerHTML = '';
+
+      if (!ownerTurfs || !ownerTurfs.length) {
+        if (scheduleTitle) scheduleTitle.textContent = '📅 Court Schedule';
+        if (scheduleSubtitle) scheduleSubtitle.textContent = 'Add your turf ground on the left to activate schedule';
+        if (ledgerTitle) ledgerTitle.textContent = '📋 Customer Booking Ledger';
+        if (ledgerSubtitle) ledgerSubtitle.textContent = 'No transactions recorded yet';
+
+        slotMatrix.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 2.5rem 1rem; color: var(--slate-500); background: var(--slate-50); border: 1.5px dashed var(--slate-200); border-radius: var(--radius-md);">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏟️</div>
+            <strong style="color: var(--navy-900); font-size: 0.95rem;">No Court Schedule Available</strong><br>
+            <span style="font-size: 0.82rem; color: var(--slate-500); display:inline-block; margin-top:4px;">
+              You haven't listed any turf facilities yet. Register your turf ground to activate your live court schedule and walk-in matrix.
+            </span><br><br>
+            <button type="button" class="btn-mini-action" onclick="document.getElementById('btn-open-add-turf')?.click()" style="background: #EA580C; color: #fff; font-weight: 700; border: none; padding: 7px 16px; border-radius: 6px; cursor: pointer;">
+              + Add First Ground
+            </button>
+          </div>
+        `;
+
+        ledgerBody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94A3B8;">No booking transactions yet.</td></tr>`;
+        return;
+      }
+
+      const currentTurf = ownerTurfs.find(t => t.id === selectedTurfId) || ownerTurfs[0];
+      selectedTurfId = currentTurf.id;
+
+      if (scheduleTitle) scheduleTitle.textContent = `📅 ${currentTurf.name} — Schedule`;
+      if (scheduleSubtitle) scheduleSubtitle.textContent = `Showing live court slots for ${currentTurf.sport} • ${currentTurf.location} on ${selectedScheduleDate}`;
+      if (ledgerTitle) ledgerTitle.textContent = `📋 Bookings (${currentTurf.name})`;
+      if (ledgerSubtitle) ledgerSubtitle.textContent = `Filtered transactions for ${currentTurf.name}`;
+
+      // Time slots configured for this specific venue
+      const DEFAULT_TIME_SLOTS = [
         '06:00 - 07:00 AM',
         '07:00 - 08:00 AM',
         '08:00 - 09:00 AM',
+        '09:00 - 10:00 AM',
         '04:00 - 05:00 PM',
         '05:00 - 06:00 PM',
         '06:00 - 07:00 PM',
@@ -468,12 +916,22 @@
         '10:00 - 11:00 PM'
       ];
 
-      const slots = timeSlots.map(timeLabel => {
-        // Match booking for this owner's grounds
-        const booking = ownerBookings.find(b => {
-          if (b.status === 'Cancelled') return false;
+      const venueSlots = (Array.isArray(currentTurf.operating_slots) && currentTurf.operating_slots.length > 0)
+        ? currentTurf.operating_slots
+        : DEFAULT_TIME_SLOTS;
+
+      // Filter bookings for this venue on selected date
+      const dateBookings = ownerBookings.filter(b => 
+        (String(b.turf_id) === String(currentTurf.id) || (b.turf_name && b.turf_name.toLowerCase().trim() === currentTurf.name.toLowerCase().trim())) &&
+        b.date === selectedScheduleDate &&
+        b.status !== 'Cancelled'
+      );
+
+      const slots = venueSlots.map(timeLabel => {
+        const booking = dateBookings.find(b => {
+          if (Array.isArray(b.time_slots) && b.time_slots.some(s => s.trim() === timeLabel)) return true;
           const slotStr = (b.time_slot || '').trim();
-          return slotStr === timeLabel || slotStr.startsWith(timeLabel.slice(0, 5));
+          return slotStr === timeLabel || slotStr.includes(timeLabel) || slotStr.startsWith(timeLabel.slice(0, 5));
         });
 
         if (booking) {
@@ -504,51 +962,114 @@
         `;
         el.addEventListener('click', () => {
           if (s.status === 'available') {
-            const customerName = prompt(`Enter customer name for walk-in slot (${s.time}):`);
+            const customerName = prompt(`Enter customer name for walk-in slot (${s.time}) at ${currentTurf.name} on ${selectedScheduleDate}:`);
             if (customerName) {
-              const primaryTurf = ownerTurfs[0] || { id: 'turf-1', name: 'Arena Sports' };
               window.TurfifyStore.createBooking({
-                turf_id: primaryTurf.id,
-                turf_name: primaryTurf.name,
-                sport: primaryTurf.sport || 'Football',
+                turf_id: currentTurf.id,
+                turf_name: currentTurf.name,
+                sport: currentTurf.sport || 'Sports',
                 player_name: customerName,
                 player_phone: '+91 Walk-in',
-                date: new Date().toISOString().split('T')[0],
+                date: selectedScheduleDate,
                 time_slot: s.time,
-                amount: primaryTurf.price_per_hour || 1200,
+                time_slots: [s.time],
+                amount: currentTurf.price_per_hour || 1200,
                 status: 'Walk-in',
                 payment_status: 'Cash at Counter'
               });
               renderOwnerDashboard();
             }
           } else if (s.status === 'walkin' && s.booking) {
-            if (confirm(`Cancel walk-in reservation for ${s.player}?`)) {
+            if (confirm(`Cancel walk-in reservation for ${s.player} at ${s.time}?`)) {
               window.TurfifyStore.cancelBooking(s.booking.id);
               renderOwnerDashboard();
             }
           } else if (s.booking) {
-            alert(`Slot ${s.time} reserved online:\nPlayer: ${s.booking.player_name}\nPhone: ${s.booking.player_phone || 'Online reservation'}\nTurf: ${s.booking.turf_name}\nAmount: ₹${s.booking.amount}\nStatus: ${s.booking.payment_status}`);
+            alert(`Slot ${s.time} reserved online:\nPlayer: ${s.booking.player_name}\nPhone: ${s.booking.player_phone || 'Online reservation'}\nTurf: ${s.booking.turf_name}\nDate: ${s.booking.date}\nAmount: ₹${s.booking.amount}\nStatus: ${s.booking.payment_status}`);
           }
         });
         slotMatrix.appendChild(el);
       });
 
-      // Ledger Table
-      const ledgerBody = document.getElementById('owner-ledger-body');
-      ledgerBody.innerHTML = '';
-      if (!ownerBookings.length) {
-        ledgerBody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94A3B8;">No booking transactions yet for your turfs.</td></tr>`;
+      // Render Ledger Filter Tabs
+      const ledgerTabsContainer = document.getElementById('ledger-filter-tabs');
+      if (ledgerTabsContainer) {
+        ledgerTabsContainer.innerHTML = '';
+        
+        const filterOptions = [
+          { id: 'all', label: `All Bookings (${ownerBookings.length})` }
+        ];
+
+        ownerTurfs.forEach(t => {
+          const count = ownerBookings.filter(b => 
+            String(b.turf_id) === String(t.id) || 
+            (b.turf_name && b.turf_name.toLowerCase().trim() === t.name.toLowerCase().trim())
+          ).length;
+          filterOptions.push({ id: t.id, label: `${t.name} (${count})` });
+        });
+
+        const liveTurfIds = ownerTurfs.map(t => String(t.id));
+        const liveTurfNames = ownerTurfs.map(t => t.name.toLowerCase().trim());
+        const pastBookings = ownerBookings.filter(b => 
+          !liveTurfIds.includes(String(b.turf_id)) && 
+          !(b.turf_name && liveTurfNames.includes(b.turf_name.toLowerCase().trim()))
+        );
+        if (pastBookings.length > 0) {
+          filterOptions.push({ id: 'past', label: `Past Grounds (${pastBookings.length})` });
+        }
+
+        filterOptions.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          const isActive = (ledgerFilterMode === opt.id);
+          btn.className = `btn-mini-action ${isActive ? 'active-filter' : ''}`;
+          btn.style.cssText = isActive
+            ? 'background: #EA580C; color: #fff; font-weight: 700; border-color: #EA580C; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;'
+            : 'background: #F8FAFC; color: #475569; font-weight: 600; border-color: #CBD5E1; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;';
+          btn.textContent = opt.label;
+          btn.onclick = () => {
+            ledgerFilterMode = opt.id;
+            renderSelectedVenueSchedule(ownerTurfs, ownerBookings);
+          };
+          ledgerTabsContainer.appendChild(btn);
+        });
+      }
+
+      // Filter Ledger according to ledgerFilterMode (default 'all')
+      let displayBookings = ownerBookings;
+      if (ledgerFilterMode === 'all') {
+        displayBookings = ownerBookings;
+        if (ledgerSubtitle) ledgerSubtitle.textContent = `All transaction records across all your venues (${displayBookings.length} total)`;
+      } else if (ledgerFilterMode === 'past') {
+        const liveTurfIds = ownerTurfs.map(t => String(t.id));
+        const liveTurfNames = ownerTurfs.map(t => t.name.toLowerCase().trim());
+        displayBookings = ownerBookings.filter(b => 
+          !liveTurfIds.includes(String(b.turf_id)) && 
+          !(b.turf_name && liveTurfNames.includes(b.turf_name.toLowerCase().trim()))
+        );
+        if (ledgerSubtitle) ledgerSubtitle.textContent = `Historical records from previously listed grounds (${displayBookings.length} total)`;
       } else {
-        ownerBookings.forEach(b => {
+        const targetTurf = ownerTurfs.find(t => t.id === ledgerFilterMode) || currentTurf;
+        displayBookings = ownerBookings.filter(b => 
+          String(b.turf_id) === String(targetTurf.id) ||
+          (b.turf_name && b.turf_name.toLowerCase().trim() === targetTurf.name.toLowerCase().trim())
+        );
+        if (ledgerSubtitle) ledgerSubtitle.textContent = `Filtered transactions for ${targetTurf.name} (${displayBookings.length} total)`;
+      }
+
+      if (!displayBookings.length) {
+        ledgerBody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:28px;color:#94A3B8;">No booking transactions found for this view.</td></tr>`;
+      } else {
+        displayBookings.forEach(b => {
           const tr = document.createElement('tr');
           const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
           tr.innerHTML = `
             <td><code style="font-size:0.75rem;">${b.id}</code></td>
             <td><strong>${b.player_name || 'Player'}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.player_phone || '—'}</span></td>
-            <td>${b.turf_name}</td>
+            <td><span style="font-weight:600; color:var(--navy-900);">${b.turf_name}</span></td>
             <td>${b.date}<br><span style="font-size:0.75rem; color:var(--slate-500);">${b.time_slot}</span></td>
             <td><strong>₹${b.amount}</strong></td>
-            <td><span style="font-size:0.8rem; color:var(--slate-600);">${b.payment_status}</span></td>
+            <td><span style="font-size:0.8rem; color:var(--slate-600);">${b.payment_status || 'Paid Online'}</span></td>
             <td><span class="status-pill ${statusClass}">${b.status}</span></td>
           `;
           ledgerBody.appendChild(tr);
@@ -618,9 +1139,9 @@
 
       // Modals
       const modal = document.getElementById('modal-add-turf');
-      document.getElementById('btn-open-add-turf').onclick = () => modal.classList.add('active');
-      document.getElementById('btn-add-turf-quick').onclick = () => modal.classList.add('active');
-      document.getElementById('btn-close-add-turf').onclick = () => modal.classList.remove('active');
+      document.getElementById('btn-open-add-turf')?.addEventListener('click', () => modal?.classList.add('active'));
+      document.getElementById('btn-add-turf-quick')?.addEventListener('click', () => modal?.classList.add('active'));
+      document.getElementById('btn-close-add-turf')?.addEventListener('click', () => modal?.classList.remove('active'));
 
       // File upload handler for gallery photo
       let uploadedImageData = '';
@@ -649,11 +1170,96 @@
         });
       });
 
+      // Custom Amenity addition handler
+      const customAmenityInput = document.getElementById('custom-amenity-input');
+      const btnAddCustomAmenity = document.getElementById('btn-add-custom-amenity');
+      const amenitiesContainer = document.getElementById('amenities-selector');
+
+      function handleAddCustomAmenity() {
+        const text = (customAmenityInput?.value || '').trim();
+        if (!text) return;
+
+        // Check if amenity already exists (case-insensitive)
+        const exists = Array.from(amenitiesContainer.querySelectorAll('.amenity-toggle-btn'))
+          .some(b => (b.dataset.amenity || '').toLowerCase() === text.toLowerCase());
+
+        if (exists) {
+          // If already exists, just highlight/select it
+          const existingBtn = Array.from(amenitiesContainer.querySelectorAll('.amenity-toggle-btn'))
+            .find(b => (b.dataset.amenity || '').toLowerCase() === text.toLowerCase());
+          if (existingBtn) existingBtn.classList.add('selected');
+          customAmenityInput.value = '';
+          return;
+        }
+
+        // Create new amenity chip
+        const newChip = document.createElement('button');
+        newChip.type = 'button';
+        newChip.className = 'amenity-toggle-btn selected';
+        newChip.dataset.amenity = text;
+        newChip.innerHTML = `⭐ ${text}`;
+        newChip.addEventListener('click', () => {
+          newChip.classList.toggle('selected');
+        });
+
+        amenitiesContainer.appendChild(newChip);
+        customAmenityInput.value = '';
+        customAmenityInput.focus();
+      }
+
+      btnAddCustomAmenity?.addEventListener('click', handleAddCustomAmenity);
+      customAmenityInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAddCustomAmenity();
+        }
+      });
+
+      // Operating slots toggle in "+ Add Ground" modal
+      const slotGrid = document.getElementById('new-turf-slots-grid');
+      const slotsCountEl = document.getElementById('new-turf-slots-count');
+
+      function updateOperatingSlotsCount() {
+        const count = slotGrid ? slotGrid.querySelectorAll('.amenity-toggle-btn.selected').length : 0;
+        if (slotsCountEl) {
+          slotsCountEl.textContent = `${count} slot${count !== 1 ? 's' : ''} open`;
+        }
+      }
+
+      slotGrid?.querySelectorAll('.amenity-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('selected');
+          updateOperatingSlotsCount();
+        });
+      });
+
+      document.getElementById('btn-slots-all')?.addEventListener('click', () => {
+        slotGrid?.querySelectorAll('.amenity-toggle-btn').forEach(btn => btn.classList.add('selected'));
+        updateOperatingSlotsCount();
+      });
+
+      document.getElementById('btn-slots-peak')?.addEventListener('click', () => {
+        const peakSlots = ['06:00 - 07:00 AM', '07:00 - 08:00 AM', '08:00 - 09:00 AM', '05:00 - 06:00 PM', '06:00 - 07:00 PM', '07:00 - 08:00 PM', '08:00 - 09:00 PM', '09:00 - 10:00 PM', '10:00 - 11:00 PM'];
+        slotGrid?.querySelectorAll('.amenity-toggle-btn').forEach(btn => {
+          btn.classList.toggle('selected', peakSlots.includes(btn.dataset.slot));
+        });
+        updateOperatingSlotsCount();
+      });
+
+      document.getElementById('btn-slots-clear')?.addEventListener('click', () => {
+        slotGrid?.querySelectorAll('.amenity-toggle-btn').forEach(btn => btn.classList.remove('selected'));
+        updateOperatingSlotsCount();
+      });
+
       document.getElementById('form-new-turf').onsubmit = (e) => {
         e.preventDefault();
-        // Collect only clicked/selected amenities
+        // Collect only clicked/selected amenities (both default and custom)
         const selectedAmenities = Array.from(document.querySelectorAll('#amenities-selector .amenity-toggle-btn.selected'))
           .map(btn => btn.dataset.amenity);
+
+        // Collect selected operating slots
+        const selectedSlots = Array.from(document.querySelectorAll('#new-turf-slots-grid .amenity-toggle-btn.selected'))
+          .map(btn => btn.dataset.slot);
 
         // Photo: gallery upload has priority, else separate URL, else default fallback
         const urlInput = document.getElementById('new-turf-url')?.value?.trim();
@@ -666,42 +1272,50 @@
           location: document.getElementById('new-turf-loc').value.trim(),
           image: finalImage,
           dimensions: '7v7 Championship Turf',
-          amenities: selectedAmenities
+          amenities: selectedAmenities,
+          operating_slots: selectedSlots.length > 0 ? selectedSlots : undefined
         });
         modal.classList.remove('active');
         location.reload();
       };
 
       document.getElementById('btn-add-walkin').onclick = () => {
-        const name = prompt('Walk-in Customer Name:', 'Manoj (Box Cricket)');
+        const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+        const ownerTurfs = window.TurfifyStore ? window.TurfifyStore.getOwnerTurfs(curUser?.id) : [];
+
+        if (!ownerTurfs.length) {
+          alert('⚠️ Please register your turf facility first before creating walk-in bookings.');
+          document.getElementById('btn-open-add-turf')?.click();
+          return;
+        }
+
+        const primaryTurf = ownerTurfs.find(t => t.id === selectedTurfId) || ownerTurfs[0];
+        const name = prompt(`Walk-in Customer Name for ${primaryTurf.name} on ${selectedScheduleDate}:`, 'Manoj');
         if (name) {
           window.TurfifyStore.createBooking({
-            turf_id: 'turf-1',
-            turf_name: 'The Arena Sports Hub',
-            sport: 'Football',
+            turf_id: primaryTurf.id,
+            turf_name: primaryTurf.name,
+            sport: primaryTurf.sport || 'Sports',
             player_id: 'walkin-' + Date.now(),
             player_name: name,
-            player_phone: '+91 91234 56789',
-            date: new Date().toISOString().split('T')[0],
+            player_phone: '+91 Walk-in',
+            date: selectedScheduleDate,
             time_slot: '10:00 PM - 11:00 PM',
-            amount: 1200,
+            time_slots: ['10:00 PM - 11:00 PM'],
+            amount: primaryTurf.price_per_hour || 1200,
             status: 'Walk-in',
             payment_status: 'Cash at Counter'
           });
-          location.reload();
+          renderOwnerDashboard();
         }
       };
 
-      document.getElementById('btn-block-slot').onclick = () => {
-        alert('11:00 PM slot marked as Blocked for regular maintenance.');
-      };
-
-      window.deleteTurf = function (id) {
-        if (confirm('Delete this turf?')) {
-          window.TurfifyStore.deleteTurf(id);
-          location.reload();
-        }
-      };
+      const btnBlockSlot = document.getElementById('btn-block-slot');
+      if (btnBlockSlot) {
+        btnBlockSlot.onclick = () => {
+          alert('11:00 PM slot marked as Blocked for regular maintenance.');
+        };
+      }
 
       // Dynamic owner name if present
       const currUser = window.TurfifyStore.getCurrentUser();
@@ -712,16 +1326,8 @@
         if (bannerTitle) bannerTitle.textContent = `Welcome, ${currUser.name.split(' ')[0]}!`;
       }
 
-      document.getElementById('btn-owner-logout')?.addEventListener('click', async () => {
-        try {
-          if (window.supabase) {
-            const sb = supabase.createClient('https://fksdanhjdhqbpijoolzf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0');
-            await sb.auth.signOut();
-          }
-        } catch (e) { }
-        localStorage.removeItem('turfify_current_user');
-        window.location.href = 'index.html';
-      });
+      document.getElementById('btn-owner-logout')?.addEventListener('click', window.handleOwnerLogout);
+      document.getElementById('btn-owner-delete-account')?.addEventListener('click', window.handleOwnerDeleteAccount);
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

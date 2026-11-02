@@ -1376,7 +1376,10 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Available Slots</label>
+          <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Available Slots (Multi-select)</span>
+            <span id="modal-slot-selection-hint" style="font-size: 0.75rem; color: var(--primary-green); font-weight: 600;">Tap to select multiple</span>
+          </label>
           <div class="slots-grid">
             <button type="button" class="slot-btn" data-slot="06:00 - 07:00 AM">06:00 - 07:00 AM</button>
             <button type="button" class="slot-btn booked" disabled>07:00 - 08:00 AM</button>
@@ -1400,7 +1403,7 @@
 
         <div class="summary-card">
           <div class="summary-line">
-            <span>Turf Rate (1 Hour)</span>
+            <span id="modal-base-rate-label">Turf Rate (1 Hour)</span>
             <span id="modal-base-rate">₹1,200</span>
           </div>
           <div class="summary-line">

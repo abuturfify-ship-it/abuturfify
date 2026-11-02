@@ -49,7 +49,8 @@
           <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: var(--primary-green-dark); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">⚽</div>
           <span id="nav-player-name" style="font-weight: 700; font-size: 0.85rem; color: var(--navy-900);">Player</span>
         </div>
-        <a href="javascript:void(0)" id="btn-logout" class="btn-login-outline" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem;">Logout</a>
+        <a href="javascript:void(0)" id="btn-logout" onclick="window.handlePlayerLogout(event)" class="btn-login-outline" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; cursor: pointer;">Logout</a>
+        <button type="button" id="btn-delete-account" onclick="window.handlePlayerDeleteAccount(event)" class="btn-login-outline" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; border-color: #EF4444; color: #EF4444; background: rgba(239, 68, 68, 0.05); cursor: pointer;" title="Permanently delete your account">Delete Account</button>
       </div>
     </div>
   </header>
@@ -65,7 +66,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             Back to Home
           </a>
-          <h1 id="player-welcome-title">Welcome back!</h1>
+          <h1 id="player-welcome-title">Welcome!</h1>
           <span class="role-badge player">⚽ Player</span>
         </div>
         <p>Ready for kickoff? Track your upcoming games, teammates, and loyalty coins.</p>
@@ -119,24 +120,24 @@
         <div class="metric-icon green">⚽</div>
         <div class="metric-data">
           <div class="metric-label">Matches Played</div>
-          <div class="metric-val" id="player-matches-count">18</div>
-          <div class="metric-sub">Top 5% active in Tamil Nadu</div>
+          <div class="metric-val" id="player-matches-count">0</div>
+          <div class="metric-sub" id="player-matches-sub">Book a match to get started</div>
         </div>
       </div>
       <div class="metric-card blue">
         <div class="metric-icon blue">⭐</div>
         <div class="metric-data">
           <div class="metric-label">Turfify Coins</div>
-          <div class="metric-val" id="player-loyalty">450 pts</div>
-          <div class="metric-sub">₹200 off next match</div>
+          <div class="metric-val" id="player-loyalty">0 pts</div>
+          <div class="metric-sub" id="player-loyalty-sub">Earn 25 coins per booking</div>
         </div>
       </div>
       <div class="metric-card orange">
         <div class="metric-icon orange">📅</div>
         <div class="metric-data">
           <div class="metric-label">Upcoming Games</div>
-          <div class="metric-val" id="player-upcoming-count">2</div>
-          <div class="metric-sub">Next game today</div>
+          <div class="metric-val" id="player-upcoming-count">0</div>
+          <div class="metric-sub" id="player-upcoming-sub">No games scheduled</div>
         </div>
       </div>
       <div class="metric-card teal">
@@ -242,8 +243,8 @@
         <!-- Slot Selection Grid -->
         <div class="form-group">
           <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
-            <span>Available 1-Hour Match Slots</span>
-            <span style="font-size: 0.72rem; color: var(--slate-500);">Green = Selected • Red = Booked</span>
+            <span>Available Match Slots (Multi-select)</span>
+            <span id="player-slot-selection-hint" style="font-size: 0.75rem; color: var(--primary-green-dark); font-weight: 600;">Tap to select one or multiple slots</span>
           </label>
           <div class="slots-grid" id="player-booking-slots-grid">
             <button type="button" class="slot-btn" data-slot="06:00 - 07:00 AM">06:00 - 07:00 AM</button>
@@ -280,7 +281,7 @@
         <!-- Cost Breakdown -->
         <div class="summary-card">
           <div class="summary-line">
-            <span>Slot Rate (1 Hour)</span>
+            <span id="player-modal-base-rate-label">Turf Rate (1 Hour)</span>
             <span id="player-modal-base-rate">₹1,200</span>
           </div>
           <div class="summary-line">
@@ -296,6 +297,60 @@
         <button type="button" class="btn-modal-action" id="btn-confirm-player-booking" style="font-weight: 800; font-size: 0.95rem;">
           ⚽ Confirm Match & Book in Dashboard
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: CANCEL MATCH RESERVATION WITH OTP
+       ========================================================================== -->
+  <div class="modal-overlay" id="modal-cancel-otp">
+    <div class="modal-container" style="max-width: 440px;">
+      <div class="modal-header" style="border-bottom: 1px solid #FEE2E2;">
+        <div>
+          <h3 class="modal-title" style="color: #DC2626; display: flex; align-items: center; gap: 8px;">
+            <span>⚠️</span> Cancel Match Reservation
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;">Enter OTP code to confirm cancellation</p>
+        </div>
+        <button type="button" class="btn-close-modal" id="btn-close-cancel-otp" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.5rem;">
+        <!-- Match Summary Card -->
+        <div id="cancel-booking-summary" style="background: #FEF2F2; border: 1.5px solid #FCA5A5; border-radius: 10px; padding: 12px 14px; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.95rem; color: #991B1B;" id="cancel-modal-turf">Sports Arena</div>
+          <div style="font-size: 0.8rem; color: #7F1D1D; margin-top: 2px;" id="cancel-modal-details">2026-11-05 • 08:00 - 09:00 AM</div>
+          <div style="font-size: 0.82rem; font-weight: 700; color: #DC2626; margin-top: 4px;" id="cancel-modal-amount">Amount: ₹1,500</div>
+        </div>
+
+        <p style="font-size: 0.85rem; color: var(--slate-600); line-height: 1.5; margin-bottom: 1rem;">
+          To prevent unauthorized cancellations, a 6-digit confirmation code has been dispatched to:
+          <strong id="cancel-modal-email" style="color: var(--navy-900); display: block; margin-top: 4px;">player@example.com</strong>
+        </p>
+
+        <!-- OTP Input -->
+        <div class="form-group" style="text-align: center; margin-bottom: 1.25rem;">
+          <label class="form-label" style="font-weight: 700; font-size: 0.82rem; margin-bottom: 8px;">Enter 6-Digit Cancellation Code</label>
+          <input type="text" id="cancel-otp-input" class="form-control" maxlength="6" placeholder="• • • • • •"
+            style="text-align: center; font-size: 1.8rem; font-weight: 800; letter-spacing: 8px; width: 220px; margin: 0 auto; font-family: monospace; border: 2px solid #CBD5E1;" autocomplete="one-time-code">
+          <div id="cancel-otp-error" style="color: #DC2626; font-size: 0.8rem; font-weight: 600; margin-top: 8px; display: none;"></div>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button type="button" class="btn-modal-action" id="btn-submit-cancel-otp" style="background: #DC2626; color: #fff; font-weight: 700; border: none; font-size: 0.92rem;">
+            Confirm & Cancel Booking
+          </button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+            <button type="button" id="btn-resend-cancel-otp" style="background: none; border: none; color: #EA580C; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-decoration: underline;">
+              Resend Code
+            </button>
+            <button type="button" id="btn-dismiss-cancel-otp" style="background: none; border: none; color: var(--slate-500); font-size: 0.8rem; cursor: pointer;">
+              Keep Booking (Go Back)
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -320,6 +375,72 @@
       }, 3000);
     }
 
+    window.handlePlayerLogout = async function (e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      try {
+        if (window.supabase) {
+          const sb = supabase.createClient('https://fksdanhjdhqbpijoolzf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0');
+          await Promise.race([
+            sb.auth.signOut(),
+            new Promise(resolve => setTimeout(resolve, 600))
+          ]);
+        }
+      } catch (err) { }
+      localStorage.removeItem('turfify_current_user');
+      sessionStorage.removeItem('turfify_current_user');
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    };
+
+    window.handlePlayerDeleteAccount = async function (e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const curUser = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+                      JSON.parse(localStorage.getItem('turfify_current_user') || 'null');
+
+      const confirmDelete = confirm('⚠️ Are you sure you want to permanently delete your Turfify account?\n\nThis will remove your account profile, data, and login access. This action cannot be undone.');
+      if (!confirmDelete) return;
+
+      const userId = curUser?.id || '';
+      const userEmail = curUser?.email || '';
+
+      try {
+        if (userId || userEmail) {
+          await Promise.race([
+            fetch('/api/delete-account', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: userId, email: userEmail })
+            }),
+            new Promise(r => setTimeout(r, 1200))
+          ]).catch(() => {});
+        }
+
+        if (window.TurfifyStore && window.TurfifyStore.deleteUser && (userId || userEmail)) {
+          window.TurfifyStore.deleteUser(userId || userEmail);
+        }
+
+        if (window.supabase) {
+          const sb = window.supabase.createClient('https://fksdanhjdhqbpijoolzf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0');
+          await Promise.race([
+            sb.auth.signOut(),
+            new Promise(r => setTimeout(r, 600))
+          ]).catch(() => {});
+        }
+      } catch (err) { }
+
+      localStorage.removeItem('turfify_current_user');
+      sessionStorage.removeItem('turfify_current_user');
+      sessionStorage.clear();
+      alert('Your account has been permanently deleted.');
+      window.location.href = 'index.html';
+    };
+
     function renderPlayerDashboard() {
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
       if (!user || !user.is_authenticated) {
@@ -327,7 +448,6 @@
         return;
       }
       const activeUser = user;
-      const isNewUser = (activeUser?.id !== 'player-1');
       const bookings = window.TurfifyStore.getPlayerBookings(activeUser?.id);
       const turfs = window.TurfifyStore.getTurfs();
 
@@ -336,15 +456,46 @@
         const navName = document.getElementById('nav-player-name');
         if (navName) navName.textContent = activeUser.name;
         const welcomeTitle = document.getElementById('player-welcome-title') || document.querySelector('.dash-welcome h1');
-        if (welcomeTitle) welcomeTitle.textContent = `Welcome back, ${activeUser.name}!`;
+        if (welcomeTitle) {
+          // "Welcome back" only for returning users (has login_count > 1 or was previously logged in)
+          const isReturning = activeUser.login_count > 1 || activeUser.has_logged_in_before;
+          welcomeTitle.textContent = isReturning
+            ? `Welcome back, ${activeUser.name}!`
+            : `Welcome, ${activeUser.name}!`;
+        }
       }
 
-      // Metrics: new users start at 0
-      const matchesPlayed = isNewUser ? (user.matches_played || bookings.length) : 18;
-      const loyaltyPts = isNewUser ? (user.loyalty_pts || (bookings.length * 25)) : 450;
+      // Metrics: strictly derived from confirmed bookings so cancellation immediately deducts
+      const confirmedBookings = bookings.filter(b => b.status === 'Confirmed' || b.status === 'Completed');
+      const matchesPlayed = confirmedBookings.length;
+      const loyaltyPts = confirmedBookings.length * 25;
+
+      // Keep user object synced in storage
+      if (activeUser) {
+        activeUser.matches_played = matchesPlayed;
+        activeUser.loyalty_pts = loyaltyPts;
+        if (window.TurfifyStore) {
+          window.TurfifyStore.setCurrentUser(activeUser);
+        }
+      }
+
       document.getElementById('player-matches-count').textContent = matchesPlayed;
       document.getElementById('player-loyalty').textContent = `${loyaltyPts} pts`;
-      document.getElementById('player-upcoming-count').textContent = bookings.filter(b => b.status === 'Confirmed').length;
+      document.getElementById('player-upcoming-count').textContent = confirmedBookings.length;
+
+      // Dynamic subtext based on active counts
+      const matchesSub = document.getElementById('player-matches-sub');
+      if (matchesSub) {
+        matchesSub.textContent = matchesPlayed > 0 ? `${matchesPlayed} match${matchesPlayed > 1 ? 'es' : ''} active` : 'Book a match to get started';
+      }
+      const loyaltySub = document.getElementById('player-loyalty-sub');
+      if (loyaltySub) {
+        loyaltySub.textContent = loyaltyPts > 0 ? `${loyaltyPts} coins earned` : 'Earn 25 coins per booking';
+      }
+      const upcomingSub = document.getElementById('player-upcoming-sub');
+      if (upcomingSub) {
+        upcomingSub.textContent = confirmedBookings.length > 0 ? `${confirmedBookings.length} upcoming game${confirmedBookings.length > 1 ? 's' : ''}` : 'No games scheduled';
+      }
 
       // Hero Card
       const heroCard = document.querySelector('.hero-match-card');
@@ -454,11 +605,52 @@
       });
     });
 
+    function updatePlayerModalRates() {
+      const turfs = window.TurfifyStore.getTurfs() || [];
+      const turf = turfs.find(t => String(t.id) === String(turfSelectEl?.value)) || turfs[0];
+      if (!turf) return;
+
+      const selectedBtns = Array.from(document.querySelectorAll('#player-booking-slots-grid .slot-btn.selected:not([disabled])'));
+      const ratePerHour = turf.price_per_hour || 1200;
+      const count = selectedBtns.length;
+      const totalAmount = ratePerHour * (count > 0 ? count : 1);
+
+      const baseRateLabel = document.getElementById('player-modal-base-rate-label');
+      const baseRateEl = document.getElementById('player-modal-base-rate');
+      const totalRateEl = document.getElementById('player-modal-total-rate');
+      const hintEl = document.getElementById('player-slot-selection-hint');
+      const btnConfirm = document.getElementById('btn-confirm-player-booking');
+
+      if (baseRateLabel) {
+        baseRateLabel.textContent = count > 1
+          ? `Turf Rate (${count} Slots)`
+          : `Turf Rate (1 Hour)`;
+      }
+      if (baseRateEl) {
+        baseRateEl.textContent = count > 1
+          ? `₹${ratePerHour.toLocaleString()} × ${count}`
+          : `₹${ratePerHour.toLocaleString()}`;
+      }
+      if (totalRateEl) {
+        totalRateEl.textContent = `₹${(ratePerHour * count).toLocaleString()}`;
+      }
+      if (hintEl) {
+        hintEl.textContent = count > 0
+          ? `${count} slot${count > 1 ? 's' : ''} selected`
+          : 'Tap to select one or multiple slots';
+      }
+      if (btnConfirm) {
+        btnConfirm.textContent = count > 1
+          ? `⚽ Confirm Match (${count} Slots) • ₹${(ratePerHour * count).toLocaleString()}`
+          : `⚽ Confirm Match & Book in Dashboard`;
+      }
+    }
+
     document.querySelectorAll('#player-booking-slots-grid .slot-btn').forEach(slotBtn => {
       slotBtn.addEventListener('click', () => {
         if (slotBtn.disabled || slotBtn.classList.contains('booked')) return;
-        document.querySelectorAll('#player-booking-slots-grid .slot-btn').forEach(s => s.classList.remove('selected'));
-        slotBtn.classList.add('selected');
+        slotBtn.classList.toggle('selected');
+        updatePlayerModalRates();
       });
     });
 
@@ -467,6 +659,11 @@
       const curTurfId = turfSelectEl.value;
       const curDate = dateInputEl.value;
       const allBookings = window.TurfifyStore.getBookings() || [];
+      const turfs = window.TurfifyStore.getTurfs() || [];
+      const activeTurf = turfs.find(t => String(t.id) === String(curTurfId));
+      const operatingSlots = (activeTurf && Array.isArray(activeTurf.operating_slots) && activeTurf.operating_slots.length > 0)
+        ? activeTurf.operating_slots
+        : null;
 
       const bookedSlots = allBookings
         .filter(b => 
@@ -474,24 +671,30 @@
           b.date === curDate &&
           b.status !== 'Cancelled'
         )
-        .map(b => (b.time_slot || '').trim());
+        .flatMap(b => {
+          if (Array.isArray(b.time_slots)) return b.time_slots.map(s => s.trim());
+          if (b.time_slot && b.time_slot.includes(',')) return b.time_slot.split(',').map(s => s.trim());
+          return [ (b.time_slot || '').trim() ];
+        });
 
       const slotButtons = document.querySelectorAll('#player-booking-slots-grid .slot-btn');
-      let hasSelected = false;
 
       slotButtons.forEach(btn => {
         const slotLabel = (btn.dataset.slot || '').trim();
-        btn.classList.remove('booked');
+        btn.classList.remove('booked', 'closed');
         btn.disabled = false;
+        btn.removeAttribute('title');
 
-        if (slotLabel && bookedSlots.includes(slotLabel)) {
+        if (slotLabel && operatingSlots && !operatingSlots.includes(slotLabel)) {
+          btn.classList.add('closed');
+          btn.disabled = true;
+          btn.classList.remove('selected');
+          btn.title = 'Outside operating hours';
+        } else if (slotLabel && bookedSlots.includes(slotLabel)) {
           btn.classList.add('booked');
           btn.disabled = true;
           btn.classList.remove('selected');
-        } else if (!hasSelected && !btn.disabled) {
-          if (btn.classList.contains('selected')) {
-            hasSelected = true;
-          }
+          btn.title = 'Slot already booked';
         }
       });
 
@@ -501,6 +704,8 @@
           firstAvailable.classList.add('selected');
         }
       }
+
+      updatePlayerModalRates();
     }
 
     function updatePlayerSelectedTurf() {
@@ -512,15 +717,11 @@
       const nameEl = document.getElementById('player-turf-preview-name');
       const metaEl = document.getElementById('player-turf-preview-meta');
       const rateEl = document.getElementById('player-turf-preview-rate');
-      const baseRateEl = document.getElementById('player-modal-base-rate');
-      const totalRateEl = document.getElementById('player-modal-total-rate');
 
       if (imgEl) imgEl.src = turf.image || 'images/turf-arena.jpg';
       if (nameEl) nameEl.textContent = turf.name;
       if (metaEl) metaEl.textContent = `${turf.sport} • ${turf.location}`;
       if (rateEl) rateEl.textContent = `₹${turf.price_per_hour}`;
-      if (baseRateEl) baseRateEl.textContent = `₹${turf.price_per_hour}`;
-      if (totalRateEl) totalRateEl.textContent = `₹${turf.price_per_hour}`;
 
       refreshPlayerSlotAvailability();
     }
@@ -569,15 +770,17 @@
     };
 
     btnConfirmPlayer?.addEventListener('click', () => {
-      const selectedSlotBtn = document.querySelector('#player-booking-slots-grid .slot-btn.selected:not([disabled])');
-      if (!selectedSlotBtn) {
-        showToast('⚠️ Please select an available match slot.');
+      const selectedSlotBtns = Array.from(document.querySelectorAll('#player-booking-slots-grid .slot-btn.selected:not([disabled])'));
+      if (selectedSlotBtns.length === 0) {
+        showToast('⚠️ Please select at least one available match slot.');
         return;
       }
 
       const turfs = window.TurfifyStore.getTurfs() || [];
       const turf = turfs.find(t => String(t.id) === String(turfSelectEl.value)) || turfs[0];
-      const slot = selectedSlotBtn.dataset.slot;
+      const selectedSlots = selectedSlotBtns.map(b => b.dataset.slot);
+      const slotString = selectedSlots.join(', ');
+      const totalAmount = (turf.price_per_hour || 1200) * selectedSlots.length;
       const date = dateInputEl.value || new Date().toISOString().split('T')[0];
       const playerName = nameInputEl.value.trim() || 'Player Guest';
       const playerPhone = phoneInputEl.value.trim() || '+91 98765 43210';
@@ -588,8 +791,9 @@
         turf_name: turf.name,
         sport: turf.sport,
         date: date,
-        time_slot: slot,
-        amount: turf.price_per_hour,
+        time_slot: slotString,
+        time_slots: selectedSlots,
+        amount: totalAmount,
         player_id: cur?.id || ('player-' + Date.now()),
         player_name: playerName,
         player_phone: playerPhone,
@@ -600,7 +804,9 @@
       });
 
       modalPlayerBooking?.classList.remove('active');
-      showToast(`🎉 Match booked at ${turf.name} for ${date} (${slot})! Check your upcoming games below.`);
+      showToast(`🎉 ${selectedSlots.length} slot${selectedSlots.length > 1 ? 's' : ''} booked at ${turf.name} for ${date}! Total: ₹${totalAmount.toLocaleString()}`);
+      // Immediately mark booked slot as unavailable and re-render dashboard
+      refreshPlayerSlotAvailability();
       renderPlayerDashboard();
     });
 
@@ -626,23 +832,174 @@
       window.addEventListener('turfify:data_synced', () => renderPlayerDashboard());
       window.addEventListener('storage', () => renderPlayerDashboard());
 
-      window.cancelBooking = function(id) {
-        if (confirm('Cancel this match reservation?')) {
-          window.TurfifyStore.cancelBooking(id);
-          renderPlayerDashboard();
+      let pendingCancellation = null;
+
+      window.cancelBooking = async function (id) {
+        const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+        const bookings = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
+        const target = bookings.find(b => String(b.id) === String(id));
+
+        if (!target) {
+          showToast('⚠️ Booking not found.');
+          return;
+        }
+
+        const email = curUser?.email || target.player_email;
+        if (!email) {
+          if (confirm(`Cancel match reservation at ${target.turf_name}?`)) {
+            window.TurfifyStore.cancelBooking(id);
+            renderPlayerDashboard();
+            showToast('Reservation cancelled.');
+          }
+          return;
+        }
+
+        pendingCancellation = {
+          bookingId: id,
+          booking: target,
+          email: email
+        };
+
+        // Populate modal fields
+        const modalTurfEl = document.getElementById('cancel-modal-turf');
+        const modalDetailsEl = document.getElementById('cancel-modal-details');
+        const modalAmountEl = document.getElementById('cancel-modal-amount');
+        const modalEmailEl = document.getElementById('cancel-modal-email');
+        const otpInput = document.getElementById('cancel-otp-input');
+        const errEl = document.getElementById('cancel-otp-error');
+
+        if (modalTurfEl) modalTurfEl.textContent = target.turf_name || 'Sports Arena';
+        if (modalDetailsEl) modalDetailsEl.textContent = `${target.date} • ${target.time_slot}`;
+        if (modalAmountEl) modalAmountEl.textContent = `Amount: ₹${(target.amount || 0).toLocaleString()}`;
+        if (modalEmailEl) modalEmailEl.textContent = email;
+        if (otpInput) otpInput.value = '';
+        if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+
+        // Open modal
+        const modal = document.getElementById('modal-cancel-otp');
+        modal?.classList.add('active');
+
+        // Dispatch OTP to email via backend
+        showToast(`📩 Sending cancellation code to ${email}...`);
+        try {
+          const res = await fetch('/api/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email,
+              type: 'cancellation',
+              turfName: target.turf_name,
+              date: target.date,
+              timeSlot: target.time_slot
+            })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast(`✅ 6-digit cancellation code sent to ${email}!`);
+            otpInput?.focus();
+          } else {
+            showToast(`⚠️ ${data.error || 'Failed to dispatch email'}`);
+          }
+        } catch (err) {
+          showToast('⚠️ Failed to dispatch OTP. Check network connection.');
         }
       };
 
-      document.getElementById('btn-logout')?.addEventListener('click', async () => {
-        try {
-          if (window.supabase) {
-            const sb = supabase.createClient('https://fksdanhjdhqbpijoolzf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0');
-            await sb.auth.signOut();
+      // OTP Verification Submission
+      document.getElementById('btn-submit-cancel-otp')?.addEventListener('click', async () => {
+        if (!pendingCancellation) return;
+        const otpInput = document.getElementById('cancel-otp-input');
+        const errEl = document.getElementById('cancel-otp-error');
+        const btn = document.getElementById('btn-submit-cancel-otp');
+        const code = (otpInput?.value || '').trim();
+
+        if (!code || code.length !== 6) {
+          if (errEl) {
+            errEl.textContent = 'Please enter the complete 6-digit cancellation code.';
+            errEl.style.display = 'block';
           }
-        } catch(e) {}
-        localStorage.removeItem('turfify_current_user');
-        window.location.href = 'index.html';
+          otpInput?.focus();
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Verifying...';
+
+        try {
+          const res = await fetch('/api/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: pendingCancellation.email,
+              otp: code,
+              type: 'cancellation'
+            })
+          });
+          const data = await res.json();
+
+          if (res.ok && data.success && data.verified) {
+            window.TurfifyStore.cancelBooking(pendingCancellation.bookingId);
+            document.getElementById('modal-cancel-otp')?.classList.remove('active');
+            renderPlayerDashboard();
+            showToast('✅ Match cancelled successfully. Coins & stats have been updated.');
+            pendingCancellation = null;
+          } else {
+            if (errEl) {
+              errEl.textContent = data.error || 'Invalid verification code. Please check your email.';
+              errEl.style.display = 'block';
+            }
+          }
+        } catch (err) {
+          if (errEl) {
+            errEl.textContent = 'Verification error. Please check your connection.';
+            errEl.style.display = 'block';
+          }
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Confirm & Cancel Booking';
+        }
       });
+
+      // Auto-validate on 6 digits
+      document.getElementById('cancel-otp-input')?.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+        if (e.target.value.length === 6) {
+          document.getElementById('btn-submit-cancel-otp')?.click();
+        }
+      });
+
+      // Close / Dismiss Handlers
+      document.getElementById('btn-close-cancel-otp')?.addEventListener('click', () => {
+        document.getElementById('modal-cancel-otp')?.classList.remove('active');
+        pendingCancellation = null;
+      });
+      document.getElementById('btn-dismiss-cancel-otp')?.addEventListener('click', () => {
+        document.getElementById('modal-cancel-otp')?.classList.remove('active');
+        pendingCancellation = null;
+      });
+      document.getElementById('btn-resend-cancel-otp')?.addEventListener('click', async () => {
+        if (!pendingCancellation) return;
+        showToast(`🔄 Resending code to ${pendingCancellation.email}...`);
+        try {
+          await fetch('/api/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: pendingCancellation.email,
+              type: 'cancellation',
+              turfName: pendingCancellation.booking.turf_name,
+              date: pendingCancellation.booking.date,
+              timeSlot: pendingCancellation.booking.time_slot
+            })
+          });
+          showToast('✅ New code dispatched to your email.');
+        } catch (e) {
+          showToast('⚠️ Failed to resend. Please try again.');
+        }
+      });
+
+      document.getElementById('btn-logout')?.addEventListener('click', window.handlePlayerLogout);
+      document.getElementById('btn-delete-account')?.addEventListener('click', window.handlePlayerDeleteAccount);
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
