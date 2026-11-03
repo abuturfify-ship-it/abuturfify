@@ -25,13 +25,14 @@
       background: #FFFFFF !important;
       border-bottom: 1px solid #E2E8F0 !important;
       padding: 0 !important;
-      height: 56px !important;
+      height: 60px !important;
       position: sticky !important;
       top: 0 !important;
       z-index: 1000 !important;
       box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
       display: flex !important;
       align-items: center !important;
+      width: 100% !important;
     }
     .nav-container {
       display: flex !important;
@@ -40,7 +41,7 @@
       max-width: 1240px !important;
       width: 100% !important;
       margin: 0 auto !important;
-      padding: 0 20px !important;
+      padding: 0 24px !important;
       height: 100% !important;
       gap: 16px !important;
     }
@@ -160,40 +161,50 @@
     .btn-delete-acc-pill:hover {
       background: #FEE2E2 !important;
     }
+
+    /* Panoramic Hero Banner - Clean, un-zoomed, vibrant turf image */
     .panoramic-hero-banner {
-      background: linear-gradient(90deg, rgba(236,253,245,0.92) 0%, rgba(240,253,250,0.82) 38%, rgba(255,255,255,0) 65%),
-                  url('images/turf-hero-panorama.jpg') right center / cover no-repeat !important;
+      background: url('images/turf-hero-panorama.jpg') right bottom / cover no-repeat !important;
       border: 1.5px solid #A7F3D0 !important;
       border-radius: 20px !important;
-      padding: 26px 36px !important;
+      padding: 22px 32px !important;
       position: relative !important;
       overflow: hidden !important;
       box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08) !important;
       margin: 18px auto 22px auto !important;
       max-width: 1240px !important;
+      width: calc(100% - 48px) !important;
       display: flex !important;
       justify-content: space-between !important;
       align-items: center !important;
-      min-height: 140px !important;
+      min-height: 130px !important;
+      box-sizing: border-box !important;
     }
     .banner-left {
       position: relative !important;
       z-index: 2 !important;
       max-width: 580px !important;
+      background: rgba(255, 255, 255, 0.72) !important;
+      backdrop-filter: blur(8px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      padding: 14px 20px !important;
+      border-radius: 14px !important;
+      border: 1px solid rgba(255, 255, 255, 0.8) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
     }
     .banner-left h1 {
-      font-size: 1.75rem !important;
+      font-size: 1.65rem !important;
       font-weight: 800 !important;
       color: #0B132B !important;
-      margin: 0 0 6px 0 !important;
+      margin: 0 0 4px 0 !important;
       letter-spacing: -0.02em !important;
       line-height: 1.2 !important;
     }
     .banner-left p {
-      font-size: 0.92rem !important;
+      font-size: 0.88rem !important;
       color: #334155 !important;
-      margin: 0 0 12px 0 !important;
-      font-weight: 500 !important;
+      margin: 0 0 10px 0 !important;
+      font-weight: 600 !important;
     }
     .banner-badge-owner, .banner-badge-player {
       display: inline-flex !important;
@@ -201,13 +212,51 @@
       gap: 6px !important;
       background: #047857 !important;
       color: #FFFFFF !important;
-      padding: 5px 16px !important;
+      padding: 4px 14px !important;
       border-radius: 999px !important;
       font-size: 0.72rem !important;
       font-weight: 800 !important;
       letter-spacing: 0.05em !important;
       box-shadow: 0 2px 6px rgba(4, 120, 87, 0.25) !important;
     }
+    .banner-right {
+      display: flex !important;
+      align-items: center !important;
+      position: relative !important;
+      z-index: 2 !important;
+    }
+    .banner-script-slogan {
+      font-family: 'Brush Script MT', 'Caveat', 'Dancing Script', cursive, sans-serif !important;
+      font-size: 2.3rem !important;
+      color: #0284C7 !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.02em !important;
+      transform: rotate(-3deg) !important;
+      user-select: none !important;
+      text-shadow: 0 2px 6px rgba(255, 255, 255, 0.9) !important;
+      margin-right: 18px !important;
+      margin-bottom: 24px !important;
+      white-space: nowrap !important;
+    }
+
+    /* Master Detail and Metrics width unification */
+    .metrics-grid-modern {
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 16px !important;
+      margin: 0 auto 22px auto !important;
+      max-width: 1240px !important;
+      width: calc(100% - 48px) !important;
+      box-sizing: border-box !important;
+    }
+    .owner-master-detail-grid, .player-master-detail-grid {
+      max-width: 1240px !important;
+      width: calc(100% - 48px) !important;
+      margin: 0 auto 3rem auto !important;
+      box-sizing: border-box !important;
+    }
+
+
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { margin: 0; padding: 0; }
@@ -701,18 +750,21 @@
     <div class="banner-left">
       <h1 id="player-welcome-title">Welcome!</h1>
       <p id="player-welcome-sub">Ready for kickoff? Track your upcoming games, teammates, and loyalty coins.</p>
-      <div class="nav-actions-wrap">
+      <div style="display:flex;align-items:center;gap:12px;">
         <span class="banner-badge-player">
-           PLAYER
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 12 9.5 16 14.5 16 16 12"></polygon></svg>PLAYER
         </span>
         <button type="button" class="btn-panel-white-pill" id="btn-player-book-slot" style="box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
           + Book Slot in Dashboard
         </button>
       </div>
     </div>
+    <div class="banner-right">
+      <div class="banner-script-slogan">Play. Book. Win.</div>
+    </div>
   </div>
 
-  <main style="max-width: 1280px; margin: 0 auto; padding: 0 20px;" id="my-matches">
+  <main style="max-width: 1240px; margin: 0 auto;" id="my-matches">
 
     <!-- Hero Match Countdown Card -->
     <div class="hero-match-card" style="margin-bottom: 22px; border-radius: 16px; border: 1.5px solid #E2E8F0; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
