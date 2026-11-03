@@ -176,16 +176,34 @@ window.TurfifyStore = {
           const localBookings = this.getBookings();
           const mergedBookings = [...localBookings];
 
+          let cancelledList = [];
+          try {
+            cancelledList = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
+          } catch (e) {}
+
           serverData.bookings.forEach(sb => {
-            const idx = mergedBookings.findIndex(lb => lb.id === sb.id);
+            const isCancelled = cancelledList.includes(String(sb.id));
+            const idx = mergedBookings.findIndex(lb => String(lb.id) === String(sb.id));
             if (idx >= 0) {
-              // If server has updated owner info or status, update local
-              if (JSON.stringify(mergedBookings[idx]) !== JSON.stringify(sb)) {
-                mergedBookings[idx] = { ...mergedBookings[idx], ...sb };
-                changed = true;
+              // NEVER allow a stale server 'Confirmed' record to overwrite a local 'Cancelled' record!
+              const localIsCancelled = mergedBookings[idx].status === 'Cancelled' || isCancelled;
+              if (localIsCancelled) {
+                if (mergedBookings[idx].status !== 'Cancelled') {
+                  mergedBookings[idx].status = 'Cancelled';
+                  changed = true;
+                }
+              } else {
+                if (JSON.stringify(mergedBookings[idx]) !== JSON.stringify(sb)) {
+                  mergedBookings[idx] = { ...mergedBookings[idx], ...sb };
+                  changed = true;
+                }
               }
             } else {
-              mergedBookings.push(sb);
+              if (isCancelled) {
+                mergedBookings.push({ ...sb, status: 'Cancelled' });
+              } else {
+                mergedBookings.push(sb);
+              }
               changed = true;
             }
           });
@@ -603,10 +621,23 @@ window.TurfifyStore = {
   },
 
   cancelBooking(bookingId) {
+    if (!bookingId) return;
+    const strId = String(bookingId);
     const bks = this.getBookings();
-    const idx = bks.findIndex(b => b.id === bookingId);
+    const idx = bks.findIndex(b => String(b.id) === strId);
+
+    // 1. Maintain persistent blacklist of cancelled bookings
+    try {
+      const cancelledList = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
+      if (!cancelledList.includes(strId)) {
+        cancelledList.push(strId);
+        localStorage.setItem('turfify_cancelled_bookings', JSON.stringify(cancelledList));
+      }
+    } catch (e) {}
+
     if (idx !== -1) {
       bks[idx].status = 'Cancelled';
+      bks[idx].cancelled_at = new Date().toISOString();
       localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(bks));
 
       // Deduct stats from current user when they cancel
@@ -622,7 +653,7 @@ window.TurfifyStore = {
 
       // Dispatch events so all open tabs/windows (owner dashboard, etc.) react immediately
       try {
-        window.dispatchEvent(new CustomEvent('turfify:booking_cancelled', { detail: { id: bookingId } }));
+        window.dispatchEvent(new CustomEvent('turfify:booking_cancelled', { detail: { id: strId } }));
         window.dispatchEvent(new CustomEvent('turfify:data_synced', { detail: { bookings: bks } }));
       } catch (e) {}
 
@@ -630,7 +661,7 @@ window.TurfifyStore = {
       fetch('/api/cancel-booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: bookingId })
+        body: JSON.stringify({ id: strId })
       }).catch(() => {});
     }
   }

@@ -441,6 +441,7 @@
                     <th>Amount</th>
                     <th>Channel</th>
                     <th>Status</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody id="owner-ledger-body">
@@ -673,6 +674,21 @@
       sessionStorage.clear();
       alert('Your owner account and associated turf listings have been permanently deleted.');
       window.location.href = 'index.html';
+    };
+
+    window.ownerCancelBooking = function (id) {
+      const bks = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
+      const target = bks.find(b => String(b.id) === String(id));
+      const info = target ? `${target.turf_name} (${target.date} • ${target.time_slot})` : `booking ${id}`;
+      if (confirm(`Are you sure you want to cancel the reservation for ${info}?`)) {
+        if (window.TurfifyStore) {
+          window.TurfifyStore.cancelBooking(id);
+        }
+        renderOwnerDashboard();
+        if (typeof showToast === 'function') {
+          showToast(`✅ Booking ${id} cancelled successfully.`);
+        }
+      }
     };
 
     window.deleteTurf = async function (id, e) {
@@ -985,7 +1001,13 @@
               renderOwnerDashboard();
             }
           } else if (s.booking) {
-            alert(`Slot ${s.time} reserved online:\nPlayer: ${s.booking.player_name}\nPhone: ${s.booking.player_phone || 'Online reservation'}\nTurf: ${s.booking.turf_name}\nDate: ${s.booking.date}\nAmount: ₹${s.booking.amount}\nStatus: ${s.booking.payment_status}`);
+            if (s.booking.status === 'Cancelled') {
+              alert(`Slot ${s.time} was cancelled.`);
+            } else if (confirm(`Slot ${s.time} reserved:\nPlayer: ${s.booking.player_name || 'Customer'}\nAmount: ₹${s.booking.amount}\nStatus: ${s.booking.status}\n\nDo you want to cancel this reservation?`)) {
+              window.TurfifyStore.cancelBooking(s.booking.id);
+              renderOwnerDashboard();
+              if (typeof showToast === 'function') showToast(`✅ Booking ${s.booking.id} cancelled successfully.`);
+            }
           }
         });
         slotMatrix.appendChild(el);
@@ -1058,7 +1080,7 @@
       }
 
       if (!displayBookings.length) {
-        ledgerBody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:28px;color:#94A3B8;">No booking transactions found for this view.</td></tr>`;
+        ledgerBody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:28px;color:#94A3B8;">No booking transactions found for this view.</td></tr>`;
       } else {
         displayBookings.forEach(b => {
           const tr = document.createElement('tr');
@@ -1071,6 +1093,12 @@
             <td><strong>₹${b.amount}</strong></td>
             <td><span style="font-size:0.8rem; color:var(--slate-600);">${b.payment_status || 'Paid Online'}</span></td>
             <td><span class="status-pill ${statusClass}">${b.status}</span></td>
+            <td>
+              ${b.status !== 'Cancelled' ?
+                `<button type="button" class="btn-mini-action" onclick="window.ownerCancelBooking('${b.id}')" style="color:#DC2626; border-color:#FCA5A5; background:#FEF2F2; font-weight:700; cursor:pointer;" title="Cancel this booking">Cancel</button>` :
+                `<span style="font-size:0.75rem; color:var(--slate-400);">—</span>`
+              }
+            </td>
           `;
           ledgerBody.appendChild(tr);
         });
