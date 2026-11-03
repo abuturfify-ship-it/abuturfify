@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 // Ensure .env is loaded if running locally
 try {
@@ -46,6 +47,13 @@ module.exports = async function handler(req, res) {
   // Generate 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+  // Generate stateless HMAC signature for serverless resilience
+  const OTP_SECRET = process.env.OTP_SECRET || process.env.GMAIL_APP_PASSWORD || 'turfify_otp_secret_key_2026';
+  const tokenHash = crypto.createHmac('sha256', OTP_SECRET)
+    .update(`${email}:${otp}:${expiresAt}:${type}`)
+    .digest('hex');
+  const otpToken = `${expiresAt}.${tokenHash}`;
 
   // Persist OTP to database file
   const dbPath = path.join(__dirname, '..', 'turfify_database.json');
@@ -206,6 +214,7 @@ module.exports = async function handler(req, res) {
         emailSent: false,
         testMode: true,
         devOtp: otp,
+        otpToken,
         message: `Testing sandbox mode: Use code ${otp} to verify (or add GMAIL_USER & GMAIL_APP_PASSWORD in Vercel to send live emails).`
       });
     }
@@ -218,6 +227,7 @@ module.exports = async function handler(req, res) {
   return res.status(200).json({
     success: true,
     emailSent: true,
+    otpToken,
     message: `Verification code sent to ${email}`
   });
 };

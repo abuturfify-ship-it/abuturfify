@@ -286,6 +286,13 @@ async function handleRequest(req, res) {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
 
+      // Generate stateless HMAC signature for serverless/multi-process resilience
+      const OTP_SECRET = process.env.OTP_SECRET || process.env.GMAIL_APP_PASSWORD || 'turfify_otp_secret_key_2026';
+      const tokenHash = crypto.createHmac('sha256', OTP_SECRET)
+        .update(`${email}:${otp}:${expiresAt}:${type}`)
+        .digest('hex');
+      const otpToken = `${expiresAt}.${tokenHash}`;
+
       if (!db.pending_otps) db.pending_otps = {};
       db.pending_otps[email] = {
         otp,
@@ -446,6 +453,7 @@ async function handleRequest(req, res) {
             emailSent: false,
             testMode: true,
             devOtp: otp,
+            otpToken,
             message: `Testing sandbox mode: Use code ${otp} to verify (or configure GMAIL_USER & GMAIL_APP_PASSWORD to send live emails).`
           });
         }
@@ -458,6 +466,7 @@ async function handleRequest(req, res) {
       return sendJson(res, 200, {
         success: true,
         emailSent: true,
+        otpToken,
         message: `Verification code sent to ${email}!`
       });
     }
@@ -480,26 +489,49 @@ async function handleRequest(req, res) {
         }
       }
 
+      let isVerified = false;
+      const OTP_SECRET = process.env.OTP_SECRET || process.env.GMAIL_APP_PASSWORD || 'turfify_otp_secret_key_2026';
+      if (data.otpToken && typeof data.otpToken === 'string' && data.otpToken.includes('.')) {
+        const [expStr, tokenHash] = data.otpToken.split('.');
+        const exp = parseInt(expStr, 10);
+        if (!isNaN(exp)) {
+          if (Date.now() > exp) {
+            return sendJson(res, 400, { error: 'Verification code has expired. Please request a new code.' });
+          }
+          const expectedHash = crypto.createHmac('sha256', OTP_SECRET)
+            .update(`${email}:${inputOtp}:${exp}:${type}`)
+            .digest('hex');
+          if (expectedHash === tokenHash) {
+            isVerified = true;
+          } else {
+            return sendJson(res, 400, { error: 'Incorrect OTP. Please enter the valid 6-digit code.' });
+          }
+        }
+      }
+
       const stored = db.pending_otps ? db.pending_otps[email] : null;
 
-      if (!stored) {
-        return sendJson(res, 400, { error: 'No pending OTP verification found. Please request a new code.' });
-      }
+      if (!isVerified) {
+        if (!stored) {
+          return sendJson(res, 400, { error: 'No pending OTP verification found or the code has expired. Please request a new code.' });
+        }
 
-      if (Date.now() > stored.expiresAt) {
-        delete db.pending_otps[email];
-        saveDatabase(db);
-        return sendJson(res, 400, { error: 'Verification code has expired. Please request a new code.' });
-      }
+        if (Date.now() > stored.expiresAt) {
+          delete db.pending_otps[email];
+          saveDatabase(db);
+          return sendJson(res, 400, { error: 'Verification code has expired. Please request a new code.' });
+        }
 
-      if (stored.otp !== inputOtp) {
-        return sendJson(res, 400, { error: 'Incorrect OTP. Please enter the valid 6-digit code.' });
+        if (stored.otp !== inputOtp) {
+          return sendJson(res, 400, { error: 'Incorrect OTP. Please enter the valid 6-digit code.' });
+        }
+        isVerified = true;
       }
 
       // Valid OTP!
       let user = null;
-      if (type === 'signup' && stored.userData) {
-        const u = stored.userData;
+      const u = stored?.userData || data.userData;
+      if (type === 'signup' && u) {
         user = {
           id: 'usr-' + Date.now(),
           name: u.name,

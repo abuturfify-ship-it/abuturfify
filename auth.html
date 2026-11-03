@@ -583,6 +583,7 @@
       });
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(data.error || 'Failed to resend code');
+      if (data.otpToken) ctx.otpToken = data.otpToken;
       if (resendBtn) resendBtn.textContent = oldText || 'Resend OTP';
       startOtpTimer();
       if (data.devOtp) {
@@ -627,7 +628,13 @@
       const res = await fetch(API_BASE + '/api/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: ctx.email, otp: digits, type: ctx.type })
+        body: JSON.stringify({
+          email: ctx.email,
+          otp: digits,
+          type: ctx.type,
+          otpToken: ctx.otpToken,
+          userData: ctx.pendingUser
+        })
       });
       const data = await res.json();
       if (data.success && data.verified) {
@@ -861,7 +868,13 @@
           showErr('signin', otpData.error || 'Failed to dispatch OTP email.');
           return;
         }
-        showOtpView({ type: 'login', email, pendingUser: resolvedUser, devOtp: otpData.devOtp });
+        showOtpView({
+          type: 'login',
+          email,
+          pendingUser: resolvedUser,
+          devOtp: otpData.devOtp,
+          otpToken: otpData.otpToken
+        });
       } catch (err) {
         hide('signin-success');
         showErr('signin', 'Failed to send OTP email. Please check your connection.');
@@ -939,7 +952,8 @@
         email,
         pendingUser: { name, email, phone, role, password: pass },
         supabaseUserId,
-        devOtp: otpData.devOtp
+        devOtp: otpData.devOtp,
+        otpToken: otpData.otpToken
       });
     } catch (err) {
       setLoading(btn, false);

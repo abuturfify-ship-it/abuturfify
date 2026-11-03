@@ -1,6 +1,23 @@
-
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
+
+// Ensure .env is loaded if running locally
+try {
+  const envPath = path.join(__dirname, '..', '.env');
+  if (fs.existsSync(envPath)) {
+    const envLines = fs.readFileSync(envPath, 'utf8').split('\n');
+    envLines.forEach(l => {
+      const idx = l.indexOf('=');
+      if (idx > 0) {
+        const k = l.substring(0, idx).trim();
+        let v = l.substring(idx + 1).trim();
+        if (v.startsWith('"') && v.endsWith('"')) v = v.slice(1, -1);
+        if (k && !process.env[k]) process.env[k] = v;
+      }
+    });
+  }
+} catch (e) {}
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,11 +41,37 @@ module.exports = async function handler(req, res) {
   const email = (body.email || '').trim().toLowerCase();
   const inputOtp = (body.otp || '').toString().trim();
   const type = body.type || 'signup';
+  const otpToken = body.otpToken || '';
+  const passedUserData = body.userData || null;
 
   if (!email || !inputOtp) {
     return res.status(400).json({ error: 'Email and OTP code are required.' });
   }
 
+  const OTP_SECRET = process.env.OTP_SECRET || process.env.GMAIL_APP_PASSWORD || 'turfify_otp_secret_key_2026';
+  let isVerified = false;
+
+  // 1. Primary: Stateless Cryptographic HMAC verification (works 100% in Serverless)
+  if (otpToken && typeof otpToken === 'string' && otpToken.includes('.')) {
+    const [expStr, tokenHash] = otpToken.split('.');
+    const exp = parseInt(expStr, 10);
+    if (!isNaN(exp)) {
+      if (Date.now() > exp) {
+        return res.status(400).json({ error: 'Verification code has expired. Please request a new code.' });
+      }
+      const expectedHash = crypto.createHmac('sha256', OTP_SECRET)
+        .update(`${email}:${inputOtp}:${exp}:${type}`)
+        .digest('hex');
+
+      if (expectedHash === tokenHash) {
+        isVerified = true;
+      } else {
+        return res.status(400).json({ error: 'Invalid verification code. Please check and try again.' });
+      }
+    }
+  }
+
+  // 2. Secondary: Fallback to turfify_database.json (for local server or persistent disks)
   const dbPath = path.join(__dirname, '..', 'turfify_database.json');
   let db = null;
   let stored = null;
@@ -41,30 +84,33 @@ module.exports = async function handler(req, res) {
       }
     }
   } catch (err) {
-    console.warn('DB read error in verify-otp:', err.message);
+    console.warn('DB read notice:', err.message);
   }
 
-  // If serverless disk didn't persist, or if matched in DB:
-  if (stored) {
+  if (!isVerified && stored) {
     if (Date.now() > stored.expiresAt) {
       delete db.pending_otps[email];
-      try { fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8'); } catch (e) { }
+      try { fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8'); } catch (e) {}
       return res.status(400).json({ error: 'Verification code has expired. Please request a new code.' });
     }
 
-    if (stored.otp !== inputOtp) {
+    if (stored.otp === inputOtp) {
+      isVerified = true;
+    } else {
       return res.status(400).json({ error: 'Invalid verification code. Please check and try again.' });
     }
+  }
 
-    // OTP matches!
+  if (isVerified) {
     let newUser = null;
-    if (type === 'signup' && stored.userData) {
-      const u = stored.userData;
+    const u = stored?.userData || passedUserData;
+
+    if (type === 'signup' && u) {
       newUser = {
         id: 'usr-' + Date.now(),
         name: u.name,
         full_name: u.name,
-        email: u.email,
+        email: u.email || email,
         phone: u.phone || '—',
         role: u.role === 'owner' ? 'owner' : 'player',
         password: u.password,
@@ -74,28 +120,33 @@ module.exports = async function handler(req, res) {
         created_at: new Date().toISOString()
       };
 
-      if (!Array.isArray(db.users)) db.users = [];
-      const existingIdx = db.users.findIndex(x => x.email && x.email.toLowerCase() === email);
-      if (existingIdx >= 0) {
-        db.users[existingIdx] = { ...db.users[existingIdx], ...newUser };
-      } else {
-        db.users.unshift(newUser);
-      }
+      if (db) {
+        if (!Array.isArray(db.users)) db.users = [];
+        const existingIdx = db.users.findIndex(x => x.email && x.email.toLowerCase() === email);
+        if (existingIdx >= 0) {
+          db.users[existingIdx] = { ...db.users[existingIdx], ...newUser };
+        } else {
+          db.users.unshift(newUser);
+        }
 
-      // Remove from deleted_emails blacklist — fresh account allowed
-      if (Array.isArray(db.deleted_emails)) {
-        db.deleted_emails = db.deleted_emails.filter(b => b.toLowerCase() !== email && b.toLowerCase() !== (newUser.id || '').toLowerCase());
+        if (Array.isArray(db.deleted_emails)) {
+          db.deleted_emails = db.deleted_emails.filter(b => b.toLowerCase() !== email && b.toLowerCase() !== (newUser.id || '').toLowerCase());
+        }
       }
     }
 
-    delete db.pending_otps[email];
-    try { fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8'); } catch (e) { }
+    if (db && db.pending_otps && db.pending_otps[email]) {
+      delete db.pending_otps[email];
+    }
+    if (db) {
+      try { fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8'); } catch (e) {}
+    }
 
     return res.status(200).json({
       success: true,
       verified: true,
       user: newUser,
-      message: type === 'signup' ? 'Email verified successfully!' : 'Login verification approved!'
+      message: type === 'signup' ? 'Email verified successfully!' : (type === 'cancellation' ? 'Cancellation authorized successfully!' : 'Login verification approved!')
     });
   }
 
@@ -103,4 +154,3 @@ module.exports = async function handler(req, res) {
     error: 'No pending verification found or the code has expired. Please request a new code.'
   });
 };
-

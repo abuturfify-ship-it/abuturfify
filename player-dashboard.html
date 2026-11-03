@@ -895,6 +895,7 @@
           });
           const data = await res.json();
           if (res.ok) {
+            if (data.otpToken) pendingCancellation.otpToken = data.otpToken;
             if (data.devOtp) {
               showToast(`🧪 Test Mode: Code is ${data.devOtp}`);
               if (otpInput) otpInput.value = data.devOtp;
@@ -937,7 +938,8 @@
             body: JSON.stringify({
               email: pendingCancellation.email,
               otp: code,
-              type: 'cancellation'
+              type: 'cancellation',
+              otpToken: pendingCancellation.otpToken
             })
           });
           const data = await res.json();
@@ -998,6 +1000,7 @@
             })
           });
           const data = await res.json();
+          if (data?.otpToken) pendingCancellation.otpToken = data.otpToken;
           if (data?.devOtp) {
             showToast(`🧪 Test Mode: New code is ${data.devOtp}`);
             const otpInput = document.getElementById('cancel-otp-input');
