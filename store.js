@@ -181,6 +181,23 @@ window.TurfifyStore = {
             cancelledList = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
           } catch (e) {}
 
+          // Merge server-side cancelled_booking_ids into local blacklist (cross-device consistency)
+          if (Array.isArray(serverData.cancelled_booking_ids)) {
+            let changed_cl = false;
+            serverData.cancelled_booking_ids.forEach(sid => {
+              const str = String(sid);
+              if (!cancelledList.includes(str)) {
+                cancelledList.push(str);
+                changed_cl = true;
+              }
+            });
+            if (changed_cl) {
+              try {
+                localStorage.setItem('turfify_cancelled_bookings', JSON.stringify(cancelledList));
+              } catch (e) {}
+            }
+          }
+
           serverData.bookings.forEach(sb => {
             const isCancelled = cancelledList.includes(String(sb.id));
             const idx = mergedBookings.findIndex(lb => String(lb.id) === String(sb.id));

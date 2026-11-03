@@ -38,6 +38,12 @@ module.exports = async function handler(req, res) {
           db.bookings[idx].status = 'Cancelled';
           db.bookings[idx].cancelled_at = new Date().toISOString();
           targetBooking = db.bookings[idx];
+          // Also track in cancelled_booking_ids for cross-device sync
+          if (!Array.isArray(db.cancelled_booking_ids)) db.cancelled_booking_ids = [];
+          const strId = String(bookingId);
+          if (!db.cancelled_booking_ids.includes(strId)) {
+            db.cancelled_booking_ids.push(strId);
+          }
           try {
             fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
           } catch (writeErr) {
@@ -57,3 +63,4 @@ module.exports = async function handler(req, res) {
     booking: targetBooking || { id: bookingId, status: 'Cancelled' }
   });
 };
+
