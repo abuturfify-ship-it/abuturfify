@@ -535,6 +535,29 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------------------------------------------------------
   // Slot Availability: Mark booked slots as red/disabled for all users
   // --------------------------------------------------------------------------
+  function buildMarketplaceSlotGrid(operatingSlots) {
+    const grid = document.getElementById('marketplace-slots-grid') || document.querySelector('.slots-grid');
+    if (!grid) return;
+
+    // Default full-day slots: 6 AM – 11 PM hourly in clean sequential order
+    const defaultSlots = [];
+    for (let h = 6; h < 23; h++) {
+      const startH = h % 12 === 0 ? 12 : h % 12;
+      const endH   = (h + 1) % 12 === 0 ? 12 : (h + 1) % 12;
+      const endSuffix = (h + 1) < 12 ? 'AM' : 'PM';
+      const label = `${String(startH).padStart(2,'0')}:00 - ${String(endH).padStart(2,'0')}:00 ${endSuffix}`;
+      defaultSlots.push(label);
+    }
+
+    const slotsToRender = (Array.isArray(operatingSlots) && operatingSlots.length > 0)
+      ? operatingSlots
+      : defaultSlots;
+
+    grid.innerHTML = slotsToRender.map(s =>
+      `<button type="button" class="slot-btn" data-slot="${s}">${s}</button>`
+    ).join('');
+  }
+
   function refreshSlotAvailability() {
     if (!window.TurfifyStore) return;
 
@@ -545,6 +568,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const operatingSlots = (activeTurf && Array.isArray(activeTurf.operating_slots) && activeTurf.operating_slots.length > 0)
       ? activeTurf.operating_slots
       : null;
+
+    // Generate dynamic full-day slots for this turf
+    buildMarketplaceSlotGrid(operatingSlots);
 
     // Get time slots booked for this turf on this date (only confirmed, not cancelled)
     const bookedSlots = allBookings
@@ -562,8 +588,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.slot-btn').forEach(btn => {
       const slotLabel = btn.dataset.slot ? btn.dataset.slot.trim() : '';
 
-      // Reset state first
-      btn.classList.remove('booked', 'closed');
+      // Reset state first — NEVER leave default or stale selections
+      btn.classList.remove('booked', 'closed', 'selected');
       btn.disabled = false;
       btn.removeAttribute('title');
 
@@ -571,16 +597,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Outside owner operating hours
         btn.classList.add('closed');
         btn.disabled = true;
-        btn.classList.remove('selected');
         btn.title = 'Outside operating hours';
       } else if (slotLabel && bookedSlots.includes(slotLabel)) {
         // Mark as booked — red & disabled
         btn.classList.add('booked');
         btn.disabled = true;
-        btn.classList.remove('selected');
         btn.title = 'Slot already booked';
       } else if (slotLabel) {
-        // Multi-select toggle
+        // Slot selection toggle
         btn.onclick = () => {
           btn.classList.toggle('selected');
           updateBookingModalRates();
@@ -588,11 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    if (!document.querySelector('.slot-btn.selected:not([disabled])')) {
-      const firstAvailable = document.querySelector('.slot-btn:not([disabled])');
-      if (firstAvailable) firstAvailable.classList.add('selected');
-    }
-
+    // Do NOT auto-select any slot by default — player chooses their own slot
     updateBookingModalRates();
   }
 
@@ -618,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
         : `₹${activeTurfRate.toLocaleString()}`;
     }
     if (totalRateEl) {
-      totalRateEl.textContent = `₹${totalAmount.toLocaleString()}`;
+      totalRateEl.textContent = selectedBtns.length > 0 ? `₹${totalAmount.toLocaleString()}` : `₹${activeTurfRate.toLocaleString()} (1 Hr)`;
     }
     if (hintEl) {
       hintEl.textContent = selectedBtns.length > 0
