@@ -664,6 +664,22 @@ async function handleRequest(req, res) {
       return sendJson(res, 400, { error: 'Missing booking id' });
     }
 
+    if (pathname === '/api/delete-booking' && req.method === 'POST') {
+      const body = await readBody(req);
+      const bookingId = body.id || body.booking_id;
+      if (bookingId) {
+        const strId = String(bookingId);
+        if (!Array.isArray(db.deleted_booking_ids)) db.deleted_booking_ids = [];
+        if (!db.deleted_booking_ids.includes(strId)) {
+          db.deleted_booking_ids.push(strId);
+        }
+        db.bookings = db.bookings.filter(b => String(b.id) !== strId);
+        saveDatabase(db);
+        return sendJson(res, 200, { success: true, id: strId });
+      }
+      return sendJson(res, 400, { error: 'Missing booking id' });
+    }
+
     if (pathname === '/api/user' && req.method === 'POST') {
       const user = await readBody(req);
       if (user && user.id) {

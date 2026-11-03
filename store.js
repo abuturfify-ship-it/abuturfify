@@ -174,12 +174,40 @@ window.TurfifyStore = {
         // 2. MERGE BOOKINGS: Keep all locally created bookings, update/add server bookings
         if (Array.isArray(serverData.bookings) && serverData.bookings.length > 0) {
           const localBookings = this.getBookings();
-          const mergedBookings = [...localBookings];
 
           let cancelledList = [];
           try {
             cancelledList = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
           } catch (e) {}
+
+          // Load deleted bookings blacklist — these are NEVER shown again
+          let deletedBookingsList = [];
+          try {
+            deletedBookingsList = JSON.parse(localStorage.getItem('turfify_deleted_bookings') || '[]');
+          } catch (e) {}
+
+          // Merge server-side deleted_booking_ids into local blacklist (cross-device consistency)
+          if (Array.isArray(serverData.deleted_booking_ids)) {
+            let changed_dl = false;
+            serverData.deleted_booking_ids.forEach(sid => {
+              const str = String(sid);
+              if (!deletedBookingsList.includes(str)) {
+                deletedBookingsList.push(str);
+                changed_dl = true;
+              }
+            });
+            if (changed_dl) {
+              try {
+                localStorage.setItem('turfify_deleted_bookings', JSON.stringify(deletedBookingsList));
+              } catch (e) {}
+            }
+          }
+
+          // Filter out any locally deleted bookings
+          let mergedBookings = localBookings.filter(b => !deletedBookingsList.includes(String(b.id)));
+          if (mergedBookings.length !== localBookings.length) {
+            changed = true;
+          }
 
           // Merge server-side cancelled_booking_ids into local blacklist (cross-device consistency)
           if (Array.isArray(serverData.cancelled_booking_ids)) {
@@ -199,6 +227,9 @@ window.TurfifyStore = {
           }
 
           serverData.bookings.forEach(sb => {
+            // Skip bookings the user has permanently deleted — never re-add them
+            if (deletedBookingsList.includes(String(sb.id))) return;
+
             const isCancelled = cancelledList.includes(String(sb.id));
             const idx = mergedBookings.findIndex(lb => String(lb.id) === String(sb.id));
             if (idx >= 0) {
@@ -226,7 +257,9 @@ window.TurfifyStore = {
           });
 
           if (localBookings.length === 0 || changed) {
-            localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(mergedBookings));
+            // Never persist deleted bookings back to storage
+            const finalBookings = mergedBookings.filter(b => !deletedBookingsList.includes(String(b.id)));
+            localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(finalBookings));
           }
         }
 
@@ -505,7 +538,15 @@ window.TurfifyStore = {
 
   getBookings() {
     try {
-      return JSON.parse(localStorage.getItem(TURFIFY_STORAGE_KEYS.BOOKINGS)) || DEFAULT_BOOKINGS;
+      const bks = JSON.parse(localStorage.getItem(TURFIFY_STORAGE_KEYS.BOOKINGS)) || DEFAULT_BOOKINGS;
+      let deletedList = [];
+      try {
+        deletedList = JSON.parse(localStorage.getItem('turfify_deleted_bookings') || '[]');
+      } catch (e) {}
+      if (Array.isArray(deletedList) && deletedList.length > 0) {
+        return bks.filter(b => !deletedList.includes(String(b.id)));
+      }
+      return bks;
     } catch {
       return DEFAULT_BOOKINGS;
     }
@@ -681,6 +722,49 @@ window.TurfifyStore = {
         body: JSON.stringify({ id: strId })
       }).catch(() => {});
     }
+  },
+
+  deleteBooking(bookingId) {
+    if (!bookingId) return;
+    const strId = String(bookingId);
+
+    // 1. Add to permanent deleted blacklist — syncWithServer() will never re-add this
+    try {
+      const deletedList = JSON.parse(localStorage.getItem('turfify_deleted_bookings') || '[]');
+      if (!deletedList.includes(strId)) {
+        deletedList.push(strId);
+        localStorage.setItem('turfify_deleted_bookings', JSON.stringify(deletedList));
+      }
+    } catch (e) {}
+
+    // 2. Also add to cancelled blacklist so server sync skips it entirely
+    try {
+      const cancelledList = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
+      if (!cancelledList.includes(strId)) {
+        cancelledList.push(strId);
+        localStorage.setItem('turfify_cancelled_bookings', JSON.stringify(cancelledList));
+      }
+    } catch (e) {}
+
+    // 3. Remove from local bookings storage immediately
+    const bks = this.getBookings().filter(b => String(b.id) !== strId);
+    try {
+      localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(bks));
+    } catch (e) {}
+
+    // 4. Dispatch events so all open tabs/windows react immediately
+    try {
+      window.dispatchEvent(new CustomEvent('turfify:booking_deleted', { detail: { id: strId } }));
+      window.dispatchEvent(new CustomEvent('turfify:booking_cancelled', { detail: { id: strId } }));
+      window.dispatchEvent(new CustomEvent('turfify:data_synced', { detail: { bookings: bks } }));
+    } catch (e) {}
+
+    // 5. Notify server endpoint to delete from server JSON
+    fetch('/api/delete-booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: strId })
+    }).catch(() => {});
   }
 };
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -695,15 +695,9 @@
       const target = bks.find(b => String(b.id) === String(id));
       const info = target ? `${target.turf_name} (${target.date} • ${target.time_slot})` : `booking ${id}`;
       if (!confirm(`Permanently delete booking record for ${info}?\n\nThis removes it from the ledger entirely.`)) return;
-      const updated = bks.filter(b => String(b.id) !== String(id));
-      try {
-        localStorage.setItem('turfify_bookings', JSON.stringify(updated));
-      } catch(e) {}
-      // Blacklist so server sync never re-adds it
-      try {
-        const cl = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
-        if (!cl.includes(String(id))) { cl.push(String(id)); localStorage.setItem('turfify_cancelled_bookings', JSON.stringify(cl)); }
-      } catch(e) {}
+      if (window.TurfifyStore && window.TurfifyStore.deleteBooking) {
+        window.TurfifyStore.deleteBooking(id);
+      }
       renderOwnerDashboard();
       if (typeof showToast === 'function') {
         showToast('🗑️ Booking record deleted from ledger.');
@@ -1150,6 +1144,7 @@
       window.addEventListener('turfify:data_synced', () => renderOwnerDashboard());
       window.addEventListener('turfify:booking_created', () => renderOwnerDashboard());
       window.addEventListener('turfify:booking_cancelled', () => renderOwnerDashboard());
+      window.addEventListener('turfify:booking_deleted', () => renderOwnerDashboard());
       window.addEventListener('storage', () => renderOwnerDashboard());
 
       // Auto-poll server every 2.5 seconds so turf owners receive new bookings/cancellations in real time

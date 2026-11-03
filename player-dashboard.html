@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,10 @@
   <meta name="description" content="Manage your sports bookings, upcoming matches, and passes on Turfify.">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="dashboard.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
 </head>
+
 <body class="dash-page">
 
   <!-- ==========================================================================
@@ -18,7 +21,8 @@
     <div class="container nav-container">
       <a href="index.html" class="brand" aria-label="Turfify Home">
         <div class="logo-badge">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
             <circle cx="12" cy="4" r="1.5" fill="currentColor"></circle>
           </svg>
@@ -42,15 +46,25 @@
       <!-- Player Profile & Logout -->
       <div class="nav-actions">
         <a href="index.html" class="btn-return-home" title="Return to Turfify Home">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
           Return to Home
         </a>
         <div style="display: flex; align-items: center; gap: 8px;">
-          <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: var(--primary-green-dark); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">⚽</div>
+          <div
+            style="width: 34px; height: 34px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: var(--primary-green-dark); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+            ⚽</div>
           <span id="nav-player-name" style="font-weight: 700; font-size: 0.85rem; color: var(--navy-900);">Player</span>
         </div>
-        <a href="javascript:void(0)" id="btn-logout" onclick="window.handlePlayerLogout(event)" class="btn-login-outline" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; cursor: pointer;">Logout</a>
-        <button type="button" id="btn-delete-account" onclick="window.handlePlayerDeleteAccount(event)" class="btn-login-outline" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; border-color: #EF4444; color: #EF4444; background: rgba(239, 68, 68, 0.05); cursor: pointer;" title="Permanently delete your account">Delete Account</button>
+        <a href="javascript:void(0)" id="btn-logout" onclick="window.handlePlayerLogout(event)"
+          class="btn-login-outline"
+          style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; cursor: pointer;">Logout</a>
+        <button type="button" id="btn-delete-account" onclick="window.handlePlayerDeleteAccount(event)"
+          class="btn-login-outline"
+          style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; border-color: #EF4444; color: #EF4444; background: rgba(239, 68, 68, 0.05); cursor: pointer;"
+          title="Permanently delete your account">Delete Account</button>
       </div>
     </div>
   </header>
@@ -63,7 +77,9 @@
       <div class="dash-welcome">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap;">
           <a href="index.html" class="btn-back-home-pill" title="Return to Turfify Home Marketplace">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
             Back to Home
           </a>
           <h1 id="player-welcome-title">Welcome!</h1>
@@ -88,15 +104,26 @@
       <h2 class="hero-match-title" id="player-hero-turf">The Arena Sports Hub — Pitch A (Football)</h2>
       <div class="match-details-row">
         <div class="match-detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
           <span id="player-hero-time">Today, 07:00 PM - 08:00 PM</span>
         </div>
         <div class="match-detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
           <span id="player-hero-location">Anna Nagar, Chennai</span>
         </div>
         <div class="match-detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
           <span>₹1,200 (Paid Online)</span>
         </div>
       </div>
@@ -108,7 +135,8 @@
         <button class="btn-match-action btn-match-secondary" onclick="alert('WhatsApp squad invite code copied!')">
           📲 Share Squad Link
         </button>
-        <button class="btn-match-action btn-match-secondary" onclick="alert('Turf Entry Pass downloaded with QR verification.')">
+        <button class="btn-match-action btn-match-secondary"
+          onclick="alert('Turf Entry Pass downloaded with QR verification.')">
           🎟️ Download Pass
         </button>
       </div>
@@ -156,10 +184,17 @@
       <div class="dash-panel">
         <div class="panel-header">
           <div class="panel-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
             My Booked Slots
           </div>
-          <button type="button" class="btn-mini-action" id="btn-player-book-another" style="font-weight: 700; color: var(--primary-green-dark); background: #ECFDF5; border-color: #A7F3D0; cursor: pointer;">
+          <button type="button" class="btn-mini-action" id="btn-player-book-another"
+            style="font-weight: 700; color: var(--primary-green-dark); background: #ECFDF5; border-color: #A7F3D0; cursor: pointer;">
             + Book Another Turf
           </button>
         </div>
@@ -207,7 +242,8 @@
       <div class="modal-header">
         <div>
           <h3 class="modal-title" id="player-booking-modal-title">Book Turf Slot</h3>
-          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;" id="player-booking-modal-sub">Direct In-Dashboard Reservation • Instant Sync</p>
+          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;" id="player-booking-modal-sub">Direct
+            In-Dashboard Reservation • Instant Sync</p>
         </div>
         <button type="button" class="btn-close-modal" id="btn-close-player-booking" aria-label="Close">✕</button>
       </div>
@@ -222,14 +258,19 @@
         </div>
 
         <!-- Selected Turf Info Card -->
-        <div id="player-booking-turf-card" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; margin-bottom: 14px;">
-          <img id="player-turf-preview-img" src="" alt="Turf" style="width: 54px; height: 54px; border-radius: 6px; object-fit: cover;">
+        <div id="player-booking-turf-card"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; margin-bottom: 14px;">
+          <img id="player-turf-preview-img" src="" alt="Turf"
+            style="width: 54px; height: 54px; border-radius: 6px; object-fit: cover;">
           <div style="flex: 1;">
-            <div id="player-turf-preview-name" style="font-weight: 700; font-size: 0.92rem; color: var(--navy-900);">Apex Sports Arena</div>
-            <div id="player-turf-preview-meta" style="font-size: 0.78rem; color: var(--slate-500);">Football • Anna Nagar, Chennai</div>
+            <div id="player-turf-preview-name" style="font-weight: 700; font-size: 0.92rem; color: var(--navy-900);">
+              Apex Sports Arena</div>
+            <div id="player-turf-preview-meta" style="font-size: 0.78rem; color: var(--slate-500);">Football • Anna
+              Nagar, Chennai</div>
           </div>
           <div style="text-align: right;">
-            <div id="player-turf-preview-rate" style="font-weight: 800; font-size: 1.05rem; color: var(--primary-green-dark);">₹1,200</div>
+            <div id="player-turf-preview-rate"
+              style="font-weight: 800; font-size: 1.05rem; color: var(--primary-green-dark);">₹1,200</div>
             <div style="font-size: 0.7rem; color: var(--slate-400);">per hour</div>
           </div>
         </div>
@@ -244,7 +285,9 @@
         <div class="form-group">
           <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
             <span>Available Match Slots (Multi-select)</span>
-            <span id="player-slot-selection-hint" style="font-size: 0.75rem; color: var(--primary-green-dark); font-weight: 600;">Tap to select one or multiple slots</span>
+            <span id="player-slot-selection-hint"
+              style="font-size: 0.75rem; color: var(--primary-green-dark); font-weight: 600;">Tap to select one or
+              multiple slots</span>
           </label>
           <div class="slots-grid" id="player-booking-slots-grid">
             <!-- Slots are generated dynamically by buildSlotGrid() -->
@@ -286,7 +329,8 @@
           </div>
         </div>
 
-        <button type="button" class="btn-modal-action" id="btn-confirm-player-booking" style="font-weight: 800; font-size: 0.95rem;">
+        <button type="button" class="btn-modal-action" id="btn-confirm-player-booking"
+          style="font-weight: 800; font-size: 0.95rem;">
           ⚽ Confirm Match & Book in Dashboard
         </button>
       </div>
@@ -303,42 +347,53 @@
           <h3 class="modal-title" style="color: #DC2626; display: flex; align-items: center; gap: 8px;">
             <span>⚠️</span> Cancel Match Reservation
           </h3>
-          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;">Enter OTP code to confirm cancellation</p>
+          <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;">Enter OTP code to confirm cancellation
+          </p>
         </div>
         <button type="button" class="btn-close-modal" id="btn-close-cancel-otp" aria-label="Close">✕</button>
       </div>
 
       <div class="modal-body" style="padding: 1.5rem;">
         <!-- Match Summary Card -->
-        <div id="cancel-booking-summary" style="background: #FEF2F2; border: 1.5px solid #FCA5A5; border-radius: 10px; padding: 12px 14px; margin-bottom: 1.25rem;">
+        <div id="cancel-booking-summary"
+          style="background: #FEF2F2; border: 1.5px solid #FCA5A5; border-radius: 10px; padding: 12px 14px; margin-bottom: 1.25rem;">
           <div style="font-weight: 700; font-size: 0.95rem; color: #991B1B;" id="cancel-modal-turf">Sports Arena</div>
-          <div style="font-size: 0.8rem; color: #7F1D1D; margin-top: 2px;" id="cancel-modal-details">2026-11-05 • 08:00 - 09:00 AM</div>
-          <div style="font-size: 0.82rem; font-weight: 700; color: #DC2626; margin-top: 4px;" id="cancel-modal-amount">Amount: ₹1,500</div>
+          <div style="font-size: 0.8rem; color: #7F1D1D; margin-top: 2px;" id="cancel-modal-details">2026-11-05 • 08:00
+            - 09:00 AM</div>
+          <div style="font-size: 0.82rem; font-weight: 700; color: #DC2626; margin-top: 4px;" id="cancel-modal-amount">
+            Amount: ₹1,500</div>
         </div>
 
         <p style="font-size: 0.85rem; color: var(--slate-600); line-height: 1.5; margin-bottom: 1rem;">
           To prevent unauthorized cancellations, a 6-digit confirmation code has been dispatched to:
-          <strong id="cancel-modal-email" style="color: var(--navy-900); display: block; margin-top: 4px;">player@example.com</strong>
+          <strong id="cancel-modal-email"
+            style="color: var(--navy-900); display: block; margin-top: 4px;">player@example.com</strong>
         </p>
 
         <!-- OTP Input -->
         <div class="form-group" style="text-align: center; margin-bottom: 1.25rem;">
-          <label class="form-label" style="font-weight: 700; font-size: 0.82rem; margin-bottom: 8px;">Enter 6-Digit Cancellation Code</label>
+          <label class="form-label" style="font-weight: 700; font-size: 0.82rem; margin-bottom: 8px;">Enter 6-Digit
+            Cancellation Code</label>
           <input type="text" id="cancel-otp-input" class="form-control" maxlength="6" placeholder="• • • • • •"
-            style="text-align: center; font-size: 1.8rem; font-weight: 800; letter-spacing: 8px; width: 220px; margin: 0 auto; font-family: monospace; border: 2px solid #CBD5E1;" autocomplete="one-time-code">
-          <div id="cancel-otp-error" style="color: #DC2626; font-size: 0.8rem; font-weight: 600; margin-top: 8px; display: none;"></div>
+            style="text-align: center; font-size: 1.8rem; font-weight: 800; letter-spacing: 8px; width: 220px; margin: 0 auto; font-family: monospace; border: 2px solid #CBD5E1;"
+            autocomplete="one-time-code">
+          <div id="cancel-otp-error"
+            style="color: #DC2626; font-size: 0.8rem; font-weight: 600; margin-top: 8px; display: none;"></div>
         </div>
 
         <!-- Buttons -->
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button type="button" class="btn-modal-action" id="btn-submit-cancel-otp" style="background: #DC2626; color: #fff; font-weight: 700; border: none; font-size: 0.92rem;">
+          <button type="button" class="btn-modal-action" id="btn-submit-cancel-otp"
+            style="background: #DC2626; color: #fff; font-weight: 700; border: none; font-size: 0.92rem;">
             Confirm & Cancel Booking
           </button>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-            <button type="button" id="btn-resend-cancel-otp" style="background: none; border: none; color: #EA580C; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-decoration: underline;">
+            <button type="button" id="btn-resend-cancel-otp"
+              style="background: none; border: none; color: #EA580C; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-decoration: underline;">
               Resend Code
             </button>
-            <button type="button" id="btn-dismiss-cancel-otp" style="background: none; border: none; color: var(--slate-500); font-size: 0.8rem; cursor: pointer;">
+            <button type="button" id="btn-dismiss-cancel-otp"
+              style="background: none; border: none; color: var(--slate-500); font-size: 0.8rem; cursor: pointer;">
               Keep Booking (Go Back)
             </button>
           </div>
@@ -393,7 +448,7 @@
         e.stopPropagation();
       }
       const curUser = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
-                      JSON.parse(localStorage.getItem('turfify_current_user') || 'null');
+        JSON.parse(localStorage.getItem('turfify_current_user') || 'null');
 
       const confirmDelete = confirm('⚠️ Are you sure you want to permanently delete your Turfify account?\n\nThis will remove your account profile, data, and login access. This action cannot be undone.');
       if (!confirmDelete) return;
@@ -410,7 +465,7 @@
               body: JSON.stringify({ id: userId, email: userEmail })
             }),
             new Promise(r => setTimeout(r, 1200))
-          ]).catch(() => {});
+          ]).catch(() => { });
         }
 
         if (window.TurfifyStore && window.TurfifyStore.deleteUser && (userId || userEmail)) {
@@ -422,7 +477,7 @@
           await Promise.race([
             sb.auth.signOut(),
             new Promise(r => setTimeout(r, 600))
-          ]).catch(() => {});
+          ]).catch(() => { });
         }
       } catch (err) { }
 
@@ -431,6 +486,24 @@
       sessionStorage.clear();
       alert('Your account has been permanently deleted.');
       window.location.href = 'index.html';
+    };
+
+    // Permanently delete a booking from player history
+    window.playerDeleteBooking = function(id) {
+      if (!id) return;
+      const bks = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
+      const target = bks.find(b => String(b.id) === String(id));
+      const info = target ? `${target.turf_name} (${target.date || ''})` : `booking ${id}`;
+      if (!confirm(`Permanently delete the record for ${info}?\n\nThis removes it from your booked slots history.`)) return;
+      if (window.TurfifyStore && window.TurfifyStore.deleteBooking) {
+        window.TurfifyStore.deleteBooking(id);
+      }
+      if (typeof renderPlayerDashboard === 'function') {
+        renderPlayerDashboard();
+      }
+      if (typeof showToast === 'function') {
+        showToast('🗑️ Booking record deleted from your history.');
+      }
     };
 
     function renderPlayerDashboard() {
@@ -534,11 +607,10 @@
             <td><span style="font-size:0.8rem; color:var(--primary-green-dark); font-weight:600;">${b.payment_status}</span></td>
             <td><span class="status-pill ${statusClass}">${b.status}</span></td>
             <td>
-              ${b.status === 'Confirmed' ? 
-                `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626;">Cancel</button>` : 
-                `<button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id || ''}')" style="cursor:pointer;">Rebook</button>`
-              }
-              <button type="button" class="btn-mini-action" onclick="window.playerDeleteBooking('${b.id}')" style="color:#7C3AED;border-color:#DDD6FE;background:#F5F3FF;margin-left:4px;cursor:pointer;" title="Delete this booking record">&#x1F5D1; Delete</button>
+              ${b.status === 'Confirmed' ?
+              `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626;">Cancel</button>` :
+              `<button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id || ''}')" style="cursor:pointer;">Rebook</button>`
+            }
             </td>
           `;
           tbody.appendChild(tr);
@@ -688,7 +760,7 @@
       buildSlotGrid(operatingSlots);
 
       const bookedSlots = allBookings
-        .filter(b => 
+        .filter(b =>
           String(b.turf_id) === String(curTurfId) &&
           b.date === curDate &&
           b.status !== 'Cancelled'
@@ -696,7 +768,7 @@
         .flatMap(b => {
           if (Array.isArray(b.time_slots)) return b.time_slots.map(s => s.trim());
           if (b.time_slot && b.time_slot.includes(',')) return b.time_slot.split(',').map(s => s.trim());
-          return [ (b.time_slot || '').trim() ];
+          return [(b.time_slot || '').trim()];
         });
 
       const slotButtons = document.querySelectorAll('#player-booking-slots-grid .slot-btn');
@@ -742,7 +814,7 @@
     turfSelectEl?.addEventListener('change', updatePlayerSelectedTurf);
     dateInputEl?.addEventListener('change', refreshPlayerSlotAvailability);
 
-    window.openPlayerBookingModal = function(turfId) {
+    window.openPlayerBookingModal = function (turfId) {
       const turfs = window.TurfifyStore.getTurfs() || [];
       if (!turfs.length) {
         showToast('No turfs currently available for booking.');
@@ -842,27 +914,9 @@
 
       window.addEventListener('turfify:booking_created', () => renderPlayerDashboard());
       window.addEventListener('turfify:booking_cancelled', () => renderPlayerDashboard());
+      window.addEventListener('turfify:booking_deleted', () => renderPlayerDashboard());
       window.addEventListener('turfify:data_synced', () => renderPlayerDashboard());
       window.addEventListener('storage', () => renderPlayerDashboard());
-      // Delete a booking record entirely from player's view
-      window.playerDeleteBooking = function(id) {
-        const bks = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
-        const target = bks.find(b => String(b.id) === String(id));
-        const info = target ? `${target.turf_name} (${target.date})` : `booking ${id}`;
-        if (!confirm(`Permanently delete the record for ${info}?\n\nNote: This removes it from your history only.`)) return;
-        // Remove from local storage bookings list
-        const updated = bks.filter(b => String(b.id) !== String(id));
-        try {
-          localStorage.setItem('turfify_bookings', JSON.stringify(updated));
-        } catch(e) {}
-        // Also add to cancelled blacklist so server sync never re-adds it
-        try {
-          const cl = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
-          if (!cl.includes(String(id))) { cl.push(String(id)); localStorage.setItem('turfify_cancelled_bookings', JSON.stringify(cl)); }
-        } catch(e) {}
-        renderPlayerDashboard();
-        showToast('🗑️ Booking record deleted from your history.');
-      };
 
       let pendingCancellation = null;
 
@@ -1051,4 +1105,5 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
+
 </html>
