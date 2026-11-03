@@ -930,12 +930,18 @@
       if (ledgerTitle) ledgerTitle.textContent = `📋 Bookings (${currentTurf.name})`;
       if (ledgerSubtitle) ledgerSubtitle.textContent = `Filtered transactions for ${currentTurf.name}`;
 
-      // Time slots configured for this specific venue
+      // Time slots configured for this specific venue - clean 6 AM to 11 PM
       const DEFAULT_TIME_SLOTS = [
         '06:00 - 07:00 AM',
         '07:00 - 08:00 AM',
         '08:00 - 09:00 AM',
         '09:00 - 10:00 AM',
+        '10:00 - 11:00 AM',
+        '11:00 - 12:00 PM',
+        '12:00 - 01:00 PM',
+        '01:00 - 02:00 PM',
+        '02:00 - 03:00 PM',
+        '03:00 - 04:00 PM',
         '04:00 - 05:00 PM',
         '05:00 - 06:00 PM',
         '06:00 - 07:00 PM',
@@ -959,8 +965,11 @@
       const slots = venueSlots.map(timeLabel => {
         const booking = dateBookings.find(b => {
           if (Array.isArray(b.time_slots) && b.time_slots.some(s => s.trim() === timeLabel)) return true;
-          const slotStr = (b.time_slot || '').trim();
-          return slotStr === timeLabel || slotStr.includes(timeLabel) || slotStr.startsWith(timeLabel.slice(0, 5));
+          if (b.time_slot) {
+            const parts = b.time_slot.split(',').map(s => s.trim());
+            if (parts.includes(timeLabel)) return true;
+          }
+          return false;
         });
 
         if (booking) {

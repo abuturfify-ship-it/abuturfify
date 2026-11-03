@@ -205,8 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const slots = timeSlots.map(timeLabel => {
       const booking = ownerBookings.find(b => {
         if (b.status === 'Cancelled') return false;
-        const slotStr = (b.time_slot || '').trim();
-        return slotStr === timeLabel || slotStr.startsWith(timeLabel.slice(0, 5));
+        if (Array.isArray(b.time_slots) && b.time_slots.some(s => s.trim() === timeLabel)) return true;
+        if (b.time_slot) {
+          const parts = b.time_slot.split(',').map(s => s.trim());
+          if (parts.includes(timeLabel)) return true;
+        }
+        return false;
       });
 
       if (booking) {
