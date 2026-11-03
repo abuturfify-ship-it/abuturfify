@@ -11,6 +11,624 @@
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%23EA580C%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
   <style>
+    body.dash-page {
+      background: #EDF5F7;
+      color: #0F172A;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .header {
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      padding: 10px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .nav-menu {
+      display: flex;
+      gap: 22px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-menu a {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #475569;
+      text-decoration: none;
+      transition: color 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-menu a:hover, .nav-menu a.active {
+      color: #059669;
+    }
+    .btn-return-home-pill {
+      border: 1.5px solid #10B981;
+      color: #047857;
+      background: #FFFFFF;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-return-home-pill:hover {
+      background: #ECFDF5;
+    }
+    .owner-profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 999px;
+      padding: 3px 12px 3px 3px;
+    }
+    .owner-profile-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #D1FAE5;
+      color: #047857;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .btn-logout-pill {
+      border: 1.5px solid #0F172A;
+      color: #0F172A;
+      background: #FFFFFF;
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .btn-logout-pill:hover {
+      background: #F1F5F9;
+    }
+    .btn-delete-acc-pill {
+      border: 1.5px solid #FCA5A5;
+      color: #DC2626;
+      background: #FFF1F2;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-delete-acc-pill:hover {
+      background: #FEE2E2;
+    }
+
+    /* Panoramic Hero Banner */
+    .panoramic-hero-banner {
+      background: linear-gradient(135deg, rgba(236, 253, 245, 0.95) 0%, rgba(224, 242, 254, 0.88) 45%, rgba(209, 250, 229, 0.95) 100%),
+        url('https://images.unsplash.com/photo-1529900245534-5ed987d09618?w=1600&auto=format&fit=crop&q=80') center/cover no-repeat;
+      border: 1.5px solid #A7F3D0;
+      border-radius: 20px;
+      padding: 24px 32px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+      margin: 18px auto 22px auto;
+      max-width: 1280px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 140px;
+    }
+    .banner-left {
+      position: relative;
+      z-index: 2;
+      max-width: 650px;
+    }
+    .banner-left h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .banner-left p {
+      font-size: 0.92rem;
+      color: #475569;
+      margin: 0 0 12px 0;
+    }
+    .banner-badge-owner {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #047857;
+      color: #FFFFFF;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      box-shadow: 0 2px 6px rgba(4, 120, 87, 0.25);
+    }
+    .banner-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 2;
+    }
+    .banner-script-slogan {
+      font-family: 'Brush Script MT', 'Caveat', cursive, sans-serif;
+      font-size: 2rem;
+      color: #0369A1;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transform: rotate(-2deg);
+      user-select: none;
+    }
+    .banner-sports-art {
+      height: 110px;
+      width: auto;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+      pointer-events: none;
+    }
+
+    /* Modern KPI Cards */
+    .metrics-grid-modern {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+      max-width: 1280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (max-width: 900px) {
+      .metrics-grid-modern {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 500px) {
+      .metrics-grid-modern {
+        grid-template-columns: 1fr;
+      }
+    }
+    .kpi-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+    .kpi-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .kpi-card.teal { border-color: #CCFBF1; }
+    .kpi-card.teal .kpi-icon-wrap { background: #0D9488; color: #FFFFFF; }
+    .kpi-card.purple { border-color: #EDE9FE; }
+    .kpi-card.purple .kpi-icon-wrap { background: #8B5CF6; color: #FFFFFF; }
+    .kpi-card.green { border-color: #D1FAE5; }
+    .kpi-card.green .kpi-icon-wrap { background: #10B981; color: #FFFFFF; }
+    .kpi-card.blue { border-color: #DBEAFE; }
+    .kpi-card.blue .kpi-icon-wrap { background: #3B82F6; color: #FFFFFF; }
+    .kpi-data {
+      flex: 1;
+      min-width: 0;
+    }
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #475569;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .kpi-val {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1.2;
+    }
+    .kpi-sub {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kpi-sub.green { color: #059669; }
+    .kpi-sub.purple { color: #7C3AED; }
+    .kpi-sub.blue { color: #2563EB; }
+    .kpi-watermark {
+      position: absolute;
+      right: -8px;
+      bottom: -8px;
+      width: 75px;
+      height: 75px;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    /* Master-Detail Layout */
+    .owner-master-detail-grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+      margin-bottom: 3rem;
+      max-width: 1280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (max-width: 1024px) {
+      .owner-master-detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Teal Themed Panels */
+    .panel-header-teal {
+      background: linear-gradient(135deg, #074E66 0%, #0A6380 100%);
+      color: #FFFFFF;
+      border-radius: 16px 16px 0 0;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .panel-title-teal {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-body-teal {
+      background: #FFFFFF;
+      border: 1.5px solid #0A6380;
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      padding: 18px 20px;
+      box-shadow: 0 6px 20px rgba(7, 78, 102, 0.05);
+      position: relative;
+    }
+    .btn-panel-white-pill {
+      background: #FFFFFF;
+      color: #074E66;
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .btn-panel-white-pill:hover {
+      background: #F1F5F9;
+      transform: translateY(-1px);
+    }
+    .btn-panel-green-pill {
+      background: #0E9F6E;
+      color: #FFFFFF;
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-panel-green-pill:hover {
+      background: #059669;
+      transform: translateY(-1px);
+    }
+    .info-alert-strip {
+      background: #EBF5FF;
+      border-left: 4px solid #3B82F6;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #1E40AF;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .schedule-legend-text {
+      font-size: 0.8rem;
+      color: #475569;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    /* Turf Card Styling */
+    .owner-turf-card {
+      border: 1.5px solid #E2E8F0;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #FFFFFF;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      gap: 14px;
+    }
+    .owner-turf-card:hover {
+      border-color: #6EE7B7;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+      transform: translateY(-1px);
+    }
+    .owner-turf-card.active-venue {
+      border-color: #10B981;
+      background: #F0FDF4;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.12);
+      border-left: 5px solid #10B981;
+    }
+    .turf-card-thumb-wrap {
+      width: 88px;
+      height: 88px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+    }
+    .turf-card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .turf-card-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .turf-card-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .turf-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .badge-status-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+    .badge-status-pill.active {
+      background: #D1FAE5;
+      color: #047857;
+    }
+    .badge-status-pill.inactive {
+      background: #E2E8F0;
+      color: #475569;
+    }
+    .turf-card-location {
+      font-size: 0.78rem;
+      color: #64748B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .turf-card-badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .turf-card-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .turf-card-pill.sport {
+      background: #EFF6FF;
+      color: #1E40AF;
+    }
+    .turf-card-pill.rate {
+      background: #DEF7EC;
+      color: #03543F;
+    }
+    .turf-card-pill.slots {
+      background: #EFF6FF;
+      color: #1D4ED8;
+    }
+    .turf-card-amenities-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .amenity-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #FFF7ED;
+      color: #C2410C;
+      border: 1px solid #FED7AA;
+    }
+    .amenity-tag-more {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #C2410C;
+      background: #FFF7ED;
+      border: 1px dashed #FED7AA;
+      padding: 2px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-delete-venue {
+      background: #FEF2F2;
+      border: 1px solid #FCA5A5;
+      color: #DC2626;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.15s ease;
+      margin-left: auto;
+    }
+    .btn-delete-venue:hover {
+      background: #FEE2E2;
+      transform: scale(1.05);
+    }
+
+    /* Slot Matrix Grid */
+    .slot-matrix {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+    .owner-slot-card {
+      background: #E8F8F2;
+      border: 1.5px solid #A7F3D0;
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 64px;
+    }
+    .owner-slot-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+    }
+    .owner-slot-card.available {
+      background: #ECFDF5;
+      border-color: #6EE7B7;
+    }
+    .owner-slot-card.walkin {
+      background: #FFFBEB;
+      border-color: #FCD34D;
+    }
+    .owner-slot-card.booked {
+      background: #FEF2F2;
+      border-color: #FCA5A5;
+    }
+    .owner-slot-time {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1.1;
+    }
+    .owner-slot-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .owner-slot-card.available .owner-slot-badge {
+      background: #D1FAE5;
+      color: #047857;
+    }
+    .owner-slot-card.walkin .owner-slot-badge {
+      background: #FEF3C7;
+      color: #B45309;
+    }
+    .owner-slot-card.booked .owner-slot-badge {
+      background: #FEE2E2;
+      color: #B91C1C;
+    }
+
+    /* Watermark in Schedule Box */
+    .schedule-batsman-watermark {
+      position: absolute;
+      right: 15px;
+      bottom: 10px;
+      width: 140px;
+      height: auto;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Modal Styling */
     .amenities-toggle-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -38,10 +656,10 @@
       border-color: #94A3B8;
     }
     .amenity-toggle-btn.selected {
-      background: #FFF7ED;
-      border-color: #EA580C;
-      color: #EA580C;
-      box-shadow: 0 0 0 1px #EA580C;
+      background: #ECFDF5;
+      border-color: #10B981;
+      color: #047857;
+      box-shadow: 0 0 0 1px #10B981;
     }
     .upload-drop-zone {
       border: 2px dashed #CBD5E1;
@@ -54,177 +672,8 @@
       transition: border-color 0.2s;
     }
     .upload-drop-zone:hover {
-      border-color: #EA580C;
-      background: #FFF7ED;
-    }
-    .owner-master-detail-grid {
-      display: grid;
-      grid-template-columns: 390px 1fr;
-      gap: 1.5rem;
-      align-items: start;
-      margin-bottom: 3rem;
-    }
-    @media (max-width: 1024px) {
-      .owner-master-detail-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    .owner-turf-card {
-      border: 1.5px solid #E2E8F0;
-      border-radius: 12px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 0.85rem;
-      background: #FFFFFF;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      cursor: pointer;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
-    }
-    .owner-turf-card:hover {
-      border-color: #FDBA74;
-      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.08);
-      transform: translateY(-1px);
-    }
-    .owner-turf-card.active-venue {
-      border-color: #EA580C;
-      background: #FFFBF7;
-      box-shadow: 0 4px 16px rgba(234, 88, 12, 0.12);
-      border-left: 4px solid #EA580C;
-    }
-    .turf-card-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-    .turf-card-thumb {
-      width: 54px;
-      height: 54px;
-      border-radius: 8px;
-      object-fit: cover;
-      flex-shrink: 0;
-      border: 1px solid #E2E8F0;
-      background: #F8FAFC;
-    }
-    .turf-card-main {
-      flex: 1;
-      min-width: 0;
-    }
-    .turf-card-title-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 3px;
-    }
-    .turf-card-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #0F172A;
-      margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .badge-active-venue {
-      font-size: 0.65rem;
-      background: #EA580C;
-      color: #FFFFFF;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 999px;
-      flex-shrink: 0;
-      letter-spacing: 0.02em;
-    }
-    .turf-card-location {
-      font-size: 0.76rem;
-      color: #64748B;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .btn-delete-venue {
-      background: #FEF2F2;
-      border: 1px solid #FCA5A5;
-      color: #DC2626;
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: all 0.15s ease;
-      padding: 0;
-      font-size: 0.8rem;
-    }
-    .btn-delete-venue:hover {
-      background: #FEE2E2;
-      color: #B91C1C;
-      transform: scale(1.05);
-    }
-    .turf-card-badges-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-    .turf-card-pill {
-      font-size: 0.72rem;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 6px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .turf-card-pill.sport {
-      background: #F1F5F9;
-      color: #334155;
-    }
-    .turf-card-pill.rate {
+      border-color: #10B981;
       background: #ECFDF5;
-      color: #047857;
-      border: 1px solid #A7F3D0;
-    }
-    .turf-card-pill.slots {
-      background: #EFF6FF;
-      color: #1D4ED8;
-    }
-    .turf-card-amenities-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 1px;
-    }
-    .amenity-tag {
-      font-size: 0.68rem;
-      font-weight: 600;
-      padding: 1px 6px;
-      border-radius: 4px;
-      background: #FFF7ED;
-      color: #C2410C;
-      border: 1px solid #FED7AA;
-    }
-    .amenity-tag-more {
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #EA580C;
-      background: #FFF7ED;
-      border: 1px dashed #FED7AA;
-      padding: 1px 6px;
-      border-radius: 4px;
-      cursor: pointer;
-      align-self: center;
-      transition: all 0.15s ease;
-      line-height: 1.2;
-    }
-    .amenity-tag-more:hover {
-      background: #EA580C;
-      color: #FFFFFF;
-      border-color: #EA580C;
-      border-style: solid;
     }
   </style>
 </head>
@@ -234,153 +683,212 @@
   <!-- ==========================================================================
        OWNER NAVIGATION BAR
        ========================================================================== -->
-  <header class="header" id="navbar" style="box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
-    <div class="container nav-container">
-      <a href="index.html" class="brand" aria-label="Turfify Home">
-        <div class="logo-badge" style="background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"></path>
-            <circle cx="12" cy="4" r="1.5" fill="currentColor"></circle>
+  <header class="header" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand" aria-label="Turfify Home" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+        <div class="logo-badge" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+            <path d="M3 12h18M12 3v18"></path>
+            <circle cx="12" cy="12" r="3"></circle>
           </svg>
         </div>
         <div class="brand-text-block">
-          <span class="brand-title">Turfify</span>
-          <span class="brand-tagline" style="color: #EA580C;">Partner Console</span>
+          <span class="brand-title" style="font-weight: 800; font-size: 1.25rem; color: #0F172A; letter-spacing: -0.02em;">Turfify</span>
+          <span class="brand-tagline" style="color: #059669; font-weight: 700; font-size: 0.72rem; display: block; margin-top: -3px;">Partner Console</span>
         </div>
       </a>
 
       <!-- Center Nav Links -->
       <nav aria-label="Main Navigation">
         <ul class="nav-menu">
-          <li><a href="index.html" class="nav-link">Home</a></li>
-          <li><a href="#slots" class="nav-link active">Slot Matrix</a></li>
+          <li><a href="index.html" class="nav-link active"><span style="font-size: 1rem;">🏠</span> Home</a></li>
+          <li><a href="#slots" class="nav-link">Slot Matrix</a></li>
           <li><a href="#ledger" class="nav-link">Bookings Ledger</a></li>
           <li><a href="#grounds" class="nav-link">My Grounds</a></li>
           <li><a href="#settlement" class="nav-link">Payouts</a></li>
         </ul>
       </nav>
 
-      <!-- Owner Profile & Logout -->
-      <div class="nav-actions">
-        <a href="index.html" class="btn-return-home owner-theme" title="Return to Turfify Home">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <!-- Owner Profile & Actions -->
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="index.html" class="btn-return-home-pill" title="Return to Turfify Home">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           Return to Home
         </a>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(234, 88, 12, 0.15); color: #EA580C; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">🏟️</div>
-          <div>
-            <div id="nav-owner-name" style="font-weight: 700; font-size: 0.85rem; color: var(--navy-900); line-height: 1.1;">Turf Owner</div>
-            <div id="nav-owner-business" style="font-size: 0.7rem; color: var(--slate-500);">Partner Console</div>
+
+        <div class="owner-profile-pill">
+          <div class="owner-profile-avatar" id="nav-owner-avatar">🏟️</div>
+          <div style="line-height: 1.15;">
+            <div id="nav-owner-name" style="font-weight: 700; font-size: 0.85rem; color: #0F172A;">Turf Owner</div>
+            <div id="nav-owner-business" style="font-size: 0.7rem; color: #64748B;">Partner Console</div>
           </div>
+          <span style="font-size: 0.75rem; color: #94A3B8; margin-left: 2px;">⌵</span>
         </div>
-        <a href="javascript:void(0)" id="btn-owner-logout" onclick="window.handleOwnerLogout(event)" class="btn-login-outline"
-          style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; cursor: pointer;">Logout</a>
-        <button type="button" id="btn-owner-delete-account" onclick="window.handleOwnerDeleteAccount(event)" class="btn-login-outline"
-          style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem; border-color: #EF4444; color: #EF4444; background: rgba(239, 68, 68, 0.05); cursor: pointer;" title="Permanently delete your account">Delete Account</button>
+
+        <a href="javascript:void(0)" id="btn-owner-logout" onclick="window.handleOwnerLogout(event)" class="btn-logout-pill">Logout</a>
+        <button type="button" id="btn-owner-delete-account" onclick="window.handleOwnerDeleteAccount(event)" class="btn-delete-acc-pill" title="Permanently delete your account">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Delete Account
+        </button>
       </div>
     </div>
   </header>
 
   <!-- ==========================================================================
-       TOP WELCOME BANNER
+       PANORAMIC HERO WELCOME BANNER (MATCHING REFERENCE IMAGE)
        ========================================================================== -->
-  <div class="dash-topbar">
-    <div class="container dash-topbar-inner">
-      <div class="dash-welcome">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap;">
-          <a href="index.html" class="btn-back-home-pill owner-theme" title="Return to Turfify Home Marketplace">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Back to Home
-          </a>
-          <h1>Arena Sports Dashboard</h1>
-          <span class="role-badge owner">🏟️ Turf Owner</span>
-        </div>
-        <p>Live court status, daily walk-in management, and financial payouts.</p>
-      </div>
-
-      <div style="display: flex; gap: 10px;">
-        <button class="btn-match-action btn-match-primary" id="btn-open-add-turf" style="background: #EA580C;">
+  <div class="panoramic-hero-banner">
+    <div class="banner-left">
+      <h1 id="owner-welcome-title">Welcome, Sajaruth Mahjabeen M!</h1>
+      <p id="owner-welcome-sub">Manage your venues, track bookings and grow your business effortlessly.</p>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="banner-badge-owner">
+          👑 TURF OWNER
+        </span>
+        <button type="button" class="btn-panel-white-pill" id="btn-open-add-turf" style="box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
           + Add New Ground
         </button>
       </div>
     </div>
+
+    <div class="banner-right">
+      <div class="banner-script-slogan">Play. Book. Grow.</div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <!-- Soccer ball & shuttlecock sports art -->
+        <svg class="banner-sports-art" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Soccer Ball -->
+          <circle cx="50" cy="65" r="38" fill="#FFFFFF" stroke="#0F172A" stroke-width="3"/>
+          <polygon points="50,42 62,51 57,66 43,66 38,51" fill="#0F172A"/>
+          <line x1="50" y1="42" x2="50" y2="27" stroke="#0F172A" stroke-width="2.5"/>
+          <line x1="62" y1="51" x2="77" y2="46" stroke="#0F172A" stroke-width="2.5"/>
+          <line x1="57" y1="66" x2="71" y2="78" stroke="#0F172A" stroke-width="2.5"/>
+          <line x1="43" y1="66" x2="29" y2="78" stroke="#0F172A" stroke-width="2.5"/>
+          <line x1="38" y1="51" x2="23" y2="46" stroke="#0F172A" stroke-width="2.5"/>
+          <polygon points="50,27 60,30 50,42 40,30" fill="#0F172A"/>
+          <!-- Shuttlecock -->
+          <ellipse cx="108" cy="74" rx="12" ry="9" fill="#F8FAFC" stroke="#0F172A" stroke-width="2"/>
+          <path d="M102 70 L125 35 L135 42 L114 76 Z" fill="#F1F5F9" stroke="#0F172A" stroke-width="1.5"/>
+          <path d="M106 72 L132 40 L142 48 L118 78 Z" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.5"/>
+          <!-- Racket strings circle -->
+          <ellipse cx="152" cy="78" rx="30" ry="24" fill="none" stroke="#059669" stroke-width="4" stroke-dasharray="2 2"/>
+          <path d="M178 92 L198 108" stroke="#047857" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
   </div>
 
-  <main class="container">
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 20px;">
 
-    <!-- Owner Metrics -->
-    <div class="metrics-grid">
-      <div class="metric-card green">
-        <div class="metric-icon green">₹</div>
-        <div class="metric-data">
-          <div class="metric-label">Today's Turnover</div>
-          <div class="metric-val" id="owner-today-rev">₹0</div>
-          <div class="metric-sub" id="owner-rev-sub">Based on live bookings</div>
+    <!-- ==========================================================================
+         4 MODERN KPI METRICS ROW (MATCHING REFERENCE IMAGE)
+         ========================================================================== -->
+    <div class="metrics-grid-modern">
+      <!-- 1. Turnover -->
+      <div class="kpi-card teal">
+        <div class="kpi-icon-wrap">₹</div>
+        <div class="kpi-data">
+          <div class="kpi-label">Today's Turnover</div>
+          <div class="kpi-val" id="owner-today-rev">₹0</div>
+          <div class="kpi-sub green" id="owner-rev-sub">↑ Based on live bookings</div>
         </div>
+        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#0D9488">
+          <rect x="15" y="55" width="16" height="35" rx="3"></rect>
+          <rect x="40" y="35" width="16" height="55" rx="3"></rect>
+          <rect x="65" y="15" width="16" height="75" rx="3"></rect>
+        </svg>
       </div>
-      <div class="metric-card orange">
-        <div class="metric-icon orange">📊</div>
-        <div class="metric-data">
-          <div class="metric-label">Slot Occupancy</div>
-          <div class="metric-val" id="owner-occupancy">0%</div>
-          <div class="metric-sub" id="owner-occupancy-sub">0 slots booked</div>
+
+      <!-- 2. Slot Occupancy -->
+      <div class="kpi-card purple">
+        <div class="kpi-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="4"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
         </div>
+        <div class="kpi-data">
+          <div class="kpi-label">Slot Occupancy</div>
+          <div class="kpi-val" id="owner-occupancy">0%</div>
+          <div class="kpi-sub purple" id="owner-occupancy-sub">0 of 0 slots booked</div>
+        </div>
+        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#8B5CF6">
+          <rect x="15" y="15" width="70" height="70" rx="14" fill="none" stroke="#8B5CF6" stroke-width="8"></rect>
+          <circle cx="35" cy="45" r="5"></circle>
+          <circle cx="65" cy="45" r="5"></circle>
+          <circle cx="35" cy="65" r="5"></circle>
+          <circle cx="65" cy="65" r="5"></circle>
+        </svg>
       </div>
-      <div class="metric-card blue">
-        <div class="metric-icon blue">🏟️</div>
-        <div class="metric-data">
-          <div class="metric-label">Active Grounds</div>
-          <div class="metric-val" id="owner-turfs-count">0 Grounds</div>
-          <div class="metric-sub" id="owner-turfs-sub">Operational venues</div>
+
+      <!-- 3. Active Grounds -->
+      <div class="kpi-card green">
+        <div class="kpi-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="3"></rect><line x1="12" y1="4" x2="12" y2="20"></line><circle cx="12" cy="12" r="3"></circle></svg>
         </div>
+        <div class="kpi-data">
+          <div class="kpi-label">Active Grounds</div>
+          <div class="kpi-val" id="owner-turfs-count">0 Grounds</div>
+          <div class="kpi-sub green" id="owner-turfs-sub">✔ Operational venues</div>
+        </div>
+        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#10B981">
+          <rect x="10" y="20" width="80" height="60" rx="8" fill="none" stroke="#10B981" stroke-width="7"></rect>
+          <line x1="50" y1="20" x2="50" y2="80" stroke="#10B981" stroke-width="5"></line>
+          <circle cx="50" cy="50" r="14" fill="none" stroke="#10B981" stroke-width="5"></circle>
+        </svg>
       </div>
-      <div class="metric-card teal">
-        <div class="metric-icon teal">👥</div>
-        <div class="metric-data">
-          <div class="metric-label">Today's Footfall</div>
-          <div class="metric-val" id="owner-footfall">0 Players</div>
-          <div class="metric-sub">Online + Walk-in</div>
+
+      <!-- 4. Footfall -->
+      <div class="kpi-card blue">
+        <div class="kpi-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         </div>
+        <div class="kpi-data">
+          <div class="kpi-label">Today's Footfall</div>
+          <div class="kpi-val" id="owner-footfall">0 Players</div>
+          <div class="kpi-sub blue">✔ Online + Walk-in</div>
+        </div>
+        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#3B82F6">
+          <circle cx="40" cy="35" r="14"></circle>
+          <path d="M20 75 C20 55, 60 55, 60 75 Z"></path>
+          <circle cx="70" cy="40" r="10"></circle>
+          <path d="M55 75 C55 60, 85 60, 85 75 Z"></path>
+        </svg>
       </div>
     </div>
 
-    <!-- Owner Main Grid: Venues on Left (360px), Schedule on Right -->
+    <!-- ==========================================================================
+         TWO-COLUMN MASTER-DETAIL GRID (MATCHING REFERENCE IMAGE)
+         ========================================================================== -->
     <div class="owner-master-detail-grid">
 
       <!-- LEFT COLUMN: MY LISTED VENUES & PAYOUTS -->
       <div>
-        <div class="dash-panel" id="grounds" style="margin-bottom: 1.5rem;">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">
-                🏟️ My Listed Venues
-              </div>
-              <span style="font-size: 0.75rem; color: var(--slate-400);">Select a venue to view its court schedule</span>
+        <div id="grounds" style="margin-bottom: 1.5rem;">
+          <div class="panel-header-teal">
+            <div class="panel-title-teal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+              My Listed Venues
             </div>
-            <button class="btn-mini-action" id="btn-add-turf-quick"
-              style="background: #FFF7ED; color: #EA580C; border-color: #FED7AA; font-weight: 700;">
+            <button class="btn-panel-white-pill" id="btn-add-turf-quick">
               + Add
             </button>
           </div>
-          <div class="panel-body" id="owner-turfs-list">
-            <!-- Injected via JavaScript -->
+          <div class="panel-body-teal" id="owner-turfs-list">
+            <!-- Injected dynamically via JavaScript -->
           </div>
         </div>
 
         <!-- Settlement Box -->
-        <div class="dash-panel" id="settlement">
-          <div class="panel-header">
-            <div class="panel-title">
+        <div id="settlement" style="margin-bottom: 1.5rem;">
+          <div class="panel-header-teal" style="background: linear-gradient(135deg, #065F46 0%, #047857 100%);">
+            <div class="panel-title-teal">
               🏦 Direct Payout Account
             </div>
           </div>
-          <div class="panel-body">
+          <div class="panel-body-teal" style="border-color: #047857;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-              <span style="font-size: 0.85rem; color: var(--slate-500);">Next Payout (Tuesday)</span>
-              <span id="owner-payout-amount" style="font-weight: 800; font-size: 1.2rem; color: var(--primary-green-dark);">₹0</span>
+              <span style="font-size: 0.85rem; color: #475569; font-weight: 600;">Next Payout (Tuesday)</span>
+              <span id="owner-payout-amount" style="font-weight: 800; font-size: 1.3rem; color: #047857;">₹0</span>
             </div>
-            <p id="owner-payout-desc" style="font-size: 0.8rem; color: var(--slate-500); line-height: 1.4;">
+            <p id="owner-payout-desc" style="font-size: 0.82rem; color: #64748B; line-height: 1.4; margin: 0;">
               No pending payouts. Payouts from online bookings are automatically settled every Tuesday to your registered bank account.
             </p>
           </div>
@@ -390,46 +898,61 @@
       <!-- RIGHT COLUMN: SELECTED VENUE COURT SCHEDULE & TRANSACTIONS -->
       <div>
         <!-- Live Slot Management Matrix -->
-        <div class="dash-panel" id="slots">
-          <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
-            <div>
-              <div class="panel-title" id="selected-venue-schedule-title">
-                📅 Court Schedule
-              </div>
-              <span id="selected-venue-subtitle" style="font-size: 0.78rem; color: var(--slate-500);">
-                Select a venue on the left to view live slots
-              </span>
+        <div id="slots" style="margin-bottom: 1.5rem;">
+          <div class="panel-header-teal">
+            <div class="panel-title-teal" id="selected-venue-schedule-title">
+              📅 Court Schedule
             </div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <input type="date" id="owner-schedule-date" class="form-control" style="padding: 5px 10px; font-size: 0.82rem; width: auto; font-weight: 600;" title="Select date to view slots">
-              <button class="btn-mini-action" id="btn-add-walkin"
-                style="background: #FFF7ED; color: #EA580C; border-color: #FED7AA; font-weight: 700;">
+              <input type="date" id="owner-schedule-date" class="form-control" style="background: #FFFFFF; border-radius: 999px; padding: 6px 14px; font-size: 0.82rem; width: auto; font-weight: 700; color: #0F172A; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" title="Select date to view slots">
+              <button class="btn-panel-green-pill" id="btn-add-walkin">
                 + Add Walk-In
               </button>
             </div>
           </div>
-          <div class="panel-body">
-            <p style="font-size: 0.82rem; color: var(--slate-500); margin-bottom: 1rem;">
-              Click any slot to switch status (Available 🟢, Walk-in 🟡, Booked 🔴). Changes reflect instantly to players.
+
+          <div class="panel-body-teal">
+            <!-- Informational Notice Box (matching reference image) -->
+            <div class="info-alert-strip">
+              <span style="font-size: 1rem;">ℹ</span>
+              <span id="selected-venue-subtitle">Showing live court slots</span>
+            </div>
+
+            <p class="schedule-legend-text">
+              Click any slot to switch status (Available 🟢, Walk-in 🟠, Booked 🔴). Changes reflect instantly to players.
             </p>
+
             <div class="slot-matrix" id="owner-slot-matrix">
               <!-- Injected via JavaScript for selected venue and date -->
             </div>
+
+            <!-- Stylish Batsman Silhouette Watermark in bottom right corner -->
+            <svg class="schedule-batsman-watermark" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M110 40 C116 40 120 35 120 29 C120 23 116 18 110 18 C104 18 100 23 100 29 C100 35 104 40 110 40 Z" fill="#0A6380"/>
+              <!-- Batsman Body & Bat -->
+              <path d="M106 44 L92 76 L82 72 L70 98 L85 102 L95 82 L105 110 L90 170 L110 170 L120 125 L145 155 L160 150 L132 108 L122 70 L116 44 Z" fill="#0A6380"/>
+              <!-- Bat angled -->
+              <path d="M68 62 L42 22 L52 18 L76 56 Z" fill="#0A6380"/>
+              <path d="M76 56 L82 72" stroke="#0A6380" stroke-width="4"/>
+              <!-- Grass Swoosh waves -->
+              <path d="M10 210 Q 100 180 190 220" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
+              <path d="M30 225 Q 120 195 200 230" stroke="#0D9488" stroke-width="6" stroke-linecap="round"/>
+            </svg>
           </div>
 
           <!-- Customer Booking Ledger -->
-          <div class="panel-header" id="ledger" style="border-top: 1px solid var(--slate-100); flex-wrap: wrap; gap: 10px; align-items: center;">
+          <div class="panel-header-teal" id="ledger" style="margin-top: 1.5rem; border-radius: 16px 16px 0 0;">
             <div>
-              <div class="panel-title" id="selected-venue-ledger-title">
+              <div class="panel-title-teal" id="selected-venue-ledger-title">
                 📋 Customer Booking Ledger
               </div>
-              <span id="selected-venue-ledger-subtitle" style="font-size: 0.75rem; color: var(--slate-400);">Transactions for this venue</span>
+              <span id="selected-venue-ledger-subtitle" style="font-size: 0.75rem; color: #CCECE6;">Transactions for this venue</span>
             </div>
             <div id="ledger-filter-tabs" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
               <!-- Filter Tabs injected via JS -->
             </div>
           </div>
-          <div class="panel-body" style="padding: 0;">
+          <div class="panel-body-teal" style="padding: 0; overflow: hidden;">
             <div style="overflow-x: auto;">
               <table class="dash-table">
                 <thead>
@@ -771,10 +1294,18 @@
       if (activeUser?.name) {
         const ownerNameEl = document.getElementById('nav-owner-name');
         if (ownerNameEl) ownerNameEl.textContent = activeUser.name;
-        const bannerTitle = document.querySelector('.dash-welcome h1');
+        const bannerTitle = document.getElementById('owner-welcome-title') || document.querySelector('.dash-welcome h1');
         if (bannerTitle) bannerTitle.textContent = `Welcome, ${activeUser.name}!`;
         const ownerBizEl = document.getElementById('nav-owner-business');
         if (ownerBizEl && activeUser.business_name) ownerBizEl.textContent = activeUser.business_name;
+        const avatarEl = document.getElementById('nav-owner-avatar');
+        if (avatarEl) {
+          if (activeUser.avatar) {
+            avatarEl.innerHTML = `<img src="${activeUser.avatar}" alt="Avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+          } else {
+            avatarEl.textContent = activeUser.name.charAt(0).toUpperCase();
+          }
+        }
       }
 
       // Revenue
@@ -842,33 +1373,33 @@
           const slotsCount = Array.isArray(t.operating_slots) && t.operating_slots.length > 0 ? t.operating_slots.length : 11;
 
           item.innerHTML = `
-            <div class="turf-card-header">
+            <div class="turf-card-thumb-wrap">
               <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}" class="turf-card-thumb" onerror="this.src='images/turf-arena.jpg'">
-              <div class="turf-card-main">
-                <div class="turf-card-title-row">
-                  <span class="turf-card-title" title="${t.name}">${t.name}</span>
-                  ${isSelected ? `<span class="badge-active-venue">Active</span>` : ''}
+            </div>
+            <div class="turf-card-content">
+              <div class="turf-card-title-row">
+                <span class="turf-card-title" title="${t.name}">${t.name}</span>
+                ${isSelected ? `<span class="badge-status-pill active">● Active</span>` : `<span class="badge-status-pill inactive">● Inactive</span>`}
+                <button type="button" class="btn-delete-venue" onclick="window.deleteTurf('${t.id}', event)" title="Delete this venue" aria-label="Delete">🗑️</button>
+              </div>
+              <div class="turf-card-location">📍 ${t.location || 'Tamil Nadu'}</div>
+              <div class="turf-card-badges-row">
+                <span class="turf-card-pill sport">⚽ ${t.sport}</span>
+                <span class="turf-card-pill rate">₹${t.price_per_hour}/hr</span>
+                <span class="turf-card-pill slots">⚡ ${slotsCount} Slots</span>
+              </div>
+              ${amenitiesList.length ? `
+                <div class="turf-card-amenities-row" id="amenities-row-${t.id}">
+                  ${amenitiesList.slice(0, 3).map(a => `<span class="amenity-tag">✓ ${a}</span>`).join('')}
+                  ${amenitiesList.slice(3).map(a => `<span class="amenity-tag amenity-tag-hidden" style="display:none;">✓ ${a}</span>`).join('')}
+                  ${amenitiesList.length > 3 ? `
+                    <button type="button" class="amenity-tag-more" onclick="window.toggleCardAmenities('${t.id}', event)" title="Click to view all amenities (${amenitiesList.slice(3).join(', ')})">
+                      +${amenitiesList.length - 3} more
+                    </button>
+                  ` : ''}
                 </div>
-                <div class="turf-card-location">📍 ${t.location || 'Tamil Nadu'}</div>
-              </div>
-              <button type="button" class="btn-delete-venue" onclick="window.deleteTurf('${t.id}', event)" title="Delete this venue" aria-label="Delete">🗑️</button>
+              ` : ''}
             </div>
-            <div class="turf-card-badges-row">
-              <span class="turf-card-pill sport">⚽ ${t.sport}</span>
-              <span class="turf-card-pill rate">₹${t.price_per_hour}/hr</span>
-              <span class="turf-card-pill slots">⚡ ${slotsCount} Slots</span>
-            </div>
-            ${amenitiesList.length ? `
-              <div class="turf-card-amenities-row" id="amenities-row-${t.id}">
-                ${amenitiesList.slice(0, 3).map(a => `<span class="amenity-tag">✓ ${a}</span>`).join('')}
-                ${amenitiesList.slice(3).map(a => `<span class="amenity-tag amenity-tag-hidden" style="display:none;">✓ ${a}</span>`).join('')}
-                ${amenitiesList.length > 3 ? `
-                  <button type="button" class="amenity-tag-more" onclick="window.toggleCardAmenities('${t.id}', event)" title="Click to view all amenities (${amenitiesList.slice(3).join(', ')})">
-                    +${amenitiesList.length - 3} more
-                  </button>
-                ` : ''}
-              </div>
-            ` : ''}
           `;
 
           // Click on turf item to select venue
@@ -992,11 +1523,11 @@
 
       slots.forEach(s => {
         const el = document.createElement('div');
-        el.className = `slot-item ${s.status}`;
+        el.className = `owner-slot-card slot-item ${s.status}`;
         el.innerHTML = `
-          <div class="slot-time">${s.time}</div>
-          <span class="slot-badge">${s.status}</span>
-          ${s.player ? `<div style="font-size:0.68rem; font-weight:600; color:var(--slate-700); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${s.player}">${s.player}</div>` : ''}
+          <div class="owner-slot-time">${s.time}</div>
+          <span class="owner-slot-badge">${s.status.toUpperCase()}</span>
+          ${s.player ? `<div style="font-size:0.68rem; font-weight:700; color:#334155; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;" title="${s.player}">${s.player}</div>` : ''}
         `;
         el.addEventListener('click', () => {
           if (s.status === 'available') {
@@ -1374,7 +1905,7 @@
       if (currUser?.name) {
         const ownerNameEl = document.getElementById('nav-owner-name');
         if (ownerNameEl) ownerNameEl.textContent = currUser.name;
-        const bannerTitle = document.querySelector('.dash-welcome h1');
+        const bannerTitle = document.getElementById('owner-welcome-title') || document.querySelector('.dash-welcome h1');
         if (bannerTitle) bannerTitle.textContent = `Welcome, ${currUser.name.split(' ')[0]}!`;
       }
 
