@@ -895,7 +895,12 @@
           });
           const data = await res.json();
           if (res.ok) {
-            showToast(`✅ 6-digit cancellation code sent to ${email}!`);
+            if (data.devOtp) {
+              showToast(`🧪 Test Mode: Code is ${data.devOtp}`);
+              if (otpInput) otpInput.value = data.devOtp;
+            } else {
+              showToast(`✅ 6-digit cancellation code sent to ${email}!`);
+            }
             otpInput?.focus();
           } else {
             showToast(`⚠️ ${data.error || 'Failed to dispatch email'}`);
@@ -981,7 +986,7 @@
         if (!pendingCancellation) return;
         showToast(`🔄 Resending code to ${pendingCancellation.email}...`);
         try {
-          await fetch('/api/send-otp', {
+          const res = await fetch('/api/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -992,7 +997,14 @@
               timeSlot: pendingCancellation.booking.time_slot
             })
           });
-          showToast('✅ New code dispatched to your email.');
+          const data = await res.json();
+          if (data?.devOtp) {
+            showToast(`🧪 Test Mode: New code is ${data.devOtp}`);
+            const otpInput = document.getElementById('cancel-otp-input');
+            if (otpInput) otpInput.value = data.devOtp;
+          } else {
+            showToast('✅ New code dispatched to your email.');
+          }
         } catch (e) {
           showToast('⚠️ Failed to resend. Please try again.');
         }

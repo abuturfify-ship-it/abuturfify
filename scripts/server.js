@@ -435,8 +435,23 @@ async function handleRequest(req, res) {
       }
 
       if (!emailSent) {
+        const isSandboxRestriction = (typeof emailDetail === 'string' && (
+          emailDetail.includes('only send testing emails') ||
+          emailDetail.includes('resend.com/domains') ||
+          emailDetail.includes('validation_error')
+        ));
+        if (isSandboxRestriction) {
+          return sendJson(res, 200, {
+            success: true,
+            emailSent: false,
+            testMode: true,
+            devOtp: otp,
+            message: `Testing sandbox mode: Use code ${otp} to verify (or configure GMAIL_USER & GMAIL_APP_PASSWORD to send live emails).`
+          });
+        }
+
         return sendJson(res, 500, {
-          error: 'Failed to deliver OTP to your email address. Please verify your email and try again.'
+          error: 'Failed to deliver OTP to your email address: ' + (typeof emailDetail === 'string' ? emailDetail : 'Email service error')
         });
       }
 

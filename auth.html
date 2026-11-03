@@ -544,6 +544,12 @@
       if (el) { el.value = ''; el.classList.remove('filled'); }
     });
     hide('otp-error'); hide('otp-success');
+
+    if (context.devOtp) {
+      showOk('otp', `🧪 Testing Mode: Your verification code is <strong>${context.devOtp}</strong> (auto-filled below).`);
+      autoFillOtp(context.devOtp);
+    }
+
     startOtpTimer();
     setTimeout(() => document.getElementById('otp-d1')?.focus(), 100);
   }
@@ -579,7 +585,12 @@
       if (!res.ok || data.error) throw new Error(data.error || 'Failed to resend code');
       if (resendBtn) resendBtn.textContent = oldText || 'Resend OTP';
       startOtpTimer();
-      showOk('otp', 'A new verification code has been sent to your email!');
+      if (data.devOtp) {
+        showOk('otp', `🧪 Testing Mode: Your new code is <strong>${data.devOtp}</strong> (auto-filled below).`);
+        autoFillOtp(data.devOtp);
+      } else {
+        showOk('otp', 'A new verification code has been sent to your email!');
+      }
     } catch (e) {
       if (resendBtn) {
         resendBtn.disabled = false;
@@ -850,7 +861,7 @@
           showErr('signin', otpData.error || 'Failed to dispatch OTP email.');
           return;
         }
-        showOtpView({ type: 'login', email, pendingUser: resolvedUser });
+        showOtpView({ type: 'login', email, pendingUser: resolvedUser, devOtp: otpData.devOtp });
       } catch (err) {
         hide('signin-success');
         showErr('signin', 'Failed to send OTP email. Please check your connection.');
@@ -927,7 +938,8 @@
         type: 'signup',
         email,
         pendingUser: { name, email, phone, role, password: pass },
-        supabaseUserId
+        supabaseUserId,
+        devOtp: otpData.devOtp
       });
     } catch (err) {
       setLoading(btn, false);
