@@ -608,9 +608,10 @@
             <td><span class="status-pill ${statusClass}">${b.status}</span></td>
             <td>
               ${b.status === 'Confirmed' ?
-              `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626;">Cancel</button>` :
-              `<button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id || ''}')" style="cursor:pointer;">Rebook</button>`
-            }
+                `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626; cursor:pointer;">Cancel</button>` :
+                `<button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id || ''}')" style="cursor:pointer;">Rebook</button>`
+              }
+              <button type="button" class="btn-mini-action" onclick="window.playerDeleteBooking('${b.id}')" style="color:#7C3AED; border-color:#DDD6FE; background:#F5F3FF; margin-left:4px; cursor:pointer;" title="Delete this booking record">🗑 Delete</button>
             </td>
           `;
           tbody.appendChild(tr);
