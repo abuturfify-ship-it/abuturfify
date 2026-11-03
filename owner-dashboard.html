@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -690,6 +690,25 @@
         }
       }
     };
+    window.ownerDeleteBooking = function(id) {
+      const bks = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
+      const target = bks.find(b => String(b.id) === String(id));
+      const info = target ? `${target.turf_name} (${target.date} • ${target.time_slot})` : `booking ${id}`;
+      if (!confirm(`Permanently delete booking record for ${info}?\n\nThis removes it from the ledger entirely.`)) return;
+      const updated = bks.filter(b => String(b.id) !== String(id));
+      try {
+        localStorage.setItem('turfify_bookings', JSON.stringify(updated));
+      } catch(e) {}
+      // Blacklist so server sync never re-adds it
+      try {
+        const cl = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
+        if (!cl.includes(String(id))) { cl.push(String(id)); localStorage.setItem('turfify_cancelled_bookings', JSON.stringify(cl)); }
+      } catch(e) {}
+      renderOwnerDashboard();
+      if (typeof showToast === 'function') {
+        showToast('🗑️ Booking record deleted from ledger.');
+      }
+    };
 
     window.deleteTurf = async function (id, e) {
       if (e) {
@@ -1098,6 +1117,7 @@
                 `<button type="button" class="btn-mini-action" onclick="window.ownerCancelBooking('${b.id}')" style="color:#DC2626; border-color:#FCA5A5; background:#FEF2F2; font-weight:700; cursor:pointer;" title="Cancel this booking">Cancel</button>` :
                 `<span style="font-size:0.75rem; color:var(--slate-400);">—</span>`
               }
+              <button type="button" class="btn-mini-action" onclick="window.ownerDeleteBooking('${b.id}')" style="color:#7C3AED;border-color:#DDD6FE;background:#F5F3FF;margin-top:4px;cursor:pointer;" title="Delete this booking record">&#x1F5D1; Delete</button>
             </td>
           `;
           ledgerBody.appendChild(tr);

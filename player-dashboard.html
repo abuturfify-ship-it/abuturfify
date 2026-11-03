@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -247,15 +247,7 @@
             <span id="player-slot-selection-hint" style="font-size: 0.75rem; color: var(--primary-green-dark); font-weight: 600;">Tap to select one or multiple slots</span>
           </label>
           <div class="slots-grid" id="player-booking-slots-grid">
-            <button type="button" class="slot-btn" data-slot="06:00 - 07:00 AM">06:00 - 07:00 AM</button>
-            <button type="button" class="slot-btn" data-slot="07:00 - 08:00 AM">07:00 - 08:00 AM</button>
-            <button type="button" class="slot-btn" data-slot="08:00 - 09:00 AM">08:00 - 09:00 AM</button>
-            <button type="button" class="slot-btn" data-slot="05:00 - 06:00 PM">05:00 - 06:00 PM</button>
-            <button type="button" class="slot-btn selected" data-slot="06:00 - 07:00 PM">06:00 - 07:00 PM</button>
-            <button type="button" class="slot-btn" data-slot="07:00 - 08:00 PM">07:00 - 08:00 PM</button>
-            <button type="button" class="slot-btn" data-slot="08:00 - 09:00 PM">08:00 - 09:00 PM</button>
-            <button type="button" class="slot-btn" data-slot="09:00 - 10:00 PM">09:00 - 10:00 PM</button>
-            <button type="button" class="slot-btn" data-slot="10:00 - 11:00 PM">10:00 - 11:00 PM</button>
+            <!-- Slots are generated dynamically by buildSlotGrid() -->
           </div>
         </div>
 
@@ -546,6 +538,7 @@
                 `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626;">Cancel</button>` : 
                 `<button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id || ''}')" style="cursor:pointer;">Rebook</button>`
               }
+              <button type="button" class="btn-mini-action" onclick="window.playerDeleteBooking('${b.id}')" style="color:#7C3AED;border-color:#DDD6FE;background:#F5F3FF;margin-left:4px;cursor:pointer;" title="Delete this booking record">&#x1F5D1; Delete</button>
             </td>
           `;
           tbody.appendChild(tr);
@@ -646,13 +639,39 @@
       }
     }
 
-    document.querySelectorAll('#player-booking-slots-grid .slot-btn').forEach(slotBtn => {
-      slotBtn.addEventListener('click', () => {
-        if (slotBtn.disabled || slotBtn.classList.contains('booked')) return;
-        slotBtn.classList.toggle('selected');
-        updatePlayerModalRates();
+    // Build the full slot grid dynamically for the selected turf
+    function buildSlotGrid(operatingSlots) {
+      const grid = document.getElementById('player-booking-slots-grid');
+      if (!grid) return;
+
+      // Default full-day slots: 6 AM – 11 PM hourly
+      const defaultSlots = [];
+      for (let h = 6; h < 23; h++) {
+        const startH = h % 12 === 0 ? 12 : h % 12;
+        const endH   = (h + 1) % 12 === 0 ? 12 : (h + 1) % 12;
+        const startSuffix = h < 12 ? 'AM' : 'PM';
+        const endSuffix   = (h + 1) < 12 ? 'AM' : 'PM';
+        const label = `${String(startH).padStart(2,'0')}:00 - ${String(endH).padStart(2,'0')}:00 ${endSuffix}`;
+        defaultSlots.push(label);
+      }
+
+      const slotsToRender = (Array.isArray(operatingSlots) && operatingSlots.length > 0)
+        ? operatingSlots
+        : defaultSlots;
+
+      grid.innerHTML = slotsToRender.map(s =>
+        `<button type="button" class="slot-btn" data-slot="${s}">${s}</button>`
+      ).join('');
+
+      // Re-bind click listeners for newly created buttons
+      grid.querySelectorAll('.slot-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (btn.disabled || btn.classList.contains('booked')) return;
+          btn.classList.toggle('selected');
+          updatePlayerModalRates();
+        });
       });
-    });
+    }
 
     function refreshPlayerSlotAvailability() {
       if (!turfSelectEl || !dateInputEl) return;
@@ -664,6 +683,9 @@
       const operatingSlots = (activeTurf && Array.isArray(activeTurf.operating_slots) && activeTurf.operating_slots.length > 0)
         ? activeTurf.operating_slots
         : null;
+
+      // Rebuild grid with correct slots for this turf
+      buildSlotGrid(operatingSlots);
 
       const bookedSlots = allBookings
         .filter(b => 
@@ -681,29 +703,20 @@
 
       slotButtons.forEach(btn => {
         const slotLabel = (btn.dataset.slot || '').trim();
-        btn.classList.remove('booked', 'closed');
+        btn.classList.remove('booked', 'closed', 'selected');
         btn.disabled = false;
         btn.removeAttribute('title');
 
-        if (slotLabel && operatingSlots && !operatingSlots.includes(slotLabel)) {
-          btn.classList.add('closed');
-          btn.disabled = true;
-          btn.classList.remove('selected');
-          btn.title = 'Outside operating hours';
-        } else if (slotLabel && bookedSlots.includes(slotLabel)) {
+        if (slotLabel && bookedSlots.includes(slotLabel)) {
           btn.classList.add('booked');
           btn.disabled = true;
-          btn.classList.remove('selected');
           btn.title = 'Slot already booked';
         }
       });
 
-      if (!document.querySelector('#player-booking-slots-grid .slot-btn.selected:not([disabled])')) {
-        const firstAvailable = document.querySelector('#player-booking-slots-grid .slot-btn:not([disabled])');
-        if (firstAvailable) {
-          firstAvailable.classList.add('selected');
-        }
-      }
+      // Auto-select first available slot
+      const firstAvailable = document.querySelector('#player-booking-slots-grid .slot-btn:not([disabled])');
+      if (firstAvailable) firstAvailable.classList.add('selected');
 
       updatePlayerModalRates();
     }
@@ -831,6 +844,25 @@
       window.addEventListener('turfify:booking_cancelled', () => renderPlayerDashboard());
       window.addEventListener('turfify:data_synced', () => renderPlayerDashboard());
       window.addEventListener('storage', () => renderPlayerDashboard());
+      // Delete a booking record entirely from player's view
+      window.playerDeleteBooking = function(id) {
+        const bks = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
+        const target = bks.find(b => String(b.id) === String(id));
+        const info = target ? `${target.turf_name} (${target.date})` : `booking ${id}`;
+        if (!confirm(`Permanently delete the record for ${info}?\n\nNote: This removes it from your history only.`)) return;
+        // Remove from local storage bookings list
+        const updated = bks.filter(b => String(b.id) !== String(id));
+        try {
+          localStorage.setItem('turfify_bookings', JSON.stringify(updated));
+        } catch(e) {}
+        // Also add to cancelled blacklist so server sync never re-adds it
+        try {
+          const cl = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
+          if (!cl.includes(String(id))) { cl.push(String(id)); localStorage.setItem('turfify_cancelled_bookings', JSON.stringify(cl)); }
+        } catch(e) {}
+        renderPlayerDashboard();
+        showToast('🗑️ Booking record deleted from your history.');
+      };
 
       let pendingCancellation = null;
 
