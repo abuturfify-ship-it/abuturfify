@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Player Portal â€” Turfify</title>
+  <title>Player Portal  Turfify</title>
   <meta name="description" content="Manage your sports bookings, upcoming matches, and passes on Turfify.">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="dashboard.css">
@@ -222,19 +222,20 @@
       background: #FEE2E2;
     }
     .panoramic-hero-banner {
-      background: url('images/owner-hero-banner.jpg') center/cover no-repeat;
+      background: linear-gradient(90deg, rgba(236,253,245,0.94) 0%, rgba(240,253,250,0.88) 40%, rgba(255,255,255,0.15) 75%),
+                  url('images/turf-hero-panorama.jpg') right center / cover no-repeat;
       border: 1.5px solid #A7F3D0;
       border-radius: 20px;
-      padding: 24px 36px;
+      padding: 32px 36px;
       position: relative;
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
-      margin: 18px auto 22px auto;
-      max-width: 1240px;
+      margin: 18px auto 24px auto;
+      max-width: 1280px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      min-height: 135px;
+      min-height: 160px;
     }
     .banner-left {
       position: relative;
@@ -474,7 +475,7 @@
       <!-- Center Nav Links -->
       <nav aria-label="Main Navigation">
         <ul class="nav-menu">
-          <li><a href="index.html" class="nav-link"><span style="font-size: 1rem;">🏠</span> Home</a></li>
+          <li><a href="index.html" class="nav-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Home</a></li>
           <li><a href="index.html#search-section" class="nav-link">Book Turfs</a></li>
           <li><a href="#my-matches" class="nav-link active">My Matches</a></li>
           <li><a href="#saved-venues" class="nav-link">Saved Venues</a></li>
@@ -482,7 +483,7 @@
       </nav>
 
       <!-- Player Profile & Logout -->
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="nav-actions-wrap">
         <a href="index.html" class="btn-return-home-pill" title="Return to Turfify Home">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           Return to Home
@@ -512,9 +513,9 @@
     <div class="banner-left">
       <h1 id="player-welcome-title">Welcome!</h1>
       <p id="player-welcome-sub">Ready for kickoff? Track your upcoming games, teammates, and loyalty coins.</p>
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="nav-actions-wrap">
         <span class="banner-badge-player">
-          âš½ PLAYER
+           PLAYER
         </span>
         <button type="button" class="btn-panel-white-pill" id="btn-player-book-slot" style="box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
           + Book Slot in Dashboard
@@ -693,9 +694,9 @@
         <div>
           <h3 class="modal-title" id="player-booking-modal-title">Book Turf Slot</h3>
           <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;" id="player-booking-modal-sub">Direct
-            In-Dashboard Reservation â€¢ Instant Sync</p>
+            In-Dashboard Reservation  Instant Sync</p>
         </div>
-        <button type="button" class="btn-close-modal" id="btn-close-player-booking" aria-label="Close">âœ•</button>
+        <button type="button" class="btn-close-modal" id="btn-close-player-booking" aria-label="Close">•</button>
       </div>
 
       <div class="modal-body">
@@ -715,12 +716,12 @@
           <div style="flex: 1;">
             <div id="player-turf-preview-name" style="font-weight: 700; font-size: 0.92rem; color: var(--navy-900);">
               Apex Sports Arena</div>
-            <div id="player-turf-preview-meta" style="font-size: 0.78rem; color: var(--slate-500);">Football â€¢ Anna
+            <div id="player-turf-preview-meta" style="font-size: 0.78rem; color: var(--slate-500);">Football  Anna
               Nagar, Chennai</div>
           </div>
           <div style="text-align: right;">
             <div id="player-turf-preview-rate"
-              style="font-weight: 800; font-size: 1.05rem; color: var(--primary-green-dark);">â‚¹1,200</div>
+              style="font-weight: 800; font-size: 1.05rem; color: var(--primary-green-dark);">1,200</div>
             <div style="font-size: 0.7rem; color: var(--slate-400);">per hour</div>
           </div>
         </div>
@@ -757,9 +758,9 @@
         <div class="form-group">
           <label class="form-label">Payment Method</label>
           <div class="payment-pills-row" id="player-payment-methods">
-            <button type="button" class="payment-pill-btn selected" data-method="UPI (Instant)">âš¡ UPI / GPay</button>
-            <button type="button" class="payment-pill-btn" data-method="Credit / Debit Card">ðŸ’³ Card</button>
-            <button type="button" class="payment-pill-btn" data-method="Pay at Venue">ðŸŸï¸ Pay at Venue</button>
+            <button type="button" class="payment-pill-btn selected" data-method="UPI (Instant)"> UPI / GPay</button>
+            <button type="button" class="payment-pill-btn" data-method="Credit / Debit Card"> Card</button>
+            <button type="button" class="payment-pill-btn" data-method="Pay at Venue"> 🏟️ Pay at Venue</button>
           </div>
         </div>
 
@@ -767,7 +768,7 @@
         <div class="summary-card">
           <div class="summary-line">
             <span id="player-modal-base-rate-label">Turf Rate (1 Hour)</span>
-            <span id="player-modal-base-rate">â‚¹1,200</span>
+            <span id="player-modal-base-rate">1,200</span>
           </div>
           <div class="summary-line">
             <span>Turfify Platform Convenience Fee</span>
@@ -775,13 +776,13 @@
           </div>
           <div class="summary-line total">
             <span>Total Payable</span>
-            <span id="player-modal-total-rate">â‚¹1,200</span>
+            <span id="player-modal-total-rate">1,200</span>
           </div>
         </div>
 
         <button type="button" class="btn-modal-action" id="btn-confirm-player-booking"
           style="font-weight: 800; font-size: 0.95rem;">
-          âš½ Confirm Match & Book in Dashboard
+           Confirm Match & Book in Dashboard
         </button>
       </div>
     </div>
@@ -795,12 +796,12 @@
       <div class="modal-header" style="border-bottom: 1px solid #FEE2E2;">
         <div>
           <h3 class="modal-title" style="color: #DC2626; display: flex; align-items: center; gap: 8px;">
-            <span>âš ï¸</span> Cancel Match Reservation
+            <span></span> Cancel Match Reservation
           </h3>
           <p style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;">Enter OTP code to confirm cancellation
           </p>
         </div>
-        <button type="button" class="btn-close-modal" id="btn-close-cancel-otp" aria-label="Close">âœ•</button>
+        <button type="button" class="btn-close-modal" id="btn-close-cancel-otp" aria-label="Close">•</button>
       </div>
 
       <div class="modal-body" style="padding: 1.5rem;">
@@ -808,10 +809,10 @@
         <div id="cancel-booking-summary"
           style="background: #FEF2F2; border: 1.5px solid #FCA5A5; border-radius: 10px; padding: 12px 14px; margin-bottom: 1.25rem;">
           <div style="font-weight: 700; font-size: 0.95rem; color: #991B1B;" id="cancel-modal-turf">Sports Arena</div>
-          <div style="font-size: 0.8rem; color: #7F1D1D; margin-top: 2px;" id="cancel-modal-details">2026-11-05 â€¢ 08:00
+          <div style="font-size: 0.8rem; color: #7F1D1D; margin-top: 2px;" id="cancel-modal-details">2026-11-05  08:00
             - 09:00 AM</div>
           <div style="font-size: 0.82rem; font-weight: 700; color: #DC2626; margin-top: 4px;" id="cancel-modal-amount">
-            Amount: â‚¹1,500</div>
+            Amount: 1,500</div>
         </div>
 
         <p style="font-size: 0.85rem; color: var(--slate-600); line-height: 1.5; margin-bottom: 1rem;">
@@ -824,7 +825,7 @@
         <div class="form-group" style="text-align: center; margin-bottom: 1.25rem;">
           <label class="form-label" style="font-weight: 700; font-size: 0.82rem; margin-bottom: 8px;">Enter 6-Digit
             Cancellation Code</label>
-          <input type="text" id="cancel-otp-input" class="form-control" maxlength="6" placeholder="â€¢ â€¢ â€¢ â€¢ â€¢ â€¢"
+          <input type="text" id="cancel-otp-input" class="form-control" maxlength="6" placeholder="     "
             style="text-align: center; font-size: 1.8rem; font-weight: 800; letter-spacing: 8px; width: 220px; margin: 0 auto; font-family: monospace; border: 2px solid #CBD5E1;"
             autocomplete="one-time-code">
           <div id="cancel-otp-error"
@@ -900,7 +901,7 @@
       const curUser = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
         JSON.parse(localStorage.getItem('turfify_current_user') || 'null');
 
-      const confirmDelete = confirm('âš ï¸ Are you sure you want to permanently delete your Turfify account?\n\nThis will remove your account profile, data, and login access. This action cannot be undone.');
+      const confirmDelete = confirm(' Are you sure you want to permanently delete your Turfify account?\n\nThis will remove your account profile, data, and login access. This action cannot be undone.');
       if (!confirmDelete) return;
 
       const userId = curUser?.id || '';
@@ -952,7 +953,7 @@
         renderPlayerDashboard();
       }
       if (typeof showToast === 'function') {
-        showToast('ðŸ—‘ï¸ Booking record deleted from your history.');
+        showToast('🗑️ Booking record deleted from your history.');
       }
     };
 
@@ -1016,7 +1017,7 @@
       const heroCard = document.querySelector('.hero-match-card');
       const upcoming = bookings.find(b => b.status === 'Confirmed');
       if (upcoming) {
-        document.getElementById('player-hero-turf').textContent = `${upcoming.turf_name} â€” Pitch (${upcoming.sport})`;
+        document.getElementById('player-hero-turf').textContent = `${upcoming.turf_name}  Pitch (${upcoming.sport})`;
         document.getElementById('player-hero-time').textContent = `${upcoming.date}, ${upcoming.time_slot}`;
       } else if (heroCard) {
         heroCard.style.background = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)';
@@ -1027,7 +1028,7 @@
             You haven't reserved any turf slots yet. Discover premier verified football, cricket, and badminton arenas across Tamil Nadu.
           </p>
           <button type="button" class="btn-match-action btn-match-primary" onclick="window.openPlayerBookingModal()" style="display:inline-block; border:none; cursor:pointer;">
-            âš½ Book Slot in Dashboard
+             Book Slot in Dashboard
           </button>
         `;
       }
@@ -1039,7 +1040,7 @@
         tbody.innerHTML = `
           <tr>
             <td colspan="6" style="text-align:center; padding: 3rem 1rem; color: var(--slate-400);">
-              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">âš½</div>
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;"></div>
               <strong style="color: var(--navy-900); font-size: 1.05rem;">No Match Bookings Yet</strong><br>
               <span style="font-size: 0.85rem; color: var(--slate-500); display:inline-block; margin-top:4px;">When you reserve turf slots, your matches and digital passes will appear here in real time.</span><br><br>
               <button type="button" class="btn-match-action btn-match-primary" onclick="window.openPlayerBookingModal()" style="display:inline-block; border:none; padding:8px 18px; font-size:0.85rem; cursor:pointer;">Book Slot in Dashboard</button>
@@ -1053,7 +1054,7 @@
           tr.innerHTML = `
             <td><strong>${b.turf_name}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.sport || 'Sports'}</span></td>
             <td>${b.date}<br><span style="font-size:0.75rem; color:var(--slate-500);">${b.time_slot}</span></td>
-            <td><strong>â‚¹${b.amount}</strong></td>
+            <td><strong>${b.amount}</strong></td>
             <td><span style="font-size:0.8rem; color:var(--primary-green-dark); font-weight:600;">${b.payment_status}</span></td>
             <td><span class="status-pill ${statusClass}">${b.status}</span></td>
             <td>
@@ -1061,7 +1062,7 @@
                 `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626; cursor:pointer;">Cancel</button>` :
                 `<button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id || ''}')" style="cursor:pointer;">Rebook</button>`
               }
-              <button type="button" class="btn-mini-action" onclick="window.playerDeleteBooking('${b.id}')" style="color:#7C3AED; border-color:#DDD6FE; background:#F5F3FF; margin-left:4px; cursor:pointer;" title="Delete this booking record">ðŸ—‘ Delete</button>
+              <button type="button" class="btn-mini-action" onclick="window.playerDeleteBooking('${b.id}')" style="color:#7C3AED; border-color:#DDD6FE; background:#F5F3FF; margin-left:4px; cursor:pointer;" title="Delete this booking record">🗑️ 🗑️ Delete</button>
             </td>
           `;
           tbody.appendChild(tr);
@@ -1079,8 +1080,8 @@
           <div class="owner-turf-info">
             <div class="owner-turf-title">${t.name}</div>
             <div class="owner-turf-meta">
-              <span>â­ ${t.rating || '4.9'}</span>
-              <span>â‚¹${t.price_per_hour}/hr</span>
+              <span> ⭐ ${t.rating || "4.9"}</span>
+              <span>${t.price_per_hour}/hr</span>
             </div>
           </div>
           <button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${t.id}')" style="background:var(--primary-green-light); color:var(--primary-green-dark); font-weight:700; cursor:pointer; border:1px solid #A7F3D0;">
@@ -1144,11 +1145,11 @@
       }
       if (baseRateEl) {
         baseRateEl.textContent = count > 1
-          ? `â‚¹${ratePerHour.toLocaleString()} Ã— ${count}`
-          : `â‚¹${ratePerHour.toLocaleString()}`;
+          ? `${ratePerHour.toLocaleString()} Ã— ${count}`
+          : `${ratePerHour.toLocaleString()}`;
       }
       if (totalRateEl) {
-        totalRateEl.textContent = `â‚¹${(ratePerHour * count).toLocaleString()}`;
+        totalRateEl.textContent = `${(ratePerHour * count).toLocaleString()}`;
       }
       if (hintEl) {
         hintEl.textContent = count > 0
@@ -1157,8 +1158,8 @@
       }
       if (btnConfirm) {
         btnConfirm.textContent = count > 1
-          ? `âš½ Confirm Match (${count} Slots) â€¢ â‚¹${(ratePerHour * count).toLocaleString()}`
-          : `âš½ Confirm Match & Book in Dashboard`;
+          ? ` Confirm Match (${count} Slots)  ${(ratePerHour * count).toLocaleString()}`
+          : ` Confirm Match & Book in Dashboard`;
       }
     }
 
@@ -1167,7 +1168,7 @@
       const grid = document.getElementById('player-booking-slots-grid');
       if (!grid) return;
 
-      // Default full-day slots: 6 AM â€“ 11 PM hourly
+      // Default full-day slots: 6 AM  11 PM hourly
       const defaultSlots = [];
       for (let h = 6; h < 23; h++) {
         const startH = h % 12 === 0 ? 12 : h % 12;
@@ -1252,8 +1253,8 @@
 
       if (imgEl) imgEl.src = turf.image || 'images/turf-arena.jpg';
       if (nameEl) nameEl.textContent = turf.name;
-      if (metaEl) metaEl.textContent = `${turf.sport} â€¢ ${turf.location}`;
-      if (rateEl) rateEl.textContent = `â‚¹${turf.price_per_hour}`;
+      if (metaEl) metaEl.textContent = `${turf.sport}  ${turf.location}`;
+      if (rateEl) rateEl.textContent = `${turf.price_per_hour}`;
 
       refreshPlayerSlotAvailability();
     }
@@ -1273,7 +1274,7 @@
         turfs.forEach(t => {
           const opt = document.createElement('option');
           opt.value = t.id;
-          opt.textContent = `${t.name} (${t.sport} â€” â‚¹${t.price_per_hour}/hr â€” ${t.location})`;
+          opt.textContent = `${t.name} (${t.sport}  ${t.price_per_hour}/hr  ${t.location})`;
           turfSelectEl.appendChild(opt);
         });
 
@@ -1295,7 +1296,7 @@
 
       const cur = window.TurfifyStore.getCurrentUser();
       if (nameInputEl) nameInputEl.value = cur?.name || '';
-      if (phoneInputEl) phoneInputEl.value = (cur?.phone && cur?.phone !== 'â€”') ? cur.phone : '+91 ';
+      if (phoneInputEl) phoneInputEl.value = (cur?.phone && cur?.phone !== '') ? cur.phone : '+91 ';
 
       updatePlayerSelectedTurf();
       modalPlayerBooking?.classList.add('active');
@@ -1304,7 +1305,7 @@
     btnConfirmPlayer?.addEventListener('click', () => {
       const selectedSlotBtns = Array.from(document.querySelectorAll('#player-booking-slots-grid .slot-btn.selected:not([disabled])'));
       if (selectedSlotBtns.length === 0) {
-        showToast('âš ï¸ Please select at least one available match slot.');
+        showToast(' Please select at least one available match slot.');
         return;
       }
 
@@ -1336,7 +1337,7 @@
       });
 
       modalPlayerBooking?.classList.remove('active');
-      showToast(`ðŸŽ‰ ${selectedSlots.length} slot${selectedSlots.length > 1 ? 's' : ''} booked at ${turf.name} for ${date}! Total: â‚¹${totalAmount.toLocaleString()}`);
+      showToast(`🎉 ${selectedSlots.length} slot${selectedSlots.length > 1 ? 's' : ''} booked at ${turf.name} for ${date}! Total: ${totalAmount.toLocaleString()}`);
       // Immediately mark booked slot as unavailable and re-render dashboard
       refreshPlayerSlotAvailability();
       renderPlayerDashboard();
@@ -1373,7 +1374,7 @@
         const target = bookings.find(b => String(b.id) === String(id));
 
         if (!target) {
-          showToast('âš ï¸ Booking not found.');
+          showToast(' Booking not found.');
           return;
         }
 
@@ -1402,8 +1403,8 @@
         const errEl = document.getElementById('cancel-otp-error');
 
         if (modalTurfEl) modalTurfEl.textContent = target.turf_name || 'Sports Arena';
-        if (modalDetailsEl) modalDetailsEl.textContent = `${target.date} â€¢ ${target.time_slot}`;
-        if (modalAmountEl) modalAmountEl.textContent = `Amount: â‚¹${(target.amount || 0).toLocaleString()}`;
+        if (modalDetailsEl) modalDetailsEl.textContent = `${target.date}  ${target.time_slot}`;
+        if (modalAmountEl) modalAmountEl.textContent = `Amount: ${(target.amount || 0).toLocaleString()}`;
         if (modalEmailEl) modalEmailEl.textContent = email;
         if (otpInput) otpInput.value = '';
         if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
@@ -1413,7 +1414,7 @@
         modal?.classList.add('active');
 
         // Dispatch OTP to email via backend
-        showToast(`ðŸ“© Sending cancellation code to ${email}...`);
+        showToast(`📩 Sending cancellation code to ${email}...`);
         try {
           const res = await fetch('/api/send-otp', {
             method: 'POST',
@@ -1430,17 +1431,17 @@
           if (res.ok) {
             if (data.otpToken) pendingCancellation.otpToken = data.otpToken;
             if (data.devOtp) {
-              showToast(`ðŸ§ª Test Mode: Code is ${data.devOtp}`);
+              showToast(`🧪 Test Mode: Code is ${data.devOtp}`);
               if (otpInput) otpInput.value = data.devOtp;
             } else {
-              showToast(`âœ… 6-digit cancellation code sent to ${email}!`);
+              showToast(`✅ 6-digit cancellation code sent to ${email}!`);
             }
             otpInput?.focus();
           } else {
-            showToast(`âš ï¸ ${data.error || 'Failed to dispatch email'}`);
+            showToast(` ${data.error || 'Failed to dispatch email'}`);
           }
         } catch (err) {
-          showToast('âš ï¸ Failed to dispatch OTP. Check network connection.');
+          showToast(' Failed to dispatch OTP. Check network connection.');
         }
       };
 
@@ -1481,7 +1482,7 @@
             window.TurfifyStore.cancelBooking(pendingCancellation.bookingId);
             document.getElementById('modal-cancel-otp')?.classList.remove('active');
             renderPlayerDashboard();
-            showToast('âœ… Match cancelled successfully. Coins & stats have been updated.');
+            showToast('✅ Match cancelled successfully. Coins & stats have been updated.');
             pendingCancellation = null;
           } else {
             if (errEl) {
@@ -1519,7 +1520,7 @@
       });
       document.getElementById('btn-resend-cancel-otp')?.addEventListener('click', async () => {
         if (!pendingCancellation) return;
-        showToast(`ðŸ”„ Resending code to ${pendingCancellation.email}...`);
+        showToast(`🔄 Resending code to ${pendingCancellation.email}...`);
         try {
           const res = await fetch('/api/send-otp', {
             method: 'POST',
@@ -1535,14 +1536,14 @@
           const data = await res.json();
           if (data?.otpToken) pendingCancellation.otpToken = data.otpToken;
           if (data?.devOtp) {
-            showToast(`ðŸ§ª Test Mode: New code is ${data.devOtp}`);
+            showToast(`🧪 Test Mode: New code is ${data.devOtp}`);
             const otpInput = document.getElementById('cancel-otp-input');
             if (otpInput) otpInput.value = data.devOtp;
           } else {
-            showToast('âœ… New code dispatched to your email.');
+            showToast('✅ New code dispatched to your email.');
           }
         } catch (e) {
-          showToast('âš ï¸ Failed to resend. Please try again.');
+          showToast(' Failed to resend. Please try again.');
         }
       });
 
