@@ -176,21 +176,22 @@
 
     /* Panoramic Hero Banner - Full width edge-to-edge un-zoomed artwork */
     .panoramic-hero-banner {
-      background: linear-gradient(135deg, #ECFDF5 0%, #E0F2FE 45%, #D1FAE5 100%) !important;
+      background: linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.80) 40%, rgba(255,255,255,0.15) 68%, rgba(255,255,255,0) 82%),
+                  url('images/turf-hero-panorama.jpg') right 68% / cover no-repeat !important;
       border: 1.5px solid #A7F3D0 !important;
       border-radius: 18px !important;
-      padding: 0 !important;
+      padding: 0 28px !important;
       position: relative !important;
       overflow: hidden !important;
       box-shadow: 0 8px 24px rgba(16, 185, 129, 0.08) !important;
-      margin: 14px 16px 18px 16px !important;
+      margin: 16px 16px 18px 16px !important;
       width: calc(100% - 32px) !important;
       max-width: 100% !important;
       display: flex !important;
       justify-content: space-between !important;
       align-items: center !important;
-      min-height: 120px !important;
-      height: 120px !important;
+      min-height: 145px !important;
+      height: 145px !important;
       box-sizing: border-box !important;
     }
     .banner-leaf-left {
@@ -207,7 +208,7 @@
     .banner-left {
       position: relative !important;
       z-index: 2 !important;
-      padding: 12px 20px 12px 75px !important;
+      padding: 12px 20px 12px 65px !important;
       max-width: 650px !important;
       background: none !important;
       backdrop-filter: none !important;
@@ -216,7 +217,7 @@
       box-shadow: none !important;
     }
     .banner-left h1 {
-      font-size: 1.65rem !important;
+      font-size: 1.68rem !important;
       font-weight: 800 !important;
       color: #0F172A !important;
       margin: 0 0 4px 0 !important;
@@ -237,27 +238,29 @@
       color: #FFFFFF !important;
       padding: 4px 14px !important;
       border-radius: 999px !important;
-      font-size: 0.72rem !important;
+      font-size: 0.74rem !important;
       font-weight: 800 !important;
       letter-spacing: 0.05em !important;
       box-shadow: 0 2px 6px rgba(4, 120, 87, 0.25) !important;
     }
-    .banner-right-art-wrap {
-      position: relative !important;
-      height: 100% !important;
+    .banner-right {
       display: flex !important;
       align-items: center !important;
-      justify-content: flex-end !important;
-      flex-shrink: 0 !important;
+      position: relative !important;
       z-index: 2 !important;
     }
-    .banner-sports-art-ref {
-      height: 120px !important;
-      width: auto !important;
-      object-fit: contain !important;
-      pointer-events: none !important;
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%) !important;
-      mask-image: linear-gradient(to right, transparent 0%, black 12%) !important;
+    .banner-script-slogan {
+      font-family: 'Brush Script MT', 'Dancing Script', 'Caveat', cursive, sans-serif !important;
+      font-size: 2.35rem !important;
+      color: #0284C7 !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.02em !important;
+      transform: rotate(-3deg) !important;
+      user-select: none !important;
+      text-shadow: 0 2px 8px rgba(255, 255, 255, 0.95) !important;
+      margin-right: 28px !important;
+      margin-bottom: 24px !important;
+      white-space: nowrap !important;
     }
     @media (max-width: 768px) {
       .panoramic-hero-banner {
@@ -556,9 +559,9 @@
       </div>
     </div>
 
-    <!-- Right Sports Art (Ball, Shuttlecock, Racket, "Play. Book. Grow.", Right Leaves) -->
-    <div class="banner-right-art-wrap">
-      <img src="images/banner-art-right.png" class="banner-sports-art-ref" alt="Play. Book. Win.">
+    <!-- Right Script Slogan: Play. Book. Win. -->
+    <div class="banner-right">
+      <div class="banner-script-slogan">Play. Book. Win.</div>
     </div>
   </div>
 
