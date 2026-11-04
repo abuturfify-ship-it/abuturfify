@@ -482,22 +482,46 @@
        ========================================================================== -->
   <header class="header" id="navbar">
     <div class="nav-container">
-      <a href="index.html" class="brand" aria-label="Turfify Home" style="display: flex; align-items: center; text-decoration: none;">
-        <img src="images/turfify-logo-ref.png" alt="Turfify" style="height: 34px; width: auto; object-fit: contain;">
-      </a>
+      <div class="nav-left-section" style="display:flex;align-items:center;gap:32px;">
+        <a href="index.html" class="brand" aria-label="Turfify Home" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
+          <svg width="40" height="32" viewBox="0 0 54 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+          <ellipse cx="26" cy="38" rx="22" ry="5" fill="rgba(0,0,0,0.12)"/>
+          <path d="M4 27 L26 38 L48 27 L48 29 L26 40 L4 29 Z" fill="#064E3B"/>
+          <polygon points="4,27 26,16 48,27 26,38" fill="#15803D" stroke="#059669" stroke-width="1.5"/>
+          <polygon points="9.5,24.2 26,16 31.5,18.7 15,27" fill="#16A34A" opacity="0.8"/>
+          <polygon points="20.5,29.7 37,21.5 42.5,24.2 26,32.5" fill="#16A34A" opacity="0.8"/>
+          <polygon points="8,27 26,18 44,27 26,36" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.2"/>
+          <line x1="17" y1="22.5" x2="35" y2="31.5" stroke="rgba(255,255,255,0.85)" stroke-width="1.2"/>
+          <ellipse cx="26" cy="27" rx="5" ry="2.5" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
+          <ellipse cx="26" cy="27" rx="3" ry="1.2" fill="rgba(0,0,0,0.25)"/>
+          <path d="M26 26 C26 26 19 19 19 13.5 C19 9.5 22.1 6.5 26 6.5 C29.9 6.5 33 9.5 33 13.5 C33 19 26 26 26 26 Z" fill="url(#turfPinGrad)"/>
+          <circle cx="26" cy="13.5" r="3" fill="#FFFFFF"/>
+          <defs>
+            <linearGradient id="turfPinGrad" x1="19" y1="6.5" x2="33" y2="26" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FF5722"/>
+              <stop offset="100%" stop-color="#DC2626"/>
+            </linearGradient>
+          </defs>
+        </svg>
+          <div style="display:flex;flex-direction:column;justify-content:center;line-height:1.15;">
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.25rem;color:#047857;letter-spacing:-0.03em;">Turfify</span>
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.65rem;color:#475569;letter-spacing:0.02em;">Player Hub</span>
+          </div>
+        </a>
 
-      <!-- Center Nav Links -->
-      <nav aria-label="Main Navigation">
-        <ul class="nav-menu">
-          <li><a href="index.html" class="nav-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Home</a></li>
-          <li><a href="index.html#search-section" class="nav-link">Book Turfs</a></li>
-          <li><a href="#my-matches" class="nav-link active">My Matches</a></li>
-          <li><a href="#saved-venues" class="nav-link">Saved Venues</a></li>
-        </ul>
-      </nav>
+        <!-- Center Nav Links -->
+        <nav aria-label="Main Navigation">
+          <ul class="nav-menu" style="display:flex;align-items:center;gap:24px;list-style:none;margin:0;padding:0;">
+            <li><a href="index.html" class="nav-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Home</a></li>
+            <li><a href="index.html#search-section" class="nav-link">Book Turfs</a></li>
+            <li><a href="#my-matches" class="nav-link active">My Matches</a></li>
+            <li><a href="#saved-venues" class="nav-link">Saved Venues</a></li>
+          </ul>
+        </nav>
+      </div>
 
       <!-- Player Profile & Logout -->
-      <div class="nav-actions-wrap">
+      <div class="nav-actions-wrap" style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
         <a href="index.html" class="btn-return-home-pill" title="Return to Turfify Home">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           Return to Home
