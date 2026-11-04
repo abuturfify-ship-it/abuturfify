@@ -438,7 +438,214 @@
         grid-template-columns: 1fr;
       }
     }
-  </style>
+  
+    /* ---- Panel Styles: My Booked Slots + Saved Venues ---- */
+    .player-master-detail-grid {
+      padding: 0 16px !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Panel wrapper cards */
+    .panel-header-teal {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      background: #FFFFFF !important;
+      border-bottom: 1.5px solid #E2E8F0 !important;
+      border-radius: 16px 16px 0 0 !important;
+      padding: 14px 18px !important;
+      gap: 10px !important;
+    }
+    .panel-title-teal {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      font-size: 1rem !important;
+      font-weight: 800 !important;
+      color: #0F172A !important;
+    }
+    .panel-body-teal {
+      background: #FFFFFF !important;
+      border-radius: 0 0 16px 16px !important;
+      border: 1.5px solid #E2E8F0 !important;
+      border-top: none !important;
+      overflow: hidden !important;
+    }
+
+    /* Wrapper card for each panel column */
+    .player-master-detail-grid > div {
+      background: #FFFFFF !important;
+      border-radius: 16px !important;
+      border: 1.5px solid #E2E8F0 !important;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04) !important;
+      overflow: hidden !important;
+    }
+
+    /* "My Booked Slots" sub-link */
+    .player-master-detail-grid .panel-header-teal {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      border: none !important;
+      border-radius: 0 !important;
+      padding: 16px 18px 10px 18px !important;
+    }
+
+    /* Book Another Turf link */
+    #btn-player-book-another {
+      font-size: 0.8rem !important;
+      font-weight: 600 !important;
+      color: #047857 !important;
+      background: none !important;
+      border: none !important;
+      padding: 0 !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      margin-top: 2px !important;
+    }
+    #btn-player-book-another:hover { text-decoration: underline !important; }
+
+    /* Bookings Table */
+    .dash-table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      font-size: 0.85rem !important;
+    }
+    .dash-table thead th {
+      background: #F8FAFC !important;
+      color: #64748B !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.04em !important;
+      padding: 10px 14px !important;
+      border-bottom: 1.5px solid #E2E8F0 !important;
+      white-space: nowrap !important;
+    }
+    .dash-table tbody tr {
+      border-bottom: 1px solid #F1F5F9 !important;
+      transition: background 0.15s !important;
+    }
+    .dash-table tbody tr:last-child { border-bottom: none !important; }
+    .dash-table tbody tr:hover { background: #F8FAFC !important; }
+    .dash-table tbody td {
+      padding: 10px 14px !important;
+      color: #0F172A !important;
+      vertical-align: middle !important;
+    }
+
+    /* Status pills */
+    .status-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      padding: 3px 10px !important;
+      border-radius: 999px !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      white-space: nowrap !important;
+    }
+    .status-pill.confirmed {
+      background: #D1FAE5 !important;
+      color: #047857 !important;
+      border: 1.5px solid #A7F3D0 !important;
+    }
+    .status-pill.cancelled {
+      background: #FEE2E2 !important;
+      color: #DC2626 !important;
+      border: 1.5px solid #FCA5A5 !important;
+    }
+    .status-pill.walkin {
+      background: #FEF3C7 !important;
+      color: #B45309 !important;
+      border: 1.5px solid #FDE68A !important;
+    }
+
+    /* Mini action buttons: Cancel + Delete */
+    .btn-mini-action {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      padding: 4px 10px !important;
+      border-radius: 999px !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      border: 1.5px solid #E2E8F0 !important;
+      background: #FFFFFF !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      transition: all 0.15s ease !important;
+    }
+
+    /* "Book Another Turf" pill in panel header */
+    .btn-panel-white-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      border: 1.5px solid #10B981 !important;
+      color: #047857 !important;
+      background: #FFFFFF !important;
+      border-radius: 999px !important;
+      padding: 4px 14px !important;
+      font-size: 0.78rem !important;
+      font-weight: 700 !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      transition: all 0.15s ease !important;
+    }
+    .btn-panel-white-pill:hover { background: #ECFDF5 !important; }
+
+    /* Saved Venues panel */
+    #saved-venues .panel-header-teal {
+      flex-direction: row !important;
+      align-items: center !important;
+      border-bottom: 1.5px solid #E2E8F0 !important;
+      padding: 14px 18px !important;
+    }
+    .saved-venue-card {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      padding: 12px 16px !important;
+      border-bottom: 1px solid #F1F5F9 !important;
+      transition: background 0.15s !important;
+    }
+    .saved-venue-card:last-child { border-bottom: none !important; }
+    .saved-venue-card:hover { background: #F8FAFC !important; }
+    .saved-venue-thumb {
+      width: 64px !important;
+      height: 56px !important;
+      border-radius: 10px !important;
+      object-fit: cover !important;
+      flex-shrink: 0 !important;
+      background: #E2E8F0 !important;
+    }
+    .saved-venue-info { flex: 1 !important; min-width: 0 !important; }
+    .saved-venue-name {
+      font-size: 0.88rem !important;
+      font-weight: 800 !important;
+      color: #0F172A !important;
+      margin-bottom: 2px !important;
+    }
+    .saved-venue-meta {
+      font-size: 0.75rem !important;
+      color: #64748B !important;
+      font-weight: 600 !important;
+    }
+    .btn-book-venue {
+      background: #FFFFFF !important;
+      border: 1.5px solid #10B981 !important;
+      color: #047857 !important;
+      border-radius: 999px !important;
+      padding: 5px 16px !important;
+      font-size: 0.78rem !important;
+      font-weight: 700 !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      transition: all 0.15s ease !important;
+      flex-shrink: 0 !important;
+    }
+    .btn-book-venue:hover { background: #ECFDF5 !important; }
+
+</style>
 </head>
 
 <body class="dash-page">
