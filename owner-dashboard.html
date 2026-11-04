@@ -28,7 +28,7 @@
       background: #FFFFFF !important;
       border-bottom: 1px solid #E2E8F0 !important;
       padding: 0 16px !important;
-      height: 56px !important;
+      height: 64px !important;
       position: sticky !important;
       top: 0 !important;
       z-index: 1000 !important;
@@ -47,8 +47,14 @@
       margin: 0 !important;
       padding: 0 !important;
       height: 100% !important;
-      gap: 16px !important;
       box-sizing: border-box !important;
+    }
+    .nav-right-flow {
+      display: flex !important;
+      align-items: center !important;
+      gap: 20px !important;
+      margin-left: auto !important;
+      flex-wrap: nowrap !important;
     }
     .nav-brand-wrap {
       display: inline-flex !important;
@@ -804,9 +810,8 @@
        ========================================================================== -->
   <header class="header" id="navbar">
     <div class="nav-container">
-      <div class="nav-left-section" style="display:flex;align-items:center;gap:32px;">
-        <a href="index.html" class="brand" aria-label="Turfify Home" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
-          <svg width="40" height="32" viewBox="0 0 54 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+      <a href="index.html" class="brand" aria-label="Turfify Home" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;">
+        <svg width="42" height="34" viewBox="0 0 54 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
           <ellipse cx="26" cy="38" rx="22" ry="5" fill="rgba(0,0,0,0.12)"/>
           <path d="M4 27 L26 38 L48 27 L48 29 L26 40 L4 29 Z" fill="#064E3B"/>
           <polygon points="4,27 26,16 48,27 26,38" fill="#15803D" stroke="#059669" stroke-width="1.5"/>
@@ -825,26 +830,22 @@
             </linearGradient>
           </defs>
         </svg>
-          <div style="display:flex;flex-direction:column;justify-content:center;line-height:1.15;">
-            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.25rem;color:#047857;letter-spacing:-0.03em;">Turfify</span>
-            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.65rem;color:#475569;letter-spacing:0.02em;">Partner Console</span>
-          </div>
+        <div style="display:flex;flex-direction:column;justify-content:center;line-height:1.15;">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.28rem;color:#047857;letter-spacing:-0.03em;">Turfify</span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.68rem;color:#475569;letter-spacing:0.02em;">Partner Console</span>
+        </div>
+      </a>
+
+      <!-- Nav Items Flow: EQUAL SPACING FROM HOME TO DELETE ACCOUNT -->
+      <div class="nav-right-flow">
+        <a href="index.html" class="nav-link active" style="font-size:0.85rem;font-weight:600;color:#059669;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Home
         </a>
+        <a href="#slots" class="nav-link" style="font-size:0.85rem;font-weight:600;color:#334155;text-decoration:none;white-space:nowrap;">Slot Matrix</a>
+        <a href="#ledger" class="nav-link" style="font-size:0.85rem;font-weight:600;color:#334155;text-decoration:none;white-space:nowrap;">Bookings Ledger</a>
+        <a href="#grounds" class="nav-link" style="font-size:0.85rem;font-weight:600;color:#334155;text-decoration:none;white-space:nowrap;">My Grounds</a>
+        <a href="#settlement" class="nav-link" style="font-size:0.85rem;font-weight:600;color:#334155;text-decoration:none;white-space:nowrap;">Payouts</a>
 
-        <!-- Center Nav Links -->
-        <nav aria-label="Main Navigation">
-          <ul class="nav-menu" style="display:flex;align-items:center;gap:24px;list-style:none;margin:0;padding:0;">
-            <li><a href="index.html" class="nav-link active"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Home</a></li>
-            <li><a href="#slots" class="nav-link">Slot Matrix</a></li>
-            <li><a href="#ledger" class="nav-link">Bookings Ledger</a></li>
-            <li><a href="#grounds" class="nav-link">My Grounds</a></li>
-            <li><a href="#settlement" class="nav-link">Payouts</a></li>
-          </ul>
-        </nav>
-      </div>
-
-      <!-- Owner Profile & Actions -->
-      <div class="nav-actions-wrap" style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
         <a href="index.html" class="btn-return-home-pill" title="Return to Turfify Home">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           Return to Home
