@@ -283,6 +283,53 @@
       }
     }
 
+    
+    /* Hero Match Countdown Card with High-Res Turf Action Background */
+    .hero-match-card {
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.82) 50%, rgba(15, 23, 42, 0.35) 100%),
+                  url('images/turf-kickoff.jpg') center right / cover no-repeat !important;
+      color: #FFFFFF !important;
+      border-radius: 18px !important;
+      border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18) !important;
+      padding: 1.75rem 2rem !important;
+      margin: 0 0 22px 0 !important;
+      position: relative !important;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+    }
+    .hero-match-card::after {
+      display: none !important;
+    }
+    .hero-match-title {
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      margin-top: 8px !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+    }
+    .hero-match-card p {
+      color: #E2E8F0 !important;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+    }
+    .match-details-row {
+      color: #CBD5E1 !important;
+      margin: 1rem 0 1.25rem 0 !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 1.5rem !important;
+    }
+    .match-detail-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      color: #E2E8F0 !important;
+      font-size: 0.9rem !important;
+      font-weight: 600 !important;
+    }
+    .match-detail-item svg {
+      stroke: #34D399 !important;
+    }
+
     /* Modern KPI Cards */
     .metrics-grid-modern {
       display: grid !important;
@@ -736,7 +783,7 @@
   <main style="width: 100%; max-width: 100%; margin: 0; padding: 0 16px; box-sizing: border-box;" id="my-matches">
 
     <!-- Hero Match Countdown Card -->
-    <div class="hero-match-card" style="margin-bottom: 22px; border-radius: 16px; border: 1.5px solid #E2E8F0; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+    <div class="hero-match-card">
       <span class="match-tag" style="background: #047857; color: #FFF; font-weight: 700; border-radius: 999px; padding: 3px 12px;">🔥 Next Kickoff</span>
       <h2 class="hero-match-title" id="player-hero-turf" style="font-weight: 800; margin-top: 8px;">The Arena Sports Hub — Pitch A (Football)</h2>
       <div class="match-details-row">
