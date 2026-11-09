@@ -125,17 +125,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Update Navbar Auth display if user is logged in
   function updateNavbarAuth() {
     const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-    const centerDashLink = document.querySelector('a[href="dashboard.html"]') || document.getElementById('nav-dashboard-link');
 
-    if (curUser && curUser.name && curUser.is_authenticated) {
+    if (curUser && curUser.name && (curUser.is_authenticated || curUser.role || curUser.id)) {
       const isOwner = (curUser.role || '').toLowerCase() === 'owner';
       const targetDashboard = isOwner ? 'owner-dashboard.html' : 'player-dashboard.html';
+      const dashLabel = isOwner ? '🏟️ Owner Dashboard' : '⚽ Player Dashboard';
 
-      // Update center Dashboard link
-      if (centerDashLink) {
-        centerDashLink.href = targetDashboard;
-        centerDashLink.textContent = isOwner ? 'Owner Dashboard' : 'Player Dashboard';
-      }
+      // Update ALL Dashboard links (desktop navbar + mobile drawer)
+      document.querySelectorAll('a[href*="dashboard"]').forEach(link => {
+        link.href = targetDashboard;
+        link.textContent = dashLabel;
+        link.style.color = isOwner ? '#EA580C' : '#059669';
+        link.style.fontWeight = '700';
+      });
 
       // Replace Login & Register with User Profile button & Logout
       const btnLogin = document.getElementById('btn-open-login');
@@ -150,7 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const btnMobileLogin = document.getElementById('btn-mobile-login');
       if (btnMobileLogin) {
-        btnMobileLogin.textContent = `👤 ${curUser.name} (Dashboard)`;
+        btnMobileLogin.textContent = `${dashLabel} (${curUser.name})`;
+        btnMobileLogin.onclick = (e) => {
+          e.preventDefault();
+          window.location.href = targetDashboard;
+        };
       }
       if (btnReg) {
         btnReg.textContent = 'Logout';
@@ -162,13 +168,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
       }
     } else {
-      // Unauthenticated visitor guard on Dashboard link
-      if (centerDashLink) {
-        centerDashLink.onclick = (e) => {
+      // Unauthenticated visitor guard on Dashboard links
+      document.querySelectorAll('a[href*="dashboard"]').forEach(link => {
+        link.onclick = (e) => {
           e.preventDefault();
           window.location.href = 'auth.html?mode=signin&redirect=dashboard';
         };
-      }
+      });
     }
   }
 

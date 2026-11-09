@@ -686,6 +686,11 @@ button {
   box-shadow: var(--shadow-card);
 }
 
+/* Hide train loop duplicate clones on desktop */
+.train-clone {
+  display: none !important;
+}
+
 /* Card Pastels */
 .sport-pill-card.football {
   background: #ECFDF5;
@@ -2035,16 +2040,44 @@ button {
     margin-top: 4px !important;
   }
 
-  /* ===== SPORTS ROW ===== */
+  /* ===== SPORTS ROW: 1 HORIZONTAL LINE MOVING TRAIN ===== */
   .sports-row-section {
-    padding: 24px 0 20px !important;
+    padding: 20px 0 16px !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+  .sports-row-section .container {
+    overflow: hidden !important;
+    padding: 0 !important;
   }
   .sports-pill-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+    width: max-content !important;
+    animation: sportsTrainLoop 20s linear infinite !important;
+    padding: 6px 14px !important;
+    margin: 0 !important;
+  }
+  .sports-pill-grid:hover,
+  .sports-pill-grid:active {
+    animation-play-state: paused !important;
   }
   .sport-pill-card {
-    padding: 12px 14px !important;
+    flex: 0 0 160px !important;
+    min-width: 160px !important;
+    max-width: 160px !important;
+    padding: 10px 14px !important;
+    box-sizing: border-box !important;
+    border-radius: 14px !important;
+  }
+  .sport-pill-card.train-clone {
+    display: flex !important;
+  }
+  @keyframes sportsTrainLoop {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-50% - 6px)); }
   }
 
   /* ===== STATS BANNER ===== */
@@ -2113,7 +2146,7 @@ button {
     display: none !important;
   }
 
-  /* ===== HOW IT WORKS: HORIZONTAL SLIDE & TURF OWNER IMAGE ===== */
+  /* ===== HOW IT WORKS: MOVING TRAIN & TURF OWNER IMAGE ===== */
   .how-it-works-dual-section {
     padding: 28px 0 !important;
     overflow: hidden !important;
@@ -2124,37 +2157,46 @@ button {
   }
   .how-it-works-box {
     overflow: hidden !important;
-    padding: 20px 14px !important;
+    padding: 20px 0 !important;
+    position: relative !important;
+  }
+  .how-it-works-box .pill-badge-small,
+  .how-it-works-box .how-it-works-title {
+    margin-left: 14px !important;
+    margin-right: 14px !important;
   }
   .steps-horizontal-row {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     gap: 12px !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    scroll-snap-type: x mandatory !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding: 6px 14px 14px !important;
-    margin-left: -14px !important;
-    margin-right: -14px !important;
-    scrollbar-width: none !important;
+    width: max-content !important;
+    animation: howItWorksTrainLoop 24s linear infinite !important;
+    padding: 8px 14px 14px !important;
+    margin: 0 !important;
   }
-  .steps-horizontal-row::-webkit-scrollbar {
-    display: none !important;
+  .steps-horizontal-row:hover,
+  .steps-horizontal-row:active {
+    animation-play-state: paused !important;
   }
   .step-item-card {
     flex: 0 0 180px !important;
     min-width: 180px !important;
     max-width: 180px !important;
-    scroll-snap-align: start !important;
     padding: 16px 12px !important;
     border-radius: 14px !important;
     box-sizing: border-box !important;
   }
+  .step-item-card.train-clone {
+    display: flex !important;
+  }
   .step-graphic-box svg {
     width: 54px !important;
     height: 54px !important;
+  }
+  @keyframes howItWorksTrainLoop {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-50% - 6px)); }
   }
   .owner-card-peach {
     display: flex !important;
