@@ -2009,16 +2009,46 @@ button {
     font-size: 0.72rem !important;
   }
 
-  /* ===== TURF LISTINGS ===== */
+  /* ===== TOP RATED TURFS: HORIZONTAL SLIDE VIEW ===== */
   .turfs-listing-section {
     padding: 24px 0 !important;
+    overflow: hidden !important;
+  }
+  .turf-cards-row-wrapper {
+    position: relative !important;
+    overflow: visible !important;
   }
   .turfs-cards-grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 14px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 8px 14px 18px !important;
+    margin-left: -14px !important;
+    margin-right: -14px !important;
+    scrollbar-width: none !important;
+  }
+  .turfs-cards-grid::-webkit-scrollbar {
+    display: none !important;
   }
   .turf-listing-card {
-    max-width: 100% !important;
+    flex: 0 0 270px !important;
+    min-width: 270px !important;
+    max-width: 270px !important;
+    scroll-snap-align: start !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+    box-sizing: border-box !important;
+  }
+  .turf-media {
+    height: 145px !important;
+  }
+  .carousel-next-btn {
+    display: none !important;
   }
 
   /* ===== HOW IT WORKS ===== */
