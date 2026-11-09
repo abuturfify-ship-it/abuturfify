@@ -1719,7 +1719,7 @@ button {
     border-radius: 999px !important;
   }
 
-  /* ===== HERO SECTION (1:1 COMPACT REPLICA OF REFERENCE) ===== */
+  /* ===== HERO SECTION (1:1 COMPACT REPLICA OF SAMPLE) ===== */
   .hero-wrapper {
     min-height: auto !important;
     padding: 8px 0 10px !important;
@@ -1730,17 +1730,19 @@ button {
 
   .hero-bg-visual {
     width: 58% !important;
-    height: 340px !important;
+    height: 290px !important;
     top: 0 !important;
     right: 0 !important;
     left: auto !important;
-    opacity: 1 !important;
-    background-image: url('images/hero-patio-ref.jpg') !important;
+    opacity: 0.95 !important;
+    background-image: url('images/hero-user.png') !important;
     background-position: right top !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.18) 12%, black 42%) !important;
-    mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.18) 12%, black 42%) !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 10%, black 38%) !important;
+    mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 10%, black 38%) !important;
   }
 
   .hero-inner-grid {
@@ -1752,13 +1754,15 @@ button {
   }
 
   .hero-left {
-    max-width: 58% !important;
+    width: 100% !important;
+    max-width: 100% !important;
     padding-right: 0 !important;
   }
 
   .hero-right { display: none !important; }
 
   .hero-main-title {
+    max-width: 60% !important;
     font-size: 1.72rem !important;
     line-height: 1.12 !important;
     letter-spacing: -0.5px !important;
@@ -1770,6 +1774,7 @@ button {
   }
 
   .hero-subtext {
+    max-width: 60% !important;
     font-size: 0.78rem !important;
     line-height: 1.35 !important;
     margin-top: 4px !important;
@@ -1782,62 +1787,119 @@ button {
     margin-top: 2px !important;
   }
 
+  /* 3 Trust Badges span full width below turf visual */
   .trust-features-row {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
-    gap: 8px !important;
-    margin-top: 8px !important;
+    justify-content: space-between !important;
     align-items: center !important;
+    width: 100% !important;
+    gap: 6px !important;
+    margin-top: 14px !important;
+    padding: 6px 0 !important;
   }
   .trust-feature-item {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
     align-items: center !important;
-    text-align: center !important;
-    gap: 4px !important;
+    text-align: left !important;
+    gap: 6px !important;
+    flex: 1 !important;
+  }
+  .trust-feature-item:not(:last-child) {
+    border-right: 1px solid #E2E8F0 !important;
+    padding-right: 4px !important;
   }
   .trust-feature-icon {
-    width: 26px !important;
-    height: 26px !important;
-    border-radius: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 9px !important;
+    flex-shrink: 0 !important;
+  }
+  .trust-feature-icon.green-shield {
+    background: #DCFCE7 !important;
+    color: #15803D !important;
+  }
+  .trust-feature-icon.blue-bolt {
+    background: #E0F2FE !important;
+    color: #0284C7 !important;
+  }
+  .trust-feature-icon.yellow-lock {
+    background: #FEF3C7 !important;
+    color: #D97706 !important;
   }
   .trust-feature-icon svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+  .trust-feature-text {
+    display: flex !important;
+    flex-direction: column !important;
   }
   .trust-feature-title {
-    font-size: 0.65rem !important;
+    font-size: 0.7rem !important;
     font-weight: 700 !important;
     line-height: 1.15 !important;
     color: #1E293B !important;
-    white-space: nowrap !important;
   }
   .trust-feature-sub { display: none !important; }
 
   /* ===== QUOTE CARD ===== */
   .hero-quote-box {
-    margin-top: 8px !important;
-    padding: 8px 10px !important;
-    border-radius: 12px !important;
+    margin-top: 10px !important;
+    padding: 10px 12px !important;
+    border-radius: 14px !important;
     background: #F0FDF4 !important;
     border: 1.5px solid #86EFAC !important;
+    width: 100% !important;
     max-width: 100% !important;
     display: flex !important;
     align-items: flex-start !important;
     gap: 8px !important;
     box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08) !important;
+    position: relative !important;
+    overflow: hidden !important;
   }
   .hero-quote-icon svg {
-    width: 18px !important;
-    height: 18px !important;
+    width: 20px !important;
+    height: 20px !important;
     color: #10B981 !important;
+    flex-shrink: 0 !important;
+  }
+  .hero-quote-content {
+    flex: 1 !important;
+    z-index: 1 !important;
   }
   .hero-quote-text {
-    font-size: 0.78rem !important;
+    font-size: 0.8rem !important;
     line-height: 1.35 !important;
     font-weight: 700 !important;
     color: #0F172A !important;
+  }
+  .hero-quote-text .quote-highlight {
+    color: #059669 !important;
+  }
+  .hero-quote-rating {
+    margin-top: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    font-size: 0.72rem !important;
+    color: #475569 !important;
+  }
+  .hero-quote-rating .stars {
+    color: #F59E0B !important;
+    letter-spacing: 1px !important;
+  }
+  .hero-quote-watermark {
+    position: absolute !important;
+    right: 4px !important;
+    bottom: -6px !important;
+    color: #10B981 !important;
+    opacity: 0.16 !important;
+    pointer-events: none !important;
   }
   .hero-quote-rating {
     margin-top: 3px !important;

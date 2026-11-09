@@ -141,12 +141,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const btnLogin = document.getElementById('btn-open-login');
       const btnReg = document.getElementById('btn-open-register');
       if (btnLogin) {
-        btnLogin.textContent = `👤 ${curUser.name}`;
+        btnLogin.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><span style="color:#2563EB;">👤</span> <span>${curUser.name}</span></span> <span style="font-size:0.7rem;margin-left:2px;opacity:0.7;">▾</span>`;
         btnLogin.title = `Go to Dashboard (${curUser.role})`;
         btnLogin.onclick = (e) => {
           e.preventDefault();
           window.location.href = targetDashboard;
         };
+      }
+      const btnMobileLogin = document.getElementById('btn-mobile-login');
+      if (btnMobileLogin) {
+        btnMobileLogin.textContent = `👤 ${curUser.name} (Dashboard)`;
       }
       if (btnReg) {
         btnReg.textContent = 'Logout';
