@@ -1361,6 +1361,38 @@ button {
     display: none;
   }
   .page-container {
-    padding: 18px;
+    padding: 14px 12px;
+  }
+  .admin-topbar {
+    padding: 0 12px !important;
+    gap: 8px !important;
+  }
+  .topbar-right {
+    gap: 6px !important;
+  }
+  .topbar-pill-btn {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+  }
+  .topbar-pill-btn .hide-mobile-label {
+    display: none !important;
+  }
+  /* Table horizontal scroll */
+  .table-panel {
+    overflow: hidden !important;
+  }
+  .table-responsive-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    display: block !important;
+  }
+  .admin-data-table {
+    min-width: 740px !important;
+    width: 100% !important;
+  }
+  .admin-data-table th, .admin-data-table td {
+    white-space: nowrap !important;
+    padding: 11px 12px !important;
   }
 }
