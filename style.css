@@ -2051,27 +2051,72 @@ button {
     display: none !important;
   }
 
-  /* ===== HOW IT WORKS ===== */
+  /* ===== HOW IT WORKS: HORIZONTAL SLIDE & TURF OWNER IMAGE ===== */
   .how-it-works-dual-section {
     padding: 28px 0 !important;
+    overflow: hidden !important;
   }
   .dual-layout-grid {
     grid-template-columns: 1fr !important;
-    gap: 20px !important;
+    gap: 22px !important;
+  }
+  .how-it-works-box {
+    overflow: hidden !important;
+    padding: 20px 14px !important;
   }
   .steps-horizontal-row {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 6px 14px 14px !important;
+    margin-left: -14px !important;
+    margin-right: -14px !important;
+    scrollbar-width: none !important;
+  }
+  .steps-horizontal-row::-webkit-scrollbar {
+    display: none !important;
   }
   .step-item-card {
+    flex: 0 0 180px !important;
+    min-width: 180px !important;
+    max-width: 180px !important;
+    scroll-snap-align: start !important;
     padding: 16px 12px !important;
+    border-radius: 14px !important;
+    box-sizing: border-box !important;
+  }
+  .step-graphic-box svg {
+    width: 54px !important;
+    height: 54px !important;
   }
   .owner-card-peach {
+    display: flex !important;
     flex-direction: column !important;
-    padding: 20px 16px !important;
+    padding: 22px 18px !important;
+    border-radius: 18px !important;
+    gap: 18px !important;
+  }
+  .owner-peach-title {
+    font-size: 1.55rem !important;
   }
   .owner-peach-graphic {
-    display: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+  .owner-man-illustration {
+    width: 100% !important;
+    max-width: 240px !important;
+    height: auto !important;
+    aspect-ratio: 1 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 12px 28px -6px rgba(234, 88, 12, 0.28) !important;
   }
 
   /* ===== CONTACT SECTION ===== */
