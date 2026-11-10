@@ -264,25 +264,73 @@
       margin-bottom: 24px !important;
       white-space: nowrap !important;
     }
+    /* Quick-Jump Action Pill Bar */
+    .dash-quick-nav-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 6px 16px 14px 16px;
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      scrollbar-width: none;
+    }
+    .dash-quick-nav-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .quick-nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      color: #0F172A;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .quick-nav-pill:hover, .quick-nav-pill.active {
+      background: #ECFDF5;
+      border-color: #10B981;
+      color: #047857;
+    }
+
+    #my-matches, #saved-venues {
+      scroll-margin-top: 76px !important;
+    }
+
     @media (max-width: 768px) {
       .header {
-        height: 58px !important;
+        height: 56px !important;
         padding: 0 12px !important;
+        overflow: hidden !important;
       }
       .nav-container {
         justify-content: space-between !important;
         gap: 8px !important;
+        width: 100% !important;
       }
-      /* Hide desktop links and secondary buttons on mobile */
+      /* Hide desktop links and secondary buttons on mobile (accessible via drawer) */
       .nav-container > a.nav-link,
       .nav-container .btn-return-home-pill,
+      .nav-container .btn-logout-pill,
       .nav-container .btn-delete-acc-pill {
         display: none !important;
       }
+      .btn-mobile-hamburger {
+        display: flex !important;
+      }
       /* Brand compact on mobile */
       .brand svg {
-        width: 36px !important;
-        height: 30px !important;
+        width: 34px !important;
+        height: 28px !important;
       }
       .brand span:first-child {
         font-size: 1.15rem !important;
@@ -295,9 +343,10 @@
         padding: 2px 8px 2px 3px !important;
         height: 32px !important;
         gap: 6px !important;
+        max-width: 135px !important;
       }
       #nav-player-name {
-        max-width: 90px !important;
+        max-width: 80px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
@@ -305,11 +354,6 @@
       }
       .player-profile-pill > div > div:last-child {
         display: none !important; /* Hide subtitle "Player Hub" on mobile */
-      }
-      .btn-logout-pill {
-        padding: 0 12px !important;
-        height: 30px !important;
-        font-size: 0.74rem !important;
       }
 
       /* Horizontal scrolling for tables */
@@ -348,6 +392,16 @@
       }
       .hero-match-card {
         padding: 1.25rem 1rem !important;
+      }
+      /* Fix panel overflow on mobile */
+      .panel-header-teal {
+        box-sizing: border-box !important;
+        width: 100% !important;
+        padding: 12px 14px !important;
+      }
+      .panel-body-teal {
+        box-sizing: border-box !important;
+        width: 100% !important;
       }
     }
 
@@ -808,21 +862,57 @@
         Return to Home
       </a>
 
-      <div class="player-profile-pill" style="flex-shrink:0;">
-        <div class="player-profile-avatar" id="nav-player-avatar">⚽</div>
-        <div style="line-height: 1.15;">
-          <div id="nav-player-name" style="font-weight: 700; font-size: 0.85rem; color: #0F172A;">Player</div>
-          <div style="font-size: 0.7rem; color: #64748B;">Player Hub</div>
+      <div class="nav-actions-wrap">
+        <div class="player-profile-pill" style="flex-shrink:0;">
+          <div class="player-profile-avatar" id="nav-player-avatar">⚽</div>
+          <div style="line-height: 1.15;">
+            <div id="nav-player-name" style="font-weight: 700; font-size: 0.85rem; color: #0F172A;">Player</div>
+            <div style="font-size: 0.7rem; color: #64748B;">Player Hub</div>
+          </div>
         </div>
-      </div>
 
-      <a href="javascript:void(0)" id="btn-logout" onclick="window.handlePlayerLogout(event)" class="btn-logout-pill" style="flex-shrink:0;">Logout</a>
-      <button type="button" id="btn-delete-account" onclick="window.handlePlayerDeleteAccount(event)" class="btn-delete-acc-pill" title="Permanently delete your account" style="flex-shrink:0;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        Delete Account
-      </button>
+        <a href="javascript:void(0)" id="btn-logout" onclick="window.handlePlayerLogout(event)" class="btn-logout-pill" style="flex-shrink:0;">Logout</a>
+        <button type="button" id="btn-delete-account" onclick="window.handlePlayerDeleteAccount(event)" class="btn-delete-acc-pill" title="Permanently delete your account" style="flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Delete Account
+        </button>
+
+        <!-- Hamburger button for mobile -->
+        <button class="btn-mobile-hamburger" id="btn-mobile-menu" aria-label="Open Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
   </header>
+
+  <!-- Mobile Overlay + Navigation Drawer (Player) -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <nav class="mobile-nav-drawer" id="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <div class="mobile-nav-header">
+      <a href="index.html" class="brand" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+        <div class="logo-badge" style="background:#10B981; color:#fff; width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+          <span style="font-size:1.1rem;">⚽</span>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title" style="font-size:1.1rem; font-weight:800; color:#047857;">Turfify</span>
+          <span class="brand-tagline" style="font-size:0.68rem; color:#64748B;">Player Hub</span>
+        </div>
+      </a>
+      <button class="btn-mobile-close" id="btn-mobile-close" aria-label="Close Menu">✕</button>
+    </div>
+    <ul class="mobile-nav-links">
+      <li><a href="index.html">🏠 Home</a></li>
+      <li><a href="#my-matches" onclick="window.closeDrawer()" style="color:#059669; font-weight:700;">🎟️ My Booked Slots</a></li>
+      <li><a href="javascript:void(0)" onclick="window.closeDrawer(); window.openPlayerBookingModal();" style="color:#059669; font-weight:700;">⚽ Book a Turf</a></li>
+      <li><a href="#saved-venues" onclick="window.closeDrawer()">❤️ Saved Venues</a></li>
+      <li><a href="index.html#search-section">🔍 Search All Turfs</a></li>
+      <li><a href="index.html#how-it-works-section">📖 How It Works</a></li>
+    </ul>
+    <div class="mobile-nav-auth" style="padding: 16px 0; border-top: 1px solid #E2E8F0; margin-top: 16px;">
+      <button type="button" class="btn-logout-pill" onclick="window.handlePlayerLogout(event)" style="width:100%; justify-content:center; height:38px; font-size:0.85rem; margin-bottom:8px;">🚪 Logout</button>
+      <button type="button" class="btn-delete-acc-pill" onclick="window.handlePlayerDeleteAccount(event)" style="width:100%; justify-content:center; height:36px; font-size:0.8rem;">🗑️ Delete Account</button>
+    </div>
+  </nav>
 
   <!-- ==========================================================================
        PANORAMIC HERO WELCOME BANNER (PLAYER)
@@ -848,7 +938,27 @@
     </div>
   </div>
 
-  <main style="width: 100%; max-width: 100%; margin: 0; padding: 0 16px; box-sizing: border-box;" id="my-matches">
+  <!-- Quick-Jump Action Tabs (Mobile & Desktop) -->
+  <div class="dash-quick-nav-bar">
+    <a href="#my-matches" class="quick-nav-pill active">
+      <span>🎟️</span>
+      <span>My Booked Slots</span>
+    </a>
+    <button type="button" onclick="window.openPlayerBookingModal()" class="quick-nav-pill" style="cursor:pointer; font-family:inherit;">
+      <span>⚽</span>
+      <span>Book a Turf</span>
+    </button>
+    <a href="#saved-venues" class="quick-nav-pill">
+      <span>❤️</span>
+      <span>Saved Venues</span>
+    </a>
+    <a href="index.html#search-section" class="quick-nav-pill">
+      <span>🔍</span>
+      <span>Find Turfs</span>
+    </a>
+  </div>
+
+  <main style="width: 100%; max-width: 100%; margin: 0; padding: 0 16px; box-sizing: border-box;" id="player-main">
 
     <!-- Hero Match Countdown Card -->
     <div class="hero-match-card">
@@ -957,7 +1067,7 @@
     <!-- Master-Detail Layout -->
     <div class="player-master-detail-grid">
       <!-- Left Column: Recent Bookings Table -->
-      <div>
+      <div id="my-matches">
         <div class="panel-header-teal">
           <div class="panel-title-teal">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -1873,6 +1983,25 @@
 
       document.getElementById('btn-logout')?.addEventListener('click', window.handlePlayerLogout);
       document.getElementById('btn-delete-account')?.addEventListener('click', window.handlePlayerDeleteAccount);
+
+      // Mobile Drawer handler
+      var hamburger = document.getElementById('btn-mobile-menu');
+      var closeBtn  = document.getElementById('btn-mobile-close');
+      var overlay   = document.getElementById('mobile-nav-overlay');
+      var drawer    = document.getElementById('mobile-nav-drawer');
+      window.openDrawer = function() {
+        if (drawer) drawer.classList.add('open');
+        if (overlay) overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      };
+      window.closeDrawer = function() {
+        if (drawer) drawer.classList.remove('open');
+        if (overlay) overlay.classList.remove('open');
+        document.body.style.overflow = '';
+      };
+      if (hamburger) hamburger.addEventListener('click', window.openDrawer);
+      if (closeBtn) closeBtn.addEventListener('click', window.closeDrawer);
+      if (overlay) overlay.addEventListener('click', window.closeDrawer);
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

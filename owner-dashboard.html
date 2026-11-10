@@ -293,25 +293,73 @@
       background: #F8FAFC !important;
     }
 
+    /* Quick-Jump Action Pill Bar */
+    .dash-quick-nav-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 6px 16px 14px 16px;
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      scrollbar-width: none;
+    }
+    .dash-quick-nav-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .quick-nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      color: #0F172A;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .quick-nav-pill:hover, .quick-nav-pill.active {
+      background: #FFF7ED;
+      border-color: #EA580C;
+      color: #EA580C;
+    }
+
+    #ledger, #grounds, #slots, #settlement {
+      scroll-margin-top: 76px !important;
+    }
+
     @media (max-width: 768px) {
       .header {
-        height: 58px !important;
+        height: 56px !important;
         padding: 0 12px !important;
+        overflow: hidden !important;
       }
       .nav-container {
         justify-content: space-between !important;
         gap: 8px !important;
+        width: 100% !important;
       }
-      /* Hide desktop links and secondary buttons on mobile */
+      /* Hide desktop links and secondary buttons on mobile (accessible via drawer) */
       .nav-container > a.nav-link,
       .nav-container .btn-return-home-pill,
+      .nav-container .btn-logout-pill,
       .nav-container .btn-delete-acc-pill {
         display: none !important;
       }
+      .btn-mobile-hamburger {
+        display: flex !important;
+      }
       /* Brand compact on mobile */
       .brand svg {
-        width: 36px !important;
-        height: 30px !important;
+        width: 34px !important;
+        height: 28px !important;
       }
       .brand span:first-child {
         font-size: 1.15rem !important;
@@ -324,21 +372,18 @@
         padding: 2px 8px 2px 3px !important;
         height: 32px !important;
         gap: 6px !important;
+        max-width: 135px !important;
       }
       #nav-owner-name {
-        max-width: 90px !important;
+        max-width: 80px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
         font-size: 0.78rem !important;
       }
-      #nav-owner-business {
-        display: none !important; /* Hide subtitle "Partner Console" on mobile */
-      }
-      .btn-logout-pill {
-        padding: 0 12px !important;
-        height: 30px !important;
-        font-size: 0.74rem !important;
+      #nav-owner-business,
+      .owner-profile-pill > svg {
+        display: none !important; /* Hide subtitle and chevron on mobile */
       }
 
       /* Horizontal scrolling for tables & lists */
@@ -374,6 +419,29 @@
       }
       .banner-right-art-wrap {
         display: none !important;
+      }
+      /* Fix panel header overflow so + Add button doesn't clip */
+      .panel-header-teal {
+        box-sizing: border-box !important;
+        width: 100% !important;
+        overflow: visible !important;
+        padding: 12px 14px !important;
+      }
+      /* Fix payout box overflow on mobile */
+      .panel-body-teal {
+        box-sizing: border-box !important;
+        width: 100% !important;
+        overflow-wrap: break-word !important;
+      }
+      /* Payout amount full width */
+      #owner-payout-amount {
+        font-size: 1.1rem !important;
+        word-break: break-all !important;
+      }
+      /* Owner master grid full width with no overflow */
+      .owner-master-detail-grid {
+        overflow: hidden !important;
+        width: 100% !important;
       }
     }
 
@@ -958,22 +1026,58 @@
         Return to Home
       </a>
 
-      <div class="owner-profile-pill" style="flex-shrink:0;">
-        <div class="owner-profile-avatar" id="nav-owner-avatar"><img src="images/owner-avatar.png" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
-        <div style="line-height: 1.15;">
-          <div id="nav-owner-name" style="font-weight: 700; font-size: 0.85rem; color: #0F172A;">Turf Owner</div>
-          <div id="nav-owner-business" style="font-size: 0.7rem; color: #64748B;">Partner Console</div>
+      <div class="nav-actions-wrap">
+        <div class="owner-profile-pill" style="flex-shrink:0;">
+          <div class="owner-profile-avatar" id="nav-owner-avatar"><img src="images/owner-avatar.png" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
+          <div style="line-height: 1.15;">
+            <div id="nav-owner-name" style="font-weight: 700; font-size: 0.85rem; color: #0F172A;">Turf Owner</div>
+            <div id="nav-owner-business" style="font-size: 0.7rem; color: #64748B;">Partner Console</div>
+          </div>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="3" style="margin-left:2px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </div>
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="3" style="margin-left:2px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </div>
 
-      <a href="javascript:void(0)" id="btn-owner-logout" onclick="window.handleOwnerLogout(event)" class="btn-logout-pill" style="flex-shrink:0;">Logout</a>
-      <button type="button" id="btn-owner-delete-account" onclick="window.handleOwnerDeleteAccount(event)" class="btn-delete-acc-pill" title="Permanently delete your account" style="flex-shrink:0;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        Delete Account
-      </button>
+        <a href="javascript:void(0)" id="btn-owner-logout" onclick="window.handleOwnerLogout(event)" class="btn-logout-pill" style="flex-shrink:0;">Logout</a>
+        <button type="button" id="btn-owner-delete-account" onclick="window.handleOwnerDeleteAccount(event)" class="btn-delete-acc-pill" title="Permanently delete your account" style="flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Delete Account
+        </button>
+
+        <!-- Hamburger button for mobile -->
+        <button class="btn-mobile-hamburger" id="btn-mobile-menu" aria-label="Open Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
   </header>
+
+  <!-- Mobile Overlay + Navigation Drawer (Owner) -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <nav class="mobile-nav-drawer" id="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <div class="mobile-nav-header">
+      <a href="index.html" class="brand" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+        <div class="logo-badge" style="background:#EA580C; color:#fff; width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+          <span style="font-size:1.1rem;">🏟️</span>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title" style="font-size:1.1rem; font-weight:800; color:#047857;">Turfify</span>
+          <span class="brand-tagline" style="font-size:0.68rem; color:#EA580C;">Partner Console</span>
+        </div>
+      </a>
+      <button class="btn-mobile-close" id="btn-mobile-close" aria-label="Close Menu">✕</button>
+    </div>
+    <ul class="mobile-nav-links">
+      <li><a href="index.html">🏠 Home</a></li>
+      <li><a href="#ledger" onclick="window.closeDrawer()" style="color:#EA580C; font-weight:700;">📋 Bookings Ledger</a></li>
+      <li><a href="#grounds" onclick="window.closeDrawer()">🏟️ My Venues</a></li>
+      <li><a href="#slots" onclick="window.closeDrawer()">🗓️ Slot Matrix</a></li>
+      <li><a href="#settlement" onclick="window.closeDrawer()">💳 Payouts</a></li>
+      <li><a href="javascript:void(0)" onclick="window.closeDrawer(); document.getElementById('btn-open-add-turf')?.click();" style="color:#059669; font-weight:700;">+ Add New Turf</a></li>
+    </ul>
+    <div class="mobile-nav-auth" style="padding: 16px 0; border-top: 1px solid #E2E8F0; margin-top: 16px;">
+      <button type="button" class="btn-logout-pill" onclick="window.handleOwnerLogout(event)" style="width:100%; justify-content:center; height:38px; font-size:0.85rem; margin-bottom:8px;">🚪 Logout</button>
+      <button type="button" class="btn-delete-acc-pill" onclick="window.handleOwnerDeleteAccount(event)" style="width:100%; justify-content:center; height:36px; font-size:0.8rem;">🗑️ Delete Account</button>
+    </div>
+  </nav>
 
   <!-- ==========================================================================
        PANORAMIC HERO WELCOME BANNER (MATCHING REFERENCE IMAGE)
@@ -995,6 +1099,30 @@
     <div class="banner-right">
       <div class="banner-script-slogan">Play. Book. Grow.</div>
     </div>
+  </div>
+
+  <!-- Quick-Jump Action Tabs (Mobile & Desktop) -->
+  <div class="dash-quick-nav-bar">
+    <a href="#ledger" class="quick-nav-pill active">
+      <span>📋</span>
+      <span>Bookings Ledger</span>
+    </a>
+    <a href="#grounds" class="quick-nav-pill">
+      <span>🏟️</span>
+      <span>My Venues</span>
+    </a>
+    <a href="#slots" class="quick-nav-pill">
+      <span>🗓️</span>
+      <span>Slot Matrix</span>
+    </a>
+    <a href="#settlement" class="quick-nav-pill">
+      <span>💳</span>
+      <span>Payouts</span>
+    </a>
+    <button type="button" onclick="document.getElementById('btn-open-add-turf')?.click(); document.getElementById('btn-add-turf-quick')?.click();" class="quick-nav-pill" style="cursor:pointer; font-family:inherit; color:#047857; border-color:#6EE7B7; background:#ECFDF5;">
+      <span>+</span>
+      <span>Add Turf</span>
+    </button>
   </div>
 
   <main style="width: 100%; max-width: 100%; margin: 0; padding: 0 16px; box-sizing: border-box;">
@@ -1112,15 +1240,14 @@
         </div>
 
         <!-- Settlement Box -->
-        <div id="settlement" style="margin-bottom: 1.5rem;">
+        <div id="settlement" style="margin-bottom: 1.5rem; width: 100%; box-sizing: border-box;">
           <div class="panel-header-teal" style="background: linear-gradient(135deg, #065F46 0%, #047857 100%);">
-            <div class="panel-title-teal">🏛️ Direct Payout Account
-            </div>
+            <div class="panel-title-teal">🏛️ Direct Payout Account</div>
           </div>
-          <div class="panel-body-teal" style="border-color: #047857;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <div class="panel-body-teal" style="border-color: #047857; padding: 14px 16px; box-sizing: border-box;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 8px;">
               <span style="font-size: 0.85rem; color: #475569; font-weight: 600;">Next Payout (Tuesday)</span>
-              <span id="owner-payout-amount" style="font-weight: 800; font-size: 1.3rem; color: #047857;">0</span>
+              <span id="owner-payout-amount" style="font-weight: 800; font-size: 1.25rem; color: #047857;">₹0</span>
             </div>
             <p id="owner-payout-desc" style="font-size: 0.82rem; color: #64748B; line-height: 1.4; margin: 0;">
               No pending payouts. Payouts from online bookings are automatically settled every Tuesday to your registered bank account.
@@ -1571,7 +1698,7 @@
       const payoutAmountEl = document.getElementById('owner-payout-amount');
       const payoutDescEl = document.getElementById('owner-payout-desc');
       if (payoutAmountEl) {
-        payoutAmountEl.textContent = `${payoutAmount.toLocaleString()}`;
+        payoutAmountEl.textContent = `₹${payoutAmount.toLocaleString('en-IN')}`;
       }
       if (payoutDescEl) {
         if (payoutAmount > 0) {
@@ -1613,8 +1740,10 @@
             <div class="turf-card-content">
               <div class="turf-card-title-row">
                 <span class="turf-card-title" title="${t.name}">${t.name}</span>
-                ${isSelected ? `<span class="badge-status-pill active">— Active</span>` : `<span class="badge-status-pill inactive">— Inactive</span>`}
-                <button type="button" class="btn-delete-venue" onclick="window.deleteTurf('${t.id}', event)" title="Delete this venue" aria-label="Delete">🗑️</button>
+                <div style="display:inline-flex; align-items:center; gap:6px; flex-shrink:0;">
+                  ${isSelected ? `<span class="badge-status-pill active">—  Active</span>` : `<span class="badge-status-pill inactive">—  Inactive</span>`}
+                  <button type="button" class="btn-delete-venue" onclick="window.deleteTurf('${t.id}', event)" title="Delete this venue" aria-label="Delete">🗑️ </button>
+                </div>
               </div>
               <div class="turf-card-location"> ${t.location || 'Tamil Nadu'}</div>
               <div class="turf-card-badges-row">
@@ -2145,6 +2274,25 @@
 
       document.getElementById('btn-owner-logout')?.addEventListener('click', window.handleOwnerLogout);
       document.getElementById('btn-owner-delete-account')?.addEventListener('click', window.handleOwnerDeleteAccount);
+
+      // Mobile Drawer handler
+      var hamburger = document.getElementById('btn-mobile-menu');
+      var closeBtn  = document.getElementById('btn-mobile-close');
+      var overlay   = document.getElementById('mobile-nav-overlay');
+      var drawer    = document.getElementById('mobile-nav-drawer');
+      window.openDrawer = function() {
+        if (drawer) drawer.classList.add('open');
+        if (overlay) overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      };
+      window.closeDrawer = function() {
+        if (drawer) drawer.classList.remove('open');
+        if (overlay) overlay.classList.remove('open');
+        document.body.style.overflow = '';
+      };
+      if (hamburger) hamburger.addEventListener('click', window.openDrawer);
+      if (closeBtn) closeBtn.addEventListener('click', window.closeDrawer);
+      if (overlay) overlay.addEventListener('click', window.closeDrawer);
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
