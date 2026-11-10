@@ -1380,16 +1380,37 @@ button {
   /* Table horizontal scroll */
   .table-panel {
     overflow: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
   }
   .table-responsive-container {
     overflow-x: auto !important;
+    overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
     width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     display: block !important;
+    box-sizing: border-box !important;
+  }
+  .table-responsive-container::-webkit-scrollbar {
+    height: 6px !important;
+    display: block !important;
+  }
+  .table-responsive-container::-webkit-scrollbar-track {
+    background: #F1F5F9 !important;
+  }
+  .table-responsive-container::-webkit-scrollbar-thumb {
+    background: #94A3B8 !important;
+    border-radius: 999px !important;
   }
   .admin-data-table {
     min-width: 740px !important;
     width: 100% !important;
+    table-layout: auto !important;
   }
   .admin-data-table th, .admin-data-table td {
     white-space: nowrap !important;
