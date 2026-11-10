@@ -342,6 +342,7 @@ function renderKPIs() {
 
   renderActivityFeed(bookings.slice(0, 3));
   renderPaymentsSplit(confirmed, turfs);
+  initDashboardCharts();
 }
 
 // ─── Activity Feed ───────────────────────────────────────────────────────────
@@ -477,6 +478,17 @@ function initNavigation() {
         }
       });
 
+      if (targetView === 'overview') {
+        initDashboardCharts();
+      } else if (targetView === 'bookings') {
+        renderBookingsTable();
+      } else if (targetView === 'users') {
+        renderUsersTable();
+      } else if (targetView === 'payments') {
+        const confirmedBookings = getLiveBookings().filter(b => b.status !== 'Cancelled');
+        renderPaymentsSplit(confirmedBookings, getLiveTurfs());
+      }
+
       // Close mobile drawer if open
       document.querySelector(".sidebar")?.classList.remove("mobile-open");
     });
@@ -497,25 +509,72 @@ function initDashboardCharts() {
   if (!chartWrapper) return;
 
   const bookings = getLiveBookings().filter(b => b.status !== 'Cancelled');
-  const byDate = {};
-  bookings.forEach(b => { const d = b.date || 'N/A'; byDate[d] = (byDate[d] || 0) + (b.amount || 0); });
-  const dates = Object.keys(byDate).sort().slice(-7);
-  const vals  = dates.map(d => byDate[d]);
-  const maxVal = Math.max(...vals, 1);
+  const revenueByDate = {};
+  bookings.forEach(b => {
+    if (b.date) {
+      const dateKey = String(b.date).trim();
+      revenueByDate[dateKey] = (revenueByDate[dateKey] || 0) + (Number(b.amount) || 0);
+    }
+  });
 
-  if (!dates.length) {
-    chartWrapper.innerHTML = `<div style="padding:40px;text-align:center;color:#94A3B8;">No booking data yet for chart.</div>`;
-    return;
+  // Build a rolling 7-day window ending on today
+  const today = new Date();
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  let daysList = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const isoDate = `${yyyy}-${mm}-${dd}`;
+    const dayLabel = `${dayNames[d.getDay()]} ${d.getDate()}`;
+    const fullDate = `${d.getDate()} ${monthNames[d.getMonth()]}`;
+    const amount = revenueByDate[isoDate] || 0;
+    daysList.push({ isoDate, dayLabel, fullDate, amount });
   }
 
-  const svgW = 540, svgH = 200, padX = 30, padY = 20;
-  const stepX = (svgW - padX * 2) / Math.max(dates.length - 1, 1);
-  const points = dates.map((d, i) => ({
-    x: padX + i * stepX,
-    y: svgH - padY - ((vals[i] / maxVal) * (svgH - padY * 2)),
-    label: d.slice(5),
-    val: fmt(vals[i])
-  }));
+  // If there are bookings with dates, but none fall in the current rolling 7 days,
+  // align the 7 days to the latest booking date so the trajectory shows real data
+  const totalInWindow = daysList.reduce((acc, d) => acc + d.amount, 0);
+  const allBookingDates = Object.keys(revenueByDate).sort();
+  if (totalInWindow === 0 && allBookingDates.length > 0) {
+    const latestDate = new Date(allBookingDates[allBookingDates.length - 1]);
+    if (!isNaN(latestDate.getTime())) {
+      daysList = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(latestDate);
+        d.setDate(d.getDate() - i);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const isoDate = `${yyyy}-${mm}-${dd}`;
+        const dayLabel = `${dayNames[d.getDay()]} ${d.getDate()}`;
+        const fullDate = `${d.getDate()} ${monthNames[d.getMonth()]}`;
+        const amount = revenueByDate[isoDate] || 0;
+        daysList.push({ isoDate, dayLabel, fullDate, amount });
+      }
+    }
+  }
+
+  const maxVal = Math.max(...daysList.map(d => d.amount), 1000);
+  const svgW = 540, svgH = 180, padX = 40, padY = 30;
+  const stepX = (svgW - padX * 2) / 6;
+
+  const points = daysList.map((d, i) => {
+    const x = padX + i * stepX;
+    const y = (svgH - padY) - ((d.amount / maxVal) * (svgH - padY * 2));
+    return {
+      x,
+      y,
+      label: d.dayLabel,
+      fullDate: d.fullDate,
+      amount: d.amount,
+      valStr: fmt(d.amount)
+    };
+  });
 
   let pathD = `M ${points[0].x} ${points[0].y}`;
   for (let i = 1; i < points.length; i++) {
@@ -526,45 +585,54 @@ function initDashboardCharts() {
     pathD += ` C ${cp1x} ${prev.y}, ${cp2x} ${curr.y}, ${curr.x} ${curr.y}`;
   }
 
-  const fillD = `${pathD} L ${points[points.length - 1].x} 200 L ${points[0].x} 200 Z`;
+  const fillD = `${pathD} L ${points[points.length - 1].x} ${svgH - 10} L ${points[0].x} ${svgH - 10} Z`;
 
   let circlesHtml = "";
   let labelsHtml = "";
+  let valueTagsHtml = "";
 
   points.forEach(p => {
     circlesHtml += `
-      <circle cx="${p.x}" cy="${p.y}" r="5" fill="#10B981" stroke="#ffffff" stroke-width="2.5" class="chart-point">
-        <title>${p.label}: ${p.val}</title>
+      <circle cx="${p.x}" cy="${p.y}" r="${p.amount > 0 ? 6 : 4}" fill="${p.amount > 0 ? '#10B981' : '#CBD5E1'}" stroke="#ffffff" stroke-width="2.5" class="chart-point">
+        <title>${p.label} (${p.fullDate}): ${p.valStr}</title>
       </circle>
     `;
     labelsHtml += `
-      <text x="${p.x}" y="220" text-anchor="middle" font-size="11" font-family="'Plus Jakarta Sans', sans-serif" fill="#64748B" font-weight="600">${p.label}</text>
+      <text x="${p.x}" y="${svgH + 18}" text-anchor="middle" font-size="11" font-family="'Plus Jakarta Sans', sans-serif" fill="#64748B" font-weight="600">${p.label}</text>
     `;
+    if (p.amount > 0) {
+      valueTagsHtml += `
+        <text x="${p.x}" y="${p.y - 10}" text-anchor="middle" font-size="10" font-family="'Plus Jakarta Sans', sans-serif" fill="#047857" font-weight="800">${p.valStr}</text>
+      `;
+    }
   });
 
   chartWrapper.innerHTML = `
-    <svg viewBox="0 0 540 230" class="chart-svg">
+    <svg viewBox="0 0 540 215" class="chart-svg" style="width:100%; height:auto; overflow:visible;">
       <defs>
         <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stop-color="#10B981" stop-opacity="0.32" />
           <stop offset="100%" stop-color="#10B981" stop-opacity="0.0" />
         </linearGradient>
       </defs>
-      <!-- Gridlines -->
-      <line x1="20" y1="50" x2="520" y2="50" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="4" />
-      <line x1="20" y1="100" x2="520" y2="100" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="4" />
-      <line x1="20" y1="150" x2="520" y2="150" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="4" />
+      <!-- Horizontal Reference Guidelines -->
+      <line x1="30" y1="30" x2="510" y2="30" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="4" />
+      <line x1="30" y1="85" x2="510" y2="85" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="4" />
+      <line x1="30" y1="140" x2="510" y2="140" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="4" />
       
       <!-- Area Fill -->
       <path d="${fillD}" fill="url(#chartGradient)" />
       
       <!-- Curve Line -->
-      <path d="${pathD}" fill="none" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" />
+      <path d="${pathD}" fill="none" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
       
+      <!-- Value Tags -->
+      ${valueTagsHtml}
+
       <!-- Interactive Dots -->
       ${circlesHtml}
       
-      <!-- X-Axis Labels -->
+      <!-- X-Axis Date Labels -->
       ${labelsHtml}
     </svg>
   `;
