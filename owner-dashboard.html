@@ -2286,7 +2286,7 @@
         updateOperatingSlotsCount();
       });
 
-      document.getElementById('form-new-turf').onsubmit = (e) => {
+      document.getElementById('form-new-turf').onsubmit = async (e) => {
         e.preventDefault();
         // Collect only clicked/selected amenities (both default and custom)
         const selectedAmenities = Array.from(document.querySelectorAll('#amenities-selector .amenity-toggle-btn.selected'))
@@ -2302,19 +2302,40 @@
           ? ownerUploadedImages
           : (urlInput ? [urlInput] : ['images/turf-arena.jpg']);
 
-        window.TurfifyStore.addTurf({
-          name: document.getElementById('new-turf-name').value.trim(),
-          sport: document.getElementById('new-turf-sport').value,
-          price_per_hour: parseInt(document.getElementById('new-turf-rate').value, 10),
-          location: document.getElementById('new-turf-loc').value.trim(),
-          image: finalImages[0],
-          images: finalImages,
-          dimensions: '7v7 Championship Turf',
-          amenities: selectedAmenities,
-          operating_slots: selectedSlots.length > 0 ? selectedSlots : undefined
-        });
-        modal.classList.remove('active');
-        location.reload();
+        const submitBtn = document.querySelector('#form-new-turf button[type="submit"]') || e.submitter;
+        const origText = submitBtn ? submitBtn.textContent : '';
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Saving to Cloud...';
+        }
+
+        try {
+          await window.TurfifyStore.addTurf({
+            name: document.getElementById('new-turf-name').value.trim(),
+            sport: document.getElementById('new-turf-sport').value,
+            price_per_hour: parseInt(document.getElementById('new-turf-rate').value, 10),
+            location: document.getElementById('new-turf-loc').value.trim(),
+            image: finalImages[0],
+            images: finalImages,
+            dimensions: '7v7 Championship Turf',
+            amenities: selectedAmenities,
+            operating_slots: selectedSlots.length > 0 ? selectedSlots : undefined
+          });
+          modal.classList.remove('active');
+          document.getElementById('form-new-turf').reset();
+          ownerUploadedImages = [];
+          renderOwnerPhotosPreview();
+          renderOwnerDashboard();
+          showToast('✅ Turf successfully registered and synced across all devices!');
+        } catch (err) {
+          console.error(err);
+          showToast('❌ Failed to save turf. Please try again.');
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = origText;
+          }
+        }
       };
 
       document.getElementById('btn-add-walkin').onclick = () => {

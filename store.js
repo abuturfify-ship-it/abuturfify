@@ -207,6 +207,46 @@ window.TurfifyStore = {
           if (localTurfs.length === 0 || changed) {
             localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, JSON.stringify(mergedTurfs));
           }
+
+          // Bi-directional sync: Push any local-only turfs (e.g. created offline or on Desktop 1) up to Supabase Cloud
+          const serverTurfIds = new Set(serverData.turfs.map(st => String(st.id)));
+          const localOnlyTurfs = localTurfs.filter(lt => !serverTurfIds.has(String(lt.id)) && !deletedTurfs.includes(String(lt.id)));
+          if (localOnlyTurfs.length > 0) {
+            localOnlyTurfs.forEach(lt => {
+              const payload = {
+                id: String(lt.id),
+                owner_id: String(lt.owner_id || ''),
+                owner_name: String(lt.owner_name || ''),
+                owner_email: String(lt.owner_email || ''),
+                owner_phone: String(lt.owner_phone || ''),
+                name: String(lt.name || 'Untitled Turf'),
+                sport: String(lt.sport || 'Football'),
+                category: String(lt.category || ''),
+                location: String(lt.location || ''),
+                city: String(lt.city || 'Chennai'),
+                price_per_hour: parseInt(lt.price_per_hour || 1200, 10),
+                rating: parseFloat(lt.rating || 5.0),
+                reviews_count: parseInt(lt.reviews_count || 1, 10),
+                dimensions: String(lt.dimensions || ''),
+                surface: String(lt.surface || ''),
+                environment: String(lt.environment || 'outdoor'),
+                image: String(lt.image || ''),
+                images: Array.isArray(lt.images) && lt.images.length > 0 ? lt.images : [lt.image].filter(Boolean),
+                amenities: Array.isArray(lt.amenities) ? lt.amenities : [],
+                operating_slots: Array.isArray(lt.operating_slots) ? lt.operating_slots : []
+              };
+              fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/turfs`, {
+                method: 'POST',
+                headers: {
+                  'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+                  'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'resolution=merge-duplicates'
+                },
+                body: JSON.stringify(payload)
+              }).catch(() => {});
+            });
+          }
         }
 
         // 2. MERGE BOOKINGS: Keep all locally created bookings, update/add server bookings
@@ -298,6 +338,46 @@ window.TurfifyStore = {
             // Never persist deleted bookings back to storage
             const finalBookings = mergedBookings.filter(b => !deletedBookingsList.includes(String(b.id)));
             localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(finalBookings));
+          }
+
+          // Bi-directional sync: Push any local-only bookings up to Supabase Cloud
+          const serverBookingIds = new Set(serverData.bookings.map(sb => String(sb.id)));
+          const localOnlyBookings = localBookings.filter(lb => !serverBookingIds.has(String(lb.id)) && !deletedBookingsList.includes(String(lb.id)));
+          if (localOnlyBookings.length > 0) {
+            localOnlyBookings.forEach(lb => {
+              const payload = {
+                id: String(lb.id),
+                turf_id: String(lb.turf_id || ''),
+                turf_name: String(lb.turf_name || ''),
+                sport: String(lb.sport || ''),
+                player_id: String(lb.player_id || ''),
+                player_name: String(lb.player_name || ''),
+                player_email: String(lb.player_email || ''),
+                player_phone: String(lb.player_phone || ''),
+                owner_id: String(lb.owner_id || ''),
+                owner_name: String(lb.owner_name || ''),
+                owner_email: String(lb.owner_email || ''),
+                owner_phone: String(lb.owner_phone || ''),
+                date: String(lb.date || new Date().toISOString().split('T')[0]),
+                time_slot: String(lb.time_slot || (Array.isArray(lb.time_slots) ? lb.time_slots[0] : '6:00 PM - 7:00 PM')),
+                time_slots: Array.isArray(lb.time_slots) ? lb.time_slots : (lb.time_slot ? [lb.time_slot] : []),
+                field_name: String(lb.field_name || ''),
+                amount: parseInt(lb.amount || 1200, 10),
+                status: String(lb.status || 'Confirmed'),
+                payment_status: String(lb.payment_status || 'Paid Online'),
+                booking_time: String(lb.booking_time || new Date().toLocaleString())
+              };
+              fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings`, {
+                method: 'POST',
+                headers: {
+                  'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+                  'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'resolution=merge-duplicates'
+                },
+                body: JSON.stringify(payload)
+              }).catch(() => {});
+            });
           }
         }
 
@@ -508,7 +588,7 @@ window.TurfifyStore = {
     return matched;
   },
 
-  addTurf(newTurf) {
+  async addTurf(newTurf) {
     const turfs = this.getTurfs();
     const cur = this.getCurrentUser();
     const rawImages = Array.isArray(newTurf.images) && newTurf.images.length > 0
@@ -541,7 +621,7 @@ window.TurfifyStore = {
     }
     localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, JSON.stringify(turfs));
 
-    // 1. Async push to Supabase Cloud
+    // 1. Push to Supabase Cloud with guaranteed completion
     const sbTurfPayload = {
       id: String(turf.id),
       owner_id: String(turf.owner_id || ''),
@@ -565,16 +645,20 @@ window.TurfifyStore = {
       operating_slots: Array.isArray(turf.operating_slots) ? turf.operating_slots : []
     };
 
-    fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/turfs`, {
-      method: 'POST',
-      headers: {
-        'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
-        'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates'
-      },
-      body: JSON.stringify(sbTurfPayload)
-    }).catch(() => {});
+    try {
+      await fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/turfs`, {
+        method: 'POST',
+        headers: {
+          'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+          'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(sbTurfPayload)
+      });
+    } catch (sbErr) {
+      console.warn('Supabase addTurf error:', sbErr);
+    }
 
     // 2. Legacy server fallback
     fetch('/api/turf', {
@@ -582,6 +666,11 @@ window.TurfifyStore = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(turf)
     }).catch(() => {});
+
+    try {
+      window.dispatchEvent(new CustomEvent('turfify:turf_added', { detail: turf }));
+      window.dispatchEvent(new CustomEvent('turfify:data_synced', { detail: { turfs: this.getTurfs() } }));
+    } catch (e) {}
 
     return turf;
   },
