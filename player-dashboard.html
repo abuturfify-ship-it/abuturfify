@@ -1516,7 +1516,8 @@
       const heroCard = document.querySelector('.hero-match-card');
       const upcoming = bookings.find(b => b.status === 'Confirmed');
       if (upcoming) {
-        document.getElementById('player-hero-turf').textContent = `${upcoming.turf_name}  Pitch (${upcoming.sport})`;
+        const turfLink = upcoming.turf_id ? `<a href="facility-details.html?id=${encodeURIComponent(upcoming.turf_id)}" style="color:inherit; text-decoration:underline;">${upcoming.turf_name}</a>` : upcoming.turf_name;
+        document.getElementById('player-hero-turf').innerHTML = `${turfLink} • Pitch (${upcoming.sport || 'Sports'})`;
         document.getElementById('player-hero-time').textContent = `${upcoming.date}, ${upcoming.time_slot}`;
       } else if (heroCard) {
         heroCard.style.background = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)';
@@ -1550,13 +1551,18 @@
         bookings.forEach(b => {
           const tr = document.createElement('tr');
           const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
+          const venueLink = b.turf_id ? `facility-details.html?id=${encodeURIComponent(b.turf_id)}` : '#';
           tr.innerHTML = `
-            <td><strong>${b.turf_name}</strong><br><span style="font-size:0.75rem; color:var(--slate-500);">${b.sport || 'Sports'}</span></td>
+            <td>
+              <strong><a href="${venueLink}" style="color:inherit; text-decoration:underline;" title="View venue details">${b.turf_name}</a></strong>
+              <br><span style="font-size:0.75rem; color:var(--slate-500);">${b.sport || 'Sports'}</span>
+            </td>
             <td>${b.date}<br><span style="font-size:0.75rem; color:var(--slate-500);">${b.time_slot}</span></td>
-            <td><strong>${b.amount}</strong></td>
+            <td><strong>₹${b.amount}</strong></td>
             <td><span style="font-size:0.8rem; color:var(--primary-green-dark); font-weight:600;">${b.payment_status}</span></td>
             <td><span class="status-pill ${statusClass}">${b.status}</span></td>
             <td>
+              <a href="${venueLink}" class="btn-mini-action" style="text-decoration:none; color:#047857; background:#ECFDF5; border-color:#A7F3D0; font-weight:700; margin-right:4px;" title="View venue page">Venue ↗</a>
               ${b.status === 'Confirmed' ?
                 `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626; cursor:pointer;">Cancel</button>` :
                 `<button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id || ''}')" style="cursor:pointer;">Rebook</button>`
@@ -1577,15 +1583,22 @@
         item.innerHTML = `
           <img src="${t.image}" alt="${t.name}" class="owner-turf-img">
           <div class="owner-turf-info" style="min-width:0; flex:1;">
-            <div class="owner-turf-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.name}</div>
+            <div class="owner-turf-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="color:inherit; text-decoration:none;">${t.name}</a>
+            </div>
             <div class="owner-turf-meta">
               <span>⭐ ${t.rating || "4.9"}</span>
               <span style="font-weight:700; color:#047857;">₹${t.price_per_hour}/hr</span>
             </div>
           </div>
-          <button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${t.id}')" style="background:#ECFDF5; color:#047857; font-weight:700; cursor:pointer; border:1.5px solid #6EE7B7; flex-shrink:0; white-space:nowrap; padding:7px 16px; border-radius:8px;">
-            Book
-          </button>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <a href="facility-details.html?id=${encodeURIComponent(t.id)}" class="btn-mini-action" style="text-decoration:none; color:#334155; background:#F1F5F9; border-color:#CBD5E1; font-weight:600; padding:7px 10px; border-radius:8px;">
+              Details
+            </a>
+            <button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${t.id}')" style="background:#ECFDF5; color:#047857; font-weight:700; cursor:pointer; border:1.5px solid #6EE7B7; flex-shrink:0; white-space:nowrap; padding:7px 14px; border-radius:8px;">
+              Book
+            </button>
+          </div>
         `;
         favList.appendChild(item);
       });

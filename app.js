@@ -366,6 +366,13 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity_label: '7v7 (14 Players)',
       surface: 'FIFA Pro 50mm Rubber Infill Artificial Turf',
       image: 'images/turf-arena.jpg',
+      images: [
+        'images/turf-arena.jpg',
+        'images/turf-kickoff.jpg',
+        'images/turf-playground.jpg',
+        'images/turf-hero-panorama.jpg',
+        'images/hero-clubhouse.jpg'
+      ],
       amenities: ['Floodlights', 'Parking', 'Changing Room', 'Free Wi-Fi', 'Drinking Water', 'Cafeteria'],
       times: ['morning', 'afternoon', 'evening', 'night'],
       is_instant: true,
@@ -389,6 +396,12 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity_label: '8v8 (16 Players)',
       surface: 'Championship Polyethylene Cricket Turf with Boundary Nets',
       image: 'images/turf-kickoff.jpg',
+      images: [
+        'images/turf-kickoff.jpg',
+        'images/turf-arena.jpg',
+        'images/about-hero-turf.jpg',
+        'images/turf-playground.jpg'
+      ],
       amenities: ['Floodlights', 'Parking', 'Cafeteria', 'Drinking Water'],
       times: ['morning', 'afternoon', 'evening', 'night'],
       is_instant: true,
@@ -412,6 +425,11 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity_label: 'Court (2-4 Players)',
       surface: 'BWF Certified 5-Layer Synthetic Wooden Core',
       image: 'images/turf-gameon.jpg',
+      images: [
+        'images/turf-gameon.jpg',
+        'images/about-player-boots.jpg',
+        'images/hero-patio-ref.jpg'
+      ],
       amenities: ['Changing Room', 'Parking', 'Free Wi-Fi', 'Drinking Water'],
       times: ['morning', 'afternoon', 'evening'],
       is_instant: true,
@@ -435,6 +453,10 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity_label: '11v11 Full Pitch (22 Players)',
       surface: 'Hybrid Natural Bermuda Turf with Drainage Trenching',
       image: 'images/turf-playground.jpg',
+      images: [
+        'images/turf-playground.jpg',
+        'images/turf-arena.jpg'
+      ],
       amenities: ['Floodlights', 'Parking', 'Cafeteria', 'Changing Room'],
       times: ['morning', 'evening', 'night'],
       is_instant: false,
@@ -458,6 +480,9 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity_label: 'Pro Tennis Court (2-4 Players)',
       surface: 'US Open Acrylic Hard Court Cushion Surface',
       image: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=800&auto=format&fit=crop&q=80',
+      images: [
+        'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=800&auto=format&fit=crop&q=80'
+      ],
       amenities: ['Floodlights', 'Parking', 'Changing Room', 'Cafeteria', 'Drinking Water'],
       times: ['morning', 'afternoon', 'evening'],
       is_instant: true,
@@ -481,6 +506,11 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity_label: '5v5 FIBA Court (10 Players)',
       surface: 'FIBA Standard Maple Hardwood Floor with Glass Backboards',
       image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop&q=80',
+      images: [
+        'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop&q=80',
+        'images/hero-clubhouse.jpg',
+        'images/turf-gameon.jpg'
+      ],
       amenities: ['Indoor', 'Floodlights', 'Changing Room', 'Free Wi-Fi', 'Drinking Water'],
       times: ['morning', 'afternoon', 'evening', 'night'],
       is_instant: true,
@@ -504,6 +534,13 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity_label: 'Panoramic Glass Padel Court (4 Players)',
       surface: 'World Padel Tour Certified Texturized Monofilament Turf',
       image: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&auto=format&fit=crop&q=80',
+      images: [
+        'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&auto=format&fit=crop&q=80',
+        'images/turf-arena.jpg',
+        'images/turf-kickoff.jpg',
+        'images/turf-playground.jpg',
+        'images/about-hero-turf.jpg'
+      ],
       amenities: ['Floodlights', 'Parking', 'Cafeteria', 'Changing Room', 'Free Wi-Fi'],
       times: ['morning', 'afternoon', 'evening', 'night'],
       is_instant: true,
@@ -527,6 +564,12 @@ document.addEventListener('DOMContentLoaded', () => {
       capacity_label: 'Wooden Cushion Court (2-4 Players)',
       surface: 'BWF Grade-1 Teakwood Flooring with Anti-Glare LED Fixtures',
       image: 'images/turf-gameon.jpg',
+      images: [
+        'images/turf-gameon.jpg',
+        'images/about-player-boots.jpg',
+        'images/turf-kickoff.jpg',
+        'images/hero-clubhouse.jpg'
+      ],
       amenities: ['Indoor', 'Changing Room', 'Parking', 'Drinking Water', 'Free Wi-Fi'],
       times: ['morning', 'afternoon', 'evening', 'night'],
       is_instant: true,
@@ -633,6 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
         capacity_label: t.dimensions || '7v7 Championship Turf',
         surface: 'Premium Synthetic Grass Playing Turf',
         image: t.image || 'images/turf-arena.jpg',
+        images: Array.isArray(t.images) && t.images.length > 0 ? t.images : (t.image ? [t.image] : ['images/turf-arena.jpg']),
         amenities: Array.isArray(t.amenities) ? t.amenities : ['Parking', 'Floodlights', 'Changing Room'],
         times: ['morning', 'afternoon', 'evening', 'night'],
         is_instant: true,
@@ -960,12 +1004,23 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // View Details buttons
+    // View Details buttons & card clicks -> Dedicated Facility Page
     document.querySelectorAll('.btn-card-details').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = btn.dataset.turfid;
-        openTurfDetailsModal(id);
+        window.location.href = 'facility-details.html?id=' + encodeURIComponent(id);
+      });
+    });
+
+    document.querySelectorAll('.turf-card-media, .turf-card-title').forEach(el => {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', (e) => {
+        const card = el.closest('.turf-listing-card');
+        const id = card?.dataset?.id;
+        if (id) {
+          window.location.href = 'facility-details.html?id=' + encodeURIComponent(id);
+        }
       });
     });
 

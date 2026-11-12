@@ -473,6 +473,11 @@ window.TurfifyStore = {
   addTurf(newTurf) {
     const turfs = this.getTurfs();
     const cur = this.getCurrentUser();
+    const rawImages = Array.isArray(newTurf.images) && newTurf.images.length > 0
+      ? newTurf.images
+      : (newTurf.image ? [newTurf.image] : ['images/turf-arena.jpg']);
+    const primaryImg = rawImages[0] || newTurf.image || 'images/turf-arena.jpg';
+
     const turf = {
       id: newTurf.id || ('turf-' + Date.now()),
       owner_id: cur?.id || newTurf.owner_id || 'owner-1',
@@ -483,8 +488,11 @@ window.TurfifyStore = {
       reviews_count: 1,
       available_today: 16,
       total_slots_day: 16,
-      image: newTurf.image || 'https://images.unsplash.com/photo-1529900245534-47fbf8c3f4be?w=800&auto=format&fit=crop&q=80',
-      ...newTurf
+      image: primaryImg,
+      images: rawImages,
+      ...newTurf,
+      image: primaryImg,
+      images: rawImages
     };
 
     const existingIdx = turfs.findIndex(t => t.id === turf.id);

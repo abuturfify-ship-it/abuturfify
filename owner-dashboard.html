@@ -1481,28 +1481,31 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Turf Photo</label>
-            <!-- Gallery / Device Upload -->
-            <div class="upload-drop-zone" id="upload-box-owner">
-              <input type="file" id="new-turf-file" accept="image/*" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <label class="form-label" style="margin-bottom:0;">Turf Photos Gallery</label>
+              <span id="owner-photos-count-badge" style="font-size:0.75rem; font-weight:700; color:#047857; background:#ECFDF5; padding:2px 8px; border-radius:999px;">0 Photos</span>
+            </div>
+            <p style="font-size:0.75rem; color:#64748B; margin-top:0; margin-bottom:8px;">Add 1, 2, 3, 5+ photos. The first photo will be used as the cover banner.</p>
+            
+            <!-- Multi-Image File Picker Drop Zone -->
+            <div class="upload-drop-zone" id="upload-box-owner" style="position:relative; cursor:pointer;">
+              <input type="file" id="new-turf-file" multiple accept="image/*" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; z-index:2;">
               <div id="upload-prompt-owner">
-                <div style="font-size: 1.4rem; margin-bottom: 2px;"></div>
-                <div style="font-weight: 600; font-size: 0.85rem; color: #334155;">Click to choose photo from Gallery / Device</div>
-                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 2px;">PNG, JPG, WEBP (Instant preview)</div>
-              </div>
-              <div id="upload-preview-wrap-owner" style="display:none; align-items:center; justify-content:center; gap:12px;">
-                <img id="upload-preview-owner" src="" alt="Preview" style="max-height: 75px; max-width: 140px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0;">
-                <div style="text-align: left;">
-                  <div id="upload-filename-owner" style="font-size:0.8rem; font-weight:700; color:#047857;">Gallery Photo Loaded </div>
-                  <div style="font-size:0.72rem; color:#64748B;">Click again to change</div>
-                </div>
+                <div style="font-size: 1.6rem; margin-bottom: 2px;">📁</div>
+                <div style="font-weight: 700; font-size: 0.88rem; color: #1E293B;">Click or Drag to Upload Photos (Multi-Select)</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 2px;">PNG, JPG, WEBP • Select 1 to 5+ photos from device</div>
               </div>
             </div>
 
-            <!-- Separately: Photo URL -->
-            <div style="margin-top: 10px;">
-              <label class="form-label" style="font-size: 0.78rem; color: var(--slate-500); margin-bottom: 3px;">Or Enter Photo URL Separately (Optional)</label>
-              <input type="url" class="form-control" id="new-turf-url" placeholder="https://images.unsplash.com/... or paste image link">
+            <!-- Live Multi-Photo Thumbnails Strip -->
+            <div id="owner-photos-preview-strip" style="display:none; margin-top:10px; gap:8px; flex-wrap:wrap;">
+              <!-- Thumbnails rendered dynamically -->
+            </div>
+
+            <!-- Separately: Add Photo via URL -->
+            <div style="margin-top: 12px; display:flex; gap:8px;">
+              <input type="url" class="form-control" id="new-turf-url" placeholder="Or paste image URL (https://...)" style="flex:1;">
+              <button type="button" id="btn-add-url-photo" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-weight:700; font-size:0.8rem; padding:0 14px; border-radius:8px; cursor:pointer; white-space:nowrap;">+ Add URL</button>
             </div>
           </div>
           <button type="submit" class="btn-modal-action" style="margin-top: 10px; background: #EA580C;">
@@ -1787,8 +1790,10 @@
               <div class="turf-card-location"> ${t.location || 'Tamil Nadu'}</div>
               <div class="turf-card-badges-row">
                 <span class="turf-card-pill sport"> ${t.sport}</span>
-                <span class="turf-card-pill rate">${t.price_per_hour}/hr</span>
+                <span class="turf-card-pill rate">₹${t.price_per_hour}/hr</span>
                 <span class="turf-card-pill slots"> ${slotsCount} Slots</span>
+                <span class="turf-card-pill" style="background:#F1F5F9; color:#475569;">📷 ${(t.images && t.images.length) || 1} Photos</span>
+                <a href="facility-details.html?id=${encodeURIComponent(t.id)}" target="_blank" class="turf-card-pill" style="text-decoration:none; background:#EFF6FF; color:#1D4ED8; font-weight:700;" onclick="event.stopPropagation()">View Page ↗</a>
               </div>
               ${amenitiesList.length ? `
                 <div class="turf-card-amenities-row" id="amenities-row-${t.id}">
@@ -2128,25 +2133,70 @@
       document.getElementById('btn-add-turf-quick')?.addEventListener('click', () => modal?.classList.add('active'));
       document.getElementById('btn-close-add-turf')?.addEventListener('click', () => modal?.classList.remove('active'));
 
-      // File upload handler for gallery photo
-      let uploadedImageData = '';
+      // Multi-image upload state for owner
+      let ownerUploadedImages = [];
+
+      function renderOwnerPhotosPreview() {
+        const strip = document.getElementById('owner-photos-preview-strip');
+        const countBadge = document.getElementById('owner-photos-count-badge');
+        if (!strip) return;
+
+        if (countBadge) {
+          countBadge.textContent = `${ownerUploadedImages.length} Photo${ownerUploadedImages.length === 1 ? '' : 's'}`;
+        }
+
+        if (ownerUploadedImages.length === 0) {
+          strip.style.display = 'none';
+          strip.innerHTML = '';
+          return;
+        }
+
+        strip.style.display = 'flex';
+        strip.innerHTML = ownerUploadedImages.map((imgSrc, idx) => `
+          <div style="position:relative; width:80px; height:60px; border-radius:8px; overflow:hidden; border:2px solid ${idx === 0 ? '#10B981' : '#CBD5E1'}; box-shadow:0 2px 6px rgba(0,0,0,0.06); flex-shrink:0;">
+            <img src="${imgSrc}" style="width:100%; height:100%; object-fit:cover;" alt="Photo ${idx + 1}">
+            ${idx === 0 ? '<span style="position:absolute; bottom:0; left:0; right:0; background:#10B981; color:#FFFFFF; font-size:0.58rem; font-weight:800; text-align:center; padding:1px 0;">COVER</span>' : ''}
+            <button type="button" onclick="window.removeOwnerPhoto(${idx})" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,0.7); color:#FFFFFF; border:none; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1;" title="Remove Photo">✕</button>
+          </div>
+        `).join('');
+      }
+
+      window.removeOwnerPhoto = function(idx) {
+        ownerUploadedImages.splice(idx, 1);
+        renderOwnerPhotosPreview();
+      };
+
       const fileInput = document.getElementById('new-turf-file');
       if (fileInput) {
         fileInput.addEventListener('change', (e) => {
-          const file = e.target.files[0];
-          if (file) {
+          const files = Array.from(e.target.files || []);
+          if (!files.length) return;
+
+          let loaded = 0;
+          files.forEach(file => {
             const reader = new FileReader();
             reader.onload = (ev) => {
-              uploadedImageData = ev.target.result;
-              document.getElementById('upload-preview-owner').src = uploadedImageData;
-              document.getElementById('upload-preview-wrap-owner').style.display = 'flex';
-              document.getElementById('upload-prompt-owner').style.display = 'none';
-              document.getElementById('upload-filename-owner').textContent = (file.name || 'Photo') + ' ';
+              ownerUploadedImages.push(ev.target.result);
+              loaded++;
+              if (loaded === files.length) {
+                renderOwnerPhotosPreview();
+              }
             };
             reader.readAsDataURL(file);
-          }
+          });
         });
       }
+
+      // Add URL Photo handler
+      document.getElementById('btn-add-url-photo')?.addEventListener('click', () => {
+        const urlInput = document.getElementById('new-turf-url');
+        const val = urlInput?.value?.trim();
+        if (val) {
+          ownerUploadedImages.push(val);
+          urlInput.value = '';
+          renderOwnerPhotosPreview();
+        }
+      });
 
       // Amenity chips toggle
       document.querySelectorAll('#amenities-selector .amenity-toggle-btn').forEach(btn => {
@@ -2246,16 +2296,19 @@
         const selectedSlots = Array.from(document.querySelectorAll('#new-turf-slots-grid .amenity-toggle-btn.selected'))
           .map(btn => btn.dataset.slot);
 
-        // Photo: gallery upload has priority, else separate URL, else default fallback
+        // Photos: multi-uploaded images array has priority, else URL fallback, else default
         const urlInput = document.getElementById('new-turf-url')?.value?.trim();
-        const finalImage = uploadedImageData || urlInput || 'images/turf-arena.jpg';
+        const finalImages = ownerUploadedImages.length > 0
+          ? ownerUploadedImages
+          : (urlInput ? [urlInput] : ['images/turf-arena.jpg']);
 
         window.TurfifyStore.addTurf({
           name: document.getElementById('new-turf-name').value.trim(),
           sport: document.getElementById('new-turf-sport').value,
           price_per_hour: parseInt(document.getElementById('new-turf-rate').value, 10),
           location: document.getElementById('new-turf-loc').value.trim(),
-          image: finalImage,
+          image: finalImages[0],
+          images: finalImages,
           dimensions: '7v7 Championship Turf',
           amenities: selectedAmenities,
           operating_slots: selectedSlots.length > 0 ? selectedSlots : undefined
