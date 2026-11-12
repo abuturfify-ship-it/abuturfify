@@ -965,18 +965,33 @@ function initModals() {
   let uploadedAdminPhoto = '';
   const adminFileInput = document.getElementById('form-turf-file');
   if (adminFileInput) {
-    adminFileInput.addEventListener('change', (e) => {
+    adminFileInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          uploadedAdminPhoto = ev.target.result;
-          document.getElementById('upload-preview-admin').src = uploadedAdminPhoto;
-          document.getElementById('upload-preview-wrap-admin').style.display = 'flex';
-          document.getElementById('upload-prompt-admin').style.display = 'none';
-          document.getElementById('upload-filename-admin').textContent = (file.name || 'Photo') + ' ✓';
-        };
-        reader.readAsDataURL(file);
+        const compressed = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              let width = img.width, height = img.height;
+              if (width > 800) { height = Math.round((height * 800) / width); width = 800; }
+              canvas.width = width; canvas.height = height;
+              canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.onerror = () => resolve(ev.target.result);
+            img.src = ev.target.result;
+          };
+          reader.onerror = () => resolve('');
+          reader.readAsDataURL(file);
+        });
+
+        uploadedAdminPhoto = compressed;
+        document.getElementById('upload-preview-admin').src = uploadedAdminPhoto;
+        document.getElementById('upload-preview-wrap-admin').style.display = 'flex';
+        document.getElementById('upload-prompt-admin').style.display = 'none';
+        document.getElementById('upload-filename-admin').textContent = (file.name || 'Photo') + ' ✓';
       }
     });
   }

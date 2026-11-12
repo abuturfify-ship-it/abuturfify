@@ -580,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // City-to-area keywords for high accuracy location matching
   const CITY_AREA_MAP = {
-    chennai: ['chennai', 'pallavaram', 'tambaram', 'velachery', 'anna nagar', 'adyar', 'porur', 'perambur', 'sholinganallur', 'chrompet', 'chromepet', 'guduvanchery', 't.nagar', 'tnagar', 'west mambalam', 'mylapore', 'nungambakkam', 'kilpauk', 'kodambakkam'],
+    chennai: ['chennai', 'pallavaram', 'tambaram', 'velachery', 'anna nagar', 'adyar', 'porur', 'perambur', 'sholinganallur', 'chrompet', 'chromepet', 'guduvanchery', 't.nagar', 'tnagar', 'west mambalam', 'mylapore', 'nungambakkam', 'kilpauk', 'kodambakkam', 'chengalpattu', 'kanchipuram', 'omr', 'ecr', 'avadi', 'ambattur', 'redhills', 'poonamallee'],
     coimbatore: ['coimbatore', 'rs puram', 'gandhipuram', 'saibaba colony', 'peelamedu', 'saravanampatti'],
     madurai: ['madurai', 'kk nagar', 'anna nagar madurai', 'koodal nagar'],
     trichy: ['trichy', 'tiruchirappalli', 'thillai nagar', 'srirangam', 'ariyamangalam'],
@@ -658,6 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (locLower.includes('madurai')) city = 'madurai';
       else if (locLower.includes('trichy') || locLower.includes('tiruchirappalli')) city = 'trichy';
       else if (locLower.includes('salem')) city = 'salem';
+      else if (locLower.includes('chengalpattu') || locLower.includes('kanchipuram')) city = 'chennai';
 
       return {
         id: String(t.id),
