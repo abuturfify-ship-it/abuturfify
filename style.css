@@ -1052,14 +1052,21 @@ button {
 /* Main Layout Wrapper */
 .explore-layout-wrapper {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 280px minmax(0, 1fr);
   gap: 28px;
   align-items: flex-start;
   position: relative;
+  width: 100%;
 }
 
-/* LEFT FILTER SIDEBAR */
+/* Drawer overlay is hidden on desktop */
+.explore-drawer-overlay {
+  display: none;
+}
+
+/* LEFT FILTER SIDEBAR (Column 1) */
 .explore-filter-sidebar {
+  grid-column: 1;
   background: #FFFFFF;
   border: 1px solid #E9EEE9;
   border-radius: 18px;
@@ -1423,8 +1430,9 @@ button {
   cursor: pointer;
 }
 
-/* RESULTS AREA */
+/* RESULTS AREA (Column 2) */
 .explore-results-area {
+  grid-column: 2;
   min-width: 0;
   width: 100%;
 }
@@ -1432,8 +1440,9 @@ button {
 /* 3-column cards grid */
 .turfs-cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
+  width: 100%;
 }
 
 /* ==========================================================================

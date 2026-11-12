@@ -733,7 +733,7 @@
             <div class="filter-group-block">
               <div class="filter-heading-between">
                 <label class="filter-group-heading" style="margin-bottom:0;">Max Price</label>
-                <span class="price-slider-label" id="price-slider-display">₹2,500/hr</span>
+                <span class="price-slider-label" id="price-slider-display">₹3,000/hr</span>
               </div>
               <input type="range" id="filter-price-range" min="500" max="3000" step="100" value="3000" class="filter-range-slider">
               <div class="range-labels-row">
@@ -820,9 +820,6 @@
           </div>
         </aside>
 
-        <!-- Mobile Drawer Backdrop Overlay -->
-        <div class="explore-drawer-overlay" id="explore-drawer-overlay"></div>
-
         <!-- RIGHT AREA: FACILITY CARDS GRID -->
         <main class="explore-results-area" id="explore-results-area">
           <div class="turfs-cards-grid" id="turfs-container">
@@ -840,6 +837,9 @@
           </div>
         </main>
       </div>
+
+      <!-- Mobile Drawer Backdrop Overlay (MUST BE OUTSIDE THE GRID) -->
+      <div class="explore-drawer-overlay" id="explore-drawer-overlay"></div>
 
     </div>
   </section>
