@@ -670,10 +670,31 @@ document.addEventListener('DOMContentLoaded', () => {
       filtered.sort((a, b) => b.rating - a.rating);
     }
 
-    // 3. Update Results Count Badge
+    // 3. Update Results Count Badge & Active Filters Count
     const countBadge = document.getElementById('turf-results-count-badge');
     if (countBadge) {
       countBadge.textContent = `${filtered.length} Facilities Available`;
+    }
+
+    // Calculate active filter count
+    let activeCount = 0;
+    if (exploreFilters.sport !== 'all') activeCount++;
+    if (exploreFilters.city !== 'all') activeCount++;
+    if (exploreFilters.env !== 'all') activeCount++;
+    if (exploreFilters.maxPrice < 3000) activeCount++;
+    if (exploreFilters.amenities.length > 0) activeCount += exploreFilters.amenities.length;
+    if (exploreFilters.timeSlot) activeCount++;
+    if (exploreFilters.minRating > 0) activeCount++;
+    if (exploreFilters.capacity !== 'all') activeCount++;
+    if (exploreFilters.quickTag) activeCount++;
+
+    const filterCountLabel = document.getElementById('active-filters-count-label');
+    if (filterCountLabel) {
+      filterCountLabel.textContent = `${activeCount} active`;
+    }
+    const filterDot = document.getElementById('filter-active-dot');
+    if (filterDot) {
+      filterDot.style.display = activeCount > 0 ? 'inline-block' : 'none';
     }
 
     // 4. Update Empty State visibility
@@ -696,21 +717,22 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="turf-media">
             <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}" loading="lazy">
             <div class="card-loc-pill">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span>${t.location || 'Tamil Nadu'}</span>
             </div>
             <button type="button" class="card-fav-btn ${isFav ? 'is-fav' : ''}" data-turfid="${t.id}" aria-label="Toggle Favourite">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             </button>
-            ${t.is_instant ? `<div class="card-instant-tag">⚡ Instant Confirm</div>` : ''}
+            ${t.is_instant ? `<div class="card-instant-tag">⚡ Instant</div>` : ''}
+            <div class="card-sport-badge">${t.sport || 'Sports'}</div>
           </div>
 
           <div class="turf-details-body">
             <div class="card-top-rate-row">
-              <div class="card-price-text">₹${t.price_per_hour} <span class="card-price-unit">/hr</span></div>
+              <div class="card-price-text">₹${t.price_per_hour.toLocaleString()} <span class="card-price-unit">/hr</span></div>
               <div class="card-rating-badge">
                 <span class="star-icon">★</span>
-                <span>${t.rating || '4.9'} (${t.reviews_count || '85+'})</span>
+                <span>${t.rating || '4.8'} (${t.reviews_count || '80+'})</span>
               </div>
             </div>
 
@@ -718,16 +740,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="card-spec-line">${t.surface || 'FIFA Approved Artificial Grass'} • ${t.capacity_label || 'Standard Turf'}</div>
 
             <div class="card-micro-amenities-row">
-              <span class="micro-amenity-chip">${t.environment === 'indoor' ? '🏠 Indoor' : '🌳 Outdoor'}</span>
-              ${microAmenities.map(a => `<span class="micro-amenity-chip">✓ ${a}</span>`).join('')}
+              <span class="micro-amenity-chip">${t.environment === 'indoor' ? 'Indoor' : 'Outdoor'}</span>
+              ${microAmenities.map(a => `<span class="micro-amenity-chip">${a}</span>`).join('')}
             </div>
 
             <div class="turf-card-actions-row">
-              <button class="btn-card-book" data-turfid="${t.id}" data-turf="${t.name}" data-rate="${t.price_per_hour}" data-loc="${t.location || 'Chennai, Tamil Nadu'}" data-sport="${t.sport || 'Football'}">
-                Book Now
-              </button>
-              <button class="btn-card-details" data-turfid="${t.id}">
+              <button type="button" class="btn-card-details" data-turfid="${t.id}">
                 View Details
+              </button>
+              <button type="button" class="btn-card-book" data-turfid="${t.id}" data-turf="${t.name}" data-rate="${t.price_per_hour}" data-loc="${t.location || 'Chennai, Tamil Nadu'}" data-sport="${t.sport || 'Football'}">
+                Book Now
               </button>
             </div>
           </div>

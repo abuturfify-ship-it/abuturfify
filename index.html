@@ -627,47 +627,51 @@
       <!-- Top Discovery Header & Toolbar -->
       <div class="explore-header-toolbar">
         <div class="explore-heading-group">
-          <div class="heading-green-pill-dash"></div>
+          <div class="explore-eyebrow-pill">
+            <span class="live-dot-green"></span>
+            <span>VERIFIED SPORTS ARENAS</span>
+          </div>
           <div class="explore-heading-title-row">
             <h2 class="section-main-heading">Explore Sports Facilities</h2>
-            <span class="explore-results-badge" id="turf-results-count-badge">Loading verified venues...</span>
+            <span class="explore-results-badge" id="turf-results-count-badge">Loading venues...</span>
           </div>
-          <p class="explore-subtitle">Compare sports facilities, check live slots, and book verified arenas across Tamil Nadu</p>
+          <p class="explore-subtitle">Compare verified arenas, check real-time availability, and book your game across Tamil Nadu.</p>
         </div>
 
         <div class="explore-toolbar-actions">
           <!-- Mobile Filters Trigger Button -->
           <button type="button" class="btn-mobile-filter-trigger" id="btn-open-mobile-filters" aria-label="Open Filters">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
             <span>Filters</span>
             <span class="filter-count-dot" id="filter-active-dot" style="display:none;"></span>
           </button>
 
           <!-- Sorting Dropdown -->
           <div class="explore-sort-wrapper">
-            <label for="explore-sort-select" class="sort-label">Sort:</label>
-            <select id="explore-sort-select" class="explore-sort-dropdown">
-              <option value="relevance">Relevance</option>
+            <span class="sort-label">Sort by:</span>
+            <select id="explore-sort-select" class="explore-sort-dropdown" aria-label="Sort facilities">
+              <option value="relevance">Recommended</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
               <option value="rating-desc">Rating: Highest First</option>
             </select>
+            <svg class="sort-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
         </div>
       </div>
 
-      <!-- Quick Category Sub-tabs (SportMatch Row: All, Most Popular, Fastest Confirm, Favourites) -->
+      <!-- Quick Category Sub-tabs (SportMatch Style) -->
       <div class="explore-subtabs-row">
         <div class="subtabs-left-scroll">
           <button type="button" class="explore-tab-pill active" data-tab="all">All Facilities</button>
-          <button type="button" class="explore-tab-pill" data-tab="popular">⭐ Most Popular</button>
-          <button type="button" class="explore-tab-pill" data-tab="instant">⚡ Fastest Confirm</button>
-          <button type="button" class="explore-tab-pill" data-tab="favourites">❤️ Favourites (<span id="fav-count-pill">0</span>)</button>
+          <button type="button" class="explore-tab-pill" data-tab="popular">Most Popular</button>
+          <button type="button" class="explore-tab-pill" data-tab="instant">Instant Confirm</button>
+          <button type="button" class="explore-tab-pill" data-tab="favourites">Favourites (<span id="fav-count-pill">0</span>)</button>
         </div>
         <div class="subtabs-quick-tags">
-          <button type="button" class="quick-chip-toggle" data-quick="indoor">🏠 Indoor</button>
-          <button type="button" class="quick-chip-toggle" data-quick="outdoor">🌳 Outdoor</button>
-          <button type="button" class="quick-chip-toggle" data-quick="under1200">₹ Under ₹1,200</button>
+          <button type="button" class="quick-chip-toggle" data-quick="indoor">Indoor</button>
+          <button type="button" class="quick-chip-toggle" data-quick="outdoor">Outdoor</button>
+          <button type="button" class="quick-chip-toggle" data-quick="under1200">Under ₹1,200</button>
         </div>
       </div>
 
@@ -681,6 +685,7 @@
               <h3 class="filter-sidebar-title">Filters</h3>
               <span class="filter-count-sub" id="active-filters-count-label">0 active</span>
             </div>
+            <button type="button" class="btn-filter-reset-link" id="btn-reset-filters">Clear all</button>
             <button type="button" class="btn-close-filter-drawer" id="btn-close-filter-drawer" aria-label="Close Filters">✕</button>
           </div>
 
@@ -690,25 +695,28 @@
               <label class="filter-group-heading">Sport</label>
               <div class="filter-chips-grid">
                 <button type="button" class="filter-chip-btn active" data-sport="all">All Sports</button>
-                <button type="button" class="filter-chip-btn" data-sport="football">⚽ Football</button>
-                <button type="button" class="filter-chip-btn" data-sport="cricket">🏏 Box Cricket</button>
-                <button type="button" class="filter-chip-btn" data-sport="badminton">🏸 Badminton</button>
-                <button type="button" class="filter-chip-btn" data-sport="tennis">🎾 Tennis</button>
-                <button type="button" class="filter-chip-btn" data-sport="basketball">🏀 Basketball</button>
+                <button type="button" class="filter-chip-btn" data-sport="football">Football</button>
+                <button type="button" class="filter-chip-btn" data-sport="cricket">Box Cricket</button>
+                <button type="button" class="filter-chip-btn" data-sport="badminton">Badminton</button>
+                <button type="button" class="filter-chip-btn" data-sport="tennis">Tennis</button>
+                <button type="button" class="filter-chip-btn" data-sport="basketball">Basketball</button>
               </div>
             </div>
 
             <!-- 2. Location & Distance -->
             <div class="filter-group-block">
               <label class="filter-group-heading" for="filter-city-select">Location / City</label>
-              <select id="filter-city-select" class="filter-select-input">
-                <option value="all">All Tamil Nadu Cities</option>
-                <option value="chennai">Chennai (Anna Nagar, Pallavaram, Nungambakkam)</option>
-                <option value="coimbatore">Coimbatore (RS Puram, Peelamedu)</option>
-                <option value="madurai">Madurai (KK Nagar)</option>
-                <option value="trichy">Tiruchirappalli (Thillai Nagar)</option>
-                <option value="salem">Salem (Fairlands)</option>
-              </select>
+              <div class="filter-select-wrapper">
+                <svg class="select-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <select id="filter-city-select" class="filter-select-input">
+                  <option value="all">All Tamil Nadu Cities</option>
+                  <option value="chennai">Chennai (Anna Nagar, Pallavaram)</option>
+                  <option value="coimbatore">Coimbatore (RS Puram)</option>
+                  <option value="madurai">Madurai (KK Nagar)</option>
+                  <option value="trichy">Tiruchirappalli (Thillai Nagar)</option>
+                  <option value="salem">Salem (Fairlands)</option>
+                </select>
+              </div>
             </div>
 
             <!-- 3. Indoor / Outdoor Environment -->
@@ -716,15 +724,15 @@
               <label class="filter-group-heading">Environment</label>
               <div class="filter-segmented-control">
                 <button type="button" class="segment-btn active" data-env="all">All</button>
-                <button type="button" class="segment-btn" data-env="indoor">🏠 Indoor</button>
-                <button type="button" class="segment-btn" data-env="outdoor">🌳 Outdoor</button>
+                <button type="button" class="segment-btn" data-env="indoor">Indoor</button>
+                <button type="button" class="segment-btn" data-env="outdoor">Outdoor</button>
               </div>
             </div>
 
             <!-- 4. Price Range Slider -->
             <div class="filter-group-block">
               <div class="filter-heading-between">
-                <label class="filter-group-heading" style="margin-bottom:0;">Max Price per Hour</label>
+                <label class="filter-group-heading" style="margin-bottom:0;">Max Price</label>
                 <span class="price-slider-label" id="price-slider-display">₹2,500/hr</span>
               </div>
               <input type="range" id="filter-price-range" min="500" max="3000" step="100" value="3000" class="filter-range-slider">
@@ -737,79 +745,78 @@
 
             <!-- 5. Facility Amenities -->
             <div class="filter-group-block">
-              <label class="filter-group-heading">Facility Amenities</label>
+              <label class="filter-group-heading">Amenities</label>
               <div class="filter-checkbox-list">
                 <label class="filter-checkbox-item">
                   <input type="checkbox" value="Floodlights" class="filter-amenity-cb">
-                  <span class="custom-cb-box"></span>
-                  <span class="cb-label-text">💡 Floodlights</span>
+                  <span class="custom-cb-check"></span>
+                  <span class="cb-label-text">Floodlights</span>
                 </label>
                 <label class="filter-checkbox-item">
                   <input type="checkbox" value="Parking" class="filter-amenity-cb">
-                  <span class="custom-cb-box"></span>
-                  <span class="cb-label-text">🅿️ Parking Space</span>
+                  <span class="custom-cb-check"></span>
+                  <span class="cb-label-text">Parking Space</span>
                 </label>
                 <label class="filter-checkbox-item">
                   <input type="checkbox" value="Changing Room" class="filter-amenity-cb">
-                  <span class="custom-cb-box"></span>
-                  <span class="cb-label-text">🚿 Changing Room</span>
+                  <span class="custom-cb-check"></span>
+                  <span class="cb-label-text">Changing Room</span>
                 </label>
                 <label class="filter-checkbox-item">
                   <input type="checkbox" value="Cafeteria" class="filter-amenity-cb">
-                  <span class="custom-cb-box"></span>
-                  <span class="cb-label-text">☕ Cafeteria / Drinks</span>
+                  <span class="custom-cb-check"></span>
+                  <span class="cb-label-text">Cafeteria / Drinks</span>
                 </label>
                 <label class="filter-checkbox-item">
                   <input type="checkbox" value="Drinking Water" class="filter-amenity-cb">
-                  <span class="custom-cb-box"></span>
-                  <span class="cb-label-text">💧 Drinking Water</span>
+                  <span class="custom-cb-check"></span>
+                  <span class="cb-label-text">Drinking Water</span>
                 </label>
                 <label class="filter-checkbox-item">
                   <input type="checkbox" value="Free Wi-Fi" class="filter-amenity-cb">
-                  <span class="custom-cb-box"></span>
-                  <span class="cb-label-text">📶 Free Wi-Fi</span>
+                  <span class="custom-cb-check"></span>
+                  <span class="cb-label-text">Free Wi-Fi</span>
                 </label>
               </div>
             </div>
 
             <!-- 6. Available Time Slots -->
             <div class="filter-group-block">
-              <label class="filter-group-heading">Available Time Slots</label>
+              <label class="filter-group-heading">Time Slots</label>
               <div class="filter-times-grid">
-                <button type="button" class="filter-time-btn" data-time="morning">🌅 Morning (6-11 AM)</button>
-                <button type="button" class="filter-time-btn" data-time="afternoon">☀️ Afternoon (12-4 PM)</button>
-                <button type="button" class="filter-time-btn" data-time="evening">🌙 Evening (5-11 PM)</button>
+                <button type="button" class="filter-time-btn" data-time="morning">Morning (6 AM – 11 AM)</button>
+                <button type="button" class="filter-time-btn" data-time="afternoon">Afternoon (12 PM – 4 PM)</button>
+                <button type="button" class="filter-time-btn" data-time="evening">Evening & Night (5 PM – 11 PM)</button>
               </div>
             </div>
 
             <!-- 7. Rating Filter -->
             <div class="filter-group-block">
-              <label class="filter-group-heading">Minimum Rating</label>
+              <label class="filter-group-heading">Rating</label>
               <div class="filter-rating-options">
                 <button type="button" class="rating-filter-pill active" data-rating="0">Any</button>
-                <button type="button" class="rating-filter-pill" data-rating="4.0">★ 4.0+</button>
-                <button type="button" class="rating-filter-pill" data-rating="4.5">★ 4.5+</button>
-                <button type="button" class="rating-filter-pill" data-rating="4.8">★ 4.8+ Top</button>
+                <button type="button" class="rating-filter-pill" data-rating="4.0">4.0+</button>
+                <button type="button" class="rating-filter-pill" data-rating="4.5">4.5+</button>
+                <button type="button" class="rating-filter-pill" data-rating="4.8">4.8+</button>
               </div>
             </div>
 
             <!-- 8. Capacity / Pitch Size -->
             <div class="filter-group-block">
-              <label class="filter-group-heading">Playing Capacity / Size</label>
+              <label class="filter-group-heading">Capacity / Size</label>
               <div class="filter-capacity-pills">
                 <button type="button" class="capacity-pill-btn active" data-cap="all">All</button>
-                <button type="button" class="capacity-pill-btn" data-cap="court">Court (2-4)</button>
-                <button type="button" class="capacity-pill-btn" data-cap="5v5">5v5 (10p)</button>
-                <button type="button" class="capacity-pill-btn" data-cap="7v7">7v7 (14p)</button>
-                <button type="button" class="capacity-pill-btn" data-cap="11v11">11v11 (Full)</button>
+                <button type="button" class="capacity-pill-btn" data-cap="court">Court</button>
+                <button type="button" class="capacity-pill-btn" data-cap="5v5">5v5</button>
+                <button type="button" class="capacity-pill-btn" data-cap="7v7">7v7</button>
+                <button type="button" class="capacity-pill-btn" data-cap="11v11">11v11</button>
               </div>
             </div>
           </div>
 
-          <!-- Filter Footer Actions -->
-          <div class="filter-sidebar-footer">
-            <button type="button" class="btn-filter-reset" id="btn-reset-filters">Reset All Filters</button>
-            <button type="button" class="btn-filter-apply mobile-only" id="btn-apply-filters-mobile">Show Results</button>
+          <!-- Filter Footer Actions (Mobile drawer) -->
+          <div class="filter-sidebar-footer mobile-only">
+            <button type="button" class="btn-filter-apply" id="btn-apply-filters-mobile">Show Results</button>
           </div>
         </aside>
 
@@ -824,10 +831,12 @@
           
           <!-- Empty state fallback (hidden by default) -->
           <div class="explore-empty-state" id="explore-empty-state" style="display: none;">
-            <div class="empty-state-icon">🏟️</div>
-            <h3 class="empty-state-title">No Facilities Found</h3>
-            <p class="empty-state-desc">Try clearing some filters or searching for another city or sport.</p>
-            <button type="button" class="btn-empty-reset" id="btn-empty-reset-action">Reset All Filters</button>
+            <div class="empty-state-icon">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#164C38" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+            </div>
+            <h3 class="empty-state-title">No matching venues found</h3>
+            <p class="empty-state-desc">Try clearing some filters or searching for another city or sport category.</p>
+            <button type="button" class="btn-empty-reset" id="btn-empty-reset-action">Clear All Filters</button>
           </div>
         </main>
       </div>
