@@ -1738,6 +1738,10 @@ button {
   transition: all 0.18s ease;
   white-space: nowrap;
   text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-card-details:hover {

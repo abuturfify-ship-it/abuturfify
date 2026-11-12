@@ -823,18 +823,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return `
         <div class="turf-listing-card" data-turfid="${t.id}" data-lat="${t.lat}" data-lng="${t.lng}">
-          <div class="turf-media">
+          <a href="facility-details.html?id=${encodeURIComponent(t.id)}" class="turf-media" style="text-decoration:none; display:block;">
             <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}" loading="lazy">
             <div class="card-loc-pill">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span>${t.location || 'Tamil Nadu'}</span>
             </div>
-            <button type="button" class="card-fav-btn ${isFav ? 'is-fav' : ''}" data-turfid="${t.id}" aria-label="Toggle Favourite">
+            <button type="button" class="card-fav-btn ${isFav ? 'is-fav' : ''}" data-turfid="${t.id}" aria-label="Toggle Favourite" onclick="event.preventDefault(); event.stopPropagation();">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             </button>
             ${t.is_instant ? `<div class="card-instant-tag">⚡ Instant</div>` : ''}
             <div class="card-sport-badge">${t.sport || 'Sports'}</div>
-          </div>
+          </a>
 
           <div class="turf-details-body">
             <div class="card-top-rate-row">
@@ -845,7 +845,9 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
 
-            <h3 class="turf-card-title">${t.name}</h3>
+            <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="text-decoration:none; color:inherit;">
+              <h3 class="turf-card-title">${t.name}</h3>
+            </a>
             <div class="card-spec-line">${t.surface || 'FIFA Approved Artificial Grass'} • ${t.capacity_label || 'Standard Turf'}</div>
 
             <div class="card-micro-amenities-row">
@@ -854,9 +856,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="turf-card-actions-row">
-              <button type="button" class="btn-card-details" data-turfid="${t.id}">
+              <a href="facility-details.html?id=${encodeURIComponent(t.id)}" class="btn-card-details">
                 View Details
-              </button>
+              </a>
               <button type="button" class="btn-card-book" data-turfid="${t.id}" data-turf="${t.name}" data-rate="${t.price_per_hour}" data-loc="${t.location || 'Chennai, Tamil Nadu'}" data-sport="${t.sport || 'Football'}">
                 Book Now
               </button>
@@ -1040,79 +1042,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Open Full Facility Details Modal
+  // Open Full Facility Details Page
   function openTurfDetailsModal(turfId) {
-    const all = getMasterTurfsList();
-    const turf = all.find(t => String(t.id) === String(turfId)) || all[0];
-    if (!turf) return;
-
-    const modal = document.getElementById('modal-turf-details');
-    const body = document.getElementById('turf-details-modal-body');
-    const title = document.getElementById('details-modal-title');
-    const loc = document.getElementById('details-modal-loc');
-
-    if (title) title.textContent = turf.name;
-    if (loc) loc.textContent = turf.location || 'Tamil Nadu';
-
-    if (body) {
-      body.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 18px;">
-          <div style="position: relative; width: 100%; height: 260px; border-radius: 14px; overflow: hidden; background: #F3F4F6;">
-            <img src="${turf.image || 'images/turf-arena.jpg'}" alt="${turf.name}" style="width: 100%; height: 100%; object-fit: cover;">
-            <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(22, 76, 56, 0.9); color: white; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700;">
-              ₹${turf.price_per_hour}/hr • Instant Booking
-            </div>
-            <div style="position: absolute; top: 12px; right: 12px; background: white; color: #202923; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.82rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-              ★ ${turf.rating} (${turf.reviews_count || 100}+ reviews)
-            </div>
-          </div>
-
-          <div>
-            <h4 style="font-size: 1.1rem; font-weight: 800; color: #202923; margin-bottom: 6px;">Venue Specifications</h4>
-            <p style="font-size: 0.86rem; color: #4B5563; line-height: 1.5; margin: 0 0 12px;">
-              ${turf.surface || 'FIFA Approved 50mm Synthetic Turf with cryogenic rubber infill'}. Ideal for ${turf.sport} competitive leagues and casual practice matches.
-            </p>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #F8FAF8; padding: 14px; border-radius: 12px; border: 1px solid #E9EEE9;">
-              <div><strong>🏟️ Sport:</strong> ${turf.sport}</div>
-              <div><strong>👥 Playing Size:</strong> ${turf.capacity_label || '7v7 Championship'}</div>
-              <div><strong>🏠 Environment:</strong> ${turf.environment === 'indoor' ? 'Indoor Covered' : 'Open Air Outdoor'}</div>
-              <div><strong>🕒 Hours:</strong> 06:00 AM – 11:30 PM</div>
-            </div>
-          </div>
-
-          <div>
-            <h4 style="font-size: 0.95rem; font-weight: 800; color: #202923; margin-bottom: 8px;">Included Facility Amenities</h4>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              ${(turf.amenities || ['Parking', 'Floodlights', 'Changing Room']).map(a => `
-                <span style="background: #E9EEE9; color: #164C38; font-size: 0.78rem; font-weight: 700; padding: 5px 12px; border-radius: 999px;">
-                  ✓ ${a}
-                </span>
-              `).join('')}
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #E5E7EB; margin-top: 8px;">
-            <div>
-              <span style="font-size: 0.78rem; color: #6B7280;">Hourly Turf Rate</span>
-              <div style="font-size: 1.4rem; font-weight: 800; color: #164C38;">₹${turf.price_per_hour} <span style="font-size: 0.82rem; font-weight: 600; color: #6B7280;">/hr</span></div>
-            </div>
-            <button class="btn-card-book" data-turfid="${turf.id}" data-turf="${turf.name}" data-rate="${turf.price_per_hour}" data-loc="${turf.location || 'Chennai, Tamil Nadu'}" data-sport="${turf.sport || 'Football'}" style="padding: 12px 28px; font-size: 0.92rem; border-radius: 10px;">
-              Book Slots at This Venue →
-            </button>
-          </div>
-        </div>
-      `;
-
-      // Wire up the inner book button
-      body.querySelector('.btn-card-book')?.addEventListener('click', () => {
-        closeModal(modal);
-        setTimeout(() => {
-          document.querySelector(`.btn-card-book[data-turfid="${turf.id}"]`)?.click();
-        }, 150);
-      });
+    if (turfId) {
+      window.location.href = 'facility-details.html?id=' + encodeURIComponent(turfId);
+      return;
     }
-
-    openModal(modal);
+    const all = getMasterTurfsList();
+    const turf = all[0];
+    if (turf) {
+      window.location.href = 'facility-details.html?id=' + encodeURIComponent(turf.id);
+    }
   }
 
   // Close Turf Details modal
