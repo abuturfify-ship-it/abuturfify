@@ -1872,6 +1872,33 @@
         renderPlayerDashboard();
       }
 
+      // Pull this player's bookings from Supabase Cloud (cross-device sync)
+      try {
+        const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+        const SB_URL = 'https://fksdanhjdhqbpijoolzf.supabase.co';
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0';
+        const sbHeaders = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
+        // Fetch all bookings for this player (by email or player_id)
+        let query = `${SB_URL}/rest/v1/bookings?select=*&order=booking_time.desc`;
+        if (curUser?.email) query += `&player_email=eq.${encodeURIComponent(curUser.email)}`;
+        else if (curUser?.id) query += `&player_id=eq.${encodeURIComponent(curUser.id)}`;
+        const sbRes = await fetch(query, { headers: sbHeaders });
+        if (sbRes.ok) {
+          const sbBookings = await sbRes.json();
+          if (Array.isArray(sbBookings) && sbBookings.length > 0) {
+            // Merge with local: Supabase wins on duplicates
+            const local = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
+            const sbIds = new Set(sbBookings.map(b => String(b.id)));
+            const localOnly = local.filter(b => !sbIds.has(String(b.id)));
+            const merged = [...sbBookings, ...localOnly];
+            try { localStorage.setItem('turfify_bookings', JSON.stringify(merged)); } catch(e) {}
+            renderPlayerDashboard();
+          }
+        }
+      } catch (sbErr) {
+        console.warn('Supabase player bookings fetch note:', sbErr);
+      }
+
       window.addEventListener('turfify:booking_created', () => renderPlayerDashboard());
       window.addEventListener('turfify:booking_cancelled', () => renderPlayerDashboard());
       window.addEventListener('turfify:booking_deleted', () => renderPlayerDashboard());

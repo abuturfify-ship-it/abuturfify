@@ -63,6 +63,54 @@ async function fetchSupabaseProfiles() {
   }
 }
 
+// ─── Supabase Bookings + Turfs Sync (cross-device) ──────────────────────────
+async function fetchSupabaseBookingsAndTurfs() {
+  try {
+    const headers = {
+      'apikey': SUPABASE_ANON,
+      'Authorization': 'Bearer ' + SUPABASE_ANON
+    };
+    const [bRes, tRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/bookings?select=*&order=booking_time.desc`, { headers }),
+      fetch(`${SUPABASE_URL}/rest/v1/turfs?select=*`, { headers })
+    ]);
+
+    if (bRes.ok) {
+      const sbBookings = await bRes.json();
+      if (Array.isArray(sbBookings) && sbBookings.length > 0) {
+        // Merge: Supabase records take priority; keep any local-only bookings
+        const local = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
+        const sbIds = new Set(sbBookings.map(b => String(b.id)));
+        const localOnly = local.filter(b => !sbIds.has(String(b.id)));
+        const merged = [...sbBookings, ...localOnly];
+        // Write merged list back to localStorage so all getBookings() calls use it
+        try {
+          localStorage.setItem('turfify_bookings', JSON.stringify(merged));
+        } catch (e) {}
+        renderKPIs();
+        renderBookingsTable();
+      }
+    }
+
+    if (tRes.ok) {
+      const sbTurfs = await tRes.json();
+      if (Array.isArray(sbTurfs) && sbTurfs.length > 0) {
+        const local = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+        const sbIds = new Set(sbTurfs.map(t => String(t.id)));
+        const localOnly = local.filter(t => !sbIds.has(String(t.id)));
+        const merged = [...sbTurfs, ...localOnly];
+        try {
+          localStorage.setItem('turfify_turfs', JSON.stringify(merged));
+        } catch (e) {}
+        renderTurfsList();
+        renderKPIs();
+      }
+    }
+  } catch (err) {
+    console.warn('Supabase bookings/turfs fetch note:', err);
+  }
+}
+
 // ─── TurfifyStore accessors ──────────────────────────────────────────────────
 function getLiveBookings() {
   return window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
@@ -271,6 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load cloud profiles and server database
   fetchSupabaseProfiles();
+  fetchSupabaseBookingsAndTurfs();
   if (window.TurfifyStore?.syncWithServer) {
     window.TurfifyStore.syncWithServer().then(() => {
       renderKPIs();

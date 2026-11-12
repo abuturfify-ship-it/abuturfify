@@ -7,6 +7,11 @@
  * - bookings (player reservations)
  */
 
+const TURFIFY_SUPABASE_CONFIG = {
+  URL: 'https://fksdanhjdhqbpijoolzf.supabase.co',
+  ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0'
+};
+
 const TURFIFY_STORAGE_KEYS = {
   CURRENT_USER: 'turfify_current_user',
   USERS: 'turfify_users',
@@ -127,12 +132,43 @@ window.TurfifyStore = {
 
   async syncWithServer() {
     try {
-      let res = await fetch('/api/data');
-      if (!res.ok) {
-        res = await fetch('/turfify_database.json');
+      let serverData = { turfs: [], bookings: [] };
+
+      // 1. Primary Cloud Sync: Query Supabase REST API directly
+      try {
+        const sbHeaders = {
+          'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+          'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY
+        };
+        const [tRes, bRes] = await Promise.all([
+          fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/turfs?select=*`, { headers: sbHeaders }),
+          fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings?select=*`, { headers: sbHeaders })
+        ]);
+        if (tRes.ok) {
+          const tJson = await tRes.json();
+          if (Array.isArray(tJson)) serverData.turfs = tJson;
+        }
+        if (bRes.ok) {
+          const bJson = await bRes.json();
+          if (Array.isArray(bJson)) serverData.bookings = bJson;
+        }
+      } catch (err) {
+        console.warn('Supabase cloud fetch note:', err);
       }
-      if (res.ok) {
-        const serverData = await res.json();
+
+      // 2. Secondary fallback to local API if cloud is empty
+      if (!serverData.turfs.length && !serverData.bookings.length) {
+        try {
+          let res = await fetch('/api/data');
+          if (!res.ok) res = await fetch('/turfify_database.json');
+          if (res.ok) {
+            const fallbackData = await res.json();
+            serverData = { ...serverData, ...fallbackData };
+          }
+        } catch (e) {}
+      }
+
+      if (serverData.turfs.length > 0 || serverData.bookings.length > 0) {
         let changed = false;
 
         // 1. MERGE TURFS: Keep all locally created/updated turfs, add any missing server turfs
@@ -503,7 +539,42 @@ window.TurfifyStore = {
     }
     localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, JSON.stringify(turfs));
 
-    // Async push to server for cross-window availability
+    // 1. Async push to Supabase Cloud
+    const sbTurfPayload = {
+      id: String(turf.id),
+      owner_id: String(turf.owner_id || ''),
+      owner_name: String(turf.owner_name || ''),
+      owner_email: String(turf.owner_email || ''),
+      owner_phone: String(turf.owner_phone || ''),
+      name: String(turf.name || 'Untitled Turf'),
+      sport: String(turf.sport || 'Football'),
+      category: String(turf.category || ''),
+      location: String(turf.location || ''),
+      city: String(turf.city || 'Chennai'),
+      price_per_hour: parseInt(turf.price_per_hour || 1200, 10),
+      rating: parseFloat(turf.rating || 5.0),
+      reviews_count: parseInt(turf.reviews_count || 1, 10),
+      dimensions: String(turf.dimensions || ''),
+      surface: String(turf.surface || ''),
+      environment: String(turf.environment || 'outdoor'),
+      image: String(primaryImg),
+      images: rawImages,
+      amenities: Array.isArray(turf.amenities) ? turf.amenities : [],
+      operating_slots: Array.isArray(turf.operating_slots) ? turf.operating_slots : []
+    };
+
+    fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/turfs`, {
+      method: 'POST',
+      headers: {
+        'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+        'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify(sbTurfPayload)
+    }).catch(() => {});
+
+    // 2. Legacy server fallback
     fetch('/api/turf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -531,7 +602,18 @@ window.TurfifyStore = {
     turfs = turfs.filter(t => String(t.id) !== strId);
     localStorage.setItem(TURFIFY_STORAGE_KEYS.TURFS, JSON.stringify(turfs));
 
-    // 3. Delete from backend server
+    // 3. Delete from Supabase Cloud
+    try {
+      fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/turfs?id=eq.${encodeURIComponent(strId)}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+          'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY
+        }
+      }).catch(() => {});
+    } catch (e) {}
+
+    // 4. Delete from backend server
     try {
       await fetch(`/api/turf?id=${encodeURIComponent(strId)}`, { method: 'DELETE' });
     } catch (e) {}
@@ -672,6 +754,41 @@ window.TurfifyStore = {
       this.addUser(cur);
     }
 
+    // Push to Supabase Cloud (cross-device sync)
+    const sbBookingPayload = {
+      id: String(newBooking.id),
+      turf_id: String(newBooking.turf_id || ''),
+      turf_name: String(newBooking.turf_name || ''),
+      sport: String(newBooking.sport || ''),
+      player_id: String(newBooking.player_id || ''),
+      player_name: String(newBooking.player_name || ''),
+      player_email: String(newBooking.player_email || ''),
+      player_phone: String(newBooking.player_phone || ''),
+      owner_id: String(newBooking.owner_id || ''),
+      owner_name: String(newBooking.owner_name || ''),
+      owner_email: String(newBooking.owner_email || ''),
+      owner_phone: String(newBooking.owner_phone || ''),
+      date: String(newBooking.date || new Date().toISOString().split('T')[0]),
+      time_slot: String(newBooking.time_slot || (Array.isArray(newBooking.time_slots) ? newBooking.time_slots[0] : '6:00 PM - 7:00 PM')),
+      time_slots: Array.isArray(newBooking.time_slots) ? newBooking.time_slots : (newBooking.time_slot ? [newBooking.time_slot] : []),
+      field_name: String(newBooking.field_name || ''),
+      amount: parseInt(newBooking.amount || 1200, 10),
+      status: String(newBooking.status || 'Confirmed'),
+      payment_status: String(newBooking.payment_status || 'Paid Online'),
+      booking_time: String(newBooking.booking_time || new Date().toLocaleString())
+    };
+
+    fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings`, {
+      method: 'POST',
+      headers: {
+        'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+        'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify(sbBookingPayload)
+    }).catch(() => {});
+
     // Try posting to backend if available
     fetch('/api/booking', {
       method: 'POST',
@@ -728,6 +845,17 @@ window.TurfifyStore = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: strId })
+      }).catch(() => {});
+
+      // Push cancellation to Supabase Cloud (cross-device sync)
+      fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings?id=eq.${encodeURIComponent(strId)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+          'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'Cancelled', cancelled_at: new Date().toISOString() })
       }).catch(() => {});
     }
   },
