@@ -810,11 +810,6 @@ button {
   background-color: #F8FAF8;
 }
 
-.explore-main-container {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
 
 /* Header & Top Controls Toolbar */
 .explore-header-toolbar {
@@ -915,33 +910,6 @@ button {
   outline: none;
 }
 
-/* Map Toggle Button */
-.btn-map-toggle {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 16px;
-  background: #FFFFFF;
-  border: 1px solid #D1D5DB;
-  border-radius: 10px;
-  color: #374151;
-  font-size: 0.84rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-.btn-map-toggle:hover {
-  border-color: #164C38;
-  color: #164C38;
-}
-
-.btn-map-toggle.active {
-  background: #164C38;
-  border-color: #164C38;
-  color: #FFFFFF;
-}
 
 /* Quick Category Subtabs Row (SportMatch style) */
 .explore-subtabs-row {
@@ -1363,226 +1331,19 @@ button {
   cursor: pointer;
 }
 
-/* RESULTS AREA: CARDS STREAM & MAP */
+/* RESULTS AREA */
 .explore-results-area {
-  display: flex;
-  gap: 20px;
   min-width: 0;
   width: 100%;
-  align-items: flex-start;
 }
 
-.explore-cards-stream {
-  flex: 1 1 54%;
-  min-width: 0;
-}
-
-/* When map view is active: 2-column cards grid */
+/* 3-column cards grid (no map) */
 .turfs-cards-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-}
-
-/* When map view is hidden: 3-column cards grid */
-.explore-layout-wrapper:not(.split-map-active) .explore-cards-stream {
-  flex: 1 1 100%;
-}
-.explore-layout-wrapper:not(.split-map-active) .turfs-cards-grid {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
-/* MAP CONTAINER (SportMatch Split Screen on Right) */
-.explore-map-container {
-  flex: 1 1 46%;
-  min-width: 320px;
-  display: block;
-}
-
-.explore-layout-wrapper:not(.split-map-active) .explore-map-container {
-  display: none !important;
-}
-
-.map-sticky-box {
-  position: sticky;
-  top: 84px;
-  height: calc(100vh - 105px);
-  min-height: 580px;
-  max-height: 720px;
-  background: #FFFFFF;
-  border-radius: 16px;
-  border: 1px solid #E5E7EB;
-  overflow: hidden;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.03);
-  display: flex;
-  flex-direction: column;
-}
-
-.map-view-header {
-  padding: 10px 14px;
-  background: #FFFFFF;
-  border-bottom: 1px solid #E5E7EB;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 500;
-}
-
-.map-status-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #164C38;
-}
-
-.live-pulse-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10B981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
-  animation: pulse-dot 2s infinite;
-}
-
-@keyframes pulse-dot {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-
-.btn-close-map-box {
-  background: transparent;
-  border: none;
-  font-size: 1rem;
-  color: #6B7280;
-  cursor: pointer;
-  padding: 4px;
-}
-.btn-close-map-box:hover {
-  color: #111827;
-}
-
-.leaflet-map-host {
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-}
-
-/* Custom Leaflet Map Pin (Airbnb / SportMatch pill) */
-.turf-map-price-pin {
-  background: #164C38;
-  color: #FFFFFF;
-  border: 2px solid #FFFFFF;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.turf-map-price-pin:hover, .turf-map-price-pin.selected {
-  background: #2563EB;
-  transform: scale(1.12);
-  z-index: 9999 !important;
-}
-
-/* Custom Leaflet Popup Styling */
-.leaflet-popup-content-wrapper {
-  border-radius: 14px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.18) !important;
-  border: 1px solid #E5E7EB !important;
-}
-
-.leaflet-popup-content {
-  margin: 0 !important;
-  line-height: 1.4 !important;
-}
-
-.map-popup-card {
-  width: 240px;
-  background: #FFFFFF;
-}
-
-.popup-media {
-  position: relative;
-  width: 100%;
-  height: 110px;
-  overflow: hidden;
-}
-
-.popup-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.popup-rate-pill {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(22, 76, 56, 0.9);
-  color: #FFFFFF;
-  padding: 2px 7px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-
-.popup-body {
-  padding: 10px 12px 12px;
-}
-
-.popup-title {
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: #202923;
-  margin: 0 0 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.popup-loc {
-  font-size: 0.75rem;
-  color: #6B7280;
-  margin-bottom: 8px;
-}
-
-.popup-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 6px;
-}
-
-.popup-price {
-  font-size: 0.98rem;
-  font-weight: 800;
-  color: #164C38;
-}
-
-.popup-btn-book {
-  background: #164C38;
-  color: #FFFFFF;
-  border: none;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 0.74rem;
-  font-weight: 700;
-  cursor: pointer;
-}
 
 /* ==========================================================================
    FACILITY CARD REDESIGN (SPORTMATCH & AIRBNB CARDS)
@@ -2984,12 +2745,7 @@ button {
     display: block !important;
   }
   .explore-results-area {
-    flex-direction: column !important;
     width: 100% !important;
-  }
-  .explore-cards-stream {
-    width: 100% !important;
-    flex: 1 1 100% !important;
   }
   .turfs-cards-grid {
     display: grid !important;
@@ -2998,23 +2754,6 @@ button {
     overflow-x: visible !important;
     padding: 0 !important;
     margin: 0 !important;
-  }
-  .turf-listing-card {
-    flex: unset !important;
-    min-width: unset !important;
-    max-width: unset !important;
-    width: 100% !important;
-    border-radius: 16px !important;
-  }
-  .explore-map-container {
-    width: 100% !important;
-    min-width: 100% !important;
-  }
-  .map-sticky-box {
-    position: relative !important;
-    top: 0 !important;
-    height: 380px !important;
-    min-height: 380px !important;
   }
 
   /* ===== HOW IT WORKS: MOVING TRAIN & TURF OWNER IMAGE ===== */
@@ -3185,9 +2924,7 @@ body.dark-mode .turf-card-title {
 }
 
 body.dark-mode .explore-filter-sidebar,
-body.dark-mode .map-sticky-box,
 body.dark-mode .explore-sort-wrapper,
-body.dark-mode .btn-map-toggle:not(.active),
 body.dark-mode .quick-chip-toggle,
 body.dark-mode .filter-chip-btn:not(.active),
 body.dark-mode .segment-btn:not(.active),
@@ -3195,8 +2932,7 @@ body.dark-mode .filter-time-btn:not(.active),
 body.dark-mode .rating-filter-pill:not(.active),
 body.dark-mode .capacity-pill-btn:not(.active),
 body.dark-mode .filter-select-input,
-body.dark-mode .btn-card-details,
-body.dark-mode .map-view-header {
+body.dark-mode .btn-card-details {
   background: #131D31 !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
   color: #F1F5F9 !important;

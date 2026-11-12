@@ -513,8 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sortBy: 'relevance'
   };
 
-  let leafletMapInstance = null;
-  let leafletMarkersGroup = null;
 
   // Favorites management via localStorage
   function getFavoritesList() {
@@ -739,9 +737,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. Bind events on newly rendered cards
     bindTurfCardEvents();
-
-    // 7. Update Map Markers
-    updateLeafletMapMarkers(filtered);
   }
 
   // Bind Card Click Events (Book Now, View Details, Favorites, Hover highlight)
@@ -815,16 +810,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Hover cards to highlight pin on map
+    // Hover cards — subtle visual feedback only (no map)
     document.querySelectorAll('.turf-listing-card').forEach(card => {
-      card.addEventListener('mouseenter', () => {
-        const id = card.dataset.turfid;
-        highlightMapMarker(id, true);
-      });
-      card.addEventListener('mouseleave', () => {
-        const id = card.dataset.turfid;
-        highlightMapMarker(id, false);
-      });
+      card.addEventListener('mouseenter', () => card.classList.add('hovered'));
+      card.addEventListener('mouseleave', () => card.classList.remove('hovered'));
     });
   }
 
@@ -908,109 +897,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closeModal(document.getElementById('modal-turf-details'));
   });
 
-  // ==========================================================================
-  // LEAFLET INTERACTIVE MAP IMPLEMENTATION (SPORTMATCH SPLIT VIEW)
-  // ==========================================================================
-  const markerLookup = {};
-
-  function initLeafletMap() {
-    const mapHost = document.getElementById('turfify-leaflet-map');
-    if (!mapHost) return;
-
-    if (typeof L === 'undefined') {
-      const fallback = document.getElementById('map-fallback-view');
-      if (fallback) fallback.style.display = 'flex';
-      return;
-    }
-
-    try {
-      // Centered on central Tamil Nadu (Trichy/Salem latitude)
-      leafletMapInstance = L.map('turfify-leaflet-map', {
-        center: [11.1271, 78.6569],
-        zoom: 7,
-        zoomControl: true,
-        scrollWheelZoom: false
-      });
-
-      // CartoDB Positron / OSM clean modern light tiles
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-        maxZoom: 18
-      }).addTo(leafletMapInstance);
-
-      leafletMarkersGroup = L.featureGroup().addTo(leafletMapInstance);
-    } catch (e) {
-      console.warn('Map initialization note:', e);
-    }
-  }
-
-  function updateLeafletMapMarkers(turfs) {
-    if (!leafletMapInstance || !leafletMarkersGroup || typeof L === 'undefined') return;
-
-    leafletMarkersGroup.clearLayers();
-    Object.keys(markerLookup).forEach(k => delete markerLookup[k]);
-
-    if (!turfs || turfs.length === 0) return;
-
-    const bounds = [];
-
-    turfs.forEach(t => {
-      if (!t.lat || !t.lng) return;
-
-      bounds.push([t.lat, t.lng]);
-
-      // Custom SportMatch/Airbnb Price Pin Marker
-      const customIcon = L.divIcon({
-        className: 'turf-map-custom-div-icon',
-        html: `<div class="turf-map-price-pin" id="map-pin-${t.id}">₹${t.price_per_hour}</div>`,
-        iconSize: [60, 28],
-        iconAnchor: [30, 14]
-      });
-
-      const marker = L.marker([t.lat, t.lng], { icon: customIcon });
-
-      // Rich Card Popup inside Map
-      const popupHtml = `
-        <div class="map-popup-card">
-          <div class="popup-media">
-            <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}">
-            <div class="popup-rate-pill">★ ${t.rating}</div>
-          </div>
-          <div class="popup-body">
-            <h4 class="popup-title">${t.name}</h4>
-            <div class="popup-loc">📍 ${t.location || 'Tamil Nadu'}</div>
-            <div class="popup-foot">
-              <div class="popup-price">₹${t.price_per_hour}/hr</div>
-              <button type="button" class="popup-btn-book" onclick="document.querySelector('.btn-card-book[data-turfid=\\'${t.id}\\']')?.click()">
-                Book
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      marker.bindPopup(popupHtml, { maxWidth: 260, offset: [0, -10] });
-      marker.addTo(leafletMarkersGroup);
-      markerLookup[String(t.id)] = marker;
-    });
-
-    if (bounds.length > 0) {
-      try {
-        leafletMapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
-      } catch (e) {}
-    }
-  }
-
-  function highlightMapMarker(turfId, highlight) {
-    const pin = document.getElementById(`map-pin-${turfId}`);
-    if (pin) {
-      if (highlight) {
-        pin.classList.add('selected');
-      } else {
-        pin.classList.remove('selected');
-      }
-    }
-  }
 
   // ==========================================================================
   // DISCOVERY CONTROLS & SIDEBAR EVENTS WIRING
@@ -1147,27 +1033,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 11. Map View Toggle (SportMatch split screen)
-    const toggleMapBtn = document.getElementById('btn-toggle-map');
-    const closeMapSideBtn = document.getElementById('btn-close-map-side');
-    const layoutWrapper = document.getElementById('explore-layout-wrapper');
-    const toggleMapText = document.getElementById('map-toggle-text');
-
-    function toggleMapView() {
-      const isSplit = layoutWrapper.classList.toggle('split-map-active');
-      if (toggleMapBtn) {
-        toggleMapBtn.classList.toggle('active', isSplit);
-        if (toggleMapText) toggleMapText.textContent = isSplit ? 'Hide Map' : 'Show Map';
-      }
-      if (isSplit && leafletMapInstance) {
-        setTimeout(() => {
-          leafletMapInstance.invalidateSize();
-        }, 200);
-      }
-    }
-
-    if (toggleMapBtn) toggleMapBtn.addEventListener('click', toggleMapView);
-    if (closeMapSideBtn) closeMapSideBtn.addEventListener('click', toggleMapView);
 
     // 12. Quick Category Subtabs (All, Most Popular, Fastest Confirm, Favourites)
     document.querySelectorAll('.explore-tab-pill').forEach(pill => {
@@ -1219,8 +1084,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (drawerOverlay) drawerOverlay.addEventListener('click', closeMobileFilters);
   }
 
-  // Initialize Map, Discovery Events, and Initial Render
-  initLeafletMap();
+  // Initialize Discovery Events and Initial Render
   setupDiscoveryEventListeners();
   updateFavoritesBadge();
   renderMarketplaceTurfs();
