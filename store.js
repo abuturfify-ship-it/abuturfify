@@ -195,10 +195,12 @@ window.TurfifyStore = {
 
           serverData.turfs.forEach(st => {
             if (deletedTurfs.includes(String(st.id))) return;
-            const exists = mergedTurfs.some(lt => String(lt.id) === String(st.id));
-            if (!exists) {
+            const idx = mergedTurfs.findIndex(lt => String(lt.id) === String(st.id));
+            if (idx === -1) {
               mergedTurfs.push(st);
               changed = true;
+            } else {
+              mergedTurfs[idx] = { ...st, ...mergedTurfs[idx] };
             }
           });
 

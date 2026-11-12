@@ -89,6 +89,8 @@ async function fetchSupabaseBookingsAndTurfs() {
         } catch (e) {}
         renderKPIs();
         renderBookingsTable();
+        renderUsersTable();
+        initDashboardCharts();
       }
     }
 
@@ -104,6 +106,7 @@ async function fetchSupabaseBookingsAndTurfs() {
         } catch (e) {}
         renderTurfsList();
         renderKPIs();
+        renderUsersTable();
       }
     }
   } catch (err) {
@@ -286,6 +289,13 @@ function initAdminAuthGate() {
       sessionStorage.setItem('turfify_admin_authenticated', 'true');
       if (errBox) errBox.style.display = 'none';
       checkAdminAuth();
+      renderKPIs();
+      renderTurfsList();
+      renderBookingsTable();
+      renderUsersTable();
+      initDashboardCharts();
+      fetchSupabaseProfiles();
+      fetchSupabaseBookingsAndTurfs();
       showToast('Super Admin console unlocked.');
     } else {
       if (errBox) {
