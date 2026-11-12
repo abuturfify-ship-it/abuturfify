@@ -345,68 +345,885 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeTurfRate = 1200;
   let activeTurfSport = 'Football';
 
+  // ==========================================================================
+  // SECTION A: DISCOVERY ENGINE & VERIFIED PARTNER VENUES (SPORTMATCH / AIRBNB)
+  // ==========================================================================
+  const DEFAULT_PARTNER_TURFS = [
+    {
+      id: 'turf-arena-chennai',
+      name: 'The Arena Sports Hub',
+      sport: 'Football',
+      category: 'football',
+      location: 'Anna Nagar, Chennai',
+      city: 'chennai',
+      lat: 13.0850,
+      lng: 80.2101,
+      environment: 'indoor',
+      price_per_hour: 1200,
+      rating: 4.8,
+      reviews_count: 124,
+      capacity: '7v7',
+      capacity_label: '7v7 (14 Players)',
+      surface: 'FIFA Pro 50mm Rubber Infill Artificial Turf',
+      image: 'images/turf-arena.jpg',
+      amenities: ['Floodlights', 'Parking', 'Changing Room', 'Free Wi-Fi', 'Drinking Water', 'Cafeteria'],
+      times: ['morning', 'afternoon', 'evening', 'night'],
+      is_instant: true,
+      is_popular: true,
+      featured: true
+    },
+    {
+      id: 'turf-kickoff-cbe',
+      name: 'Kickoff Hub Arena',
+      sport: 'Box Cricket',
+      category: 'cricket',
+      location: 'RS Puram, Coimbatore',
+      city: 'coimbatore',
+      lat: 11.0081,
+      lng: 76.9558,
+      environment: 'outdoor',
+      price_per_hour: 1000,
+      rating: 4.7,
+      reviews_count: 98,
+      capacity: '7v7',
+      capacity_label: '8v8 (16 Players)',
+      surface: 'Championship Polyethylene Cricket Turf with Boundary Nets',
+      image: 'images/turf-kickoff.jpg',
+      amenities: ['Floodlights', 'Parking', 'Cafeteria', 'Drinking Water'],
+      times: ['morning', 'afternoon', 'evening', 'night'],
+      is_instant: true,
+      is_popular: true,
+      featured: false
+    },
+    {
+      id: 'turf-gameon-madurai',
+      name: 'Game On Badminton Club',
+      sport: 'Badminton',
+      category: 'badminton',
+      location: 'KK Nagar, Madurai',
+      city: 'madurai',
+      lat: 9.9320,
+      lng: 78.1432,
+      environment: 'indoor',
+      price_per_hour: 900,
+      rating: 4.9,
+      reviews_count: 142,
+      capacity: 'court',
+      capacity_label: 'Court (2-4 Players)',
+      surface: 'BWF Certified 5-Layer Synthetic Wooden Core',
+      image: 'images/turf-gameon.jpg',
+      amenities: ['Changing Room', 'Parking', 'Free Wi-Fi', 'Drinking Water'],
+      times: ['morning', 'afternoon', 'evening'],
+      is_instant: true,
+      is_popular: true,
+      featured: true
+    },
+    {
+      id: 'turf-playground-trichy',
+      name: 'Playground Pro Stadium',
+      sport: 'Football',
+      category: 'football',
+      location: 'Thillai Nagar, Trichy',
+      city: 'trichy',
+      lat: 10.8270,
+      lng: 78.6890,
+      environment: 'outdoor',
+      price_per_hour: 1500,
+      rating: 4.6,
+      reviews_count: 76,
+      capacity: '11v11',
+      capacity_label: '11v11 Full Pitch (22 Players)',
+      surface: 'Hybrid Natural Bermuda Turf with Drainage Trenching',
+      image: 'images/turf-playground.jpg',
+      amenities: ['Floodlights', 'Parking', 'Cafeteria', 'Changing Room'],
+      times: ['morning', 'evening', 'night'],
+      is_instant: false,
+      is_popular: true,
+      featured: false
+    },
+    {
+      id: 'turf-grandslam-tennis',
+      name: 'Grand Slam Tennis Academy',
+      sport: 'Tennis',
+      category: 'tennis',
+      location: 'Nungambakkam, Chennai',
+      city: 'chennai',
+      lat: 13.0604,
+      lng: 80.2376,
+      environment: 'outdoor',
+      price_per_hour: 1400,
+      rating: 4.9,
+      reviews_count: 110,
+      capacity: 'court',
+      capacity_label: 'Pro Tennis Court (2-4 Players)',
+      surface: 'US Open Acrylic Hard Court Cushion Surface',
+      image: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=800&auto=format&fit=crop&q=80',
+      amenities: ['Floodlights', 'Parking', 'Changing Room', 'Cafeteria', 'Drinking Water'],
+      times: ['morning', 'afternoon', 'evening'],
+      is_instant: true,
+      is_popular: true,
+      featured: true
+    },
+    {
+      id: 'turf-apex-hoop-salem',
+      name: 'Apex Hoop Basketball Arena',
+      sport: 'Basketball',
+      category: 'basketball',
+      location: 'Fairlands, Salem',
+      city: 'salem',
+      lat: 11.6643,
+      lng: 78.1460,
+      environment: 'indoor',
+      price_per_hour: 1100,
+      rating: 4.8,
+      reviews_count: 64,
+      capacity: '5v5',
+      capacity_label: '5v5 FIBA Court (10 Players)',
+      surface: 'FIBA Standard Maple Hardwood Floor with Glass Backboards',
+      image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop&q=80',
+      amenities: ['Indoor', 'Floodlights', 'Changing Room', 'Free Wi-Fi', 'Drinking Water'],
+      times: ['morning', 'afternoon', 'evening', 'night'],
+      is_instant: true,
+      is_popular: false,
+      featured: false
+    }
+  ];
+
+  // City-to-area keywords for high accuracy location matching
+  const CITY_AREA_MAP = {
+    chennai: ['chennai', 'pallavaram', 'tambaram', 'velachery', 'anna nagar', 'adyar', 'porur', 'perambur', 'sholinganallur', 'chrompet', 'chromepet', 'guduvanchery', 't.nagar', 'tnagar', 'west mambalam', 'mylapore', 'nungambakkam', 'kilpauk', 'kodambakkam'],
+    coimbatore: ['coimbatore', 'rs puram', 'gandhipuram', 'saibaba colony', 'peelamedu', 'saravanampatti'],
+    madurai: ['madurai', 'kk nagar', 'anna nagar madurai', 'koodal nagar'],
+    trichy: ['trichy', 'tiruchirappalli', 'thillai nagar', 'srirangam', 'ariyamangalam'],
+    salem: ['salem', 'fairlands', 'junction main road']
+  };
+
+  // Active filter state
+  const exploreFilters = {
+    sport: 'all',
+    city: 'all',
+    env: 'all',
+    maxPrice: 3000,
+    amenities: [],
+    timeSlot: null,
+    minRating: 0,
+    capacity: 'all',
+    tab: 'all',
+    quickTag: null,
+    sortBy: 'relevance'
+  };
+
+  let leafletMapInstance = null;
+  let leafletMarkersGroup = null;
+
+  // Favorites management via localStorage
+  function getFavoritesList() {
+    try {
+      return JSON.parse(localStorage.getItem('turfify_favorites') || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function toggleFavoriteTurf(id) {
+    let favs = getFavoritesList();
+    const strId = String(id);
+    let added = false;
+    if (favs.includes(strId)) {
+      favs = favs.filter(f => f !== strId);
+    } else {
+      favs.push(strId);
+      added = true;
+    }
+    localStorage.setItem('turfify_favorites', JSON.stringify(favs));
+    updateFavoritesBadge();
+    showToast(added ? 'Saved to your favourites! ❤️' : 'Removed from favourites.');
+    renderMarketplaceTurfs();
+  }
+
+  function updateFavoritesBadge() {
+    const favs = getFavoritesList();
+    const badge = document.getElementById('fav-count-pill');
+    if (badge) badge.textContent = favs.length;
+  }
+
+  // Combine registered turfs from TurfifyStore with default verified venues
+  function getMasterTurfsList() {
+    const storeTurfs = (window.TurfifyStore && typeof window.TurfifyStore.getTurfs === 'function') 
+      ? window.TurfifyStore.getTurfs() 
+      : [];
+
+    const formattedStoreTurfs = storeTurfs.map(t => {
+      const sLower = (t.sport || 'football').toLowerCase();
+      let cat = 'football';
+      if (sLower.includes('cricket')) cat = 'cricket';
+      else if (sLower.includes('badminton')) cat = 'badminton';
+      else if (sLower.includes('tennis')) cat = 'tennis';
+      else if (sLower.includes('basketball')) cat = 'basketball';
+
+      const locLower = (t.location || 'chennai').toLowerCase();
+      let city = 'chennai';
+      if (locLower.includes('coimbatore')) city = 'coimbatore';
+      else if (locLower.includes('madurai')) city = 'madurai';
+      else if (locLower.includes('trichy') || locLower.includes('tiruchirappalli')) city = 'trichy';
+      else if (locLower.includes('salem')) city = 'salem';
+
+      return {
+        id: String(t.id),
+        name: t.name,
+        sport: t.sport || 'Box Cricket',
+        category: cat,
+        location: t.location || 'Chennai, Tamil Nadu',
+        city: city,
+        lat: t.lat || (city === 'coimbatore' ? 11.01 : city === 'madurai' ? 9.92 : city === 'trichy' ? 10.82 : city === 'salem' ? 11.66 : 12.9675),
+        lng: t.lng || (city === 'coimbatore' ? 76.96 : city === 'madurai' ? 78.12 : city === 'trichy' ? 78.69 : city === 'salem' ? 78.14 : 80.1491),
+        environment: (t.amenities && t.amenities.some(a => a.toLowerCase().includes('indoor'))) ? 'indoor' : 'outdoor',
+        price_per_hour: parseInt(t.price_per_hour, 10) || 1200,
+        rating: parseFloat(t.rating) || 5.0,
+        reviews_count: t.reviews_count || 18,
+        capacity: '7v7',
+        capacity_label: t.dimensions || '7v7 Championship Turf',
+        surface: 'Premium Synthetic Grass Playing Turf',
+        image: t.image || 'images/turf-arena.jpg',
+        amenities: Array.isArray(t.amenities) ? t.amenities : ['Parking', 'Floodlights', 'Changing Room'],
+        times: ['morning', 'afternoon', 'evening', 'night'],
+        is_instant: true,
+        is_popular: true,
+        is_user_turf: true
+      };
+    });
+
+    // Merge: Store turfs appear first, followed by verified partner venues
+    const combined = [...formattedStoreTurfs];
+    DEFAULT_PARTNER_TURFS.forEach(pt => {
+      if (!combined.some(t => String(t.id) === String(pt.id) || t.name === pt.name)) {
+        combined.push(pt);
+      }
+    });
+
+    return combined;
+  }
+
+  // Main Discovery Render & Filter function
   function renderMarketplaceTurfs() {
     const container = document.getElementById('turfs-container');
-    if (!container || !window.TurfifyStore) return;
+    if (!container) return;
 
-    const turfs = window.TurfifyStore.getTurfs();
+    const allTurfs = getMasterTurfsList();
+    const favs = getFavoritesList();
 
-    if (!turfs || turfs.length === 0) {
-      container.innerHTML = `
-        <div style="grid-column:1/-1;text-align:center;padding:64px 24px;">
-          <div style="font-size:3rem;margin-bottom:16px;">🏟️</div>
-          <h3 style="color:#e8eaf6;font-size:1.4rem;margin-bottom:8px;">No Turfs Listed Yet</h3>
-          <p style="color:#9fa8da;margin-bottom:24px;">Be the first to register your turf and start earning!</p>
-          <button onclick="document.getElementById('btn-hero-owner').click()" style="background:linear-gradient(135deg,#7c4dff,#ff6d00);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:1rem;cursor:pointer;">
-            List Your Turf 🚀
-          </button>
-        </div>
-      `;
-      return;
+    // 1. Filter turfs based on exploreFilters state
+    let filtered = allTurfs.filter(turf => {
+      // Tab filter
+      if (exploreFilters.tab === 'popular' && !(turf.rating >= 4.7 || turf.is_popular)) return false;
+      if (exploreFilters.tab === 'instant' && !turf.is_instant) return false;
+      if (exploreFilters.tab === 'favourites' && !favs.includes(String(turf.id))) return false;
+
+      // Quick Tag filter
+      if (exploreFilters.quickTag === 'indoor' && turf.environment !== 'indoor') return false;
+      if (exploreFilters.quickTag === 'outdoor' && turf.environment !== 'outdoor') return false;
+      if (exploreFilters.quickTag === 'under1200' && turf.price_per_hour > 1200) return false;
+
+      // Sport filter
+      if (exploreFilters.sport !== 'all' && turf.category !== exploreFilters.sport && !turf.sport.toLowerCase().includes(exploreFilters.sport)) return false;
+
+      // City filter
+      if (exploreFilters.city !== 'all') {
+        const targetCity = exploreFilters.city.toLowerCase();
+        const areas = CITY_AREA_MAP[targetCity] || [targetCity];
+        const turfLocLower = (turf.location + ' ' + turf.city).toLowerCase();
+        const matchesCity = areas.some(a => turfLocLower.includes(a));
+        if (!matchesCity) return false;
+      }
+
+      // Environment filter
+      if (exploreFilters.env !== 'all' && turf.environment !== exploreFilters.env) return false;
+
+      // Price filter
+      if (turf.price_per_hour > exploreFilters.maxPrice) return false;
+
+      // Amenities filter
+      if (exploreFilters.amenities.length > 0) {
+        const tAmenities = (turf.amenities || []).map(a => a.toLowerCase());
+        const hasAll = exploreFilters.amenities.every(req => 
+          tAmenities.some(ta => ta.includes(req.toLowerCase()))
+        );
+        if (!hasAll) return false;
+      }
+
+      // Time Slot filter
+      if (exploreFilters.timeSlot && !turf.times.includes(exploreFilters.timeSlot)) return false;
+
+      // Minimum Rating filter
+      if (exploreFilters.minRating > 0 && turf.rating < exploreFilters.minRating) return false;
+
+      // Capacity filter
+      if (exploreFilters.capacity !== 'all' && turf.capacity !== exploreFilters.capacity) return false;
+
+      return true;
+    });
+
+    // 2. Sort results
+    if (exploreFilters.sortBy === 'price-asc') {
+      filtered.sort((a, b) => a.price_per_hour - b.price_per_hour);
+    } else if (exploreFilters.sortBy === 'price-desc') {
+      filtered.sort((a, b) => b.price_per_hour - a.price_per_hour);
+    } else if (exploreFilters.sortBy === 'rating-desc') {
+      filtered.sort((a, b) => b.rating - a.rating);
     }
 
-    container.innerHTML = turfs.map(t => {
-      const sportLower = (t.sport || 'football').toLowerCase();
-      let sportKey = 'football';
-      if (sportLower.includes('cricket')) sportKey = 'cricket';
-      else if (sportLower.includes('badminton')) sportKey = 'badminton';
+    // 3. Update Results Count Badge
+    const countBadge = document.getElementById('turf-results-count-badge');
+    if (countBadge) {
+      countBadge.textContent = `${filtered.length} Facilities Available`;
+    }
 
-      const locKey = (t.location || 'chennai').toLowerCase();
-      const amenities = Array.isArray(t.amenities) ? t.amenities : [];
+    // 4. Update Empty State visibility
+    const emptyState = document.getElementById('explore-empty-state');
+    if (filtered.length === 0) {
+      container.style.display = 'none';
+      if (emptyState) emptyState.style.display = 'block';
+    } else {
+      container.style.display = 'grid';
+      if (emptyState) emptyState.style.display = 'none';
+    }
+
+    // 5. Render Facility Cards Grid (Airbnb & SportMatch card structure)
+    container.innerHTML = filtered.map(t => {
+      const isFav = favs.includes(String(t.id));
+      const microAmenities = (t.amenities || []).slice(0, 3);
 
       return `
-        <div class="turf-listing-card" data-sport="${sportKey}" data-location="${locKey}" data-name="${t.name}" data-rate="${t.price_per_hour}">
+        <div class="turf-listing-card" data-turfid="${t.id}" data-lat="${t.lat}" data-lng="${t.lng}">
           <div class="turf-media">
-            <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}">
-            <div class="rating-pill-green">★ ${t.rating || 4.9}</div>
-          </div>
-          <div class="turf-details-body">
-            <h3 class="turf-card-title">${t.name}</h3>
-            <div class="turf-card-loc">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-              <span>${t.location || 'Chennai, Tamil Nadu'}</span>
+            <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}" loading="lazy">
+            <div class="card-loc-pill">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>${t.location || 'Tamil Nadu'}</span>
             </div>
-            ${amenities.length ? `
-              <div class="amenities-badges-row">
-                ${amenities.map(a => `<span class="amenity-chip">✓ ${a}</span>`).join('')}
+            <button type="button" class="card-fav-btn ${isFav ? 'is-fav' : ''}" data-turfid="${t.id}" aria-label="Toggle Favourite">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </button>
+            ${t.is_instant ? `<div class="card-instant-tag">⚡ Instant Confirm</div>` : ''}
+          </div>
+
+          <div class="turf-details-body">
+            <div class="card-top-rate-row">
+              <div class="card-price-text">₹${t.price_per_hour} <span class="card-price-unit">/hr</span></div>
+              <div class="card-rating-badge">
+                <span class="star-icon">★</span>
+                <span>${t.rating || '4.9'} (${t.reviews_count || '85+'})</span>
               </div>
-            ` : ''}
+            </div>
+
+            <h3 class="turf-card-title">${t.name}</h3>
+            <div class="card-spec-line">${t.surface || 'FIFA Approved Artificial Grass'} • ${t.capacity_label || 'Standard Turf'}</div>
+
+            <div class="card-micro-amenities-row">
+              <span class="micro-amenity-chip">${t.environment === 'indoor' ? '🏠 Indoor' : '🌳 Outdoor'}</span>
+              ${microAmenities.map(a => `<span class="micro-amenity-chip">✓ ${a}</span>`).join('')}
+            </div>
+
             <div class="turf-card-actions-row">
-              <div class="price-line">₹${t.price_per_hour} <span class="price-unit">/hr</span></div>
-              <div class="action-btns-group">
-                <button class="btn-card-book" data-turfid="${t.id}" data-turf="${t.name}" data-rate="${t.price_per_hour}" data-loc="${t.location || 'Chennai, Tamil Nadu'}" data-sport="${t.sport || 'Football'}">Book Now</button>
-                <button class="btn-card-heart" aria-label="Favorite">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                </button>
-              </div>
+              <button class="btn-card-book" data-turfid="${t.id}" data-turf="${t.name}" data-rate="${t.price_per_hour}" data-loc="${t.location || 'Chennai, Tamil Nadu'}" data-sport="${t.sport || 'Football'}">
+                Book Now
+              </button>
+              <button class="btn-card-details" data-turfid="${t.id}">
+                View Details
+              </button>
             </div>
           </div>
         </div>
       `;
     }).join('');
 
+    // 6. Bind events on newly rendered cards
     bindTurfCardEvents();
+
+    // 7. Update Map Markers
+    updateLeafletMapMarkers(filtered);
   }
+
+  // Bind Card Click Events (Book Now, View Details, Favorites, Hover highlight)
+  function bindTurfCardEvents() {
+    // Book Now buttons
+    document.querySelectorAll('.btn-card-book').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.turfid || 'turf-1';
+        const name = btn.dataset.turf || 'The Arena Sports Hub';
+        const rate = btn.dataset.rate || '1200';
+        const loc = btn.dataset.loc || 'Chennai, Tamil Nadu';
+        const sport = btn.dataset.sport || 'Football';
+
+        // Check if user is logged in
+        const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+        const isAuthenticated = !!(curUser && curUser.is_authenticated === true);
+
+        if (!isAuthenticated) {
+          sessionStorage.setItem('turfify_pending_booking', JSON.stringify({
+            id, name, rate, loc, sport
+          }));
+          window.location.href = `auth.html?mode=signin&redirect=booking&turf=${encodeURIComponent(name)}&turfId=${encodeURIComponent(id)}`;
+          return;
+        }
+
+        activeTurfId = id;
+        activeTurfName = name;
+        activeTurfRate = parseInt(rate, 10);
+        activeTurfSport = sport;
+
+        document.getElementById('booking-modal-title').textContent = `Book Slot — ${name}`;
+        document.getElementById('booking-modal-sub').textContent = loc;
+        document.getElementById('modal-base-rate').textContent = `₹${rate}`;
+        document.getElementById('modal-total-rate').textContent = `₹${rate}`;
+
+        const dateInput = document.getElementById('booking-date');
+        if (!dateInput.value) {
+          dateInput.value = new Date().toISOString().split('T')[0];
+        }
+
+        const nameInput = document.getElementById('booking-player-name');
+        const phoneInput = document.getElementById('booking-player-phone');
+        if (nameInput) {
+          nameInput.value = (curUser && curUser.name && curUser.name !== 'Player Guest') ? curUser.name : (nameInput.value || '');
+        }
+        if (phoneInput) {
+          phoneInput.value = (curUser && curUser.phone && curUser.phone !== '—') ? curUser.phone : (phoneInput.value || '');
+        }
+
+        openModal(modalBooking);
+        refreshSlotAvailability();
+      });
+    });
+
+    // View Details buttons
+    document.querySelectorAll('.btn-card-details').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.turfid;
+        openTurfDetailsModal(id);
+      });
+    });
+
+    // Favorite heart buttons
+    document.querySelectorAll('.card-fav-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.turfid;
+        toggleFavoriteTurf(id);
+      });
+    });
+
+    // Hover cards to highlight pin on map
+    document.querySelectorAll('.turf-listing-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        const id = card.dataset.turfid;
+        highlightMapMarker(id, true);
+      });
+      card.addEventListener('mouseleave', () => {
+        const id = card.dataset.turfid;
+        highlightMapMarker(id, false);
+      });
+    });
+  }
+
+  // Open Full Facility Details Modal
+  function openTurfDetailsModal(turfId) {
+    const all = getMasterTurfsList();
+    const turf = all.find(t => String(t.id) === String(turfId)) || all[0];
+    if (!turf) return;
+
+    const modal = document.getElementById('modal-turf-details');
+    const body = document.getElementById('turf-details-modal-body');
+    const title = document.getElementById('details-modal-title');
+    const loc = document.getElementById('details-modal-loc');
+
+    if (title) title.textContent = turf.name;
+    if (loc) loc.textContent = turf.location || 'Tamil Nadu';
+
+    if (body) {
+      body.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="position: relative; width: 100%; height: 260px; border-radius: 14px; overflow: hidden; background: #F3F4F6;">
+            <img src="${turf.image || 'images/turf-arena.jpg'}" alt="${turf.name}" style="width: 100%; height: 100%; object-fit: cover;">
+            <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(22, 76, 56, 0.9); color: white; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700;">
+              ₹${turf.price_per_hour}/hr • Instant Booking
+            </div>
+            <div style="position: absolute; top: 12px; right: 12px; background: white; color: #202923; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.82rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+              ★ ${turf.rating} (${turf.reviews_count || 100}+ reviews)
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-size: 1.1rem; font-weight: 800; color: #202923; margin-bottom: 6px;">Venue Specifications</h4>
+            <p style="font-size: 0.86rem; color: #4B5563; line-height: 1.5; margin: 0 0 12px;">
+              ${turf.surface || 'FIFA Approved 50mm Synthetic Turf with cryogenic rubber infill'}. Ideal for ${turf.sport} competitive leagues and casual practice matches.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #F8FAF8; padding: 14px; border-radius: 12px; border: 1px solid #E9EEE9;">
+              <div><strong>🏟️ Sport:</strong> ${turf.sport}</div>
+              <div><strong>👥 Playing Size:</strong> ${turf.capacity_label || '7v7 Championship'}</div>
+              <div><strong>🏠 Environment:</strong> ${turf.environment === 'indoor' ? 'Indoor Covered' : 'Open Air Outdoor'}</div>
+              <div><strong>🕒 Hours:</strong> 06:00 AM – 11:30 PM</div>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 800; color: #202923; margin-bottom: 8px;">Included Facility Amenities</h4>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              ${(turf.amenities || ['Parking', 'Floodlights', 'Changing Room']).map(a => `
+                <span style="background: #E9EEE9; color: #164C38; font-size: 0.78rem; font-weight: 700; padding: 5px 12px; border-radius: 999px;">
+                  ✓ ${a}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #E5E7EB; margin-top: 8px;">
+            <div>
+              <span style="font-size: 0.78rem; color: #6B7280;">Hourly Turf Rate</span>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #164C38;">₹${turf.price_per_hour} <span style="font-size: 0.82rem; font-weight: 600; color: #6B7280;">/hr</span></div>
+            </div>
+            <button class="btn-card-book" data-turfid="${turf.id}" data-turf="${turf.name}" data-rate="${turf.price_per_hour}" data-loc="${turf.location || 'Chennai, Tamil Nadu'}" data-sport="${turf.sport || 'Football'}" style="padding: 12px 28px; font-size: 0.92rem; border-radius: 10px;">
+              Book Slots at This Venue →
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Wire up the inner book button
+      body.querySelector('.btn-card-book')?.addEventListener('click', () => {
+        closeModal(modal);
+        setTimeout(() => {
+          document.querySelector(`.btn-card-book[data-turfid="${turf.id}"]`)?.click();
+        }, 150);
+      });
+    }
+
+    openModal(modal);
+  }
+
+  // Close Turf Details modal
+  document.getElementById('btn-close-turf-details')?.addEventListener('click', () => {
+    closeModal(document.getElementById('modal-turf-details'));
+  });
+
+  // ==========================================================================
+  // LEAFLET INTERACTIVE MAP IMPLEMENTATION (SPORTMATCH SPLIT VIEW)
+  // ==========================================================================
+  const markerLookup = {};
+
+  function initLeafletMap() {
+    const mapHost = document.getElementById('turfify-leaflet-map');
+    if (!mapHost) return;
+
+    if (typeof L === 'undefined') {
+      const fallback = document.getElementById('map-fallback-view');
+      if (fallback) fallback.style.display = 'flex';
+      return;
+    }
+
+    try {
+      // Centered on central Tamil Nadu (Trichy/Salem latitude)
+      leafletMapInstance = L.map('turfify-leaflet-map', {
+        center: [11.1271, 78.6569],
+        zoom: 7,
+        zoomControl: true,
+        scrollWheelZoom: false
+      });
+
+      // CartoDB Positron / OSM clean modern light tiles
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        maxZoom: 18
+      }).addTo(leafletMapInstance);
+
+      leafletMarkersGroup = L.featureGroup().addTo(leafletMapInstance);
+    } catch (e) {
+      console.warn('Map initialization note:', e);
+    }
+  }
+
+  function updateLeafletMapMarkers(turfs) {
+    if (!leafletMapInstance || !leafletMarkersGroup || typeof L === 'undefined') return;
+
+    leafletMarkersGroup.clearLayers();
+    Object.keys(markerLookup).forEach(k => delete markerLookup[k]);
+
+    if (!turfs || turfs.length === 0) return;
+
+    const bounds = [];
+
+    turfs.forEach(t => {
+      if (!t.lat || !t.lng) return;
+
+      bounds.push([t.lat, t.lng]);
+
+      // Custom SportMatch/Airbnb Price Pin Marker
+      const customIcon = L.divIcon({
+        className: 'turf-map-custom-div-icon',
+        html: `<div class="turf-map-price-pin" id="map-pin-${t.id}">₹${t.price_per_hour}</div>`,
+        iconSize: [60, 28],
+        iconAnchor: [30, 14]
+      });
+
+      const marker = L.marker([t.lat, t.lng], { icon: customIcon });
+
+      // Rich Card Popup inside Map
+      const popupHtml = `
+        <div class="map-popup-card">
+          <div class="popup-media">
+            <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}">
+            <div class="popup-rate-pill">★ ${t.rating}</div>
+          </div>
+          <div class="popup-body">
+            <h4 class="popup-title">${t.name}</h4>
+            <div class="popup-loc">📍 ${t.location || 'Tamil Nadu'}</div>
+            <div class="popup-foot">
+              <div class="popup-price">₹${t.price_per_hour}/hr</div>
+              <button type="button" class="popup-btn-book" onclick="document.querySelector('.btn-card-book[data-turfid=\\'${t.id}\\']')?.click()">
+                Book
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      marker.bindPopup(popupHtml, { maxWidth: 260, offset: [0, -10] });
+      marker.addTo(leafletMarkersGroup);
+      markerLookup[String(t.id)] = marker;
+    });
+
+    if (bounds.length > 0) {
+      try {
+        leafletMapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
+      } catch (e) {}
+    }
+  }
+
+  function highlightMapMarker(turfId, highlight) {
+    const pin = document.getElementById(`map-pin-${turfId}`);
+    if (pin) {
+      if (highlight) {
+        pin.classList.add('selected');
+      } else {
+        pin.classList.remove('selected');
+      }
+    }
+  }
+
+  // ==========================================================================
+  // DISCOVERY CONTROLS & SIDEBAR EVENTS WIRING
+  // ==========================================================================
+  function setupDiscoveryEventListeners() {
+    // 1. Sport filter chips in left sidebar
+    document.querySelectorAll('.filter-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        exploreFilters.sport = btn.dataset.sport;
+        renderMarketplaceTurfs();
+      });
+    });
+
+    // 2. City select in left sidebar
+    const citySelect = document.getElementById('filter-city-select');
+    if (citySelect) {
+      citySelect.addEventListener('change', () => {
+        exploreFilters.city = citySelect.value;
+        renderMarketplaceTurfs();
+      });
+    }
+
+    // 3. Environment segmented buttons (All, Indoor, Outdoor)
+    document.querySelectorAll('.segment-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        exploreFilters.env = btn.dataset.env;
+        renderMarketplaceTurfs();
+      });
+    });
+
+    // 4. Price range slider
+    const priceSlider = document.getElementById('filter-price-range');
+    const priceDisplay = document.getElementById('price-slider-display');
+    if (priceSlider) {
+      priceSlider.addEventListener('input', () => {
+        const val = parseInt(priceSlider.value, 10);
+        exploreFilters.maxPrice = val;
+        if (priceDisplay) priceDisplay.textContent = `₹${val.toLocaleString()}/hr`;
+        renderMarketplaceTurfs();
+      });
+    }
+
+    // 5. Facility Amenities checkboxes
+    document.querySelectorAll('.filter-amenity-cb').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const checked = Array.from(document.querySelectorAll('.filter-amenity-cb:checked')).map(c => c.value);
+        exploreFilters.amenities = checked;
+        renderMarketplaceTurfs();
+      });
+    });
+
+    // 6. Time Slot buttons
+    document.querySelectorAll('.filter-time-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('active')) {
+          btn.classList.remove('active');
+          exploreFilters.timeSlot = null;
+        } else {
+          document.querySelectorAll('.filter-time-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          exploreFilters.timeSlot = btn.dataset.time;
+        }
+        renderMarketplaceTurfs();
+      });
+    });
+
+    // 7. Rating filter pills
+    document.querySelectorAll('.rating-filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.rating-filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        exploreFilters.minRating = parseFloat(btn.dataset.rating) || 0;
+        renderMarketplaceTurfs();
+      });
+    });
+
+    // 8. Capacity pills
+    document.querySelectorAll('.capacity-pill-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.capacity-pill-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        exploreFilters.capacity = btn.dataset.cap;
+        renderMarketplaceTurfs();
+      });
+    });
+
+    // 9. Reset All Filters button
+    const resetBtn = document.getElementById('btn-reset-filters');
+    const emptyResetBtn = document.getElementById('btn-empty-reset-action');
+    function resetAllDiscoveryFilters() {
+      exploreFilters.sport = 'all';
+      exploreFilters.city = 'all';
+      exploreFilters.env = 'all';
+      exploreFilters.maxPrice = 3000;
+      exploreFilters.amenities = [];
+      exploreFilters.timeSlot = null;
+      exploreFilters.minRating = 0;
+      exploreFilters.capacity = 'all';
+      exploreFilters.tab = 'all';
+      exploreFilters.quickTag = null;
+      exploreFilters.sortBy = 'relevance';
+
+      // Reset UI elements
+      document.querySelectorAll('.filter-chip-btn').forEach(b => b.classList.toggle('active', b.dataset.sport === 'all'));
+      if (citySelect) citySelect.value = 'all';
+      document.querySelectorAll('.segment-btn').forEach(b => b.classList.toggle('active', b.dataset.env === 'all'));
+      if (priceSlider) { priceSlider.value = 3000; }
+      if (priceDisplay) priceDisplay.textContent = '₹3,000/hr';
+      document.querySelectorAll('.filter-amenity-cb').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.filter-time-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.rating-filter-pill').forEach(b => b.classList.toggle('active', b.dataset.rating === '0'));
+      document.querySelectorAll('.capacity-pill-btn').forEach(b => b.classList.toggle('active', b.dataset.cap === 'all'));
+      document.querySelectorAll('.explore-tab-pill').forEach(b => b.classList.toggle('active', b.dataset.tab === 'all'));
+      document.querySelectorAll('.quick-chip-toggle').forEach(b => b.classList.remove('active'));
+      const sortSelect = document.getElementById('explore-sort-select');
+      if (sortSelect) sortSelect.value = 'relevance';
+
+      renderMarketplaceTurfs();
+      showToast('Filters reset to default.');
+    }
+    if (resetBtn) resetBtn.addEventListener('click', resetAllDiscoveryFilters);
+    if (emptyResetBtn) emptyResetBtn.addEventListener('click', resetAllDiscoveryFilters);
+
+    // 10. Sorting Select Dropdown
+    const sortSelect = document.getElementById('explore-sort-select');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', () => {
+        exploreFilters.sortBy = sortSelect.value;
+        renderMarketplaceTurfs();
+      });
+    }
+
+    // 11. Map View Toggle (SportMatch split screen)
+    const toggleMapBtn = document.getElementById('btn-toggle-map');
+    const closeMapSideBtn = document.getElementById('btn-close-map-side');
+    const layoutWrapper = document.getElementById('explore-layout-wrapper');
+    const toggleMapText = document.getElementById('map-toggle-text');
+
+    function toggleMapView() {
+      const isSplit = layoutWrapper.classList.toggle('split-map-active');
+      if (toggleMapBtn) {
+        toggleMapBtn.classList.toggle('active', isSplit);
+        if (toggleMapText) toggleMapText.textContent = isSplit ? 'Hide Map' : 'Show Map';
+      }
+      if (isSplit && leafletMapInstance) {
+        setTimeout(() => {
+          leafletMapInstance.invalidateSize();
+        }, 200);
+      }
+    }
+
+    if (toggleMapBtn) toggleMapBtn.addEventListener('click', toggleMapView);
+    if (closeMapSideBtn) closeMapSideBtn.addEventListener('click', toggleMapView);
+
+    // 12. Quick Category Subtabs (All, Most Popular, Fastest Confirm, Favourites)
+    document.querySelectorAll('.explore-tab-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.explore-tab-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        exploreFilters.tab = pill.dataset.tab;
+        renderMarketplaceTurfs();
+      });
+    });
+
+    // 13. Quick Tag Chips (Indoor, Outdoor, Under 1200)
+    document.querySelectorAll('.quick-chip-toggle').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (chip.classList.contains('active')) {
+          chip.classList.remove('active');
+          exploreFilters.quickTag = null;
+        } else {
+          document.querySelectorAll('.quick-chip-toggle').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          exploreFilters.quickTag = chip.dataset.quick;
+        }
+        renderMarketplaceTurfs();
+      });
+    });
+
+    // 14. Mobile Drawer Open/Close
+    const mobileFilterTrigger = document.getElementById('btn-open-mobile-filters');
+    const mobileFilterClose = document.getElementById('btn-close-filter-drawer');
+    const mobileApplyBtn = document.getElementById('btn-apply-filters-mobile');
+    const drawerOverlay = document.getElementById('explore-drawer-overlay');
+    const sidebar = document.getElementById('explore-filter-sidebar');
+
+    function openMobileFilters() {
+      if (sidebar) sidebar.classList.add('open');
+      if (drawerOverlay) drawerOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileFilters() {
+      if (sidebar) sidebar.classList.remove('open');
+      if (drawerOverlay) drawerOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (mobileFilterTrigger) mobileFilterTrigger.addEventListener('click', openMobileFilters);
+    if (mobileFilterClose) mobileFilterClose.addEventListener('click', closeMobileFilters);
+    if (mobileApplyBtn) mobileApplyBtn.addEventListener('click', closeMobileFilters);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeMobileFilters);
+  }
+
+  // Initialize Map, Discovery Events, and Initial Render
+  initLeafletMap();
+  setupDiscoveryEventListeners();
+  updateFavoritesBadge();
+  renderMarketplaceTurfs();
 
   function bindTurfCardEvents() {
     document.querySelectorAll('.btn-card-book').forEach(btn => {
@@ -759,25 +1576,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Connect Hero Search Bar directly into Section A Discovery Engine
   document.getElementById('search-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const loc = document.getElementById('select-location').value;
-    const sport = document.getElementById('select-sport').value;
-    filterVenues(sport, loc);
+    const loc = document.getElementById('select-location')?.value || 'all';
+    const sport = document.getElementById('select-sport')?.value || 'all';
+
+    exploreFilters.city = loc;
+    exploreFilters.sport = sport;
+
+    // Sync left sidebar controls
+    const citySelect = document.getElementById('filter-city-select');
+    if (citySelect) citySelect.value = loc;
+
+    document.querySelectorAll('.filter-chip-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.sport === sport || (sport === 'all' && btn.dataset.sport === 'all'));
+    });
+
+    renderMarketplaceTurfs();
     document.getElementById('popular-turfs')?.scrollIntoView({ behavior: 'smooth' });
   });
 
+  // Connect Hero Sports Pills directly into Section A Discovery Engine
   document.querySelectorAll('.sport-pill-card').forEach(pill => {
     pill.addEventListener('click', () => {
-      const sport = pill.dataset.sport;
-      document.getElementById('select-sport').value = sport;
-      filterVenues(sport, 'all');
+      const sport = pill.dataset.sport || 'all';
+      exploreFilters.sport = sport;
+
+      const heroSportSelect = document.getElementById('select-sport');
+      if (heroSportSelect) heroSportSelect.value = sport;
+
+      document.querySelectorAll('.filter-chip-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.sport === sport);
+      });
+
+      renderMarketplaceTurfs();
       document.getElementById('popular-turfs')?.scrollIntoView({ behavior: 'smooth' });
     });
   });
 
-  // Carousel arrow feedback
+  // Next turfs quick toast
   document.getElementById('btn-next-turfs')?.addEventListener('click', () => {
-    showToast('Browsing more verified turfs in Tamil Nadu.');
+    showToast('Browsing verified sports facilities across Tamil Nadu.');
   });
 });
