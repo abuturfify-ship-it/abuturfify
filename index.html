@@ -823,8 +823,13 @@
         <!-- RIGHT AREA: FACILITY CARDS GRID -->
         <main class="explore-results-area" id="explore-results-area">
           <div class="turfs-cards-grid" id="turfs-container">
-            <!-- Dynamically populated by app.js with real & verified turfs -->
+            <!-- Dynamically populated by app.js with real & verified turfs (2-column grid, 6 per page) -->
           </div>
+
+          <!-- Pagination Controls (SportMatch Style) -->
+          <nav class="explore-pagination-wrapper" id="explore-pagination" aria-label="Facility pages navigation">
+            <!-- Dynamically populated by app.js: e.g. < 1 2 3 > -->
+          </nav>
           
           <!-- Empty state fallback (hidden by default) -->
           <div class="explore-empty-state" id="explore-empty-state" style="display: none;">

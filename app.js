@@ -486,6 +486,52 @@ document.addEventListener('DOMContentLoaded', () => {
       is_instant: true,
       is_popular: false,
       featured: false
+    },
+    {
+      id: 'turf-velachery-padel',
+      name: 'Velocity Padel & Sports Arena',
+      sport: 'Tennis',
+      category: 'tennis',
+      location: 'Velachery, Chennai',
+      city: 'chennai',
+      lat: 12.9815,
+      lng: 80.2180,
+      environment: 'outdoor',
+      price_per_hour: 1300,
+      rating: 4.8,
+      reviews_count: 88,
+      capacity: 'court',
+      capacity_label: 'Panoramic Glass Padel Court (4 Players)',
+      surface: 'World Padel Tour Certified Texturized Monofilament Turf',
+      image: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&auto=format&fit=crop&q=80',
+      amenities: ['Floodlights', 'Parking', 'Cafeteria', 'Changing Room', 'Free Wi-Fi'],
+      times: ['morning', 'afternoon', 'evening', 'night'],
+      is_instant: true,
+      is_popular: true,
+      featured: false
+    },
+    {
+      id: 'turf-smash-cbe',
+      name: 'Smash Point Badminton Academy',
+      sport: 'Badminton',
+      category: 'badminton',
+      location: 'Gandhipuram, Coimbatore',
+      city: 'coimbatore',
+      lat: 11.0183,
+      lng: 76.9680,
+      environment: 'indoor',
+      price_per_hour: 850,
+      rating: 4.9,
+      reviews_count: 116,
+      capacity: 'court',
+      capacity_label: 'Wooden Cushion Court (2-4 Players)',
+      surface: 'BWF Grade-1 Teakwood Flooring with Anti-Glare LED Fixtures',
+      image: 'images/turf-gameon.jpg',
+      amenities: ['Indoor', 'Changing Room', 'Parking', 'Drinking Water', 'Free Wi-Fi'],
+      times: ['morning', 'afternoon', 'evening', 'night'],
+      is_instant: true,
+      is_popular: true,
+      featured: true
     }
   ];
 
@@ -512,6 +558,10 @@ document.addEventListener('DOMContentLoaded', () => {
     quickTag: null,
     sortBy: 'relevance'
   };
+
+  // Pagination state: 2-column grid with 6 facilities per page
+  let currentExplorePage = 1;
+  const FACILITIES_PER_PAGE = 6;
 
 
   // Favorites management via localStorage
@@ -697,18 +747,33 @@ document.addEventListener('DOMContentLoaded', () => {
       filterDot.style.display = activeCount > 0 ? 'inline-block' : 'none';
     }
 
-    // 4. Update Empty State visibility
+    // 4. Update Empty State visibility & Pagination
     const emptyState = document.getElementById('explore-empty-state');
+    const paginationNav = document.getElementById('explore-pagination');
+
     if (filtered.length === 0) {
       container.style.display = 'none';
       if (emptyState) emptyState.style.display = 'block';
-    } else {
-      container.style.display = 'grid';
-      if (emptyState) emptyState.style.display = 'none';
+      if (paginationNav) {
+        paginationNav.style.display = 'none';
+        paginationNav.innerHTML = '';
+      }
+      return;
     }
 
-    // 5. Render Facility Cards Grid (Airbnb & SportMatch card structure)
-    container.innerHTML = filtered.map(t => {
+    container.style.display = 'grid';
+    if (emptyState) emptyState.style.display = 'none';
+
+    // Calculate pagination slices (6 facilities per page)
+    const totalPages = Math.ceil(filtered.length / FACILITIES_PER_PAGE) || 1;
+    if (currentExplorePage > totalPages) currentExplorePage = totalPages;
+    if (currentExplorePage < 1) currentExplorePage = 1;
+
+    const startIndex = (currentExplorePage - 1) * FACILITIES_PER_PAGE;
+    const pageItems = filtered.slice(startIndex, startIndex + FACILITIES_PER_PAGE);
+
+    // 5. Render Facility Cards Grid (2-column grid, 6 per page)
+    container.innerHTML = pageItems.map(t => {
       const isFav = favs.includes(String(t.id));
       const microAmenities = (t.amenities || []).slice(0, 3);
 
@@ -757,8 +822,89 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }).join('');
 
-    // 6. Bind events on newly rendered cards
+    // 6. Render Pagination Controls (< 1 2 3 >)
+    renderPaginationControls(totalPages);
+
+    // 7. Bind events on newly rendered cards
     bindTurfCardEvents();
+  }
+
+  // Render Numbered Pagination (SportMatch Style)
+  function renderPaginationControls(totalPages) {
+    const paginationNav = document.getElementById('explore-pagination');
+    if (!paginationNav) return;
+
+    if (totalPages <= 1) {
+      paginationNav.style.display = 'none';
+      paginationNav.innerHTML = '';
+      return;
+    }
+
+    paginationNav.style.display = 'flex';
+
+    let html = `
+      <button type="button" class="pagination-nav-btn" id="btn-page-prev" ${currentExplorePage === 1 ? 'disabled' : ''} aria-label="Previous Page">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+    `;
+
+    for (let p = 1; p <= totalPages; p++) {
+      html += `
+        <button type="button" class="pagination-num-btn ${p === currentExplorePage ? 'active' : ''}" data-page="${p}">
+          ${p}
+        </button>
+      `;
+    }
+
+    html += `
+      <button type="button" class="pagination-nav-btn" id="btn-page-next" ${currentExplorePage === totalPages ? 'disabled' : ''} aria-label="Next Page">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    `;
+
+    paginationNav.innerHTML = html;
+
+    // Bind page number clicks
+    paginationNav.querySelectorAll('.pagination-num-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const page = parseInt(btn.dataset.page, 10);
+        if (page && page !== currentExplorePage) {
+          currentExplorePage = page;
+          renderMarketplaceTurfs();
+          scrollToExploreTop();
+        }
+      });
+    });
+
+    // Bind Prev / Next buttons
+    const prevBtn = document.getElementById('btn-page-prev');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (currentExplorePage > 1) {
+          currentExplorePage--;
+          renderMarketplaceTurfs();
+          scrollToExploreTop();
+        }
+      });
+    }
+
+    const nextBtn = document.getElementById('btn-page-next');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (currentExplorePage < totalPages) {
+          currentExplorePage++;
+          renderMarketplaceTurfs();
+          scrollToExploreTop();
+        }
+      });
+    }
+  }
+
+  function scrollToExploreTop() {
+    const section = document.getElementById('popular-turfs');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   // Bind Card Click Events (Book Now, View Details, Favorites, Hover highlight)
@@ -930,6 +1076,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.filter-chip-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         exploreFilters.sport = btn.dataset.sport;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     });
@@ -939,6 +1086,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (citySelect) {
       citySelect.addEventListener('change', () => {
         exploreFilters.city = citySelect.value;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     }
@@ -949,6 +1097,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         exploreFilters.env = btn.dataset.env;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     });
@@ -961,6 +1110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = parseInt(priceSlider.value, 10);
         exploreFilters.maxPrice = val;
         if (priceDisplay) priceDisplay.textContent = `₹${val.toLocaleString()}/hr`;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     }
@@ -970,6 +1120,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cb.addEventListener('change', () => {
         const checked = Array.from(document.querySelectorAll('.filter-amenity-cb:checked')).map(c => c.value);
         exploreFilters.amenities = checked;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     });
@@ -985,6 +1136,7 @@ document.addEventListener('DOMContentLoaded', () => {
           btn.classList.add('active');
           exploreFilters.timeSlot = btn.dataset.time;
         }
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     });
@@ -995,6 +1147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.rating-filter-pill').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         exploreFilters.minRating = parseFloat(btn.dataset.rating) || 0;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     });
@@ -1005,6 +1158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.capacity-pill-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         exploreFilters.capacity = btn.dataset.cap;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     });
@@ -1024,6 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       exploreFilters.tab = 'all';
       exploreFilters.quickTag = null;
       exploreFilters.sortBy = 'relevance';
+      currentExplorePage = 1;
 
       // Reset UI elements
       document.querySelectorAll('.filter-chip-btn').forEach(b => b.classList.toggle('active', b.dataset.sport === 'all'));
@@ -1051,10 +1206,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sortSelect) {
       sortSelect.addEventListener('change', () => {
         exploreFilters.sortBy = sortSelect.value;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     }
-
 
     // 12. Quick Category Subtabs (All, Most Popular, Fastest Confirm, Favourites)
     document.querySelectorAll('.explore-tab-pill').forEach(pill => {
@@ -1062,6 +1217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.explore-tab-pill').forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         exploreFilters.tab = pill.dataset.tab;
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     });
@@ -1077,6 +1233,7 @@ document.addEventListener('DOMContentLoaded', () => {
           chip.classList.add('active');
           exploreFilters.quickTag = chip.dataset.quick;
         }
+        currentExplorePage = 1;
         renderMarketplaceTurfs();
       });
     });

@@ -1437,12 +1437,73 @@ button {
   width: 100%;
 }
 
-/* 3-column cards grid */
+/* 2-column cards grid (6 facilities per page) */
 .turfs-cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px;
   width: 100%;
+}
+
+/* Pagination Controls (SportMatch Style: < 1 2 3 >) */
+.explore-pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid #E9EEE9;
+  width: 100%;
+}
+
+.pagination-nav-btn,
+.pagination-num-btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  background: #FFFFFF;
+  color: #374151;
+  font-family: var(--font-inter);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.pagination-nav-btn:hover:not(:disabled),
+.pagination-num-btn:hover:not(.active) {
+  border-color: #164C38;
+  color: #164C38;
+  background: #F4F6F3;
+}
+
+.pagination-num-btn.active {
+  background: #164C38;
+  border-color: #164C38;
+  color: #FFFFFF;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(22, 76, 56, 0.25);
+}
+
+.pagination-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #E5E7EB;
+  color: #9CA3AF;
+}
+
+.pagination-info-pill {
+  font-size: 0.82rem;
+  color: #6B7280;
+  font-weight: 500;
+  margin: 0 8px;
 }
 
 /* ==========================================================================
@@ -3121,6 +3182,23 @@ body.dark-mode .card-loc-pill {
 body.dark-mode .card-fav-btn {
   background: rgba(17, 24, 39, 0.95) !important;
   color: #9CA3AF !important;
+}
+
+body.dark-mode .explore-pagination-wrapper {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-mode .pagination-nav-btn,
+body.dark-mode .pagination-num-btn {
+  background: #131D31 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F1F5F9 !important;
+}
+
+body.dark-mode .pagination-num-btn.active {
+  background: #164C38 !important;
+  border-color: #B9E5C6 !important;
+  color: #FFFFFF !important;
 }
 
 body.dark-mode .search-col-label {
