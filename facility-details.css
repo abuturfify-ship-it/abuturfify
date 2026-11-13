@@ -3,6 +3,11 @@
    ========================================================================== */
 
 /* Page Container */
+html,
+body.facility-details-page {
+  overflow-x: clip !important;
+}
+
 .facility-details-page {
   background: #FFFFFF;
   color: #202923;
@@ -335,15 +340,18 @@ body.dark-mode .btn-header-action {
 .facility-main-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 48px;
+  gap: 40px;
   padding: 36px 0 60px;
   align-items: start;
 }
 
-.facility-main-grid > aside {
+.facility-main-grid > aside,
+.facility-sidebar-aside {
   align-self: start;
+  position: -webkit-sticky;
   position: sticky;
-  top: 90px;
+  top: 96px;
+  z-index: 25;
 }
 
 .facility-left-col {
@@ -1076,6 +1084,9 @@ body.dark-mode .review-text {
    RIGHT COLUMN: STICKY BOOKING PANEL (METEGOL REFERENCE MATCH)
    ========================================================================== */
 .facility-booking-panel {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 96px;
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   border-radius: 20px;
@@ -1401,8 +1412,10 @@ body.dark-mode .mobile-bar-price {
     grid-template-columns: 1fr;
     gap: 36px;
   }
+  .facility-main-grid > aside,
+  .facility-sidebar-aside,
   .facility-booking-panel {
-    display: none; /* Mobile sticky bar replaces panel on small screens */
+    display: none !important; /* Mobile sticky bar replaces panel on small screens */
   }
   .mobile-sticky-book-bar {
     display: flex;
