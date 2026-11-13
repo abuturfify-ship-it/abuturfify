@@ -939,27 +939,20 @@ window.TurfifyStore = {
       window.dispatchEvent(new CustomEvent('turfify:data_synced', { detail: { bookings: bks } }));
     } catch (e) {}
 
-    // Delete matching rows from Supabase Cloud
-    try {
-      if (turfId) {
-        await fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings?turf_id=eq.${encodeURIComponent(turfId)}`, {
+    // Delete matching rows from Supabase Cloud by exact IDs
+    if (toDeleteIds.length > 0) {
+      try {
+        const idList = toDeleteIds.map(id => encodeURIComponent(id)).join(',');
+        await fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings?id=in.(${idList})`, {
           method: 'DELETE',
           headers: {
             'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
             'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY
           }
         });
-      } else if (ownerId) {
-        await fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings?owner_id=eq.${encodeURIComponent(ownerId)}`, {
-          method: 'DELETE',
-          headers: {
-            'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
-            'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY
-          }
-        });
+      } catch (e) {
+        console.warn('Supabase bulk delete error:', e);
       }
-    } catch (e) {
-      console.warn('Supabase bulk delete error:', e);
     }
   }
 };
