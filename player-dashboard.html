@@ -1577,7 +1577,7 @@
       // Favorites
       const favList = document.getElementById('player-favorites-list');
       favList.innerHTML = '';
-      turfs.slice(0, 3).forEach(t => {
+      turfs.forEach(t => {
         const item = document.createElement('div');
         item.className = 'owner-turf-item';
         item.innerHTML = `
