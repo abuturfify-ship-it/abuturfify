@@ -133,6 +133,8 @@ window.TurfifyStore = {
   async syncWithServer() {
     try {
       let serverData = { turfs: [], bookings: [] };
+      let cloudTurfsConnected = false;
+      let cloudBookingsConnected = false;
 
       // 1. Primary Cloud Sync: Query Supabase REST API directly
       try {
@@ -146,18 +148,24 @@ window.TurfifyStore = {
         ]);
         if (tRes.ok) {
           const tJson = await tRes.json();
-          if (Array.isArray(tJson)) serverData.turfs = tJson;
+          if (Array.isArray(tJson)) {
+            serverData.turfs = tJson;
+            cloudTurfsConnected = true;
+          }
         }
         if (bRes.ok) {
           const bJson = await bRes.json();
-          if (Array.isArray(bJson)) serverData.bookings = bJson;
+          if (Array.isArray(bJson)) {
+            serverData.bookings = bJson;
+            cloudBookingsConnected = true;
+          }
         }
       } catch (err) {
         console.warn('Supabase cloud fetch note:', err);
       }
 
-      // 2. Secondary fallback to local API if cloud is empty
-      if (!serverData.turfs.length && !serverData.bookings.length) {
+      // 2. Secondary fallback to local API ONLY if cloud connection completely failed
+      if (!cloudTurfsConnected && !cloudBookingsConnected) {
         try {
           let res = await fetch('/api/data');
           if (!res.ok) res = await fetch('/turfify_database.json');
@@ -249,135 +257,31 @@ window.TurfifyStore = {
           }
         }
 
-        // 2. MERGE BOOKINGS: Keep all locally created bookings, update/add server bookings
-        if (Array.isArray(serverData.bookings) && serverData.bookings.length > 0) {
-          const localBookings = this.getBookings();
+        // 2. MERGE BOOKINGS: Supabase Cloud is the single source of truth across all devices
+        if (cloudBookingsConnected || (Array.isArray(serverData.bookings) && serverData.bookings.length > 0)) {
+          let deletedBookingsList = [];
+          try {
+            deletedBookingsList = JSON.parse(localStorage.getItem('turfify_deleted_bookings') || '[]');
+          } catch (e) {}
 
           let cancelledList = [];
           try {
             cancelledList = JSON.parse(localStorage.getItem('turfify_cancelled_bookings') || '[]');
           } catch (e) {}
 
-          // Load deleted bookings blacklist — these are NEVER shown again
-          let deletedBookingsList = [];
-          try {
-            deletedBookingsList = JSON.parse(localStorage.getItem('turfify_deleted_bookings') || '[]');
-          } catch (e) {}
+          // Cloud bookings, excluding any locally deleted in the immediate session
+          const finalBookings = (serverData.bookings || []).filter(sb => !deletedBookingsList.includes(String(sb.id)));
 
-          // Merge server-side deleted_booking_ids into local blacklist (cross-device consistency)
-          if (Array.isArray(serverData.deleted_booking_ids)) {
-            let changed_dl = false;
-            serverData.deleted_booking_ids.forEach(sid => {
-              const str = String(sid);
-              if (!deletedBookingsList.includes(str)) {
-                deletedBookingsList.push(str);
-                changed_dl = true;
-              }
-            });
-            if (changed_dl) {
-              try {
-                localStorage.setItem('turfify_deleted_bookings', JSON.stringify(deletedBookingsList));
-              } catch (e) {}
-            }
-          }
-
-          // Filter out any locally deleted bookings
-          let mergedBookings = localBookings.filter(b => !deletedBookingsList.includes(String(b.id)));
-          if (mergedBookings.length !== localBookings.length) {
-            changed = true;
-          }
-
-          // Merge server-side cancelled_booking_ids into local blacklist (cross-device consistency)
-          if (Array.isArray(serverData.cancelled_booking_ids)) {
-            let changed_cl = false;
-            serverData.cancelled_booking_ids.forEach(sid => {
-              const str = String(sid);
-              if (!cancelledList.includes(str)) {
-                cancelledList.push(str);
-                changed_cl = true;
-              }
-            });
-            if (changed_cl) {
-              try {
-                localStorage.setItem('turfify_cancelled_bookings', JSON.stringify(cancelledList));
-              } catch (e) {}
-            }
-          }
-
-          serverData.bookings.forEach(sb => {
-            // Skip bookings the user has permanently deleted — never re-add them
-            if (deletedBookingsList.includes(String(sb.id))) return;
-
-            const isCancelled = cancelledList.includes(String(sb.id));
-            const idx = mergedBookings.findIndex(lb => String(lb.id) === String(sb.id));
-            if (idx >= 0) {
-              // NEVER allow a stale server 'Confirmed' record to overwrite a local 'Cancelled' record!
-              const localIsCancelled = mergedBookings[idx].status === 'Cancelled' || isCancelled;
-              if (localIsCancelled) {
-                if (mergedBookings[idx].status !== 'Cancelled') {
-                  mergedBookings[idx].status = 'Cancelled';
-                  changed = true;
-                }
-              } else {
-                if (JSON.stringify(mergedBookings[idx]) !== JSON.stringify(sb)) {
-                  mergedBookings[idx] = { ...mergedBookings[idx], ...sb };
-                  changed = true;
-                }
-              }
-            } else {
-              if (isCancelled) {
-                mergedBookings.push({ ...sb, status: 'Cancelled' });
-              } else {
-                mergedBookings.push(sb);
-              }
-              changed = true;
+          finalBookings.forEach(b => {
+            if (cancelledList.includes(String(b.id))) {
+              b.status = 'Cancelled';
             }
           });
 
-          if (localBookings.length === 0 || changed) {
-            // Never persist deleted bookings back to storage
-            const finalBookings = mergedBookings.filter(b => !deletedBookingsList.includes(String(b.id)));
+          const localBookings = this.getBookings();
+          if (JSON.stringify(localBookings) !== JSON.stringify(finalBookings)) {
             localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(finalBookings));
-          }
-
-          // Bi-directional sync: Push any local-only bookings up to Supabase Cloud
-          const serverBookingIds = new Set(serverData.bookings.map(sb => String(sb.id)));
-          const localOnlyBookings = localBookings.filter(lb => !serverBookingIds.has(String(lb.id)) && !deletedBookingsList.includes(String(lb.id)));
-          if (localOnlyBookings.length > 0) {
-            localOnlyBookings.forEach(lb => {
-              const payload = {
-                id: String(lb.id),
-                turf_id: String(lb.turf_id || ''),
-                turf_name: String(lb.turf_name || ''),
-                sport: String(lb.sport || ''),
-                player_id: String(lb.player_id || ''),
-                player_name: String(lb.player_name || ''),
-                player_email: String(lb.player_email || ''),
-                player_phone: String(lb.player_phone || ''),
-                owner_id: String(lb.owner_id || ''),
-                owner_name: String(lb.owner_name || ''),
-                owner_email: String(lb.owner_email || ''),
-                owner_phone: String(lb.owner_phone || ''),
-                date: String(lb.date || new Date().toISOString().split('T')[0]),
-                time_slot: String(lb.time_slot || (Array.isArray(lb.time_slots) ? lb.time_slots[0] : '6:00 PM - 7:00 PM')),
-                time_slots: Array.isArray(lb.time_slots) ? lb.time_slots : (lb.time_slot ? [lb.time_slot] : []),
-                field_name: String(lb.field_name || ''),
-                amount: parseInt(lb.amount || 1200, 10),
-                status: String(lb.status || 'Confirmed'),
-                payment_status: String(lb.payment_status || 'Paid Online'),
-                booking_time: String(lb.booking_time || new Date().toLocaleString())
-              };
-              fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings`, {
-                method: 'POST',
-                headers: {
-                  'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
-                  'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY,
-                  'Content-Type': 'application/json',
-                  'Prefer': 'resolution=merge-duplicates'
-                },
-                body: JSON.stringify(payload)
-              }).catch(() => {});
-            });
+            changed = true;
           }
         }
 
@@ -951,7 +855,7 @@ window.TurfifyStore = {
     }
   },
 
-  deleteBooking(bookingId) {
+  async deleteBooking(bookingId) {
     if (!bookingId) return;
     const strId = String(bookingId);
 
@@ -986,12 +890,77 @@ window.TurfifyStore = {
       window.dispatchEvent(new CustomEvent('turfify:data_synced', { detail: { bookings: bks } }));
     } catch (e) {}
 
-    // 5. Notify server endpoint to delete from server JSON
+    // 5. Delete from Supabase Cloud with guaranteed completion (cross-device permanent sync)
+    try {
+      await fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings?id=eq.${encodeURIComponent(strId)}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+          'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY
+        }
+      });
+    } catch (sbErr) {
+      console.warn('Supabase deleteBooking error:', sbErr);
+    }
+
+    // 6. Notify server endpoint fallback
     fetch('/api/delete-booking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: strId })
     }).catch(() => {});
+  },
+
+  async deleteAllOwnerBookings(ownerId, turfId) {
+    let bks = this.getBookings();
+    const toDeleteIds = [];
+
+    bks = bks.filter(b => {
+      const matchOwner = ownerId && (String(b.owner_id) === String(ownerId) || (b.owner_email && b.owner_email.toLowerCase() === String(ownerId).toLowerCase()));
+      const matchTurf = turfId && String(b.turf_id) === String(turfId);
+      if (turfId ? matchTurf : (matchOwner || !ownerId)) {
+        toDeleteIds.push(String(b.id));
+        return false;
+      }
+      return true;
+    });
+
+    try {
+      localStorage.setItem(TURFIFY_STORAGE_KEYS.BOOKINGS, JSON.stringify(bks));
+      const deletedList = JSON.parse(localStorage.getItem('turfify_deleted_bookings') || '[]');
+      toDeleteIds.forEach(id => {
+        if (!deletedList.includes(id)) deletedList.push(id);
+      });
+      localStorage.setItem('turfify_deleted_bookings', JSON.stringify(deletedList));
+    } catch (e) {}
+
+    try {
+      window.dispatchEvent(new CustomEvent('turfify:booking_deleted', { detail: { ids: toDeleteIds } }));
+      window.dispatchEvent(new CustomEvent('turfify:data_synced', { detail: { bookings: bks } }));
+    } catch (e) {}
+
+    // Delete matching rows from Supabase Cloud
+    try {
+      if (turfId) {
+        await fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings?turf_id=eq.${encodeURIComponent(turfId)}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+            'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY
+          }
+        });
+      } else if (ownerId) {
+        await fetch(`${TURFIFY_SUPABASE_CONFIG.URL}/rest/v1/bookings?owner_id=eq.${encodeURIComponent(ownerId)}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': TURFIFY_SUPABASE_CONFIG.ANON_KEY,
+            'Authorization': 'Bearer ' + TURFIFY_SUPABASE_CONFIG.ANON_KEY
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Supabase bulk delete error:', e);
+    }
   }
 };
 

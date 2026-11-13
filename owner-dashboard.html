@@ -1409,6 +1409,7 @@
               <div style="display:flex; align-items:center; gap:6px;">
                 <button type="button" class="btn-ledger-scroll" onclick="document.getElementById('ledger-table-container')?.scrollBy({left: -220, behavior: 'smooth'})" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#334155; cursor:pointer; display:inline-flex; align-items:center; gap:3px;" title="Scroll Left">◀ Left</button>
                 <button type="button" class="btn-ledger-scroll" onclick="document.getElementById('ledger-table-container')?.scrollBy({left: 220, behavior: 'smooth'})" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#334155; cursor:pointer; display:inline-flex; align-items:center; gap:3px;" title="Scroll Right">Right ▶</button>
+                <button type="button" class="btn-ledger-clear" onclick="window.ownerClearAllBookings()" style="background:#FEF2F2; border:1px solid #FCA5A5; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#DC2626; cursor:pointer; display:inline-flex; align-items:center; gap:3px; margin-left:6px;" title="Permanently delete all booking records across all devices">🗑️ Clear All</button>
               </div>
             </div>
             <div class="table-responsive-container" id="ledger-table-container">
@@ -1674,17 +1675,34 @@
         }
       }
     };
-    window.ownerDeleteBooking = function(id) {
+    window.ownerDeleteBooking = async function(id) {
       const bks = window.TurfifyStore ? window.TurfifyStore.getBookings() : [];
       const target = bks.find(b => String(b.id) === String(id));
       const info = target ? `${target.turf_name} (${target.date}  ${target.time_slot})` : `booking ${id}`;
       if (!confirm(`Permanently delete booking record for ${info}?\n\nThis removes it from the ledger entirely.`)) return;
       if (window.TurfifyStore && window.TurfifyStore.deleteBooking) {
-        window.TurfifyStore.deleteBooking(id);
+        await window.TurfifyStore.deleteBooking(id);
       }
       renderOwnerDashboard();
       if (typeof showToast === 'function') {
         showToast('🗑️ Booking record deleted from ledger.');
+      }
+    };
+
+    window.ownerClearAllBookings = async function() {
+      const activeUser = window.TurfifyStore?.getCurrentUser();
+      const bks = window.TurfifyStore ? window.TurfifyStore.getOwnerBookings(activeUser?.id) : [];
+      if (!bks.length) {
+        alert('No booking records to clear.');
+        return;
+      }
+      if (!confirm(`Permanently delete all ${bks.length} booking records across all devices and Supabase Cloud?\n\nThis action cannot be undone.`)) return;
+      if (window.TurfifyStore?.deleteAllOwnerBookings) {
+        await window.TurfifyStore.deleteAllOwnerBookings(activeUser?.id);
+      }
+      renderOwnerDashboard();
+      if (typeof showToast === 'function') {
+        showToast(`🗑️ All ${bks.length} booking records permanently deleted across all devices.`);
       }
     };
 
