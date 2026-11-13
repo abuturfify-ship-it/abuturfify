@@ -619,12 +619,18 @@
     }
     .owner-master-detail-grid {
       display: grid !important;
-      grid-template-columns: 380px 1fr !important;
+      grid-template-columns: 380px minmax(0, 1fr) !important;
       gap: 1.5rem !important;
       align-items: start !important;
       margin: 0 0 3rem 0 !important;
       width: 100% !important;
       max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .owner-master-detail-grid > div {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
       box-sizing: border-box !important;
     }
     @media (max-width: 1024px) {
@@ -643,6 +649,52 @@
         min-width: 0 !important;
         box-sizing: border-box !important;
       }
+    }
+
+    /* Global Horizontal Table Swipe & Responsive Container */
+    .table-responsive-container {
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      touch-action: pan-x pan-y !important;
+      overscroll-behavior-x: contain !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      display: block !important;
+      box-sizing: border-box !important;
+      cursor: grab;
+      position: relative;
+    }
+    .table-responsive-container.is-dragging {
+      cursor: grabbing !important;
+      user-select: none !important;
+    }
+    .table-responsive-container::-webkit-scrollbar {
+      height: 8px !important;
+      display: block !important;
+    }
+    .table-responsive-container::-webkit-scrollbar-track {
+      background: #F1F5F9 !important;
+      border-radius: 999px !important;
+    }
+    .table-responsive-container::-webkit-scrollbar-thumb {
+      background: #CBD5E1 !important;
+      border-radius: 999px !important;
+    }
+    .table-responsive-container::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8 !important;
+    }
+    .dash-table {
+      min-width: 860px !important;
+      width: 100% !important;
+      table-layout: auto !important;
+      border-collapse: collapse !important;
+    }
+    .dash-table th, .dash-table td {
+      white-space: nowrap !important;
+      padding: 11px 14px !important;
+      vertical-align: middle !important;
     }
 
     /* Teal Themed Panels */
@@ -1349,11 +1401,17 @@
             </div>
           </div>
           <div class="panel-body-teal" style="padding: 0; overflow: hidden; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;">
-            <div style="font-size:0.75rem; color:#64748B; background:#F8FAFC; padding:7px 14px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; gap:6px;">
-              <span>↔️</span>
-              <span style="font-weight:600;">Swipe left/right to view full booking details & actions</span>
+            <div style="font-size:0.75rem; color:#64748B; background:#F8FAFC; padding:7px 14px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span>↔️</span>
+                <span style="font-weight:600;">Swipe left/right or drag to view full booking details & actions</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <button type="button" class="btn-ledger-scroll" onclick="document.getElementById('ledger-table-container')?.scrollBy({left: -220, behavior: 'smooth'})" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#334155; cursor:pointer; display:inline-flex; align-items:center; gap:3px;" title="Scroll Left">◀ Left</button>
+                <button type="button" class="btn-ledger-scroll" onclick="document.getElementById('ledger-table-container')?.scrollBy({left: 220, behavior: 'smooth'})" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#334155; cursor:pointer; display:inline-flex; align-items:center; gap:3px;" title="Scroll Right">Right ▶</button>
+              </div>
             </div>
-            <div class="table-responsive-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;">
+            <div class="table-responsive-container" id="ledger-table-container">
               <table class="dash-table">
                 <thead>
                   <tr>
@@ -2064,6 +2122,50 @@
           ledgerBody.appendChild(tr);
         });
       }
+      initDragToScroll();
+    }
+
+    function initDragToScroll() {
+      const container = document.getElementById('ledger-table-container');
+      if (!container || container.dataset.dragInit) return;
+      container.dataset.dragInit = 'true';
+
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+      let moved = false;
+
+      container.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button, a, input, select')) return;
+        isDown = true;
+        moved = false;
+        container.classList.add('is-dragging');
+        startX = e.pageX - container.offsetLeft;
+        scrollLeft = container.scrollLeft;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false;
+        container.classList.remove('is-dragging');
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - container.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        if (Math.abs(walk) > 4) moved = true;
+        container.scrollLeft = scrollLeft - walk;
+      });
+
+      container.addEventListener('click', (e) => {
+        if (moved) {
+          e.preventDefault();
+          e.stopPropagation();
+          moved = false;
+        }
+      }, true);
     }
 
     function showToast(msg) {
@@ -2081,6 +2183,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       renderOwnerDashboard();
+      initDragToScroll();
 
       // Sync latest server records for cross-window consistency
       if (window.TurfifyStore?.syncWithServer) {

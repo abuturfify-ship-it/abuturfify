@@ -286,11 +286,57 @@
   text-transform: uppercase;
 }
 
+/* Responsive Table Container with horizontal swipe & drag scroll */
+.table-responsive-container {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
+  overscroll-behavior-x: contain !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  cursor: grab;
+  position: relative;
+}
+
+.table-responsive-container.is-dragging {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+.table-responsive-container::-webkit-scrollbar {
+  height: 8px !important;
+  display: block !important;
+}
+
+.table-responsive-container::-webkit-scrollbar-track {
+  background: #F1F5F9 !important;
+  border-radius: 999px !important;
+}
+
+.table-responsive-container::-webkit-scrollbar-thumb {
+  background: #CBD5E1 !important;
+  border-radius: 999px !important;
+}
+
+.table-responsive-container::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8 !important;
+}
+
 /* Tables for Bookings */
 .dash-table {
   width: 100%;
+  min-width: 860px !important;
   border-collapse: collapse;
   font-size: 0.85rem;
+}
+
+.dash-table th,
+.dash-table td {
+  white-space: nowrap !important;
 }
 
 .dash-table th {
