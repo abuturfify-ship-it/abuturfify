@@ -848,7 +848,7 @@
             const iso = btn.dataset.iso;
             selectedDate = dates.find(d => d.iso === iso) || dates[0];
             renderDateStrip();
-            renderTimeSlots();
+            loadBookedSlots(turf.id, selectedDate.iso); // reload real bookings for new date
             updateBookingSummary();
           });
         });
@@ -858,24 +858,50 @@
 
       // 10. Time Slots Generation & Filter
       const ALL_HOURS = [
-        { label: '06:00 AM - 07:00 AM', phase: 'morning', booked: false },
-        { label: '07:00 AM - 08:00 AM', phase: 'morning', booked: false },
-        { label: '08:00 AM - 09:00 AM', phase: 'morning', booked: false },
-        { label: '09:00 AM - 10:00 AM', phase: 'morning', booked: false },
-        { label: '10:00 AM - 11:00 AM', phase: 'morning', booked: true },
-        { label: '11:00 AM - 12:00 PM', phase: 'morning', booked: false },
-        { label: '12:00 PM - 01:00 PM', phase: 'afternoon', booked: false },
-        { label: '01:00 PM - 02:00 PM', phase: 'afternoon', booked: true },
-        { label: '02:00 PM - 03:00 PM', phase: 'afternoon', booked: false },
-        { label: '03:00 PM - 04:00 PM', phase: 'afternoon', booked: false },
-        { label: '04:00 PM - 05:00 PM', phase: 'evening', booked: false },
-        { label: '05:00 PM - 06:00 PM', phase: 'evening', booked: false },
-        { label: '06:00 PM - 07:00 PM', phase: 'evening', booked: false },
-        { label: '07:00 PM - 08:00 PM', phase: 'evening', booked: false },
-        { label: '08:00 PM - 09:00 PM', phase: 'night', booked: false },
-        { label: '09:00 PM - 10:00 PM', phase: 'night', booked: false },
-        { label: '10:00 PM - 11:00 PM', phase: 'night', booked: true }
+        { label: '06:00 AM - 07:00 AM', phase: 'morning' },
+        { label: '07:00 AM - 08:00 AM', phase: 'morning' },
+        { label: '08:00 AM - 09:00 AM', phase: 'morning' },
+        { label: '09:00 AM - 10:00 AM', phase: 'morning' },
+        { label: '10:00 AM - 11:00 AM', phase: 'morning' },
+        { label: '11:00 AM - 12:00 PM', phase: 'morning' },
+        { label: '12:00 PM - 01:00 PM', phase: 'afternoon' },
+        { label: '01:00 PM - 02:00 PM', phase: 'afternoon' },
+        { label: '02:00 PM - 03:00 PM', phase: 'afternoon' },
+        { label: '03:00 PM - 04:00 PM', phase: 'afternoon' },
+        { label: '04:00 PM - 05:00 PM', phase: 'evening' },
+        { label: '05:00 PM - 06:00 PM', phase: 'evening' },
+        { label: '06:00 PM - 07:00 PM', phase: 'evening' },
+        { label: '07:00 PM - 08:00 PM', phase: 'evening' },
+        { label: '08:00 PM - 09:00 PM', phase: 'night' },
+        { label: '09:00 PM - 10:00 PM', phase: 'night' },
+        { label: '10:00 PM - 11:00 PM', phase: 'night' }
       ];
+
+      // Tracks which slots are booked for the current turf+date from Supabase
+      let bookedSlotLabels = new Set();
+
+      const SUPABASE_URL = 'https://fksdanhjdhqbpijoolzf.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2RhbmhqZGhxYnBpam9vbHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2NDA3MDQsImV4cCI6MjEwODIxNjcwNH0.kXpr4ohoHuv-XFrSyqGjzXh3cYcFmn4dXmq_ZUsKTz0';
+
+      async function loadBookedSlots(turfId, dateIso) {
+        bookedSlotLabels = new Set();
+        try {
+          const url = `${SUPABASE_URL}/rest/v1/bookings?turf_id=eq.${encodeURIComponent(turfId)}&date=eq.${dateIso}&status=neq.Cancelled&select=time_slot`;
+          const res = await fetch(url, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            data.forEach(b => {
+              if (b.time_slot) {
+                // time_slot may contain multiple slots separated by ", "
+                b.time_slot.split(',').forEach(s => bookedSlotLabels.add(s.trim()));
+              }
+            });
+          }
+        } catch(e) { console.warn('Could not load booked slots:', e); }
+        renderTimeSlots();
+      }
 
       let currentPhase = 'all';
       let selectedSlot = ALL_HOURS.find(s => s.label === '06:00 PM - 07:00 PM') || ALL_HOURS[0];
@@ -888,11 +914,12 @@
           : ALL_HOURS.filter(s => s.phase === currentPhase);
 
         slotsContainer.innerHTML = filtered.map(s => {
+          const isBooked = bookedSlotLabels.has(s.label);
           const isSelected = (s.label === selectedSlot.label);
           return `
-            <button type="button" class="time-slot-btn ${s.booked ? 'booked' : ''} ${isSelected ? 'selected' : ''}" data-slot="${s.label}" ${s.booked ? 'disabled' : ''}>
+            <button type="button" class="time-slot-btn ${isBooked ? 'booked' : ''} ${isSelected && !isBooked ? 'selected' : ''}" data-slot="${s.label}" ${isBooked ? 'disabled' : ''}>
               <span>${s.label.split(' - ')[0]}</span>
-              <span class="slot-status-text">${s.booked ? 'Booked' : (isSelected ? 'Selected' : 'Available')}</span>
+              <span class="slot-status-text">${isBooked ? 'Booked' : (isSelected ? 'Selected' : 'Available')}</span>
             </button>
           `;
         }).join('');
@@ -917,7 +944,8 @@
         });
       });
 
-      renderTimeSlots();
+      // Initial load: fetch real booked slots from Supabase for today
+      loadBookedSlots(turf.id, selectedDate.iso);
 
       // 11. Update Booking Panel Summary
       function updateBookingSummary() {
