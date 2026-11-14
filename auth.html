@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -115,6 +116,8 @@
     .btn-google:active{background:#f1f3f4}
     .btn-google svg{flex-shrink:0}
     .btn-google.loading{opacity:0.7;pointer-events:none}
+    .g-btn-wrap{display:flex;justify-content:center;align-items:center;width:100%;min-height:44px}
+    .g-btn-wrap iframe{margin:0 auto !important}
 
     /* RESPONSIVE */
     @media(max-width:900px){
@@ -204,10 +207,12 @@
           </button>
         </form>
         <div class="auth-divider">or continue with</div>
-        <button type="button" class="btn-google" id="btn-google-signin" onclick="signInWithGoogle()">
-          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-          Continue with Google
-        </button>
+        <div id="g_id_signin_wrap" class="g-btn-wrap">
+          <button type="button" class="btn-google" id="btn-google-signin" onclick="signInWithGoogle()">
+            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+            Continue with Google
+          </button>
+        </div>
         <p class="auth-footer-text">Don't have an account? <button type="button" class="link-btn" onclick="switchView('signup', event)">Create one free</button></p>
       </div>
 
@@ -260,10 +265,12 @@
           </button>
         </form>
         <div class="auth-divider">or continue with</div>
-        <button type="button" class="btn-google" id="btn-google-signup" onclick="signInWithGoogle()">
-          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-          Continue with Google
-        </button>
+        <div id="g_id_signup_wrap" class="g-btn-wrap">
+          <button type="button" class="btn-google" id="btn-google-signup" onclick="signInWithGoogle()">
+            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+            Continue with Google
+          </button>
+        </div>
         <p class="auth-footer-text">Already have an account? <button type="button" class="link-btn" onclick="switchView('signin', event)">Sign in</button></p>
       </div>
 
@@ -446,8 +453,72 @@
   }
 
 
-  // ── GOOGLE OAUTH ──────────────────────────────────────────────
+  // ── GOOGLE OAUTH & IDENTITY SERVICES (GIS) ────────────────────
+  const GOOGLE_CLIENT_ID = '466978597032-6i1ssecbfv64e3al07n98l0f2mnni1qn.apps.googleusercontent.com';
+
+  async function handleGoogleCredentialResponse(response) {
+    if (!response || !response.credential) return;
+    try {
+      const btn1 = document.getElementById('btn-google-signin');
+      const btn2 = document.getElementById('btn-google-signup');
+      if (btn1) { btn1.classList.add('loading'); btn1.textContent = 'Signing in to Turfify...'; }
+      if (btn2) { btn2.classList.add('loading'); btn2.textContent = 'Signing in to Turfify...'; }
+
+      const { data, error } = await sb.auth.signInWithIdToken({
+        provider: 'google',
+        token: response.credential,
+      });
+
+      if (error) throw error;
+      if (data?.user) {
+        await redirectByRole(data.user);
+      }
+    } catch (err) {
+      console.error('Google Sign-In Error:', err);
+      showErr('signin', 'Google sign-in failed: ' + (err.message || err));
+      showErr('signup', 'Google sign-in failed: ' + (err.message || err));
+    }
+  }
+
+  function initGoogleIdentity() {
+    if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+      setTimeout(initGoogleIdentity, 300);
+      return;
+    }
+    try {
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+
+      const signinWrap = document.getElementById('g_id_signin_wrap');
+      const signupWrap = document.getElementById('g_id_signup_wrap');
+      const renderOpts = {
+        theme: 'outline',
+        size: 'large',
+        type: 'standard',
+        text: 'continue_with',
+        shape: 'rectangular',
+        logo_alignment: 'center',
+        width: 360
+      };
+      if (signinWrap) google.accounts.id.renderButton(signinWrap, renderOpts);
+      if (signupWrap) google.accounts.id.renderButton(signupWrap, renderOpts);
+      google.accounts.id.prompt();
+    } catch (e) {
+      console.warn('Google Identity Services notice:', e);
+    }
+  }
+
+  window.addEventListener('load', initGoogleIdentity);
+
   async function signInWithGoogle() {
+    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+      google.accounts.id.prompt();
+      return;
+    }
     const btn1 = document.getElementById('btn-google-signin');
     const btn2 = document.getElementById('btn-google-signup');
     if (btn1) { btn1.classList.add('loading'); btn1.textContent = 'Redirecting to Google...'; }
@@ -462,9 +533,9 @@
     if (error) {
       if (btn1) { btn1.classList.remove('loading'); btn1.innerHTML = `<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Continue with Google`; }
       if (btn2) { btn2.classList.remove('loading'); btn2.innerHTML = `<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Continue with Google`; }
-      showSigninError('Google sign-in failed: ' + error.message);
+      showErr('signin', 'Google sign-in failed: ' + error.message);
+      showErr('signup', 'Google sign-in failed: ' + error.message);
     }
-    // On success, Supabase redirects to auth.html which auto-detects session and redirectByRole
   }
   // ──────────────────────────────────────────────────────────────
 
