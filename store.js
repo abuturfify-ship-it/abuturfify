@@ -454,7 +454,25 @@ window.TurfifyStore = {
 
   getTurfs() {
     try {
-      return JSON.parse(localStorage.getItem(TURFIFY_STORAGE_KEYS.TURFS)) || [];
+      const list = JSON.parse(localStorage.getItem(TURFIFY_STORAGE_KEYS.TURFS)) || [];
+      return list.map(t => {
+        const fmt = t.dimensions || t.capacity || t.format || '11v11';
+        const env = t.environment || t.env || 'Outdoor';
+        const crts = parseInt(t.courts_count || t.courts, 10) || 1;
+        const surf = t.surface || t.surface_type || 'Artificial Turf';
+        return {
+          ...t,
+          dimensions: fmt,
+          capacity: fmt,
+          format: fmt,
+          environment: env,
+          env: env,
+          courts_count: crts,
+          courts: crts,
+          surface: surf,
+          surface_type: surf
+        };
+      });
     } catch {
       return [];
     }

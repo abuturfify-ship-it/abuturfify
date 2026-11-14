@@ -849,10 +849,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="text-decoration:none; color:inherit;">
               <h3 class="turf-card-title">${t.name}</h3>
             </a>
-            <div class="card-spec-line">${t.surface || 'FIFA Approved Artificial Grass'} • ${t.capacity_label || 'Standard Turf'}</div>
+            <div class="card-spec-line">${t.surface || 'FIFA Approved Artificial Grass'} • ${t.dimensions || t.capacity || t.capacity_label || 'Standard Turf'}</div>
 
             <div class="card-micro-amenities-row">
-              <span class="micro-amenity-chip">${t.environment === 'indoor' ? 'Indoor' : 'Outdoor'}</span>
+              <span class="micro-amenity-chip">${t.environment === 'Indoor' ? '🏢 Indoor' : (t.environment === 'Semi-Indoor' ? '⛅ Semi-Indoor' : '☀️ Outdoor')}</span>
               ${microAmenities.map(a => `<span class="micro-amenity-chip">${a}</span>`).join('')}
             </div>
 

@@ -147,6 +147,17 @@
       <!-- LEFT COLUMN -->
       <div class="facility-left-col">
 
+        <!-- SECTION: ABOUT THIS FACILITY -->
+        <section class="facility-section-block">
+          <h2 class="facility-section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: #10B981;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            About this Facility
+          </h2>
+          <div class="facility-desc-box" id="facility-description" style="background:#FFFFFF; border:1.5px solid #E2E8F0; border-radius:12px; padding:18px 22px; font-size:0.92rem; color:#334155; line-height:1.65; box-shadow:0 1px 4px rgba(0,0,0,0.03);">
+            <!-- Dynamically populated from turf.description -->
+          </div>
+        </section>
+
         <!-- SECTION: AVAILABLE FIELDS (METEGOL REFERENCE) -->
         <section class="facility-section-block">
           <h2 class="facility-section-title">
@@ -634,8 +645,26 @@
       document.getElementById('venue-reviews-count').textContent = `(${turf.reviews_count || 120} reviews)`;
       document.getElementById('reviews-big-num').textContent = turf.rating || '4.8';
       document.getElementById('reviews-total-summary').textContent = `Based on ${turf.reviews_count || 120} verified player bookings`;
-      document.getElementById('spec-surface').textContent = turf.surface || 'FIFA Approved Synthetic Grass';
-      document.getElementById('spec-capacity').textContent = `${turf.capacity || '7v7'} (${turf.sport || 'Sports'})`;
+      
+      // Populate Facility Description
+      const descBox = document.getElementById('facility-description');
+      if (descBox) {
+        descBox.textContent = turf.description || `${turf.name} offers top-tier playing facilities with premium lighting, verified court surface, and hassle-free slot bookings across Tamil Nadu.`;
+      }
+
+      // Populate Surface & Specs
+      const formatVal = turf.dimensions || turf.capacity || turf.format || '11v11';
+      const surfaceVal = turf.surface || turf.surface_type || 'FIFA Approved Synthetic Grass';
+      const envVal = turf.environment || turf.env || 'Outdoor';
+      const envDetail = envVal === 'Indoor' 
+        ? 'Indoor Air-Conditioned Arena' 
+        : (envVal === 'Semi-Indoor' ? 'Semi-Indoor Covered Shed / Rooftop' : 'Outdoor with Overhead Boundary Netting');
+
+      document.getElementById('spec-surface').textContent = surfaceVal;
+      document.getElementById('spec-capacity').textContent = `${formatVal} (${turf.sport || 'Sports'})`;
+      const specEnvEl = document.getElementById('spec-env');
+      if (specEnvEl) specEnvEl.textContent = envDetail;
+
       document.getElementById('map-address-text').textContent = turf.location || 'Chennai, Tamil Nadu';
       document.getElementById('btn-open-google-maps').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(turf.name + ' ' + turf.location)}`;
 
@@ -723,30 +752,28 @@
         if (e.key === 'ArrowRight') document.getElementById('btn-lightbox-next').click();
       });
 
-      // 7. Render Available Fields (MeteGol Reference Match)
+      // 7. Render Available Fields (Dynamic courts matching owner configuration)
       const fieldsContainer = document.getElementById('available-fields-container');
       const rate = parseInt(turf.price_per_hour, 10) || 1200;
+      const countCourts = Math.max(1, parseInt(turf.courts_count || turf.courts, 10) || 1);
+      const envIcon = envVal === 'Indoor' ? '🏢' : (envVal === 'Semi-Indoor' ? '⛅' : '☀️');
 
-      const fields = [
-        {
-          id: 'field-a',
-          name: 'Field A',
-          format: turf.capacity || '7v7',
-          env: 'Outdoor',
-          surface: 'Synthetic Turf',
+      const fields = [];
+      const courtLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      for (let i = 0; i < countCourts; i++) {
+        const letter = courtLetters[i] || (i + 1);
+        const fieldName = countCourts === 1 ? 'Main Pitch / Court' : `Court ${letter}`;
+        fields.push({
+          id: `court-${i + 1}`,
+          name: fieldName,
+          format: formatVal,
+          env: envVal,
+          envIcon: envIcon,
+          surface: surfaceVal,
           price: rate,
           priceText: `₹${rate.toLocaleString()}/hour`
-        },
-        {
-          id: 'field-b',
-          name: 'Field B',
-          format: '5v5',
-          env: 'Outdoor',
-          surface: 'Synthetic Turf',
-          price: Math.max(800, rate - 200),
-          priceText: `₹${(Math.max(800, rate - 200)).toLocaleString()}/hour`
-        }
-      ];
+        });
+      }
 
       let selectedField = fields[0];
 
@@ -761,7 +788,7 @@
                 <div class="field-format-badge">${f.format}</div>
               </div>
               <div class="field-tags-row">
-                <span class="field-tag-chip outdoor">☀️ ${f.env}</span>
+                <span class="field-tag-chip outdoor">${f.envIcon} ${f.env}</span>
                 <span class="field-tag-chip surface">:: ${f.surface}</span>
               </div>
               <div class="field-price-row">
