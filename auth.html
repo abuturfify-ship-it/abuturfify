@@ -54,9 +54,9 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at 50% 30%, rgba(9, 15, 24, 0.72) 0%, rgba(5, 8, 14, 0.92) 100%);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: radial-gradient(circle at 50% 25%, rgba(6, 11, 18, 0.5) 0%, rgba(4, 7, 12, 0.8) 100%);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       pointer-events: none;
       z-index: 0;
     }
@@ -539,7 +539,7 @@
       border-radius: 28px;
       overflow: hidden;
       min-height: 640px;
-      background: #0B1118 url('images/auth-player-exact.jpg') center center / cover no-repeat;
+      background: #0B1118;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -548,16 +548,29 @@
       box-sizing: border-box;
     }
 
+    .visual-img-element {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: inherit;
+      z-index: 0;
+      display: block;
+    }
+
     .visual-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(180deg, rgba(9, 14, 23, 0.35) 0%, rgba(9, 14, 23, 0.05) 50%, rgba(9, 14, 23, 0.65) 100%);
       pointer-events: none;
+      z-index: 1;
     }
 
     .visual-top, .visual-center, .visual-bottom {
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     .visual-top {
@@ -634,7 +647,9 @@
         padding: 12px;
       }
       .auth-visual-side {
-        display: none;
+        min-height: 240px;
+        order: -1; /* Shows at top of card so player image is always seen! */
+        padding: 20px;
       }
       .auth-form-side {
         padding: 24px 18px;
@@ -869,6 +884,7 @@
 
     <!-- RIGHT PANEL: HIGH-ENERGY SPORTS VISUAL -->
     <div class="auth-visual-side">
+      <img src="images/auth-player-exact.jpg" alt="Player in Action" class="visual-img-element">
       <div class="visual-overlay"></div>
       
       <div class="visual-top">
