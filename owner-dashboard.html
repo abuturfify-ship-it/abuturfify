@@ -1474,6 +1474,211 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ==========================================================================
+       OWNER SAAS DASHBOARD 8-MODULE NAVIGATION & PANES
+       ========================================================================== */
+    .owner-saas-nav-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #FFFFFF;
+      border-bottom: 1.5px solid #E2E8F0;
+      position: sticky;
+      top: 64px;
+      z-index: 990;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: thin;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    }
+    .owner-saas-nav-bar::-webkit-scrollbar {
+      height: 4px;
+    }
+    .owner-saas-nav-bar::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+    .saas-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #475569;
+      background: #F8FAFC;
+      border: 1.5px solid #E2E8F0;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+    .saas-tab-btn:hover {
+      background: #F1F5F9;
+      color: #0F172A;
+      border-color: #CBD5E1;
+    }
+    .saas-tab-btn.active {
+      background: #064E3B;
+      color: #FFFFFF;
+      border-color: #064E3B;
+      box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+    }
+    .saas-tab-btn-add {
+      margin-left: auto;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: #FFFFFF;
+      border: none;
+      box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+    }
+    .saas-tab-btn-add:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .owner-tab-pane {
+      display: none;
+      animation: tabFadeIn 0.22s ease-in-out;
+      width: 100%;
+    }
+    .owner-tab-pane.active {
+      display: block;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Maintenance Slot State */
+    .owner-slot-card.maintenance {
+      background: repeating-linear-gradient(45deg, #F8FAFC, #F8FAFC 8px, #E2E8F0 8px, #E2E8F0 16px) !important;
+      border-color: #94A3B8 !important;
+      color: #475569 !important;
+    }
+    .owner-slot-card.maintenance .owner-slot-badge {
+      background: #475569 !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Analytics Visual Cards (Mockup Matching) */
+    .saas-analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+      margin-bottom: 24px;
+    }
+    .saas-card-box {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    .saas-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .saas-card-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .saas-badge-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #ECFDF5;
+      color: #047857;
+      border: 1px solid #A7F3D0;
+    }
+
+    /* Next Sessions Feed */
+    .next-session-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #F8FAFC;
+      border: 1px solid #F1F5F9;
+      margin-bottom: 8px;
+      transition: background 0.15s ease;
+    }
+    .next-session-item:hover {
+      background: #F1F5F9;
+    }
+    .next-session-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #0F172A;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    /* Heatmap Grid */
+    .heatmap-bars-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      align-items: flex-end;
+      height: 120px;
+      padding-top: 14px;
+    }
+    .heatmap-bar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .heatmap-bar-fill {
+      width: 100%;
+      max-width: 32px;
+      border-radius: 6px;
+      background: linear-gradient(180deg, #10B981 0%, #059669 100%);
+      transition: height 0.3s ease;
+    }
+    .heatmap-bar-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #64748B;
+    }
+
+    /* Pricing Control Form */
+    .pricing-editor-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 18px;
+      padding: 24px;
+      max-width: 820px;
+      margin: 0 auto 24px auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+
+    @media (max-width: 900px) {
+      .saas-analytics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
@@ -1598,258 +1803,496 @@
     </div>
   </div>
 
-  <!-- Quick-Jump Action Tabs (Mobile & Desktop) -->
-  <div class="dash-quick-nav-bar">
-    <a href="#ledger" class="quick-nav-pill active">
-      <span>📋</span>
-      <span>Bookings Ledger</span>
-    </a>
-    <a href="#grounds" class="quick-nav-pill">
-      <span>🏟️</span>
-      <span>My Venues</span>
-    </a>
-    <a href="#slots" class="quick-nav-pill">
-      <span>🗓️</span>
-      <span>Slot Matrix</span>
-    </a>
-    <a href="#settlement" class="quick-nav-pill">
-      <span>💳</span>
-      <span>Payouts</span>
-    </a>
-    <button type="button" onclick="document.getElementById('btn-open-add-turf')?.click(); document.getElementById('btn-add-turf-quick')?.click();" class="quick-nav-pill" style="cursor:pointer; font-family:inherit; color:#047857; border-color:#6EE7B7; background:#ECFDF5;">
-      <span>+</span>
-      <span>Add Turf</span>
+    <!-- ==========================================================================
+       OWNER SAAS DASHBOARD 8-MODULE NAVIGATION BAR (MATCHING MOCKUP)
+       ========================================================================== -->
+  <nav class="owner-saas-nav-bar" id="owner-saas-nav-bar">
+    <button type="button" class="saas-tab-btn active" data-tab="overview">📊 Overview</button>
+    <button type="button" class="saas-tab-btn" data-tab="facilities">🏟️ My Facilities</button>
+    <button type="button" class="saas-tab-btn" data-tab="availability">🗓️ Manage Availability</button>
+    <button type="button" class="saas-tab-btn" data-tab="bookings">📋 Bookings</button>
+    <button type="button" class="saas-tab-btn" data-tab="pricing">💰 Pricing</button>
+    <button type="button" class="saas-tab-btn" data-tab="payouts">💳 Earnings & Payouts</button>
+    <button type="button" class="saas-tab-btn" data-tab="reviews">⭐ Reviews</button>
+    <button type="button" class="saas-tab-btn" data-tab="settings">⚙️ Profile & Settings</button>
+    <button type="button" class="saas-tab-btn saas-tab-btn-add" id="btn-saas-add-turf" onclick="document.getElementById('btn-open-add-turf')?.click(); document.getElementById('btn-add-turf-quick')?.click();">
+      + Add Facility
     </button>
-  </div>
+  </nav>
 
-  <main style="width: 100%; max-width: 100%; margin: 0; padding: 0 16px; box-sizing: border-box;">
+  <main style="width: 100%; max-width: 100%; margin: 0; padding: 18px 16px; box-sizing: border-box;">
 
     <!-- ==========================================================================
-         4 MODERN KPI METRICS ROW (MATCHING REFERENCE IMAGE)
+         MODULE 1: OVERVIEW PANE
          ========================================================================== -->
-    <div class="metrics-grid-modern">
-      <!-- 1. Turnover (Teal) -->
-      <div class="kpi-card teal">
-        <div class="kpi-icon-wrap" style="width: 48px; height: 48px; border-radius: 50%; background: #00BFA5; color: #FFFFFF; font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 191, 165, 0.25);">
-          ₹
-        </div>
-        <div class="kpi-data">
-          <div class="kpi-label">TODAY'S TURNOVER</div>
-          <div class="kpi-val" id="owner-today-rev">₹0</div>
-          <div class="kpi-sub green" id="owner-rev-sub">
-            <span style="color:#059669;font-weight:800;">↑</span> Based on live bookings
+    <div class="owner-tab-pane active" id="pane-overview">
+
+      <!-- 4 KPI Metrics Row -->
+      <div class="metrics-grid-modern">
+        <!-- 1. Turnover -->
+        <div class="kpi-card teal">
+          <div class="kpi-icon-wrap" style="width: 48px; height: 48px; border-radius: 50%; background: #00BFA5; color: #FFFFFF; font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 191, 165, 0.25);">
+            ₹
+          </div>
+          <div class="kpi-data">
+            <div class="kpi-label">TODAY'S TURNOVER</div>
+            <div class="kpi-val" id="owner-today-rev">₹0</div>
+            <div class="kpi-sub green" id="owner-rev-sub">
+              <span style="color:#059669;font-weight:800;">↑</span> Based on live bookings
+            </div>
           </div>
         </div>
-        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#00BFA5" style="position: absolute; right: 8px; bottom: 6px; width: 72px; height: 72px; opacity: 0.16; pointer-events: none;">
-          <rect x="18" y="52" width="16" height="38" rx="4" />
-          <rect x="42" y="32" width="16" height="58" rx="4" />
-          <rect x="66" y="14" width="16" height="76" rx="4" />
-          <path d="M18 42 L42 22 L66 6 L84 22" fill="none" stroke="#00BFA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-          <polyline points="72,6 84,6 84,18" fill="none" stroke="#00BFA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+
+        <!-- 2. Slot Occupancy -->
+        <div class="kpi-card purple">
+          <div class="kpi-icon-wrap" style="width: 48px; height: 48px; border-radius: 14px; background: #EDE9FE; color: #7C3AED; font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="4"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          </div>
+          <div class="kpi-data">
+            <div class="kpi-label">SLOT OCCUPANCY</div>
+            <div class="kpi-val" id="owner-occupancy">0%</div>
+            <div class="kpi-sub purple" id="owner-occupancy-sub">0 of 0 slots booked</div>
+            <div style="height: 4px; width: 100%; background: #EDE9FE; border-radius: 999px; margin-top: 6px; overflow: hidden;">
+              <div id="owner-occupancy-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #7C3AED, #A78BFA); border-radius: 999px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Active Grounds -->
+        <div class="kpi-card green">
+          <div class="kpi-icon-wrap" style="width: 48px; height: 48px; border-radius: 14px; background: #DCFCE7; color: #16A34A; display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.2"><rect x="2" y="4" width="20" height="16" rx="3"></rect><line x1="12" y1="4" x2="12" y2="20"></line><circle cx="12" cy="12" r="3.5"></circle></svg>
+          </div>
+          <div class="kpi-data">
+            <div class="kpi-label">ACTIVE GROUNDS</div>
+            <div class="kpi-val" id="owner-turfs-count">0 Grounds</div>
+            <div class="kpi-sub green" id="owner-turfs-sub">
+              <span style="color:#059669;font-weight:800;">✔</span> Operational venues
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Today's Footfall -->
+        <div class="kpi-card blue">
+          <div class="kpi-icon-wrap" style="width: 48px; height: 48px; border-radius: 50%; background: #0284C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          </div>
+          <div class="kpi-data">
+            <div class="kpi-label">TODAY'S FOOTFALL</div>
+            <div class="kpi-val" id="owner-footfall">0 Players</div>
+            <div class="kpi-sub blue">
+              <span style="color:#0284C7;font-weight:800;">✔</span> Online + Walk-in
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- 2. Slot Occupancy (Purple) -->
-      <div class="kpi-card purple">
-        <div class="kpi-icon-wrap" style="width: 48px; height: 48px; border-radius: 14px; background: #EDE9FE; color: #7C3AED; font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="4"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><circle cx="8" cy="15" r="1.5" fill="#7C3AED"></circle><circle cx="12" cy="15" r="1.5" fill="#7C3AED"></circle><circle cx="16" cy="15" r="1.5" fill="#7C3AED"></circle></svg>
-        </div>
-        <div class="kpi-data">
-          <div class="kpi-label">SLOT OCCUPANCY</div>
-          <div class="kpi-val" id="owner-occupancy">0%</div>
-          <div class="kpi-sub purple" id="owner-occupancy-sub">0 of 0 slots booked</div>
-          <div style="height: 4px; width: 100%; background: #EDE9FE; border-radius: 999px; margin-top: 6px; overflow: hidden;">
-            <div id="owner-occupancy-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #7C3AED, #A78BFA); border-radius: 999px;"></div>
+      <!-- SaaS Mockup Matching Analytics Row -->
+      <div class="saas-analytics-grid">
+        <!-- Left: Court Utilization & Revenue Breakdown -->
+        <div class="saas-card-box">
+          <div class="saas-card-header">
+            <div class="saas-card-title">
+              <span>📈</span>
+              <span>Court Utilization & Performance</span>
+            </div>
+            <span class="saas-badge-pill" id="utilization-badge">74% Capacity</span>
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <div>
+              <div style="font-size:2.2rem; font-weight:800; color:#064E3B; line-height:1;" id="stat-util-pct">74%</div>
+              <div style="font-size:0.75rem; color:#059669; font-weight:700; margin-top:4px;">↗ +14% vs previous week</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.4rem; font-weight:800; color:#0F172A;" id="stat-avg-duration">1h 15m</div>
+              <div style="font-size:0.75rem; color:#64748B;">Avg Session Duration</div>
+            </div>
+          </div>
+
+          <!-- Revenue Category Breakdown -->
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:8px 12px; background:#F8FAFC; border-radius:8px;">
+              <span style="font-weight:700; color:#334155;">⚽ Online Turf Bookings</span>
+              <span style="font-weight:800; color:#064E3B;" id="overview-rev-online">85% Share</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:8px 12px; background:#F8FAFC; border-radius:8px;">
+              <span style="font-weight:700; color:#334155;">🚶 Walk-in Counter Reservations</span>
+              <span style="font-weight:800; color:#D97706;" id="overview-rev-walkin">15% Share</span>
+            </div>
+          </div>
+
+          <!-- Weekly Utilization Bars -->
+          <div style="margin-top:20px;">
+            <div style="font-size:0.78rem; font-weight:700; color:#64748B; margin-bottom:8px;">Weekly Court Usage (Mon - Sun)</div>
+            <div class="heatmap-bars-grid">
+              <div class="heatmap-bar-col"><div class="heatmap-bar-fill" style="height:65%;"></div><span class="heatmap-bar-label">Mon</span></div>
+              <div class="heatmap-bar-col"><div class="heatmap-bar-fill" style="height:55%;"></div><span class="heatmap-bar-label">Tue</span></div>
+              <div class="heatmap-bar-col"><div class="heatmap-bar-fill" style="height:70%;"></div><span class="heatmap-bar-label">Wed</span></div>
+              <div class="heatmap-bar-col"><div class="heatmap-bar-fill" style="height:80%;"></div><span class="heatmap-bar-label">Thu</span></div>
+              <div class="heatmap-bar-col"><div class="heatmap-bar-fill" style="height:95%; background:#047857;"></div><span class="heatmap-bar-label">Fri</span></div>
+              <div class="heatmap-bar-col"><div class="heatmap-bar-fill" style="height:100%; background:#064E3B;"></div><span class="heatmap-bar-label" style="color:#064E3B; font-weight:800;">Sat</span></div>
+              <div class="heatmap-bar-col"><div class="heatmap-bar-fill" style="height:100%; background:#064E3B;"></div><span class="heatmap-bar-label" style="color:#064E3B; font-weight:800;">Sun</span></div>
+            </div>
           </div>
         </div>
-        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#7C3AED" style="position: absolute; right: 8px; bottom: 6px; width: 72px; height: 72px; opacity: 0.16; pointer-events: none;">
-          <rect x="15" y="20" width="70" height="65" rx="14" fill="none" stroke="#7C3AED" stroke-width="7" />
-          <line x1="15" y1="40" x2="85" y2="40" stroke="#7C3AED" stroke-width="6" />
-          <circle cx="35" cy="58" r="4.5" fill="#7C3AED" />
-          <circle cx="50" cy="58" r="4.5" fill="#7C3AED" />
-          <circle cx="65" cy="58" r="4.5" fill="#7C3AED" />
-          <circle cx="35" cy="72" r="4.5" fill="#7C3AED" />
-          <circle cx="50" cy="72" r="4.5" fill="#7C3AED" />
-        </svg>
+
+        <!-- Right: Upcoming Reservations (Next Sessions Feed) -->
+        <div class="saas-card-box">
+          <div class="saas-card-header">
+            <div class="saas-card-title">
+              <span>⏱️</span>
+              <span>Next Upcoming Sessions</span>
+            </div>
+            <button type="button" onclick="switchOwnerTab('bookings')" style="background:none; border:none; font-size:0.78rem; font-weight:700; color:#047857; cursor:pointer;">View All →</button>
+          </div>
+
+          <div id="overview-next-sessions-list">
+            <!-- Dynamically populated from store bookings -->
+          </div>
+        </div>
       </div>
 
-      <!-- 3. Active Grounds (Green) -->
-      <div class="kpi-card green">
-        <div class="kpi-icon-wrap" style="width: 48px; height: 48px; border-radius: 14px; background: #DCFCE7; color: #16A34A; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.2"><rect x="2" y="4" width="20" height="16" rx="3"></rect><line x1="12" y1="4" x2="12" y2="20"></line><circle cx="12" cy="12" r="3.5"></circle></svg>
-        </div>
-        <div class="kpi-data">
-          <div class="kpi-label">ACTIVE GROUNDS</div>
-          <div class="kpi-val" id="owner-turfs-count">0 Grounds</div>
-          <div class="kpi-sub green" id="owner-turfs-sub">
-            <span style="color:#059669;font-weight:800;">✔</span> Operational venues
-          </div>
-        </div>
-        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#16A34A" style="position: absolute; right: 8px; bottom: 6px; width: 72px; height: 72px; opacity: 0.16; pointer-events: none;">
-          <rect x="8" y="16" width="84" height="68" rx="8" fill="none" stroke="#16A34A" stroke-width="6" />
-          <line x1="50" y1="16" x2="50" y2="84" stroke="#16A34A" stroke-width="5" />
-          <circle cx="50" cy="50" r="16" fill="none" stroke="#16A34A" stroke-width="5" />
-          <path d="M8 32 C18 32 18 68 8 68" fill="none" stroke="#16A34A" stroke-width="5" />
-          <path d="M92 32 C82 32 82 68 92 68" fill="none" stroke="#16A34A" stroke-width="5" />
-        </svg>
-      </div>
+    </div>
 
-      <!-- 4. Today's Footfall (Blue) -->
-      <div class="kpi-card blue">
-        <div class="kpi-icon-wrap" style="width: 48px; height: 48px; border-radius: 50%; background: #0284C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        </div>
-        <div class="kpi-data">
-          <div class="kpi-label">TODAY'S FOOTFALL</div>
-          <div class="kpi-val" id="owner-footfall">0 Players</div>
-          <div class="kpi-sub blue">
-            <span style="color:#0284C7;font-weight:800;">✔</span> Online + Walk-in
+    <!-- ==========================================================================
+         MODULE 2: MY FACILITIES PANE
+         ========================================================================== -->
+    <div class="owner-tab-pane" id="pane-facilities">
+      <div id="grounds" style="margin-bottom: 1.5rem;">
+        <div class="panel-header-teal">
+          <div>
+            <div class="panel-title-teal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+              My Listed Facilities & Courts
+            </div>
+            <p style="font-size:0.75rem; color:#CCECE6; margin:2px 0 0 0;">Manage court specifications, photos, and live marketplace listings</p>
           </div>
+          <button class="btn-panel-white-pill" id="btn-add-turf-quick">
+            + Add Facility
+          </button>
         </div>
-        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#0284C7" style="position: absolute; right: -4px; bottom: -4px; width: 95px; height: 85px; opacity: 0.16; pointer-events: none;">
-          <circle cx="36" cy="36" r="14" />
-          <path d="M14 80 C14 56 58 56 58 80 Z" />
-          <circle cx="68" cy="42" r="10" />
-          <path d="M52 80 C52 62 84 62 84 80 Z" />
-          <circle cx="86" cy="46" r="7" />
-          <path d="M76 80 C76 68 96 68 96 80 Z" />
-        </svg>
+        <div class="panel-body-teal" id="owner-turfs-list">
+          <!-- Injected dynamically via JavaScript -->
+        </div>
       </div>
     </div>
 
-    <div class="owner-master-detail-grid">
-
-      <!-- LEFT COLUMN: MY LISTED VENUES & PAYOUTS -->
-      <div>
-        <div id="grounds" style="margin-bottom: 1.5rem;">
-          <div class="panel-header-teal">
-            <div class="panel-title-teal">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-              My Listed Venues
+    <!-- ==========================================================================
+         MODULE 3: MANAGE AVAILABILITY PANE (WITH AUTONOMOUS MAINTENANCE BLOCKER)
+         ========================================================================== -->
+    <div class="owner-tab-pane" id="pane-availability">
+      <div id="slots" style="margin-bottom: 1.5rem;">
+        <div class="panel-header-teal">
+          <div>
+            <div class="panel-title-teal" id="selected-venue-schedule-title">
+              Court Availability Schedule
             </div>
-            <button class="btn-panel-white-pill" id="btn-add-turf-quick">
-              + Add
+            <span id="selected-venue-subtitle" style="font-size:0.75rem; color:#CCECE6;">Click any slot to manage walk-ins or block maintenance hours</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <input type="date" id="owner-schedule-date" class="form-control" style="background: #FFFFFF; border-radius: 999px; padding: 6px 14px; font-size: 0.82rem; width: auto; font-weight: 700; color: #0F172A; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" title="Select date to view slots">
+            <button class="btn-panel-green-pill" id="btn-add-walkin">
+              + Add Walk-In
+            </button>
+            <button type="button" class="btn-panel-white-pill" id="btn-block-maintenance" style="background:#FFF7ED; color:#C2410C; border-color:#FED7AA;">
+              🛠️ Block Maintenance
             </button>
           </div>
-          <div class="panel-body-teal" id="owner-turfs-list">
-            <!-- Injected dynamically via JavaScript -->
-          </div>
         </div>
 
-        <!-- Settlement Box -->
-        <div id="settlement" style="margin-bottom: 1.5rem; width: 100%; box-sizing: border-box;">
-          <div class="panel-header-teal" style="background: linear-gradient(135deg, #065F46 0%, #047857 100%);">
-            <div class="panel-title-teal">🏛️ Direct Payout Account</div>
+        <div class="panel-body-teal">
+          <!-- Notice strip with explanation -->
+          <div class="info-alert-strip">
+            <span>ℹ️</span>
+            <span><strong>Autonomous Slot Control:</strong> Available slots are green 🟢. Walk-in slots are orange 🟠. Online bookings are red 🔴. Blocked maintenance slots are striped grey 🛠️. You can block or unblock anytime without admin approval.</span>
           </div>
-          <div class="panel-body-teal" style="border-color: #047857; padding: 14px 16px; box-sizing: border-box;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 8px;">
-              <span style="font-size: 0.85rem; color: #475569; font-weight: 600;">Next Payout (Tuesday)</span>
-              <span id="owner-payout-amount" style="font-weight: 800; font-size: 1.25rem; color: #047857;">₹0</span>
-            </div>
-            <p id="owner-payout-desc" style="font-size: 0.82rem; color: #64748B; line-height: 1.4; margin: 0;">
-              No pending payouts. Payouts from online bookings are automatically settled every Tuesday to your registered bank account.
-            </p>
+
+          <div class="slot-matrix" id="owner-slot-matrix">
+            <!-- Injected via JavaScript for selected venue and date -->
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- RIGHT COLUMN: SELECTED VENUE COURT SCHEDULE & TRANSACTIONS -->
-      <div>
-        <!-- Live Slot Management Matrix -->
-        <div id="slots" style="margin-bottom: 1.5rem;">
-          <div class="panel-header-teal">
-            <div class="panel-title-teal" id="selected-venue-schedule-title">
-               Court Schedule
+    <!-- ==========================================================================
+         MODULE 4: BOOKINGS PANE (UPCOMING & CONFIRMED RESERVATIONS)
+         ========================================================================== -->
+    <div class="owner-tab-pane" id="pane-bookings">
+      <div class="panel-header-teal" id="ledger" style="border-radius: 16px 16px 0 0;">
+        <div>
+          <div class="panel-title-teal" id="selected-venue-ledger-title">
+            Bookings Ledger &amp; Reservations
+          </div>
+          <span id="selected-venue-ledger-subtitle" style="font-size: 0.75rem; color: #CCECE6;">All confirmed player reservations, walk-in slots, and cancellations</span>
+        </div>
+        <div id="ledger-filter-tabs" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+          <!-- Filter Tabs injected via JS -->
+        </div>
+      </div>
+      <div class="panel-body-teal" style="padding: 0; overflow: hidden; width: 100%; box-sizing: border-box;">
+        <div style="font-size:0.75rem; color:#64748B; background:#F8FAFC; padding:8px 16px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="text" id="owner-booking-search" placeholder="🔍 Search customer name or phone..." style="border:1px solid #CBD5E1; border-radius:8px; padding:5px 12px; font-size:0.78rem; outline:none; width:220px;" oninput="window.filterOwnerBookingsBySearch(this.value)">
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button type="button" class="btn-ledger-scroll" onclick="document.getElementById('ledger-table-container')?.scrollBy({left: -220, behavior: 'smooth'})" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#334155; cursor:pointer;">◀ Left</button>
+            <button type="button" class="btn-ledger-scroll" onclick="document.getElementById('ledger-table-container')?.scrollBy({left: 220, behavior: 'smooth'})" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#334155; cursor:pointer;">Right ▶</button>
+            <button type="button" class="btn-ledger-clear" onclick="window.ownerClearAllBookings()" style="background:#FEF2F2; border:1px solid #FCA5A5; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#DC2626; cursor:pointer; margin-left:6px;">🗑️ Clear Records</button>
+          </div>
+        </div>
+        <div class="table-responsive-container" id="ledger-table-container">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Customer Name</th>
+                <th>Venue / Ground</th>
+                <th>Date &amp; Time Slot</th>
+                <th>Amount</th>
+                <th>Payment Status</th>
+                <th>Booking Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="owner-ledger-body">
+              <!-- Injected via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODULE 5: PRICING PANE (AUTONOMOUS PRICE MANAGEMENT)
+         ========================================================================== -->
+    <div class="owner-tab-pane" id="pane-pricing">
+      <div class="pricing-editor-card">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:18px;">
+          <div style="width:44px; height:44px; border-radius:12px; background:#ECFDF5; color:#047857; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">💰</div>
+          <div>
+            <h2 style="font-size:1.3rem; font-weight:800; color:#0F172A; margin:0;">Facility Pricing &amp; Surge Rates</h2>
+            <p style="font-size:0.82rem; color:#64748B; margin:2px 0 0 0;">Update standard hourly rates, weekend surge, and night slot pricing directly without contacting admin.</p>
+          </div>
+        </div>
+
+        <div style="background:#F8FAFC; border:1.5px solid #E2E8F0; border-radius:14px; padding:18px; margin-bottom:20px;">
+          <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label" style="font-weight:700; color:#0F172A;">Select Facility</label>
+            <select class="form-control" id="pricing-turf-select" onchange="window.loadSelectedTurfPricing(this.value)" style="font-weight:700;">
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">Standard Base Hourly Rate (₹) *</label>
+              <input type="number" class="form-control" id="pricing-base-rate" placeholder="1200" min="200" style="font-size:1.1rem; font-weight:800; color:#064E3B;">
             </div>
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <input type="date" id="owner-schedule-date" class="form-control" style="background: #FFFFFF; border-radius: 999px; padding: 6px 14px; font-size: 0.82rem; width: auto; font-weight: 700; color: #0F172A; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" title="Select date to view slots">
-              <button class="btn-panel-green-pill" id="btn-add-walkin">
-                + Add Walk-In
-              </button>
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">Peak Night Slot Rate (7 PM - 11 PM) (₹)</label>
+              <input type="number" class="form-control" id="pricing-peak-rate" placeholder="1500" min="200" style="font-size:1.1rem; font-weight:800; color:#D97706;">
             </div>
           </div>
 
-          <div class="panel-body-teal">
-            <!-- Informational Notice Box (matching reference image) -->
-            <div class="info-alert-strip">
-              <span style="font-size: 1rem;"></span>
-              <span id="selected-venue-subtitle">Showing live court slots</span>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">Weekend Surge Premium (%)</label>
+              <input type="number" class="form-control" id="pricing-weekend-premium" placeholder="10" min="0" max="100">
             </div>
-
-            <p class="schedule-legend-text">
-              Click any slot to switch status (Available 🟢, Walk-in 🟠, Booked 🔴). Changes reflect instantly to players.
-            </p>
-
-            <div class="slot-matrix" id="owner-slot-matrix">
-              <!-- Injected via JavaScript for selected venue and date -->
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">Minimum Booking Duration</label>
+              <select class="form-control" id="pricing-min-duration">
+                <option value="1">1 Hour</option>
+                <option value="2">2 Hours</option>
+              </select>
             </div>
-
-            <!-- Stylish Batsman Silhouette Watermark in bottom right corner -->
-            <svg class="schedule-batsman-watermark" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M110 40 C116 40 120 35 120 29 C120 23 116 18 110 18 C104 18 100 23 100 29 C100 35 104 40 110 40 Z" fill="#0A6380"/>
-              <!-- Batsman Body & Bat -->
-              <path d="M106 44 L92 76 L82 72 L70 98 L85 102 L95 82 L105 110 L90 170 L110 170 L120 125 L145 155 L160 150 L132 108 L122 70 L116 44 Z" fill="#0A6380"/>
-              <!-- Bat angled -->
-              <path d="M68 62 L42 22 L52 18 L76 56 Z" fill="#0A6380"/>
-              <path d="M76 56 L82 72" stroke="#0A6380" stroke-width="4"/>
-              <!-- Grass Swoosh waves -->
-              <path d="M10 210 Q 100 180 190 220" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
-              <path d="M30 225 Q 120 195 200 230" stroke="#0D9488" stroke-width="6" stroke-linecap="round"/>
-            </svg>
           </div>
 
-          <!-- Customer Booking Ledger -->
-          <div class="panel-header-teal" id="ledger" style="margin-top: 1.5rem; border-radius: 16px 16px 0 0;">
+          <!-- Quick Preset Buttons -->
+          <div style="margin-top:14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span style="font-size:0.75rem; font-weight:700; color:#64748B;">Quick Presets:</span>
+            <button type="button" class="btn-mini-action" onclick="document.getElementById('pricing-base-rate').value=1000; document.getElementById('pricing-peak-rate').value=1200;" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; cursor:pointer;">Economy (₹1,000/hr)</button>
+            <button type="button" class="btn-mini-action" onclick="document.getElementById('pricing-base-rate').value=1500; document.getElementById('pricing-peak-rate').value=1800;" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; cursor:pointer;">Standard Arena (₹1,500/hr)</button>
+            <button type="button" class="btn-mini-action" onclick="document.getElementById('pricing-base-rate').value=2000; document.getElementById('pricing-peak-rate').value=2400;" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; cursor:pointer;">Championship FIFA (₹2,000/hr)</button>
+          </div>
+        </div>
+
+        <button type="button" id="btn-save-pricing" onclick="window.handleSaveTurfPricing()" style="width:100%; background:linear-gradient(135deg, #059669 0%, #047857 100%); color:#FFFFFF; border:none; border-radius:12px; padding:14px; font-size:0.95rem; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(4, 120, 87, 0.35); transition:transform 0.15s ease;">
+          💾 Save &amp; Apply Pricing Live to Marketplace
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODULE 6: EARNINGS & PAYOUTS PANE
+         ========================================================================== -->
+    <div class="owner-tab-pane" id="pane-payouts">
+      <div id="settlement" style="margin-bottom: 1.5rem; width: 100%; max-width:880px; margin:0 auto 24px auto;">
+        <div class="panel-header-teal" style="background: linear-gradient(135deg, #065F46 0%, #047857 100%);">
+          <div class="panel-title-teal">🏛️ Direct Payout &amp; Settlement Account</div>
+          <span style="font-size:0.75rem; color:#A7F3D0; font-weight:700;">Direct Bank / UPI</span>
+        </div>
+        <div class="panel-body-teal" style="padding: 22px; box-sizing: border-box; background:#FFFFFF;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; padding-bottom:14px; border-bottom:1px solid #E2E8F0;">
             <div>
-              <div class="panel-title-teal" id="selected-venue-ledger-title">
-                 Customer Booking Ledger
-              </div>
-              <span id="selected-venue-ledger-subtitle" style="font-size: 0.75rem; color: #CCECE6;">Transactions for this venue</span>
+              <div style="font-size: 0.82rem; color: #64748B; font-weight: 600;">Next Scheduled Payout (Every Tuesday)</div>
+              <div id="owner-payout-amount" style="font-weight: 800; font-size: 2rem; color: #047857; margin-top:2px;">₹0</div>
             </div>
-            <div id="ledger-filter-tabs" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-              <!-- Filter Tabs injected via JS -->
+            <button type="button" onclick="alert('Payout request submitted. Automatic cycle triggers every Tuesday.')" style="background:#ECFDF5; border:1.5px solid #10B981; color:#047857; font-weight:800; font-size:0.82rem; padding:8px 16px; border-radius:8px; cursor:pointer;">
+              ⚡ Request Early Settlement
+            </button>
+          </div>
+          <p id="owner-payout-desc" style="font-size: 0.82rem; color: #64748B; line-height: 1.4; margin-bottom: 18px;">
+            Online booking revenue is securely held in escrow and settled automatically every Tuesday to your registered bank account or UPI ID.
+          </p>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">Bank Account Holder Name</label>
+              <input type="text" class="form-control" id="payout-holder-name" placeholder="e.g. Sajaruth Mahjabeen M">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">Bank Account Number</label>
+              <input type="text" class="form-control" id="payout-acc-num" placeholder="e.g. 50100234567890">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">IFSC Code</label>
+              <input type="text" class="form-control" id="payout-ifsc" placeholder="e.g. HDFC0001234">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">UPI ID (Fast Settlement)</label>
+              <input type="text" class="form-control" id="payout-upi-id" placeholder="e.g. turfowner@okaxis">
             </div>
           </div>
-          <div class="panel-body-teal" style="padding: 0; overflow: hidden; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;">
-            <div style="font-size:0.75rem; color:#64748B; background:#F8FAFC; padding:7px 14px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
-              <div style="display:flex; align-items:center; gap:6px;">
-                <span>↔️</span>
-                <span style="font-weight:600;">Swipe left/right or drag to view full booking details & actions</span>
+
+          <button type="button" onclick="window.saveOwnerPayoutDetails()" style="margin-top:16px; background:#047857; color:#FFFFFF; border:none; padding:12px 24px; border-radius:10px; font-weight:800; font-size:0.88rem; cursor:pointer;">
+            💾 Save Payout Information
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODULE 7: REVIEWS & RATINGS PANE
+         ========================================================================== -->
+    <div class="owner-tab-pane" id="pane-reviews">
+      <div style="max-width:880px; margin:0 auto 24px auto;">
+        <div class="saas-card-box">
+          <div class="saas-card-header">
+            <div class="saas-card-title">
+              <span>⭐</span>
+              <span>Customer Reviews &amp; Player Feedback</span>
+            </div>
+            <span class="saas-badge-pill">4.9 / 5.0 Rating</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:24px; padding:16px 0; border-bottom:1px solid #E2E8F0; margin-bottom:18px;">
+            <div style="text-align:center; padding-right:24px; border-right:1px solid #E2E8F0;">
+              <div style="font-size:2.8rem; font-weight:800; color:#047857; line-height:1;">4.9</div>
+              <div style="color:#F59E0B; font-size:1.1rem; margin:4px 0;">★★★★★</div>
+              <div style="font-size:0.75rem; color:#64748B;">48 Verified Reviews</div>
+            </div>
+            <div style="flex:1;">
+              <div style="display:flex; align-items:center; gap:8px; font-size:0.75rem; margin-bottom:4px;">
+                <span>5 ★</span>
+                <div style="flex:1; height:6px; background:#F1F5F9; border-radius:999px; overflow:hidden;"><div style="width:88%; height:100%; background:#10B981;"></div></div>
+                <span style="font-weight:700;">88%</span>
               </div>
-              <div style="display:flex; align-items:center; gap:6px;">
-                <button type="button" class="btn-ledger-scroll" onclick="document.getElementById('ledger-table-container')?.scrollBy({left: -220, behavior: 'smooth'})" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#334155; cursor:pointer; display:inline-flex; align-items:center; gap:3px;" title="Scroll Left">◀ Left</button>
-                <button type="button" class="btn-ledger-scroll" onclick="document.getElementById('ledger-table-container')?.scrollBy({left: 220, behavior: 'smooth'})" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#334155; cursor:pointer; display:inline-flex; align-items:center; gap:3px;" title="Scroll Right">Right ▶</button>
-                <button type="button" class="btn-ledger-clear" onclick="window.ownerClearAllBookings()" style="background:#FEF2F2; border:1px solid #FCA5A5; border-radius:6px; padding:3px 9px; font-size:0.75rem; font-weight:700; color:#DC2626; cursor:pointer; display:inline-flex; align-items:center; gap:3px; margin-left:6px;" title="Permanently delete all booking records across all devices">🗑️ Clear All</button>
+              <div style="display:flex; align-items:center; gap:8px; font-size:0.75rem; margin-bottom:4px;">
+                <span>4 ★</span>
+                <div style="flex:1; height:6px; background:#F1F5F9; border-radius:999px; overflow:hidden;"><div style="width:10%; height:100%; background:#34D399;"></div></div>
+                <span style="font-weight:700;">10%</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; font-size:0.75rem;">
+                <span>3 ★</span>
+                <div style="flex:1; height:6px; background:#F1F5F9; border-radius:999px; overflow:hidden;"><div style="width:2%; height:100%; background:#FCD34D;"></div></div>
+                <span style="font-weight:700;">2%</span>
               </div>
             </div>
-            <div class="table-responsive-container" id="ledger-table-container">
-              <table class="dash-table">
-                <thead>
-                  <tr>
-                    <th>Booking ID</th>
-                    <th>Customer</th>
-                    <th>Turf Ground</th>
-                    <th>Date & Time</th>
-                    <th>Amount</th>
-                    <th>Channel</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="owner-ledger-body">
-                  <!-- Injected via JavaScript -->
-                </tbody>
-              </table>
+          </div>
+
+          <!-- Reviews List -->
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="padding:14px; background:#F8FAFC; border-radius:12px; border:1px solid #F1F5F9;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <div style="font-weight:800; font-size:0.88rem; color:#0F172A;">Ravi Kumar <span style="font-size:0.7rem; color:#059669; background:#ECFDF5; padding:1px 6px; border-radius:4px; font-weight:700;">✓ Verified Player</span></div>
+                <div style="color:#F59E0B; font-size:0.85rem;">★★★★★</div>
+              </div>
+              <p style="font-size:0.82rem; color:#475569; margin:0 0 6px 0; line-height:1.45;">"Excellent artificial turf quality! We played 7v7 football under floodlights. High grip and clean changing room with cold water."</p>
+              <div style="font-size:0.72rem; color:#94A3B8;">Booked 8:00 PM slot • 2 days ago</div>
+            </div>
+
+            <div style="padding:14px; background:#F8FAFC; border-radius:12px; border:1px solid #F1F5F9;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <div style="font-weight:800; font-size:0.88rem; color:#0F172A;">Karthik S <span style="font-size:0.7rem; color:#059669; background:#ECFDF5; padding:1px 6px; border-radius:4px; font-weight:700;">✓ Verified Player</span></div>
+                <div style="color:#F59E0B; font-size:0.85rem;">★★★★★</div>
+              </div>
+              <p style="font-size:0.82rem; color:#475569; margin:0 0 6px 0; line-height:1.45;">"Super smooth booking on Turfify. The owner confirmed our slot instantly and the court was ready when we arrived."</p>
+              <div style="font-size:0.72rem; color:#94A3B8;">Booked Box Cricket • 4 days ago</div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
+    <!-- ==========================================================================
+         MODULE 8: PROFILE & SETTINGS PANE
+         ========================================================================== -->
+    <div class="owner-tab-pane" id="pane-settings">
+      <div style="max-width:820px; margin:0 auto 24px auto;" class="saas-card-box">
+        <div class="saas-card-header">
+          <div class="saas-card-title">
+            <span>⚙️</span>
+            <span>Owner Account &amp; Facility Settings</span>
+          </div>
+          <span class="saas-badge-pill">Partner Console</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">Owner Full Name</label>
+            <input type="text" class="form-control" id="settings-owner-name" placeholder="Full Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">Business / Entity Name</label>
+            <input type="text" class="form-control" id="settings-business-name" placeholder="e.g. Apex Sports Ventures">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">Contact Email</label>
+            <input type="email" class="form-control" id="settings-owner-email" placeholder="owner@gmail.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">Contact Phone / WhatsApp</label>
+            <input type="tel" class="form-control" id="settings-owner-phone" placeholder="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">Operating City / District</label>
+            <input type="text" class="form-control" id="settings-owner-city" placeholder="e.g. Chennai">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">Instant Booking Approval</label>
+            <select class="form-control" id="settings-instant-booking">
+              <option value="enabled" selected>Instant Confirmation (Recommended)</option>
+              <option value="manual">Manual Owner Review</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:16px; padding:12px; background:#F8FAFC; border-radius:10px; border:1px solid #E2E8F0; font-size:0.78rem; color:#64748B;">
+          🔒 Your account changes automatically sync across your partner console and active facilities.
+        </div>
+
+        <button type="button" onclick="window.saveOwnerProfileSettings()" style="margin-top:18px; width:100%; background:#064E3B; color:#FFFFFF; border:none; padding:13px; border-radius:10px; font-weight:800; font-size:0.92rem; cursor:pointer;">
+          💾 Save Profile &amp; Settings
+        </button>
+      </div>
     </div>
 
   </main>
 
-    <!-- ==========================================================================
+
+  <!-- ==========================================================================
        MODAL: ADD NEW GROUND (6-STEP GUIDED WIZARD)
        ========================================================================== -->
   <div class="modal-overlay" id="modal-add-turf">
@@ -2357,6 +2800,165 @@
       }
     };
 
+    
+    /* ==========================================================================
+       OWNER SAAS DASHBOARD CONTROLLERS (8-MODULE ARCHITECTURE)
+       ========================================================================== */
+
+    // Tab switcher with URL hash synchronization
+    window.switchOwnerTab = function(tabName) {
+      if (!tabName) tabName = 'overview';
+      const aliasMap = {
+        'grounds': 'facilities',
+        'venues': 'facilities',
+        'slots': 'availability',
+        'ledger': 'bookings',
+        'settlement': 'payouts'
+      };
+      if (aliasMap[tabName]) tabName = aliasMap[tabName];
+      const validTabs = ['overview', 'facilities', 'availability', 'bookings', 'pricing', 'payouts', 'reviews', 'settings'];
+      if (!validTabs.includes(tabName)) tabName = 'overview';
+
+      document.querySelectorAll('.saas-tab-btn[data-tab]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+      });
+
+      document.querySelectorAll('.owner-tab-pane').forEach(pane => {
+        pane.classList.toggle('active', pane.id === ('pane-' + tabName));
+      });
+
+      if (window.location.hash !== '#' + tabName) {
+        history.replaceState(null, '', '#' + tabName);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Autonomous Pricing Management
+    window.loadSelectedTurfPricing = function(turfId) {
+      const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+      const turf = turfs.find(t => String(t.id) === String(turfId));
+      if (!turf) return;
+      const base = turf.price_per_hour || 1200;
+      const baseEl = document.getElementById('pricing-base-rate');
+      const peakEl = document.getElementById('pricing-peak-rate');
+      const weekendEl = document.getElementById('pricing-weekend-premium');
+      if (baseEl) baseEl.value = base;
+      if (peakEl) peakEl.value = Math.round(base * 1.33);
+      if (weekendEl) weekendEl.value = 200;
+    };
+
+    window.handleSaveTurfPricing = function() {
+      const select = document.getElementById('pricing-turf-select');
+      const turfId = select ? select.value : selectedTurfId;
+      const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+      const turf = turfs.find(t => String(t.id) === String(turfId));
+      if (!turf) {
+        alert('Please select a facility to adjust pricing.');
+        return;
+      }
+      const newRate = parseInt(document.getElementById('pricing-base-rate')?.value, 10);
+      if (isNaN(newRate) || newRate <= 0) {
+        alert('Please enter a valid hourly rate.');
+        return;
+      }
+      turf.price_per_hour = newRate;
+      window.TurfifyStore.addTurf(turf);
+      renderOwnerDashboard();
+      alert('✅ Pricing updated live to ₹' + newRate + '/hr for ' + turf.name + '!\n\nThis new rate is immediately live across the marketplace without needing administrator approval.');
+      if (typeof showToast === 'function') showToast('💰 Pricing updated to ₹' + newRate + '/hr for ' + turf.name);
+    };
+
+    // Customer search filter for Bookings
+    window.filterOwnerBookingsBySearch = function(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#owner-ledger-body tr');
+      rows.forEach(r => {
+        const text = r.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          r.style.display = '';
+        } else {
+          r.style.display = 'none';
+        }
+      });
+    };
+
+    // Profile & Settings
+    window.saveOwnerProfileSettings = function() {
+      const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      if (!curUser) return;
+      const name = document.getElementById('settings-owner-name')?.value;
+      const biz = document.getElementById('settings-business-name')?.value;
+      const email = document.getElementById('settings-owner-email')?.value;
+      const phone = document.getElementById('settings-owner-phone')?.value;
+      const city = document.getElementById('settings-owner-city')?.value;
+
+      if (name) curUser.name = name;
+      if (biz) curUser.business_name = biz;
+      if (email) curUser.email = email;
+      if (phone) curUser.phone = phone;
+      if (city) curUser.city = city;
+
+      localStorage.setItem('turfify_current_user', JSON.stringify(curUser));
+      sessionStorage.setItem('turfify_current_user', JSON.stringify(curUser));
+      renderOwnerDashboard();
+      alert('✅ Profile and facility settings saved successfully!');
+      if (typeof showToast === 'function') showToast('⚙️ Settings saved successfully.');
+    };
+
+    // Payout Details
+    window.saveOwnerPayoutDetails = function() {
+      const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const details = {
+        account_holder: document.getElementById('payout-account-holder')?.value,
+        bank_name: document.getElementById('payout-bank-name')?.value,
+        account_number: document.getElementById('payout-account-number')?.value,
+        ifsc: document.getElementById('payout-ifsc')?.value,
+        upi_id: document.getElementById('payout-upi-id')?.value,
+        updated_at: new Date().toISOString()
+      };
+      localStorage.setItem('turfify_owner_payout_' + (curUser?.id || 'default'), JSON.stringify(details));
+      alert('✅ Bank and UPI payout details saved securely!\n\nAll online player bookings settle directly to this account every Tuesday.');
+      if (typeof showToast === 'function') showToast('💳 Payout details saved.');
+    };
+
+    // Render Overview Widgets: Next Sessions & Utilization
+    window.renderOverviewWidgets = function(ownerTurfs, ownerBookings) {
+      const nextSessionsEl = document.getElementById('overview-next-sessions-list');
+      if (nextSessionsEl) {
+        nextSessionsEl.innerHTML = '';
+        const upcomingBookings = (ownerBookings || [])
+          .filter(b => b.status !== 'Cancelled')
+          .slice(-6)
+          .reverse();
+        if (upcomingBookings.length === 0) {
+          nextSessionsEl.innerHTML = '<div style="text-align:center; padding:24px 12px; color:#64748B; font-size:0.82rem;">No sessions scheduled today yet.<br><span style="color:#059669; font-weight:700;">Share your turf link to start receiving bookings!</span></div>';
+        } else {
+          upcomingBookings.forEach(b => {
+            const isMaint = b.status === 'Maintenance';
+            const isWalkin = b.status === 'Walk-in';
+            const item = document.createElement('div');
+            item.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#F8FAFC; border-radius:12px; border:1px solid #F1F5F9;';
+            item.innerHTML = `
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:36px; height:36px; border-radius:50%; background:${isMaint ? '#FEE2E2' : (isWalkin ? '#FEF3C7' : '#DCFCE7')}; color:${isMaint ? '#DC2626' : (isWalkin ? '#D97706' : '#059669')}; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem;">
+                  ${isMaint ? '🛠️' : (isWalkin ? '🚶' : '⚽')}
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:0.84rem; color:#0F172A;">${b.player_name || 'Player'}</div>
+                  <div style="font-size:0.72rem; color:#64748B;">${b.time_slot || 'Slot'} • ${b.turf_name || 'Ground'}</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <span class="saas-badge-pill" style="font-size:0.68rem; ${isMaint ? 'background:#FEE2E2;color:#DC2626;' : (isWalkin ? 'background:#FEF3C7;color:#B45309;' : 'background:#ECFDF5;color:#065F46;')}">${b.status}</span>
+                <div style="font-size:0.72rem; font-weight:800; color:#0F172A; margin-top:2px;">₹${b.amount || 0}</div>
+              </div>
+            `;
+            nextSessionsEl.appendChild(item);
+          });
+        }
+      }
+    };
+
     function renderOwnerDashboard() {
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
       if (!user || !user.is_authenticated || user.role !== 'owner') {
@@ -2377,6 +2979,48 @@
       }
 
       document.getElementById('owner-turfs-count').textContent = `${ownerTurfs.length} Grounds`;
+      // Render Overview widgets (Next Sessions, utilization)
+      if (window.renderOverviewWidgets) {
+        window.renderOverviewWidgets(ownerTurfs, ownerBookings);
+      }
+
+      // Populate Pricing dropdown
+      const pricingSelect = document.getElementById('pricing-turf-select');
+      if (pricingSelect) {
+        pricingSelect.innerHTML = ownerTurfs.map(t => `<option value="${t.id}" ${t.id === selectedTurfId ? 'selected' : ''}>${t.name} (${t.sport || 'Sports'})</option>`).join('');
+        if (ownerTurfs.length > 0) {
+          const curT = ownerTurfs.find(t => t.id === (pricingSelect.value || selectedTurfId)) || ownerTurfs[0];
+          window.loadSelectedTurfPricing(curT.id);
+        }
+      }
+
+      // Populate Settings inputs if blank
+      if (activeUser) {
+        const setOwnerName = document.getElementById('settings-owner-name');
+        const setBizName = document.getElementById('settings-business-name');
+        const setOwnerEmail = document.getElementById('settings-owner-email');
+        const setOwnerPhone = document.getElementById('settings-owner-phone');
+        const setOwnerCity = document.getElementById('settings-owner-city');
+        if (setOwnerName && !setOwnerName.value) setOwnerName.value = activeUser.name || '';
+        if (setBizName && !setBizName.value) setBizName.value = activeUser.business_name || '';
+        if (setOwnerEmail && !setOwnerEmail.value) setOwnerEmail.value = activeUser.email || '';
+        if (setOwnerPhone && !setOwnerPhone.value) setOwnerPhone.value = activeUser.phone || '';
+        if (setOwnerCity && !setOwnerCity.value) setOwnerCity.value = activeUser.city || 'Tamil Nadu';
+      }
+
+      // Populate Payout inputs if saved
+      const savedPayout = localStorage.getItem('turfify_owner_payout_' + (activeUser?.id || 'default'));
+      if (savedPayout) {
+        try {
+          const p = JSON.parse(savedPayout);
+          if (p.account_holder) document.getElementById('payout-account-holder').value = p.account_holder;
+          if (p.bank_name) document.getElementById('payout-bank-name').value = p.bank_name;
+          if (p.account_number) document.getElementById('payout-account-number').value = p.account_number;
+          if (p.ifsc) document.getElementById('payout-ifsc').value = p.ifsc;
+          if (p.upi_id) document.getElementById('payout-upi-id').value = p.upi_id;
+        } catch(e){}
+      }
+
 
       // Dynamic owner name and business title
       if (activeUser?.name) {
@@ -2811,6 +3455,60 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
+      // Wire up 8-Module SaaS Tabs
+      document.querySelectorAll('.saas-tab-btn[data-tab]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.switchOwnerTab(btn.dataset.tab);
+        });
+      });
+
+      // Synchronize with URL hash
+      const initHash = window.location.hash.replace('#', '');
+      if (initHash) {
+        window.switchOwnerTab(initHash);
+      }
+      window.addEventListener('hashchange', () => {
+        const h = window.location.hash.replace('#', '');
+        if (h) window.switchOwnerTab(h);
+      });
+
+      // Wire up autonomous Maintenance Blocker button
+      const btnBlockMaint = document.getElementById('btn-block-maintenance');
+      if (btnBlockMaint) {
+        btnBlockMaint.onclick = () => {
+          const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+          const ownerTurfs = window.TurfifyStore ? window.TurfifyStore.getOwnerTurfs(curUser?.id) : [];
+          if (!ownerTurfs.length) {
+            alert('Please register your turf facility first.');
+            document.getElementById('btn-open-add-turf')?.click();
+            return;
+          }
+          const primaryTurf = ownerTurfs.find(t => t.id === selectedTurfId) || ownerTurfs[0];
+          const chosenSlot = prompt(`Block Maintenance Hours for ${primaryTurf.name} on ${selectedScheduleDate}:\n\nEnter slot time (e.g. 06:00 - 07:00 AM, 02:00 - 03:00 PM, 10:00 - 11:00 PM):\n\n(No administrator approval required)`, '10:00 - 11:00 PM');
+          if (!chosenSlot) return;
+          const reason = prompt('Maintenance task description (e.g. Pitch grooming, Floodlight maintenance, Rain covering):', 'Regular Pitch Maintenance') || 'Turf Maintenance';
+
+          window.TurfifyStore.createBooking({
+            turf_id: primaryTurf.id,
+            turf_name: primaryTurf.name,
+            sport: primaryTurf.sport || 'Sports',
+            player_id: 'maint-' + Date.now(),
+            player_name: `🛠️ ${reason}`,
+            player_phone: 'Owner Blocked',
+            date: selectedScheduleDate,
+            time_slot: chosenSlot.trim(),
+            time_slots: [chosenSlot.trim()],
+            amount: 0,
+            status: 'Maintenance',
+            payment_status: 'Maintenance Block'
+          });
+          renderOwnerDashboard();
+          alert(`🛠️ Slot ${chosenSlot} at ${primaryTurf.name} is now BLOCKED for maintenance!\n\nPlayers cannot book this slot until you unblock it.`);
+          if (typeof showToast === 'function') showToast(`🛠️ Slot ${chosenSlot} blocked for maintenance.`);
+        };
+      }
+
       renderOwnerDashboard();
       initDragToScroll();
 
