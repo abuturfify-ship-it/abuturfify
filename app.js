@@ -660,6 +660,12 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (locLower.includes('salem')) city = 'salem';
       else if (locLower.includes('chengalpattu') || locLower.includes('kanchipuram')) city = 'chennai';
 
+      const rawEnv = (t.environment || ((t.amenities && t.amenities.some(a => a.toLowerCase().includes('indoor'))) ? 'Indoor' : 'Outdoor'));
+      const normalizedEnv = rawEnv.toLowerCase() === 'indoor' ? 'Indoor' : (rawEnv.toLowerCase().includes('semi') ? 'Semi-Indoor' : 'Outdoor');
+      const formatStr = t.dimensions || t.capacity || t.capacity_label || '11v11';
+      const surfaceStr = t.surface || t.surface_type || 'Premium Synthetic Grass Playing Turf';
+      const descStr = t.description || t.category || '';
+
       return {
         id: String(t.id),
         name: t.name,
@@ -669,13 +675,15 @@ document.addEventListener('DOMContentLoaded', () => {
         city: city,
         lat: t.lat || (city === 'coimbatore' ? 11.01 : city === 'madurai' ? 9.92 : city === 'trichy' ? 10.82 : city === 'salem' ? 11.66 : 12.9675),
         lng: t.lng || (city === 'coimbatore' ? 76.96 : city === 'madurai' ? 78.12 : city === 'trichy' ? 78.69 : city === 'salem' ? 78.14 : 80.1491),
-        environment: (t.amenities && t.amenities.some(a => a.toLowerCase().includes('indoor'))) ? 'indoor' : 'outdoor',
+        environment: normalizedEnv,
         price_per_hour: parseInt(t.price_per_hour, 10) || 1200,
         rating: parseFloat(t.rating) || 5.0,
         reviews_count: t.reviews_count || 18,
-        capacity: '7v7',
-        capacity_label: t.dimensions || '7v7 Championship Turf',
-        surface: 'Premium Synthetic Grass Playing Turf',
+        capacity: formatStr,
+        capacity_label: formatStr,
+        dimensions: formatStr,
+        description: descStr,
+        surface: surfaceStr,
         image: t.image || 'images/turf-arena.jpg',
         images: Array.isArray(t.images) && t.images.length > 0 ? t.images : (t.image ? [t.image] : ['images/turf-arena.jpg']),
         amenities: Array.isArray(t.amenities) ? t.amenities : ['Parking', 'Floodlights', 'Changing Room'],
@@ -849,6 +857,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="text-decoration:none; color:inherit;">
               <h3 class="turf-card-title">${t.name}</h3>
             </a>
+            ${t.description ? `
+              <p class="turf-card-desc" style="font-size:0.78rem; color:#64748B; margin:3px 0 6px 0; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                ${t.description}
+              </p>
+            ` : ''}
             <div class="card-spec-line">${t.surface || 'FIFA Approved Artificial Grass'} • ${t.dimensions || t.capacity || t.capacity_label || 'Standard Turf'}</div>
 
             <div class="card-micro-amenities-row">

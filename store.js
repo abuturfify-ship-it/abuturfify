@@ -203,6 +203,9 @@ window.TurfifyStore = {
 
           serverData.turfs.forEach(st => {
             if (deletedTurfs.includes(String(st.id))) return;
+            if (st.category && !st.description) {
+              st.description = st.category;
+            }
             const idx = mergedTurfs.findIndex(lt => String(lt.id) === String(st.id));
             if (idx === -1) {
               mergedTurfs.push(st);
@@ -552,15 +555,15 @@ window.TurfifyStore = {
       owner_phone: String(turf.owner_phone || ''),
       name: String(turf.name || 'Untitled Turf'),
       sport: String(turf.sport || 'Football'),
-      category: String(turf.category || ''),
+      category: String(turf.description || turf.category || ''),
       location: String(turf.location || ''),
       city: String(turf.city || 'Chennai'),
       price_per_hour: parseInt(turf.price_per_hour || 1200, 10),
       rating: parseFloat(turf.rating || 5.0),
       reviews_count: parseInt(turf.reviews_count || 1, 10),
-      dimensions: String(turf.dimensions || ''),
-      surface: String(turf.surface || ''),
-      environment: String(turf.environment || 'outdoor'),
+      dimensions: String(turf.dimensions || '11v11'),
+      surface: String(turf.surface || turf.surface_type || 'Artificial Turf'),
+      environment: String(turf.environment || 'Outdoor'),
       image: String(primaryImg),
       images: rawImages,
       amenities: Array.isArray(turf.amenities) ? turf.amenities : [],
