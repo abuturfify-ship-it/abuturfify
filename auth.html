@@ -39,29 +39,41 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Page Canvas */
+    /* Page Canvas with atmospheric sports background */
     .auth-page-canvas {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 40px 20px;
-      background: radial-gradient(circle at 50% 12%, #11261d 0%, #090E17 65%);
+      position: relative;
+      background: #060B12 url('images/auth-bg.jpg') center center / cover no-repeat fixed;
       box-sizing: border-box;
+    }
+    .auth-page-canvas::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(9, 15, 24, 0.72) 0%, rgba(5, 8, 14, 0.92) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      pointer-events: none;
+      z-index: 0;
     }
 
     /* Floating Rounded Shell */
     .auth-card-shell {
       width: 100%;
       max-width: 1080px;
-      background: var(--card-bg);
-      border-radius: 36px;
+      background: #FFFFFF;
+      border-radius: 40px;
       padding: 16px;
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
       gap: 16px;
-      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      box-shadow: 0 35px 110px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.12);
       position: relative;
+      z-index: 1;
     }
 
     /* Left Form Side */
@@ -524,10 +536,10 @@
     /* RIGHT VISUAL PANEL */
     .auth-visual-side {
       position: relative;
-      border-radius: 26px;
+      border-radius: 28px;
       overflow: hidden;
       min-height: 640px;
-      background: #0B1118 url('https://images.unsplash.com/photo-1622163642998-1ea32b0bbc67?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+      background: #0B1118 url('images/auth-player-exact.jpg') center center / cover no-repeat;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -539,7 +551,7 @@
     .visual-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(9, 14, 23, 0.52) 0%, rgba(9, 14, 23, 0.12) 45%, rgba(9, 14, 23, 0.88) 100%);
+      background: linear-gradient(180deg, rgba(9, 14, 23, 0.35) 0%, rgba(9, 14, 23, 0.05) 50%, rgba(9, 14, 23, 0.65) 100%);
       pointer-events: none;
     }
 
@@ -871,9 +883,7 @@
       </div>
 
       <div class="visual-center">
-        <div class="visual-quote">
-          "Game on anytime, anywhere. Instant booking for premier football, box cricket, badminton &amp; tennis turfs."
-        </div>
+        <!-- Kept clear to let the dynamic action player graphic shine unobscured -->
       </div>
 
       <div class="visual-bottom">
