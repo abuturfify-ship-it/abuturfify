@@ -10,163 +10,657 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%2310B981%22/><path d=%22M30 65 L50 25 L70 65 L50 52 Z%22 fill=%22white%22/></svg>">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --green:#10B981;--green-dark:#059669;--green-light:#34D399;
-      --green-glow:rgba(16,185,129,0.18);
-      --bg:#080E14;--surface:#0F1923;--surface2:#162233;
-      --border:rgba(255,255,255,0.07);--border-green:rgba(16,185,129,0.3);
-      --text:#F1F5F9;--text-muted:#8B9BB4;--text-dim:#4A5568;
-      --error:#EF4444;--error-bg:rgba(239,68,68,0.1);
-      --radius:16px;--radius-sm:10px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #10B981;
+      --green-dark: #059669;
+      --green-light: #34D399;
+      --green-glow: rgba(16, 185, 129, 0.16);
+      --bg: #090E17;
+      --card-bg: #FFFFFF;
+      --surface-subtle: #F8FAFC;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --text-dim: #94A3B8;
+      --error: #EF4444;
+      --error-bg: #FEF2F2;
+      --radius: 16px;
+      --radius-pill: 999px;
     }
-    html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
-    .auth-wrapper{display:grid;grid-template-columns:1fr 1fr;height:100vh}
-    /* LEFT */
-    .auth-brand{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:48px;background:linear-gradient(145deg,#0a1628 0%,#0d1f35 50%,#071a0e 100%);overflow:hidden}
-    .auth-brand::before{content:'';position:absolute;top:-120px;left:-120px;width:500px;height:500px;background:radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%);pointer-events:none}
-    .brand-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(16,185,129,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
-    .brand-logo{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
-    .brand-logo-badge{width:44px;height:44px;background:linear-gradient(135deg,var(--green),var(--green-dark));border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(16,185,129,0.4)}
-    .brand-logo-text{font-size:22px;font-weight:800;letter-spacing:-0.5px}
-    .brand-logo-text span{color:var(--green)}
-    .brand-center{position:relative;z-index:1}
-    .brand-headline{font-size:40px;font-weight:800;line-height:1.15;letter-spacing:-1.5px;margin-bottom:20px}
-    .brand-headline .highlight{background:linear-gradient(90deg,var(--green),var(--green-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .brand-desc{font-size:15px;color:var(--text-muted);line-height:1.7;max-width:360px;margin-bottom:40px}
-    .brand-stats{display:flex;gap:28px}
-    .stat-number{font-size:26px;font-weight:800;color:var(--green);display:block;line-height:1}
-    .stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-top:4px;display:block}
-    .brand-features{position:relative;z-index:1;display:flex;flex-direction:column;gap:14px}
-    .feature-chip{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:10px;font-size:13px;color:var(--text-muted)}
-    .feature-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}
-    /* RIGHT */
-    .auth-panel{display:flex;align-items:center;justify-content:center;padding:40px 32px;background:var(--surface);overflow-y:auto}
-    .auth-card{width:100%;max-width:420px}
-    .auth-card-header{margin-bottom:28px}
-    .auth-card-title{font-size:26px;font-weight:800;letter-spacing:-0.7px;margin-bottom:6px}
-    .auth-card-sub{font-size:14px;color:var(--text-muted)}
-    /* TABS */
-    .auth-tabs{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;border:1px solid var(--border)}
-    .auth-tab{flex:1;padding:9px;border:none;background:transparent;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Inter',sans-serif;border-radius:8px;cursor:pointer;transition:all .22s ease}
-    .auth-tab.active{background:var(--green);color:#fff;box-shadow:0 4px 16px rgba(16,185,129,0.35)}
-    /* VIEWS */
-    .auth-view{display:none;animation:fadeSlide .25s ease}
-    .auth-view.active{display:block}
-    @keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    /* FORM */
-    .form-group{margin-bottom:14px}
-    .form-label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
-    .form-input{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;transition:border-color .2s,box-shadow .2s;outline:none}
-    .form-input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-glow)}
-    .form-input::placeholder{color:var(--text-dim)}
-    .form-input-wrap{position:relative}
-    .form-input-wrap .form-input{padding-right:44px}
-    .input-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-dim);cursor:pointer;transition:color .2s;background:none;border:none}
-    .input-icon:hover{color:var(--green)}
-    /* ROLE */
-    .role-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-    .role-card{position:relative}
-    .role-card input[type=radio]{position:absolute;opacity:0;width:0;height:0}
-    .role-card label{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;background:var(--surface2);text-align:center}
-    .role-card label:hover{border-color:var(--border-green)}
-    .role-card input:checked+label{border-color:var(--green);background:rgba(16,185,129,0.08);box-shadow:0 0 0 1px var(--green),0 4px 16px rgba(16,185,129,0.12)}
-    .role-icon{width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;font-size:18px}
-    .role-name{font-size:13px;font-weight:700;color:var(--text)}
-    .role-desc{font-size:11px;color:var(--text-muted)}
-    /* BUTTON */
-    .btn-auth{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),var(--green-dark));border:none;border-radius:var(--radius-sm);color:#fff;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .22s ease;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(16,185,129,0.3);margin-top:4px}
-    .btn-auth:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 28px rgba(16,185,129,0.45)}
-    .btn-auth:disabled{opacity:.65;cursor:not-allowed}
-    .btn-auth .btn-spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
-    .btn-auth.loading .btn-text{display:none}
-    .btn-auth.loading .btn-spinner{display:block}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    /* ALERTS */
-    .alert{display:none;padding:12px 14px;border-radius:var(--radius-sm);font-size:13px;line-height:1.5;margin-bottom:14px;align-items:flex-start;gap:10px}
-    .alert.show{display:flex}
-    .alert-error{background:var(--error-bg);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5}
-    .alert-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green-light)}
-    /* MISC */
-    .forgot-link-wrap{text-align:right;margin-top:-4px;margin-bottom:14px}
-    .link-btn{background:none;border:none;color:var(--green);font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;padding:0;transition:color .2s}
-    .link-btn:hover{color:var(--green-light);text-decoration:underline}
-    .auth-footer-text{text-align:center;font-size:13px;color:var(--text-muted);margin-top:18px}
-    .back-home{display:flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13px;text-decoration:none;margin-bottom:28px;transition:color .2s}
-    .back-home:hover{color:var(--green)}
-    /* STRENGTH */
-    .password-strength{display:none;margin-top:6px}
-    .strength-bar{height:3px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:4px}
-    .strength-fill{height:100%;border-radius:4px;transition:width .3s,background .3s}
-    .strength-label{font-size:11px;color:var(--text-dim)}
-    /* OTP */
-    .otp-info-box{background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.22);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:18px;font-size:13px;color:var(--text-muted);line-height:1.6}
-    .otp-info-box strong{color:var(--green)}
-    .otp-inputs{display:flex;gap:10px;justify-content:center;margin:18px 0}
-    .otp-digit{width:48px;height:56px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:22px;font-weight:700;font-family:'Inter',sans-serif;text-align:center;transition:border-color .2s,box-shadow .2s;outline:none}
-    .otp-digit:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-glow)}
-    .otp-digit.filled{border-color:rgba(16,185,129,0.5)}
-    .otp-resend-wrap{text-align:center;margin-top:6px;font-size:13px;color:var(--text-muted)}
-    .otp-timer{color:var(--green);font-weight:600}
-    /* GOOGLE BUTTON */
-    .auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--text-muted);font-size:12px}
-    .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-    .btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:11px 16px;background:#fff;border:1.5px solid #dadce0;border-radius:var(--radius);font-size:14px;font-weight:600;color:#3c4043;cursor:pointer;transition:all .18s;font-family:inherit}
-    .btn-google:hover{background:#f8f9fa;border-color:#c0c0c0;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-    .btn-google:active{background:#f1f3f4}
-    .btn-google svg{flex-shrink:0}
-    .btn-google.loading{opacity:0.7;pointer-events:none}
-    .g-btn-wrap{display:flex;justify-content:center;align-items:center;width:100%;min-height:44px}
-    .g-btn-wrap iframe{margin:0 auto !important}
 
-    /* RESPONSIVE */
-    @media(max-width:900px){
-      .auth-wrapper{grid-template-columns:1fr}
-      .auth-brand{display:none}
-      html,body{overflow:auto}
-      .auth-panel{min-height:100vh;padding:32px 20px}
+    html, body {
+      min-height: 100vh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Page Canvas */
+    .auth-page-canvas {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: radial-gradient(circle at 50% 12%, #11261d 0%, #090E17 65%);
+      box-sizing: border-box;
+    }
+
+    /* Floating Rounded Shell */
+    .auth-card-shell {
+      width: 100%;
+      max-width: 1080px;
+      background: var(--card-bg);
+      border-radius: 36px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 16px;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    /* Left Form Side */
+    .auth-form-side {
+      padding: 32px 36px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      box-sizing: border-box;
+    }
+
+    .form-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .brand-badge-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .brand-spoke-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: #ECFDF5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #A7F3D0;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+    }
+
+    .brand-title-text {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+    .brand-title-text span {
+      color: var(--green);
+    }
+
+    .back-home-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: #F1F5F9;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+    .back-home-pill:hover {
+      background: #E2E8F0;
+      color: var(--text);
+    }
+
+    .auth-headline-block {
+      margin-bottom: 20px;
+    }
+
+    .auth-card-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: var(--text);
+      line-height: 1.22;
+      margin-bottom: 6px;
+    }
+
+    .auth-card-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      background: #F1F5F9;
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      margin-bottom: 22px;
+      gap: 4px;
+      border: 1px solid #E2E8F0;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 700;
+      font-family: inherit;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .auth-tab.active {
+      background: #0F172A;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      background: var(--surface-subtle);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      font-size: 14px;
+      color: var(--text);
+      font-family: inherit;
+      transition: all 0.18s ease;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      border-color: var(--green);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3.5px var(--green-glow);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .form-input-wrap {
+      position: relative;
+    }
+
+    .form-input-wrap .form-input {
+      padding-right: 44px;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.18s;
+    }
+    .input-icon:hover {
+      color: var(--green);
+    }
+
+    /* Role Selector */
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .role-card {
+      position: relative;
+    }
+
+    .role-card input[type=radio] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .role-card label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--surface-subtle);
+    }
+
+    .role-card label:hover {
+      border-color: #CBD5E1;
+    }
+
+    .role-card input:checked + label {
+      border-color: var(--green);
+      background: #ECFDF5;
+      box-shadow: 0 0 0 1px var(--green), 0 4px 12px rgba(16, 185, 129, 0.12);
+    }
+
+    .role-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
+    }
+
+    .role-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .role-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn-auth {
+      width: 100%;
+      height: 50px;
+      background: #0F172A;
+      border: none;
+      border-radius: var(--radius-pill);
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.22);
+      margin-top: 8px;
+    }
+
+    .btn-auth:hover:not(:disabled) {
+      background: #1E293B;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(15, 23, 42, 0.3);
+    }
+
+    .btn-auth:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-auth:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-auth .btn-spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #FFFFFF;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    .btn-auth.loading .btn-text { display: none; }
+    .btn-auth.loading .btn-spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Divider & Google Button */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0;
+      color: var(--text-dim);
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .btn-google {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      height: 48px;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.18s;
+      font-family: inherit;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .btn-google:hover {
+      background: var(--surface-subtle);
+      border-color: #CBD5E1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .btn-google svg { flex-shrink: 0; }
+    .btn-google.loading { opacity: 0.7; pointer-events: none; }
+
+    .g-btn-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      min-height: 44px;
+    }
+    .g-btn-wrap iframe { margin: 0 auto !important; }
+
+    /* Footer Text & Links */
+    .auth-footer-text {
+      text-align: center;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-top: 18px;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--green);
+      font-size: 13.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .link-btn:hover {
+      color: var(--green-dark);
+      text-decoration: underline;
+    }
+
+    .forgot-link-wrap {
+      text-align: right;
+      margin-top: -4px;
+      margin-bottom: 12px;
+    }
+
+    /* Alerts */
+    .alert {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .alert.show { display: flex; }
+    .alert-error {
+      background: var(--error-bg);
+      border: 1px solid #FECACA;
+      color: #991B1B;
+    }
+    .alert-success {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      color: #065F46;
+    }
+
+    /* Views */
+    .auth-view {
+      display: none;
+      animation: fadeSlide .22s ease;
+    }
+    .auth-view.active { display: block; }
+
+    /* Strength */
+    .password-strength { display: none; margin-top: 6px; }
+    .strength-bar { height: 4px; background: var(--border); border-radius: var(--radius-pill); overflow: hidden; margin-bottom: 4px; }
+    .strength-fill { height: 100%; border-radius: var(--radius-pill); transition: width .3s, background .3s; }
+    .strength-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+
+    /* OTP */
+    .otp-info-box {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      font-size: 13.5px;
+      color: #065F46;
+      line-height: 1.55;
+    }
+    .otp-info-box strong { color: #047857; }
+    .otp-inputs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 18px 0;
+    }
+    .otp-digit {
+      width: 48px;
+      height: 56px;
+      background: var(--surface-subtle);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 700;
+      font-family: inherit;
+      text-align: center;
+      transition: all .2s;
+      outline: none;
+    }
+    .otp-digit:focus {
+      border-color: var(--green);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px var(--green-glow);
+    }
+    .otp-digit.filled { border-color: var(--green); }
+    .otp-resend-wrap {
+      text-align: center;
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .otp-timer { color: var(--green); font-weight: 700; }
+
+    /* RIGHT VISUAL PANEL */
+    .auth-visual-side {
+      position: relative;
+      border-radius: 26px;
+      overflow: hidden;
+      min-height: 640px;
+      background: #0B1118 url('https://images.unsplash.com/photo-1622163642998-1ea32b0bbc67?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 32px;
+      color: #FFFFFF;
+      box-sizing: border-box;
+    }
+
+    .visual-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(9, 14, 23, 0.52) 0%, rgba(9, 14, 23, 0.12) 45%, rgba(9, 14, 23, 0.88) 100%);
+      pointer-events: none;
+    }
+
+    .visual-top, .visual-center, .visual-bottom {
+      position: relative;
+      z-index: 1;
+    }
+
+    .visual-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .visual-brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      font-size: 13.5px;
+      letter-spacing: -0.3px;
+    }
+
+    .visual-tag {
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.22);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #34D399;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+    }
+
+    .visual-quote {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.45;
+      letter-spacing: -0.4px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      max-width: 380px;
+    }
+
+    .visual-bottom-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .visual-partners-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .partner-badge {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .auth-card-shell {
+        grid-template-columns: 1fr;
+        border-radius: 28px;
+        padding: 12px;
+      }
+      .auth-visual-side {
+        display: none;
+      }
+      .auth-form-side {
+        padding: 24px 18px;
+      }
+      .auth-page-canvas {
+        padding: 16px 10px;
+      }
+      .auth-card-title {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 <body>
-<div class="auth-wrapper">
-  <!-- LEFT BRAND PANEL -->
-  <aside class="auth-brand">
-    <div class="brand-grid"></div>
-    <!-- Brand Logo - 1-Click to Home -->
-    <a href="index.html" class="brand-logo" style="text-decoration:none; color:inherit;" title="← Return to Turfify Home">
-      <div class="brand-logo-badge">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round">
-          <path d="M6 8h12M12 8v11a3 3 0 0 0 3 3"/><circle cx="12" cy="4" r="1.5" fill="#fff"/>
-        </svg>
+<div class="auth-page-canvas">
+  <div class="auth-card-shell">
+    
+    <!-- LEFT PANEL: FORM SIDE -->
+    <div class="auth-form-side">
+      <!-- Top Brand Header Bar -->
+      <div class="form-header-bar">
+        <a href="index.html" class="brand-badge-link" title="Return to Turfify Home">
+          <div class="brand-spoke-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round">
+              <circle cx="12" cy="12" r="3" fill="#10B981"/>
+              <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
+            </svg>
+          </div>
+          <span class="brand-title-text">Turfi<span>fy</span></span>
+        </a>
+        <a href="index.html" class="back-home-pill" title="Return to Turfify Home">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Home
+        </a>
       </div>
-      <span class="brand-logo-text">Turfi<span>fy</span></span>
-    </a>
-    <div class="brand-center">
-      <h1 class="brand-headline">The Premium<br>Sports Booking<br><span class="highlight">Platform.</span></h1>
-      <p class="brand-desc">Join thousands of players and turf owners on Tamil Nadu's premier sports marketplace. Real-time slots, instant confirmation, secure payments across Chennai, Coimbatore, Madurai &amp; beyond.</p>
-      <div class="brand-stats">
-        <div><span class="stat-number">1,200+</span><span class="stat-label">Turfs Listed</span></div>
-        <div><span class="stat-number">48K+</span><span class="stat-label">Players</span></div>
-        <div><span class="stat-number">4.9★</span><span class="stat-label">Avg Rating</span></div>
-      </div>
-    </div>
-    <div class="brand-features">
-      <div class="feature-chip"><span class="dot"></span>Instant slot confirmation</div>
-      <div class="feature-chip"><span class="dot"></span>Secure Supabase authentication</div>
-      <div class="feature-chip"><span class="dot"></span>Owner &amp; Player role management</div>
-    </div>
-  </aside>
 
-  <!-- RIGHT AUTH PANEL -->
-  <main class="auth-panel">
-    <div class="auth-card">
-      <a href="index.html" class="back-home" title="Return to Turfify Home">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Back to Turfify Home
-      </a>
-      <div class="auth-card-header">
-        <h2 class="auth-card-title" id="auth-page-title">Welcome back 👋</h2>
+      <div class="auth-headline-block">
+        <h1 class="auth-card-title" id="auth-page-title">Welcome back 👋</h1>
         <p class="auth-card-sub" id="auth-page-sub">Sign in to your Turfify account</p>
       </div>
 
@@ -359,9 +853,42 @@
         <p class="auth-footer-text"><button class="link-btn" onclick="switchView('signin')">Back to Sign In</button></p>
       </div>
 
-    </div>
-  </main>
-</div>
+    </div><!-- /.auth-form-side -->
+
+    <!-- RIGHT PANEL: HIGH-ENERGY SPORTS VISUAL -->
+    <div class="auth-visual-side">
+      <div class="visual-overlay"></div>
+      
+      <div class="visual-top">
+        <div class="visual-brand-badge">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3" fill="#ffffff"/>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
+          </svg>
+          <span>Turfify</span>
+        </div>
+        <span class="visual-tag">Tamil Nadu #1</span>
+      </div>
+
+      <div class="visual-center">
+        <div class="visual-quote">
+          "Game on anytime, anywhere. Instant booking for premier football, box cricket, badminton &amp; tennis turfs."
+        </div>
+      </div>
+
+      <div class="visual-bottom">
+        <div class="visual-bottom-label">Our Venue Partners</div>
+        <div class="visual-partners-row">
+          <span class="partner-badge">⚽ Mauji Turf</span>
+          <span class="partner-badge">🏟️ Apex Arena</span>
+          <span class="partner-badge">🏏 Smash Zone</span>
+          <span class="partner-badge">🎾 ProSpin</span>
+        </div>
+      </div>
+    </div><!-- /.auth-visual-side -->
+
+  </div><!-- /.auth-card-shell -->
+</div><!-- /.auth-page-canvas -->
 
 <script src="store.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -375,11 +902,11 @@
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
   const TITLES = {
-    signin: { title: 'Welcome back 👋',      sub: 'Sign in to your Turfify account' },
-    signup: { title: 'Create account 🚀',    sub: "Join Turfify — it's free" },
-    forgot: { title: 'Reset password 🔑',   sub: "We'll email you a reset link" },
-    reset:  { title: 'Set new password 🔒', sub: 'Enter your new password below' },
-    otp:    { title: 'Verify your code 🔐', sub: 'Enter the 6-digit OTP sent to your email' }
+    signin: { title: 'Welcome Back to Turfify 👋', sub: 'Sign in to access your bookings, teams, and saved venues' },
+    signup: { title: 'Create Your Turfify Account 🚀', sub: 'Join the movement. Unlock exclusive turf bookings and venue insights' },
+    forgot: { title: 'Reset Your Password 🔑', sub: "Enter your email to receive a secure reset link" },
+    reset:  { title: 'Set New Password 🔒', sub: 'Enter your new password below' },
+    otp:    { title: 'Verify Your Code 🔐', sub: 'Enter the 6-digit OTP sent to your email' }
   };
 
   function switchView(view, evt) {
@@ -397,6 +924,7 @@
     tabs.style.display = (view === 'forgot' || view === 'reset' || view === 'otp') ? 'none' : 'flex';
     document.getElementById('tab-signin')?.classList.toggle('active', view === 'signin');
     document.getElementById('tab-signup')?.classList.toggle('active', view === 'signup');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function setLoading(btn, on) {
