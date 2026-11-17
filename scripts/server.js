@@ -358,9 +358,11 @@ async function handleRequest(req, res) {
       let emailDetail = null;
 
       // ── PRIMARY: Gmail SMTP via Nodemailer ──
-      // Always read fresh credentials from .env
-      let gmailUser = process.env.GMAIL_USER;
-      let gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
+      const DEFAULT_GMAIL_USER = 'sajaruthmahjabeen@gmail.com';
+      const DEFAULT_GMAIL_PASS = 'hglkhikgbznwagpr';
+
+      let gmailUser = process.env.GMAIL_USER || DEFAULT_GMAIL_USER;
+      let gmailAppPassword = process.env.GMAIL_APP_PASSWORD || DEFAULT_GMAIL_PASS;
       try {
         const envPath = path.join(ROOT_DIR, '.env');
         if (fs.existsSync(envPath)) {
@@ -442,20 +444,14 @@ async function handleRequest(req, res) {
       }
 
       if (!emailSent) {
-        console.warn('Email dispatch notice (falling back to on-screen verification code):', emailDetail);
-        return sendJson(res, 200, {
-          success: true,
-          emailSent: false,
-          devOtp: otp,
-          otpToken,
-          message: `Verification code: ${otp}`
+        return sendJson(res, 500, {
+          error: 'Failed to deliver OTP to your email address: ' + (typeof emailDetail === 'string' ? emailDetail : 'Email service error')
         });
       }
 
       return sendJson(res, 200, {
         success: true,
         emailSent: true,
-        devOtp: otp,
         otpToken,
         message: `Verification code sent to ${email}!`
       });
