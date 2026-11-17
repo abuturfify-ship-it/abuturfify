@@ -2228,6 +2228,238 @@
       border: none !important;
     }
 </style>
+
+<style>
+    /* ==========================================================================
+       DEFINITIVE FIX: CALENDAR & SCHEDULE PERSISTENCE, TOPBAR, AND SIDEBAR
+       ========================================================================== */
+
+    /* Ensure Two-Column Overview NEVER collapses on Desktop / Laptop */
+    .player-overview-grid {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) 300px !important;
+      gap: 20px !important;
+      padding: 24px 28px !important;
+      box-sizing: border-box !important;
+      align-items: start !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .player-overview-main {
+      min-width: 0 !important;
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 20px !important;
+    }
+
+    /* Right Sidebar (Calendar + Schedule) ALWAYS VISIBLE */
+    .player-overview-sidebar {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 20px !important;
+      width: 300px !important;
+      flex-shrink: 0 !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .player-cal-widget-box, .player-schedule-widget-box {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      background: #FFFFFF !important;
+      border-radius: 20px !important;
+      padding: 20px !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+      border: 1px solid #E2E8F0 !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Topbar Layout & Sizing */
+    .player-saas-topbar {
+      height: 72px !important;
+      background: #FFFFFF !important;
+      border-bottom: 1px solid #E2E8F0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 0 28px !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 90 !important;
+      box-sizing: border-box !important;
+      gap: 16px !important;
+    }
+
+    .player-topbar-left-cluster {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      flex: 1 !important;
+      max-width: 620px !important;
+    }
+
+    .btn-hamburger-icon {
+      width: 42px !important;
+      height: 42px !important;
+      border-radius: 12px !important;
+      background: #F8FAFC !important;
+      border: 1.5px solid #E2E8F0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      flex-shrink: 0 !important;
+      transition: background 0.15s ease !important;
+    }
+    .btn-hamburger-icon:hover {
+      background: #E2E8F0 !important;
+    }
+
+    .player-topbar-search-box {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      background: #F8FAFC !important;
+      border: 1.5px solid #E2E8F0 !important;
+      border-radius: 12px !important;
+      padding: 0 14px !important;
+      height: 42px !important;
+      flex: 1 !important;
+      box-sizing: border-box !important;
+    }
+    .player-topbar-search-box input {
+      border: none !important;
+      background: transparent !important;
+      outline: none !important;
+      font-size: 0.88rem !important;
+      width: 100% !important;
+      color: #0F172A !important;
+    }
+
+    .btn-topbar-filter-sliders {
+      width: 42px !important;
+      height: 42px !important;
+      border-radius: 12px !important;
+      background: #10B981 !important;
+      border: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25) !important;
+      transition: background 0.15s ease !important;
+    }
+    .btn-topbar-filter-sliders:hover {
+      background: #059669 !important;
+    }
+
+    .btn-topbar-green-search {
+      height: 42px !important;
+      background: #10B981 !important;
+      color: #FFFFFF !important;
+      font-size: 0.88rem !important;
+      font-weight: 700 !important;
+      border: none !important;
+      border-radius: 12px !important;
+      padding: 0 20px !important;
+      cursor: pointer !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25) !important;
+      transition: background 0.15s ease !important;
+    }
+    .btn-topbar-green-search:hover {
+      background: #059669 !important;
+    }
+
+    .player-topbar-right-cluster {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      flex-shrink: 0 !important;
+    }
+
+    .topbar-icon-bubble {
+      width: 42px !important;
+      height: 42px !important;
+      border-radius: 50% !important;
+      background: #F8FAFC !important;
+      border: 1.5px solid #E2E8F0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      position: relative !important;
+      transition: background 0.15s ease !important;
+    }
+    .topbar-icon-bubble:hover {
+      background: #F1F5F9 !important;
+    }
+    .bubble-red-dot {
+      position: absolute !important;
+      top: 8px !important;
+      right: 8px !important;
+      width: 7px !important;
+      height: 7px !important;
+      border-radius: 50% !important;
+      background: #EF4444 !important;
+      border: 1.5px solid #FFFFFF !important;
+    }
+
+    .topbar-user-avatar-chip {
+      width: 42px !important;
+      height: 42px !important;
+      border-radius: 50% !important;
+      overflow: hidden !important;
+      border: 2px solid #10B981 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #ECFDF5 !important;
+      cursor: pointer !important;
+    }
+    .avatar-photo-circle {
+      font-size: 1.2rem !important;
+    }
+
+    /* Sidebar Collapsed State (Toggled by ≡ button) */
+    .player-saas-sidebar.sidebar-collapsed {
+      width: 80px !important;
+      padding: 24px 10px 20px !important;
+    }
+    .player-saas-sidebar.sidebar-collapsed .sidebar-brand-text,
+    .player-saas-sidebar.sidebar-collapsed .nav-btn-text,
+    .player-saas-sidebar.sidebar-collapsed .player-nav-counter-green,
+    .player-saas-sidebar.sidebar-collapsed .player-discount-promo-card {
+      display: none !important;
+    }
+    .player-saas-sidebar.sidebar-collapsed .player-tab-nav-btn {
+      justify-content: center !important;
+      padding: 12px !important;
+    }
+
+    /* Only collapse to 1 column on actual Mobile (< 860px) */
+    @media (max-width: 860px) {
+      .player-overview-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .player-overview-sidebar {
+        width: 100% !important;
+      }
+      .player-saas-sidebar {
+        position: fixed !important;
+        left: -260px !important;
+        transition: left 0.25s ease-in-out !important;
+      }
+      .player-saas-sidebar.drawer-open {
+        left: 0 !important;
+        box-shadow: 4px 0 25px rgba(0,0,0,0.2) !important;
+      }
+    }
+</style>
 </head>
 
 <body class="dash-page">
@@ -2280,54 +2512,54 @@
       <div>
         <!-- BRAND LOGO (MATCHING IMAGE 3) -->
         <div class="player-sidebar-brand">
-          <div style="width:34px; height:34px; border-radius:10px; background:#10B981; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(16,185,129,0.35);">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <div style="width:36px; height:36px; border-radius:10px; background:#10B981; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(16,185,129,0.35); flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
           </div>
-          <span style="font-size:1.3rem; font-weight:800; color:#0F172A; letter-spacing:-0.5px;">Turfify</span>
+          <span class="sidebar-brand-text" style="font-size:1.3rem; font-weight:800; color:#0F172A; letter-spacing:-0.5px;">Turfify</span>
         </div>
 
-        <!-- NAVIGATION LINKS (EXACT MATCH TO IMAGE 3) -->
+        <!-- 6 DEDICATED TURFIFY NAVIGATION TABS -->
         <ul class="player-nav-group">
           <li>
             <button type="button" class="player-tab-nav-btn active" data-player-tab="overview">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
-              <span>Dashboard</span>
+              <span class="nav-btn-text">Overview</span>
             </button>
           </li>
           <li>
             <button type="button" class="player-tab-nav-btn" data-player-tab="bookings">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-              <span>Discover</span>
+              <span class="nav-btn-text">My bookings</span>
             </button>
           </li>
           <li>
             <button type="button" class="player-tab-nav-btn" data-player-tab="payments">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-              <span>Tickets</span>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+              <span class="nav-btn-text">Payments</span>
             </button>
           </li>
           <li>
             <button type="button" class="player-tab-nav-btn" data-player-tab="favorites">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              <span>Favorite</span>
-            </button>
-          </li>
-          <li>
-            <button type="button" class="player-tab-nav-btn" data-player-tab="support" style="position:relative;">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-              <span>Messages</span>
-              <span class="player-nav-counter-green">5</span>
+              <span class="nav-btn-text">Favorites</span>
             </button>
           </li>
           <li>
             <button type="button" class="player-tab-nav-btn" data-player-tab="profile">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              <span>Transaction</span>
+              <span class="nav-btn-text">Profile</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="player-tab-nav-btn" data-player-tab="support" style="position:relative;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <span class="nav-btn-text">Support</span>
+              <span class="player-nav-counter-green">5</span>
             </button>
           </li>
         </ul>
 
-        <!-- 50% DISCOUNT CARD (EXACT MATCH TO IMAGE 3) -->
+        <!-- 50% DISCOUNT CARD (MATCHING IMAGE 3) -->
         <div class="player-discount-promo-card">
           <h4>50% Discount!</h4>
           <p>Get best discounts on certain days and don't miss it</p>
@@ -2337,15 +2569,15 @@
         </div>
       </div>
 
-      <!-- BOTTOM CONTROLS (EXACT MATCH TO IMAGE 3) -->
+      <!-- BOTTOM CONTROLS (SETTINGS & LOGOUT) -->
       <div class="player-sidebar-bottom">
         <button type="button" class="player-bottom-link-btn" onclick="switchPlayerTab('profile')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          <span>Settings</span>
+          <span class="nav-btn-text">Settings</span>
         </button>
         <button type="button" class="player-bottom-link-btn" onclick="window.handlePlayerLogout(event)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          <span>Log out</span>
+          <span class="nav-btn-text">Log out</span>
         </button>
       </div>
     </aside>
@@ -2355,38 +2587,47 @@
 
       <!-- TOPBAR HEADER BAR (MATCHING MOCKUP) -->
       <header class="player-saas-topbar">
-        <div style="display:flex; align-items:center; gap:12px; flex:1; max-width:540px;">
-          <button type="button" id="btn-player-mobile-menu" class="btn-mini-action" style="display:none; padding:8px 10px; border-radius:10px; background:#F1F5F9;" onclick="document.getElementById('player-saas-sidebar')?.classList.toggle('drawer-open')">
-            ☰
+        <!-- LEFT: THREE-LINE HAMBURGER ≡ + SEARCH + FILTER + SEARCH BUTTON -->
+        <div class="player-topbar-left-cluster">
+          <!-- THREE-LINE HAMBURGER BUTTON -->
+          <button type="button" id="btn-toggle-sidebar" class="btn-hamburger-icon" aria-label="Toggle navigation" onclick="window.togglePlayerSidebar()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.4" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
           </button>
-          <div class="player-search-bar">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.2" style="margin-right:8px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="player-global-search" placeholder="Search destination, venue, sport or booking ID..." oninput="window.handlePlayerGlobalSearch(this.value)">
-            <button type="button" class="player-search-btn" onclick="window.executePlayerSearch()">Search</button>
+
+          <!-- SEARCH INPUT WITH EMBEDDED MAGNIFIER -->
+          <div class="player-topbar-search-box">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="player-global-search" placeholder="Search destination, venue, sport..." oninput="window.handlePlayerGlobalSearch(this.value)" onkeydown="if(event.key==='Enter') window.executePlayerSearch()">
           </div>
+
+          <!-- SLIDERS / FILTER BUTTON (MATCHING MOCKUP) -->
+          <button type="button" class="btn-topbar-filter-sliders" onclick="window.toggleFilterModal()" title="Filter facilities">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+          </button>
+
+          <!-- GREEN SEARCH BUTTON (MATCHING MOCKUP) -->
+          <button type="button" class="btn-topbar-green-search" onclick="window.executePlayerSearch()">
+            Search
+          </button>
         </div>
 
-        <div style="display:flex; align-items:center; gap:12px;">
-          <!-- Notification Bell -->
-          <div style="position:relative; cursor:pointer;" onclick="showToast('🔔 All your match alerts and notifications are up to date.')">
-            <div style="width:38px; height:38px; border-radius:12px; background:#F8FAFC; border:1px solid #E2E8F0; display:flex; align-items:center; justify-content:center;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            </div>
-            <div style="position:absolute; top:8px; right:8px; width:7px; height:7px; background:#EF4444; border-radius:50%; border:1.5px solid #FFFFFF;"></div>
+        <!-- RIGHT: NOTIFICATION BELL + CHAT BUBBLE + PROFILE AVATAR -->
+        <div class="player-topbar-right-cluster">
+          <!-- Notification Bell with Red Dot -->
+          <div class="topbar-icon-bubble" onclick="showToast('🔔 All match reminders and notifications are up to date.')" title="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="bubble-red-dot"></span>
           </div>
 
-          <!-- Direct Book Action -->
-          <button type="button" onclick="window.openPlayerBookingModal()" style="background:#064E3B; color:#FFFFFF; border:none; padding:8px 16px; border-radius:12px; font-weight:700; font-size:0.84rem; cursor:pointer; display:flex; align-items:center; gap:6px;">
-            <span>+</span>
-            <span>Book Turf</span>
-          </button>
+          <!-- Message Bubble with Red Dot (Matching Mockup) -->
+          <div class="topbar-icon-bubble" onclick="switchPlayerTab('support')" title="Support & Messages">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <span class="bubble-red-dot"></span>
+          </div>
 
-          <!-- User Avatar Chip -->
-          <div style="display:flex; align-items:center; gap:8px; padding:3px 10px 3px 3px; background:#FFFFFF; border:1px solid #E2E8F0; border-radius:999px;">
-            <div style="width:30px; height:30px; border-radius:50%; background:#D1FAE5; color:#047857; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.8rem; overflow:hidden;" id="player-avatar-wrap">
-              ⚽
-            </div>
-            <span style="font-size:0.82rem; font-weight:700; color:#0F172A;" id="nav-player-name">Player</span>
+          <!-- User Avatar Profile Chip (Matching Mockup) -->
+          <div class="topbar-user-avatar-chip" onclick="switchPlayerTab('profile')" title="View profile">
+            <div class="avatar-photo-circle" id="nav-player-avatar">⚽</div>
           </div>
         </div>
       </header>
@@ -4206,6 +4447,85 @@
     } else {
       renderOverviewExtras();
     }
+
+
+
+    /* ── Working Hamburger Toggle (≡) ─────────────────────────────────── */
+    window.togglePlayerSidebar = function() {
+      const sidebar = document.getElementById('player-saas-sidebar');
+      if (!sidebar) return;
+      if (window.innerWidth <= 860) {
+        sidebar.classList.toggle('drawer-open');
+      } else {
+        sidebar.classList.toggle('sidebar-collapsed');
+      }
+    };
+
+    /* ── Working Real-Time Search ─────────────────────────────────────── */
+    window.handlePlayerGlobalSearch = function(query) {
+      const q = (query || '').toLowerCase().trim();
+      const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+
+      // Filter Popular Places in Overview
+      const popGrid = document.getElementById('player-popular-grid');
+      if (popGrid) {
+        const filteredTurfs = q ? turfs.filter(t => 
+          (t.name || '').toLowerCase().includes(q) ||
+          (t.location || '').toLowerCase().includes(q) ||
+          (t.sport || '').toLowerCase().includes(q) ||
+          (t.city || '').toLowerCase().includes(q)
+        ) : turfs.slice(0, 3);
+
+        if (filteredTurfs.length === 0) {
+          popGrid.innerHTML = `<div style="grid-column:1/-1; padding:2rem; text-align:center; color:#94A3B8; font-size:0.9rem;">
+            No facilities found matching "<strong>${query}</strong>". Try searching for Chennai, Madurai, or Football.
+          </div>`;
+        } else {
+          popGrid.innerHTML = filteredTurfs.map(t => `
+            <div class="popular-facility-card" onclick="window.location='facility-details.html?id=${encodeURIComponent(t.id)}'">
+              <div class="popular-card-media">
+                <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}">
+                <div class="popular-card-rating">⭐ ${t.rating || '4.8'}</div>
+              </div>
+              <div class="popular-card-body">
+                <div>
+                  <h4 class="popular-card-name">${t.name}</h4>
+                  <div class="popular-card-loc">📍 ${t.location || 'Tamil Nadu'}</div>
+                </div>
+                <div class="popular-card-footer">
+                  <span class="popular-card-price">₹${t.price_per_hour}<span style="font-size:0.7rem; color:#94A3B8; font-weight:500;">/hr</span></span>
+                  <button type="button" class="popular-card-book-btn" onclick="event.stopPropagation(); window.openPlayerBookingModal('${t.id}')">Book</button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // If on My Bookings tab, filter table
+      if (typeof filterBookingsSearch === 'function') {
+        filterBookingsSearch(q);
+      }
+    };
+
+    window.executePlayerSearch = function() {
+      const input = document.getElementById('player-global-search');
+      const q = input ? input.value.trim() : '';
+      if (!q) {
+        showToast('🔍 Please enter a venue name, location, or sport to search.');
+        return;
+      }
+      window.handlePlayerGlobalSearch(q);
+      showToast(`🔍 Filtering facilities for "${q}"...`);
+    };
+
+    window.toggleFilterModal = function() {
+      showToast('⚡ Quick Filter: Showing top verified 11v11 and 7v7 turfs.');
+      const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+      _renderPopularGrid(turfs);
+    };
 
 </script>
 </body>
