@@ -1294,6 +1294,607 @@
     .player-faq-item p  { margin: 0; font-size: 0.82rem; color: #64748B; line-height: 1.6; }
 
 </style>
+
+<style>
+    /* ==========================================================================
+       PIXEL-PERFECT TRAVEL-THEMED PLAYER SAAS DASHBOARD STYLES
+       ========================================================================== */
+    body {
+      background: #F8FAFC !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .player-saas-shell {
+      display: flex;
+      min-height: 100vh;
+      background: #F8FAFC;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Left Sidebar */
+    .player-saas-sidebar {
+      width: 230px;
+      flex-shrink: 0;
+      background: #FFFFFF;
+      border-right: 1px solid #E2E8F0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 0 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      box-sizing: border-box;
+      z-index: 100;
+    }
+
+    /* Main Area */
+    .player-saas-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    .player-saas-topbar {
+      height: 72px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      box-sizing: border-box;
+    }
+
+    .player-topbar-search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 440px;
+      background: #F8FAFC;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 14px;
+      padding: 4px 6px 4px 14px;
+    }
+    .player-topbar-search-wrap input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.88rem;
+      flex: 1;
+      color: #0F172A;
+    }
+    .player-topbar-search-btn {
+      background: #10B981;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .player-topbar-search-btn:hover {
+      background: #059669;
+    }
+
+    /* ── Overview 2-Column Grid (Main + Right Sidebar) ────────────────── */
+    .player-overview-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 24px;
+      padding: 28px 32px 40px;
+      box-sizing: border-box;
+      align-items: start;
+    }
+
+    .player-overview-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* ── Horizontal Hero Card (Exact match to Moraine Lake Card) ─────── */
+    .player-mockup-hero-card {
+      background: #FFFFFF;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      border: 1px solid #E2E8F0;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      align-items: stretch;
+      box-sizing: border-box;
+    }
+
+    .hero-left-media {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      height: 270px;
+      background: #0F172A;
+    }
+    .hero-left-media img#player-featured-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 18px;
+    }
+
+    .hero-media-badges {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+    .hero-status-chip {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+    }
+
+    .hero-media-thumbs-strip {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(8px);
+      padding: 4px 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .hero-thumb-box {
+      width: 42px;
+      height: 36px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 255, 255, 0.6);
+    }
+    .hero-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-thumb-more {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      color: #FFFFFF;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    /* Hero Right Side Info */
+    .hero-right-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+    .hero-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0 0 4px;
+      letter-spacing: -0.3px;
+      line-height: 1.25;
+    }
+    .hero-location-line {
+      font-size: 0.85rem;
+      color: #64748B;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .hero-map-link {
+      color: #10B981;
+      font-weight: 700;
+      text-decoration: none;
+      margin-left: 4px;
+    }
+    .hero-map-link:hover { text-decoration: underline; }
+
+    .hero-description {
+      font-size: 0.82rem;
+      color: #64748B;
+      line-height: 1.5;
+      margin: 0 0 10px;
+    }
+
+    .hero-specs-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .hero-spec-pill {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .hero-spec-pill strong { color: #0F172A; }
+
+    .hero-cancellation-callout {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.76rem;
+      color: #065F46;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .hero-bottom-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #F1F5F9;
+    }
+    .hero-price-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-price-label {
+      font-size: 0.72rem;
+      color: #94A3B8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hero-price-val {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #0F172A;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-buttons-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-hero-primary-green {
+      background: #10B981;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn-hero-primary-green:hover { background: #059669; }
+
+    .btn-hero-secondary-white {
+      background: #F8FAFC;
+      color: #334155;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+    .btn-hero-secondary-white:hover { background: #E2E8F0; }
+
+    .btn-hero-danger-soft {
+      background: #FEF2F2;
+      color: #DC2626;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border: 1.5px solid #FECACA;
+      border-radius: 12px;
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+    .btn-hero-danger-soft:hover { background: #FEE2E2; }
+
+    /* ── Popular Place Grid (3 cards side by side) ───────────────────── */
+    .player-popular-container {
+      background: transparent;
+    }
+    .player-popular-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .player-popular-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .popular-facility-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+      border: 1px solid #E2E8F0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .popular-facility-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+    .popular-card-media {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+    .popular-card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .popular-card-rating {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      color: #FFFFFF;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+    .popular-card-body {
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .popular-card-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0 0 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .popular-card-loc {
+      font-size: 0.75rem;
+      color: #64748B;
+      margin: 0 0 10px;
+    }
+    .popular-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+    .popular-card-price {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #059669;
+    }
+    .popular-card-book-btn {
+      background: #10B981;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ── Right Column (Calendar + My Schedule) ───────────────────────── */
+    .player-overview-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Calendar Card (Exact match to Mockup "May 2022") */
+    .player-cal-widget-box {
+      background: #FFFFFF;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      border: 1px solid #E2E8F0;
+      box-sizing: border-box;
+    }
+    .player-cal-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .cal-arrow-btn {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #64748B;
+      font-size: 1.1rem;
+    }
+    .cal-arrow-btn:hover { background: #E2E8F0; }
+
+    .player-cal-day-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .cal-day-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: #64748B;
+      font-weight: 600;
+      padding: 4px;
+    }
+    .cal-day-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0F172A;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+    }
+    .cal-day-col.active .cal-day-num {
+      background: #10B981 !important;
+      color: #FFFFFF !important;
+      border-color: #10B981 !important;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* "My Schedule" Feed (Matching Mockup) */
+    .player-schedule-widget-box {
+      background: #FFFFFF;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      border: 1px solid #E2E8F0;
+      box-sizing: border-box;
+    }
+    .player-schedule-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .player-schedule-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .schedule-item-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .schedule-item-card:last-child {
+      border-bottom: none;
+    }
+    .schedule-item-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #0F172A;
+    }
+    .schedule-item-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .schedule-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .schedule-item-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0 0 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .schedule-item-date {
+      font-size: 0.72rem;
+      color: #64748B;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .schedule-squad-icons {
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #94A3B8;
+      font-weight: 700;
+      gap: 2px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .player-overview-grid {
+        grid-template-columns: 1fr;
+      }
+      .player-mockup-hero-card {
+        grid-template-columns: 1fr;
+      }
+      .hero-left-media {
+        height: 220px;
+      }
+      .player-popular-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 768px) {
+      .player-saas-shell {
+        flex-direction: column;
+      }
+      .player-saas-sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+      }
+      .player-overview-grid {
+        padding: 16px;
+      }
+      .player-popular-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+</style>
 </head>
 
 <body class="dash-page">
@@ -1301,68 +1902,7 @@
   <!-- ==========================================================================
        PLAYER NAVIGATION BAR
        ========================================================================== -->
-  <header class="header" id="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="brand" aria-label="Turfify Home" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;">
-        <svg width="46" height="37" viewBox="0 0 54 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-          <ellipse cx="26" cy="38" rx="22" ry="5" fill="rgba(0,0,0,0.12)"/>
-          <path d="M4 27 L26 38 L48 27 L48 29 L26 40 L4 29 Z" fill="#064E3B"/>
-          <polygon points="4,27 26,16 48,27 26,38" fill="#15803D" stroke="#059669" stroke-width="1.5"/>
-          <polygon points="9.5,24.2 26,16 31.5,18.7 15,27" fill="#16A34A" opacity="0.8"/>
-          <polygon points="20.5,29.7 37,21.5 42.5,24.2 26,32.5" fill="#16A34A" opacity="0.8"/>
-          <polygon points="8,27 26,18 44,27 26,36" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.2"/>
-          <line x1="17" y1="22.5" x2="35" y2="31.5" stroke="rgba(255,255,255,0.85)" stroke-width="1.2"/>
-          <ellipse cx="26" cy="27" rx="5" ry="2.5" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
-          <ellipse cx="26" cy="27" rx="3" ry="1.2" fill="rgba(0,0,0,0.25)"/>
-          <path d="M26 26 C26 26 19 19 19 13.5 C19 9.5 22.1 6.5 26 6.5 C29.9 6.5 33 9.5 33 13.5 C33 19 26 26 26 26 Z" fill="url(#turfPinGrad)"/>
-          <circle cx="26" cy="13.5" r="3" fill="#FFFFFF"/>
-          <defs>
-            <linearGradient id="turfPinGrad" x1="19" y1="6.5" x2="33" y2="26" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#FF5722"/>
-              <stop offset="100%" stop-color="#DC2626"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div style="display:flex;flex-direction:column;justify-content:center;line-height:1.15;">
-          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.38rem;color:#047857;letter-spacing:-0.03em;">Turfify</span>
-          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.72rem;color:#475569;letter-spacing:0.02em;">Player Hub</span>
-        </div>
-      </a>
-
-      <a href="index.html" class="nav-link" style="font-size:0.86rem;font-weight:600;color:#334155;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Home
-      </a>
-      <a href="index.html#search-section" class="nav-link" style="font-size:0.86rem;font-weight:600;color:#334155;text-decoration:none;white-space:nowrap;flex-shrink:0;">Book Turfs</a>
-      <a href="#my-matches" class="nav-link active" style="font-size:0.86rem;font-weight:600;color:#059669;text-decoration:none;white-space:nowrap;flex-shrink:0;">My Matches</a>
-      <a href="#saved-venues" class="nav-link" style="font-size:0.86rem;font-weight:600;color:#334155;text-decoration:none;white-space:nowrap;flex-shrink:0;">Saved Venues</a>
-
-      <a href="index.html" class="btn-return-home-pill" title="Return to Turfify Home" style="flex-shrink:0;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        Return to Home
-      </a>
-
-      <div class="nav-actions-wrap">
-        <div class="player-profile-pill" style="flex-shrink:0;">
-          <div class="player-profile-avatar" id="nav-player-avatar">⚽</div>
-          <div style="line-height: 1.15;">
-            <div id="nav-player-name" style="font-weight: 700; font-size: 0.85rem; color: #0F172A;">Player</div>
-            <div style="font-size: 0.7rem; color: #64748B;">Player Hub</div>
-          </div>
-        </div>
-
-        <a href="javascript:void(0)" id="btn-logout" onclick="window.handlePlayerLogout(event)" class="btn-logout-pill" style="flex-shrink:0;">Logout</a>
-        <button type="button" id="btn-delete-account" onclick="window.handlePlayerDeleteAccount(event)" class="btn-delete-acc-pill" title="Permanently delete your account" style="flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-          Delete Account
-        </button>
-
-        <!-- Hamburger button for mobile -->
-        <button class="btn-mobile-hamburger" id="btn-mobile-menu" aria-label="Open Menu">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
-  </header>
+  
 
   <!-- Mobile Overlay + Navigation Drawer (Player) -->
   <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
@@ -1519,158 +2059,157 @@
            PANE 1: OVERVIEW (MATCHING REFERENCE MOCKUP)
            ====================================================================== -->
       <section class="player-tab-pane active" id="pane-player-overview">
-        <div class="overview-content-grid">
+      <div class="player-overview-grid">
 
-          <!-- Left Column: Featured Upcoming Hero Card + Popular Places -->
-          <div>
+        <!-- CENTER / MAIN CONTENT (LEFT SIDE OF GRID) -->
+        <div class="player-overview-main">
 
-            <!-- ⭐ THE MOST PROMINENT ITEM: UPCOMING BOOKING HERO CARD -->
-            <div class="hero-booking-card-featured" id="player-featured-upcoming-card">
-              <div class="hero-booking-media-wrap">
-                <img id="player-featured-hero-img" src="images/turf-arena.jpg" alt="Featured Turf" onerror="this.src='images/turf-arena.jpg'">
-                <div class="hero-booking-badges-overlay">
-                  <span class="hero-booking-badge" id="player-featured-status-badge" style="background:#047857; color:#FFFFFF;">
-                    CONFIRMED RESERVATION ✅
-                  </span>
-                  <span class="hero-booking-badge" id="player-featured-pay-badge" style="background:rgba(15,23,42,0.75); color:#F8FAFC;">
-                    ₹1,200 (Paid Online)
-                  </span>
-                </div>
-                <!-- Thumbnails preview strip (matching mockup) -->
-                <div class="hero-booking-thumb-strip">
-                  <img src="images/turf-arena.jpg" alt="thumb" class="hero-thumb-mini">
-                  <img src="images/turf-lights.jpg" alt="thumb" class="hero-thumb-mini" onerror="this.src='images/turf-arena.jpg'">
-                  <div class="hero-thumb-mini" style="background:rgba(0,0,0,0.6); color:#FFF; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">
-                    +3
-                  </div>
-                </div>
+          <!-- BREADCRUMB / SUBTITLE (MATCHING MOCKUP) -->
+          <div style="display:flex; align-items:center; gap:8px; font-size:0.88rem; font-weight:600; color:#64748B; margin-bottom:4px;">
+            <span style="color:#10B981; font-weight:800; cursor:pointer;" onclick="switchPlayerTab('overview')">‹</span>
+            <span>Tamil Nadu</span>
+            <span style="color:#CBD5E1;">/</span>
+            <span style="color:#0F172A; font-weight:700;">Upcoming Match</span>
+          </div>
+
+          <!-- ⭐ THE MOST PROMINENT ITEM: HORIZONTAL FEATURED HERO BOOKING CARD -->
+          <div class="player-mockup-hero-card" id="player-featured-upcoming-card">
+            
+            <!-- LEFT HALF: PHOTO + OVERLAY THUMBNAILS -->
+            <div class="hero-left-media">
+              <img id="player-featured-hero-img" src="images/turf-arena.jpg" alt="Featured Turf" onerror="this.src='https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800&q=80'">
+              
+              <!-- Status Badges Overlay -->
+              <div class="hero-media-badges">
+                <span id="player-featured-status-badge" class="hero-status-chip" style="background:#10B981; color:#FFFFFF;">
+                  CONFIRMED ✅
+                </span>
+                <span id="player-featured-pay-badge" class="hero-status-chip" style="background:rgba(15,23,42,0.8); color:#F8FAFC;">
+                  Paid Online
+                </span>
               </div>
 
-              <div class="hero-booking-body">
-                <div class="hero-booking-title-row">
-                  <div>
-                    <h2 class="hero-booking-venue-name" id="player-hero-turf">The Arena Sports Hub — Pitch A</h2>
-                    <div style="font-size:0.86rem; color:#475569; display:flex; align-items:center; gap:6px; margin-top:4px;">
-                      <span>📍</span>
-                      <span id="player-hero-location">Anna Nagar, Chennai, Tamil Nadu</span>
-                      <a href="#" id="player-hero-map-link" target="_blank" style="color:#059669; font-weight:700; text-decoration:none; margin-left:6px;" onclick="event.stopPropagation()">View on Map ↗</a>
-                    </div>
-                  </div>
-                  <div style="text-align:right;">
-                    <div style="font-size:1.45rem; font-weight:800; color:#064E3B;" id="player-hero-price">₹1,200</div>
-                    <span style="font-size:0.72rem; color:#64748B; font-weight:600;">Standard Match Rate</span>
-                  </div>
+              <!-- Mini Thumbnails Overlay (Exact match to Mockup: 3 thumbs + "+3") -->
+              <div class="hero-media-thumbs-strip">
+                <div class="hero-thumb-box"><img src="images/turf-arena.jpg" alt="thumb" onerror="this.src='https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=200&q=70'"></div>
+                <div class="hero-thumb-box"><img src="images/turf-lights.jpg" alt="thumb" onerror="this.src='https://images.unsplash.com/photo-1551958219-acbc608c6377?w=200&q=70'"></div>
+                <div class="hero-thumb-box"><img src="images/turf-indoor.jpg" alt="thumb" onerror="this.src='https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=200&q=70'"></div>
+                <div class="hero-thumb-box hero-thumb-more">+3</div>
+              </div>
+            </div>
+
+            <!-- RIGHT HALF: DETAILS, PRICE, CANCEL POLICY, AND ACTIONS -->
+            <div class="hero-right-info">
+              <div>
+                <h2 class="hero-title" id="player-hero-turf">The Arena Sports Hub — Pitch A</h2>
+                
+                <div class="hero-location-line">
+                  <span>📍</span>
+                  <span id="player-hero-location">Anna Nagar, Chennai, Tamil Nadu</span>
+                  <a href="https://maps.google.com/?q=Anna+Nagar+Chennai+Tamil+Nadu" id="player-hero-map-link" target="_blank" class="hero-map-link">View on Map ↗</a>
                 </div>
 
-                <div class="hero-booking-meta-row">
-                  <span class="hero-meta-pill" id="player-hero-time-pill">
-                    <span>🗓️</span>
-                    <strong id="player-hero-time">Today, 08:00 PM – 09:00 PM</strong>
+                <p class="hero-description" id="player-hero-desc">
+                  Championship grade artificial grass pitch with high-intensity floodlights, professional pitch marking, and player changing rooms.
+                </p>
+
+                <!-- Spec Pills (⏱️ 60 Mins, 🌙 Night, ⚽ 11v11) -->
+                <div class="hero-specs-row">
+                  <span class="hero-spec-pill" id="player-hero-time-pill">
+                    <span>⏱️</span> <strong id="player-hero-time">Today, 08:00 PM – 09:00 PM</strong>
                   </span>
-                  <span class="hero-meta-pill" id="player-hero-format-pill">
-                    <span>🏟️</span>
-                    <strong id="player-hero-format">11v11 Artificial Grass</strong>
+                  <span class="hero-spec-pill" id="player-hero-format-pill">
+                    <span>⚽</span> <strong id="player-hero-format">11v11 Pitch</strong>
                   </span>
-                  <span class="hero-meta-pill" id="player-hero-ref-pill">
-                    <span>📋</span>
-                    <strong id="player-hero-ref">Ref: #TRF-179468</strong>
+                  <span class="hero-spec-pill" id="player-hero-ref-pill">
+                    <span>📋</span> <strong id="player-hero-ref">Ref: #TRF-179468</strong>
                   </span>
                 </div>
 
                 <!-- Free Cancellation Notice -->
-                <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:10px 14px; margin-bottom:16px; font-size:0.78rem; color:#166534; display:flex; align-items:center; gap:8px;">
-                  <span>ℹ️</span>
-                  <span><strong>Free Cancellation:</strong> You can cancel this booking with instant OTP verification up to kickoff time.</span>
+                <div class="hero-cancellation-callout">
+                  <span style="font-size:0.95rem;">🛡️</span>
+                  <span><strong>Free Cancellation:</strong> Free cancellation up to 4 hrs before kickoff with instant OTP verification.</span>
                 </div>
+              </div>
 
-                <!-- Hero Action Buttons -->
-                <div class="hero-booking-actions">
-                  <button type="button" class="btn-match-action btn-match-primary" id="btn-hero-directions" onclick="window.openHeroDirections()" style="border:none; cursor:pointer;">
+              <!-- Price & Actions Row (Matching Mockup with bright green button) -->
+              <div class="hero-bottom-actions-row">
+                <div class="hero-price-wrap">
+                  <span class="hero-price-label">Price</span>
+                  <span class="hero-price-val" id="player-hero-price">₹1,200</span>
+                </div>
+                <div class="hero-buttons-group">
+                  <button type="button" class="btn-hero-primary-green" id="btn-hero-directions">
                     📍 Get Directions
                   </button>
-                  <button type="button" class="btn-match-action btn-match-secondary" id="btn-hero-receipt" onclick="window.downloadHeroReceipt()" style="cursor:pointer;">
-                    📥 Download Receipt
+                  <button type="button" class="btn-hero-secondary-white" id="btn-hero-receipt">
+                    📄 Receipt
                   </button>
-                  <button type="button" class="btn-match-action btn-match-secondary" id="btn-hero-cancel" onclick="window.triggerHeroCancellation()" style="color:#DC2626; border-color:#FCA5A5; background:#FEF2F2; cursor:pointer;">
-                    🚫 Cancel Reservation
-                  </button>
-                  <button type="button" class="btn-match-action btn-match-secondary" onclick="window.shareSquadLink()" style="cursor:pointer;">
-                    📲 Invite Squad
+                  <button type="button" class="btn-hero-danger-soft" id="btn-hero-cancel">
+                    Cancel
                   </button>
                 </div>
               </div>
+
             </div>
-
-            <!-- POPULAR PLACES / QUICK REBOOK (MATCHING MOCKUP ROW) -->
-            <div style="margin-top:24px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-                <h3 style="font-size:1.15rem; font-weight:800; color:#0F172A; margin:0;">Popular Facilities 🏟️</h3>
-                <button type="button" class="link-btn" onclick="window.switchPlayerTab('favorites')" style="color:#059669; font-weight:700; font-size:0.84rem;">See all ↗</button>
-              </div>
-
-              <div class="popular-places-grid" id="player-popular-grid">
-                <!-- Populated dynamically -->
-              </div>
-            </div>
-
           </div>
 
-          <!-- Right Column: Interactive Mini Calendar & My Schedule -->
-          <div>
-            <!-- Mini Calendar Widget (Matching Mockup) -->
-            <div class="right-sidebar-box">
-              <div class="cal-header-row">
-                <button type="button" class="btn-mini-action" style="padding:4px 8px; border-radius:6px;" onclick="window.prevCalendarMonth()">‹</button>
-                <span class="cal-month-title" id="cal-month-name">November 2026</span>
-                <button type="button" class="btn-mini-action" style="padding:4px 8px; border-radius:6px;" onclick="window.nextCalendarMonth()">›</button>
-              </div>
-              <div class="cal-days-pills-row" id="cal-days-strip">
-                <!-- Day pills injected via JS -->
-              </div>
+          <!-- POPULAR FACILITIES (MATCHING "Popular Place 🌈" in Mockup) -->
+          <div class="player-popular-container">
+            <div class="player-popular-title-row">
+              <h3 style="font-size:1.15rem; font-weight:800; color:#0F172A; margin:0; display:flex; align-items:center; gap:8px;">
+                Popular Facilities <span style="font-size:1.1rem;">🌈</span>
+              </h3>
+              <a href="javascript:void(0)" onclick="switchPlayerTab('favorites')" style="color:#10B981; font-weight:700; font-size:0.85rem; text-decoration:none;">
+                See all ↗
+              </a>
             </div>
 
-            <!-- "My Schedule" Feed (Matching Mockup) -->
-            <div class="right-sidebar-box">
-              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-                <h4 style="font-size:1rem; font-weight:800; color:#0F172A; margin:0;">My Schedule 🗓️</h4>
-                <button type="button" class="link-btn" onclick="window.switchPlayerTab('bookings')" style="color:#059669; font-size:0.78rem; font-weight:700;">See all</button>
-              </div>
-              <div id="player-schedule-feed">
-                <!-- Schedule cards injected via JS -->
-              </div>
+            <!-- 3 Columns Side-by-Side (Mockup Style) -->
+            <div id="player-popular-grid" class="player-popular-cards-grid">
+              <!-- Populated by JS -->
             </div>
-
-            <!-- 4 Quick Stats Summary -->
-            <div class="right-sidebar-box" style="padding:16px;">
-              <div style="font-size:0.75rem; font-weight:800; color:#64748B; text-transform:uppercase; margin-bottom:12px;">Player Performance</div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px;">
-                  <div style="font-size:0.7rem; color:#64748B; font-weight:700;">MATCHES</div>
-                  <div style="font-size:1.3rem; font-weight:800; color:#0F172A;" id="player-matches-count">0</div>
-                  <div style="font-size:0.68rem; color:#059669;" id="player-matches-sub">Active player</div>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px;">
-                  <div style="font-size:0.7rem; color:#64748B; font-weight:700;">COINS</div>
-                  <div style="font-size:1.3rem; font-weight:800; color:#7C3AED;" id="player-loyalty">0 pts</div>
-                  <div style="font-size:0.68rem; color:#7C3AED;" id="player-loyalty-sub">25/booking</div>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px;">
-                  <div style="font-size:0.7rem; color:#64748B; font-weight:700;">UPCOMING</div>
-                  <div style="font-size:1.3rem; font-weight:800; color:#0284C7;" id="player-upcoming-count">0</div>
-                  <div style="font-size:0.68rem; color:#0284C7;" id="player-upcoming-sub">Games scheduled</div>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px;">
-                  <div style="font-size:0.7rem; color:#64748B; font-weight:700;">STATUS</div>
-                  <div style="font-size:0.95rem; font-weight:800; color:#059669; margin-top:4px;">Verified ✓</div>
-                  <div style="font-size:0.68rem; color:#64748B;">Ready to play</div>
-                </div>
-              </div>
-            </div>
-
           </div>
 
         </div>
-      </section>
+
+        <!-- RIGHT SIDEBAR (CALENDAR + MY SCHEDULE - MATCHING MOCKUP) -->
+        <aside class="player-overview-sidebar">
+
+          <!-- MINI CALENDAR WIDGET (MATCHING "May 2022" CARD IN MOCKUP) -->
+          <div class="player-cal-widget-box">
+            <div class="player-cal-header-row">
+              <button type="button" class="cal-arrow-btn" aria-label="Previous month">‹</button>
+              <h4 id="cal-month-name" style="margin:0; font-size:1rem; font-weight:800; color:#0F172A;">November 2026</h4>
+              <button type="button" class="cal-arrow-btn" aria-label="Next month">›</button>
+            </div>
+            
+            <!-- Horizontal Day Strip (Mon 06, Tue 14, Wed 18 active green) -->
+            <div id="cal-days-strip" class="player-cal-day-strip">
+              <!-- Populated by JS with active rounded green pill -->
+            </div>
+          </div>
+
+          <!-- "MY SCHEDULE" WIDGET (MATCHING MOCKUP RIGHT SIDEBAR) -->
+          <div class="player-schedule-widget-box">
+            <div class="player-schedule-header-row">
+              <h4 style="margin:0; font-size:1.05rem; font-weight:800; color:#0F172A;">My Schedule</h4>
+              <a href="javascript:void(0)" onclick="switchPlayerTab('bookings')" style="color:#10B981; font-weight:700; font-size:0.82rem; text-decoration:none;">
+                See all
+              </a>
+            </div>
+
+            <div id="player-schedule-feed" class="player-schedule-items-list">
+              <!-- Populated by JS with thumbnail, title, date range, squad avatars -->
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+  
+    </section>
 
       <!-- ======================================================================
            PANE 2: MY BOOKINGS (ALL RESERVATION DETAILS)
@@ -2214,9 +2753,9 @@
         }
       }
 
-      document.getElementById('player-matches-count').textContent = matchesPlayed;
-      document.getElementById('player-loyalty').textContent = `${loyaltyPts} pts`;
-      document.getElementById('player-upcoming-count').textContent = confirmedBookings.length;
+      const elMatches = document.getElementById('player-matches-count'); if (elMatches) elMatches.textContent = matchesPlayed;
+      const elLoyalty = document.getElementById('player-loyalty'); if (elLoyalty) elLoyalty.textContent = `${loyaltyPts} pts`;
+      const elUpcoming = document.getElementById('player-upcoming-count'); if (elUpcoming) elUpcoming.textContent = confirmedBookings.length;
 
       // Dynamic subtext based on active counts
       const matchesSub = document.getElementById('player-matches-sub');
@@ -2237,8 +2776,8 @@
       const upcoming = bookings.find(b => b.status === 'Confirmed');
       if (upcoming) {
         const turfLink = upcoming.turf_id ? `<a href="facility-details.html?id=${encodeURIComponent(upcoming.turf_id)}" style="color:inherit; text-decoration:underline;">${upcoming.turf_name}</a>` : upcoming.turf_name;
-        document.getElementById('player-hero-turf').innerHTML = `${turfLink} • Pitch (${upcoming.sport || 'Sports'})`;
-        document.getElementById('player-hero-time').textContent = `${upcoming.date}, ${upcoming.time_slot}`;
+        const elOldHeroTurf = document.getElementById('player-hero-turf'); if (elOldHeroTurf) elOldHeroTurf.innerHTML = `${turfLink} • Pitch (${upcoming.sport || 'Sports'})`;
+        const elOldHeroTime = document.getElementById('player-hero-time'); if (elOldHeroTime) elOldHeroTime.textContent = `${upcoming.date}, ${upcoming.time_slot}`;
       } else if (heroCard) {
         heroCard.style.background = 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)';
         heroCard.innerHTML = `
@@ -2320,7 +2859,7 @@
             </button>
           </div>
         `;
-        favList.appendChild(item);
+        if (favList) { favList.appendChild(item); }
       });
     }
 
@@ -2829,7 +3368,8 @@
       if (overlay) overlay.addEventListener('click', window.closeDrawer);
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
 
     // ========================================================================
     //  MODERN SAAS SHELL — PLAYER DASHBOARD CONTROLLER
@@ -2904,34 +3444,47 @@
       const cnclBtn = document.getElementById('btn-hero-cancel');
       const card    = document.getElementById('player-featured-upcoming-card');
 
+      if (!card) return;
+
       if (!upcoming) {
-        // Empty state
-        if (card) {
-          card.style.background = 'linear-gradient(135deg,#0F172A 0%,#1E293B 100%)';
-          card.innerHTML = `
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;text-align:center;padding:2rem;">
-              <div style="font-size:3rem;margin-bottom:1rem;">⚽</div>
-              <h3 style="color:#F1F5F9;font-size:1.4rem;font-weight:800;margin-bottom:0.5rem;">No Upcoming Matches</h3>
-              <p style="color:#94A3B8;font-size:0.95rem;max-width:400px;margin-bottom:1.5rem;">Reserve a turf slot and your next match will appear here with full details.</p>
-              <button type="button" onclick="window.openPlayerBookingModal()" style="background:#10B981;color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:0.95rem;font-weight:700;cursor:pointer;">📅 Book a Slot</button>
-            </div>
-          `;
-        }
+        card.style.display = 'block';
+        card.style.background = '#FFFFFF';
+        card.innerHTML = `
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:220px; text-align:center; padding:2.5rem 1.5rem;">
+            <div style="width:60px; height:60px; border-radius:50%; background:#ECFDF5; border:1px solid #A7F3D0; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:1rem;">⚽</div>
+            <h3 style="color:#0F172A; font-size:1.35rem; font-weight:800; margin:0 0 6px;">No Upcoming Matches Yet</h3>
+            <p style="color:#64748B; font-size:0.88rem; max-width:440px; margin:0 0 1.25rem; line-height:1.5;">
+              You don't have any turf slots booked right now. Discover verified football, cricket, and badminton pitches across Tamil Nadu.
+            </p>
+            <button type="button" onclick="window.openPlayerBookingModal()" style="background:#10B981; color:#fff; border:none; padding:12px 28px; border-radius:12px; font-size:0.92rem; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(16,185,129,0.3);">
+              📅 Book Slot in Dashboard
+            </button>
+          </div>
+        `;
         return;
       }
 
+      // Ensure card uses 2-column grid
+      card.style.display = 'grid';
+      card.style.background = '#FFFFFF';
+
       const turf = turfs.find(t => t.id === upcoming.turf_id) || {};
-      if (imgEl)   imgEl.src = turf.image || upcoming.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800&q=80';
-      if (badge)   { badge.textContent = '✅ CONFIRMED'; badge.style.cssText='background:#DCFCE7;color:#15803D;padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:800;letter-spacing:0.5px;'; }
-      if (payBadge){ payBadge.textContent = upcoming.payment_status === 'Paid' ? '💳 Paid Online' : '💵 Cash on Ground'; payBadge.style.cssText='background:#EFF6FF;color:#1D4ED8;padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:700;'; }
-      if (turfEl)  turfEl.textContent = upcoming.turf_name || 'Your Turf';
-      if (locEl)   locEl.textContent  = turf.location || upcoming.location || 'Tamil Nadu';
-      const mapsQ = encodeURIComponent((turf.location || upcoming.turf_name || '') + ' Tamil Nadu');
-      if (mapEl)   { mapEl.href = 'https://maps.google.com/?q=' + mapsQ; mapEl.textContent = '📍 Get Directions'; }
-      if (priceEl) priceEl.textContent = '₹' + (upcoming.amount || turf.price_per_hour || '—');
-      if (timeEl)  timeEl.textContent  = upcoming.date + '  •  ' + upcoming.time_slot;
-      if (fmtEl)   fmtEl.textContent   = upcoming.format || turf.format || '11v11';
-      if (refEl)   refEl.textContent   = 'Ref: #TRF-' + (upcoming.id || '').toString().slice(-6).toUpperCase().padStart(6,'0');
+      if (imgEl)   imgEl.src = turf.image || upcoming.image || 'images/turf-arena.jpg';
+      if (badge)   { badge.textContent = 'CONFIRMED RESERVATION ✅'; }
+      if (payBadge){ payBadge.textContent = (upcoming.payment_status === 'Paid Online' || upcoming.payment_status === 'Paid') ? '💳 Paid Online' : '💵 Cash on Ground'; }
+      if (turfEl)  {
+        const venueLink = upcoming.turf_id ? `<a href="facility-details.html?id=${encodeURIComponent(upcoming.turf_id)}" style="color:inherit; text-decoration:none;">${upcoming.turf_name}</a>` : upcoming.turf_name;
+        turfEl.innerHTML = venueLink;
+      }
+      const venueLocation = turf.location || upcoming.location || 'Anna Nagar, Chennai, Tamil Nadu';
+      if (locEl)   locEl.textContent  = venueLocation;
+      const mapsQ = encodeURIComponent(venueLocation);
+      if (mapEl)   { mapEl.href = 'https://maps.google.com/?q=' + mapsQ; }
+      if (priceEl) priceEl.textContent = '₹' + (upcoming.amount || turf.price_per_hour || '1,200');
+      if (timeEl)  timeEl.textContent  = `${upcoming.date}, ${upcoming.time_slot}`;
+      if (fmtEl)   fmtEl.textContent   = (turf.dimensions || upcoming.format || '11v11') + ' Pitch';
+      const refCode = '#TRF-' + (upcoming.id || '').toString().slice(-6).toUpperCase().padStart(6,'0');
+      if (refEl)   refEl.textContent   = 'Ref: ' + refCode;
 
       // Wire action buttons
       if (dirBtn)  { dirBtn.onclick = () => window.open('https://maps.google.com/?q=' + mapsQ, '_blank'); }
@@ -2944,21 +3497,25 @@
       if (!grid) return;
       const featured = turfs.slice(0, 3);
       if (featured.length === 0) {
-        grid.innerHTML = '<p style="color:#94A3B8;font-size:0.9rem;">No facilities found.</p>';
+        grid.innerHTML = '<p style="color:#94A3B8; font-size:0.9rem; grid-column:1/-1; padding:20px; text-align:center;">No facilities found.</p>';
         return;
       }
       grid.innerHTML = featured.map(t => `
-        <div style="border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);background:#fff;cursor:pointer;" onclick="window.location='facility-details.html?id=${encodeURIComponent(t.id)}'">
-          <div style="height:130px;overflow:hidden;position:relative;">
-            <img src="${t.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=400&q=70'}" alt="${t.name}" style="width:100%;height:100%;object-fit:cover;">
-            <div style="position:absolute;bottom:8px;left:10px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.7rem;padding:3px 8px;border-radius:999px;">⭐ ${t.rating || '4.9'}</div>
+        <div class="popular-facility-card" onclick="window.location='facility-details.html?id=${encodeURIComponent(t.id)}'">
+          <div class="popular-card-media">
+            <img src="${t.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&q=75'}" alt="${t.name}">
+            <div class="popular-card-rating">⭐ ${t.rating || '4.8'}</div>
           </div>
-          <div style="padding:10px 12px 12px;">
-            <div style="font-weight:700;font-size:0.9rem;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.name}</div>
-            <div style="font-size:0.75rem;color:#64748B;margin:2px 0 8px;">📍 ${t.location || 'Tamil Nadu'}</div>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span style="font-weight:800;color:#059669;font-size:0.95rem;">₹${t.price_per_hour}<span style="font-size:0.7rem;font-weight:500;color:#94A3B8;">/hr</span></span>
-              <button onclick="event.stopPropagation();window.openPlayerBookingModal('${t.id}')" style="background:#10B981;color:#fff;border:none;padding:5px 12px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;">Book</button>
+          <div class="popular-card-body">
+            <div>
+              <h4 class="popular-card-name">${t.name}</h4>
+              <div class="popular-card-loc">📍 ${t.location || 'Tamil Nadu'}</div>
+            </div>
+            <div class="popular-card-footer">
+              <span class="popular-card-price">₹${t.price_per_hour}<span style="font-size:0.7rem; color:#94A3B8; font-weight:500;">/hr</span></span>
+              <button type="button" class="popular-card-book-btn" onclick="event.stopPropagation(); window.openPlayerBookingModal('${t.id}')">
+                Book
+              </button>
             </div>
           </div>
         </div>
@@ -2970,27 +3527,23 @@
       const daysEl  = document.getElementById('cal-days-strip');
       if (!monthEl || !daysEl) return;
       const now   = new Date();
-      const year  = now.getFullYear();
-      const month = now.getMonth();
       const days  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       monthEl.textContent = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
 
-      // Build 7-day strip starting today
+      // Generate 5 days strip centered around today (matching mockup: Mon 06, Tue 14, Wed 18, etc.)
       let html = '';
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(year, month, now.getDate() + i);
+      for (let i = 0; i < 5; i++) {
+        const d = new Date();
+        d.setDate(now.getDate() + i);
         const iso = d.toISOString().split('T')[0];
-        const hasBooking = bookings.some(b => b.date === iso || (b.date && b.date.startsWith(iso)));
         const isToday = i === 0;
+        const dayStr = days[d.getDay()];
+        const dateNum = String(d.getDate()).padStart(2, '0');
+
         html += `
-          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:38px;cursor:default;">
-            <span style="font-size:0.65rem;color:#94A3B8;font-weight:600;text-transform:uppercase;">${days[d.getDay()]}</span>
-            <span style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:${isToday?'800':'600'};
-              background:${isToday?'#10B981':'transparent'};color:${isToday?'#fff':(hasBooking?'#059669':'#334155')};
-              border:${hasBooking&&!isToday?'2px solid #6EE7B7':'2px solid transparent'};">
-              ${d.getDate()}
-            </span>
-            ${hasBooking ? '<span style="width:5px;height:5px;border-radius:50%;background:#10B981;"></span>' : '<span style="width:5px;height:5px;"></span>'}
+          <div class="cal-day-col ${isToday ? 'active' : ''}">
+            <span>${dayStr}</span>
+            <div class="cal-day-num">${dateNum}</div>
           </div>
         `;
       }
@@ -3000,30 +3553,30 @@
     function _renderScheduleFeed(bookings) {
       const feed = document.getElementById('player-schedule-feed');
       if (!feed) return;
-      const upcoming = bookings.filter(b => b.status === 'Confirmed').slice(0, 4);
-      if (upcoming.length === 0) {
-        feed.innerHTML = '<p style="color:#94A3B8;font-size:0.85rem;padding:12px 0;">No upcoming matches scheduled.</p>';
+      const confirmed = bookings.filter(b => b.status === 'Confirmed' || b.status === 'Completed').slice(0, 4);
+      if (confirmed.length === 0) {
+        feed.innerHTML = '<p style="color:#94A3B8; font-size:0.85rem; padding:16px 0; margin:0; text-align:center;">No upcoming matches scheduled.</p>';
         return;
       }
-      const sports = { Football:'⚽', Cricket:'🏏', Badminton:'🏸', Basketball:'🏀', Tennis:'🎾' };
-      feed.innerHTML = upcoming.map(b => {
-        const icon = sports[b.sport] || '🏟️';
-        return `
-          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F1F5F9;">
-            <div style="width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;">
-              <img src="${b.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=100&q=60'}" style="width:100%;height:100%;object-fit:cover;">
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-weight:700;font-size:0.85rem;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${icon} ${b.turf_name}</div>
-              <div style="font-size:0.72rem;color:#64748B;margin-top:2px;">📅 ${b.date} &nbsp;•&nbsp; ⏰ ${b.time_slot}</div>
-            </div>
-            <span style="background:#DCFCE7;color:#15803D;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:999px;flex-shrink:0;">Confirmed</span>
+      feed.innerHTML = confirmed.map(b => `
+        <div class="schedule-item-card">
+          <div class="schedule-item-thumb">
+            <img src="${b.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=200&q=70'}" alt="turf">
           </div>
-        `;
-      }).join('');
+          <div class="schedule-item-info">
+            <div class="schedule-item-title">${b.turf_name}</div>
+            <div class="schedule-item-date">
+              <span>🗓️</span> ${b.date} • ${b.time_slot}
+            </div>
+          </div>
+          <div class="schedule-squad-icons">
+            <span>👥</span>
+            <span>+5</span>
+          </div>
+        </div>
+      `).join('');
     }
 
-    /* ── Payments Pane ──────────────────────────────────────────────────── */
     function renderPaymentsPane() {
       const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
       const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
