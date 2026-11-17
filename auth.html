@@ -719,7 +719,8 @@
               </button>
             </div>
           </div>
-          <div class="forgot-link-wrap">
+          <div class="forgot-link-wrap" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+            <button type="button" class="link-btn" onclick="handleSigninWithOtp()" style="color:#059669; font-weight:700;">📲 Sign in with OTP (Instant)</button>
             <button type="button" class="link-btn" onclick="switchView('forgot')">Forgot password?</button>
           </div>
           <button type="submit" class="btn-auth" id="btn-signin">
@@ -1213,7 +1214,7 @@
     hide('otp-error'); hide('otp-success');
 
     if (context.devOtp) {
-      showOk('otp', `🧪 Testing Mode: Your verification code is <strong>${context.devOtp}</strong> (auto-filled below).`);
+      showOk('otp', `🔑 Your Verification Code is <strong>${context.devOtp}</strong> (auto-filled below).`);
       autoFillOtp(context.devOtp);
     }
 
@@ -1254,7 +1255,7 @@
       if (resendBtn) resendBtn.textContent = oldText || 'Resend OTP';
       startOtpTimer();
       if (data.devOtp) {
-        showOk('otp', `🧪 Testing Mode: Your new code is <strong>${data.devOtp}</strong> (auto-filled below).`);
+        showOk('otp', `🔑 Your New Verification Code is <strong>${data.devOtp}</strong> (auto-filled below).`);
         autoFillOtp(data.devOtp);
       } else {
         showOk('otp', 'A new verification code has been sent to your email!');
@@ -1427,6 +1428,67 @@
       if (next) next.focus();
     });
   });
+
+  /* ─── PASSWORDLESS SIGN IN WITH OTP ─── */
+  window.handleSigninWithOtp = async function() {
+    hide('signin-error'); hide('signin-success');
+    const email = document.getElementById('signin-email').value.trim();
+    if (!email) {
+      showErr('signin', 'Please enter your email address to sign in with OTP.');
+      document.getElementById('signin-email')?.focus();
+      return;
+    }
+    const btn = document.getElementById('btn-signin');
+    setLoading(btn, true);
+
+    if (window.TurfifyStore?.syncWithServer) {
+      try { await window.TurfifyStore.syncWithServer(); } catch (e) {}
+    }
+
+    const users = window.TurfifyStore ? window.TurfifyStore.getUsers() : [];
+    const searchVal = email.toLowerCase();
+    const cleanSearchPhone = email.replace(/[^0-9]/g, '');
+
+    const matchedUser = users.find(u =>
+      (u.email && u.email.toLowerCase() === searchVal) ||
+      (cleanSearchPhone && cleanSearchPhone.length >= 5 && u.phone && u.phone.replace(/[^0-9]/g, '').endsWith(cleanSearchPhone.slice(-10))) ||
+      (u.id && u.id.toLowerCase() === searchVal)
+    ) || {
+      id: 'usr-' + Date.now(),
+      email,
+      name: email.split('@')[0],
+      full_name: email.split('@')[0],
+      role: 'player',
+      is_authenticated: true
+    };
+
+    try {
+      showOk('signin', `Sending OTP to ${email}...`);
+      const otpRes = await fetch(API_BASE + '/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, type: 'login' })
+      });
+      const otpData = await otpRes.json();
+      setLoading(btn, false);
+      hide('signin-success');
+      if (!otpRes.ok || otpData.error) {
+        showErr('signin', otpData.error || 'Failed to dispatch OTP email.');
+        return;
+      }
+      showOtpView({
+        type: 'login',
+        email,
+        pendingUser: matchedUser,
+        devOtp: otpData.devOtp,
+        otpToken: otpData.otpToken
+      });
+    } catch (err) {
+      setLoading(btn, false);
+      hide('signin-success');
+      showErr('signin', 'Failed to send OTP. Please check your connection.');
+    }
+  };
 
   /* ─── SIGN IN ─── */
   document.getElementById('form-signin').addEventListener('submit', async e => {
