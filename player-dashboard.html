@@ -1895,6 +1895,339 @@
       }
     }
 </style>
+
+<style>
+    /* -------------------------------------------------------------
+       PERFECT PIXEL ALIGNMENT (MATCHING USER REFERENCE MOCKUP)
+       ------------------------------------------------------------- */
+
+    /* Sidebar Alignment (Image 3) */
+    .player-saas-sidebar {
+      width: 240px !important;
+      flex-shrink: 0 !important;
+      background: #FFFFFF !important;
+      border-right: 1px solid #E2E8F0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      padding: 24px 16px 20px !important;
+      position: sticky !important;
+      top: 0 !important;
+      height: 100vh !important;
+      box-sizing: border-box !important;
+      z-index: 100 !important;
+    }
+
+    .player-sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 8px 24px;
+    }
+
+    .player-nav-group {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .player-tab-nav-btn {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      width: 100% !important;
+      padding: 12px 16px !important;
+      border: none !important;
+      border-radius: 12px !important;
+      background: transparent !important;
+      color: #64748B !important;
+      font-size: 0.92rem !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      transition: all 0.15s ease !important;
+      box-sizing: border-box !important;
+    }
+    .player-tab-nav-btn:hover {
+      background: #F8FAFC !important;
+      color: #0F172A !important;
+    }
+    .player-tab-nav-btn.active {
+      background: #10B981 !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+    }
+    .player-tab-nav-btn.active svg {
+      stroke: #FFFFFF !important;
+    }
+
+    .player-nav-counter-green {
+      margin-left: auto;
+      background: #10B981;
+      color: #FFFFFF;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 8px;
+      line-height: 1.2;
+    }
+    .player-tab-nav-btn.active .player-nav-counter-green {
+      background: #FFFFFF;
+      color: #10B981;
+    }
+
+    /* 50% Discount Card (Image 3) */
+    .player-discount-promo-card {
+      margin-top: 24px;
+      background: #10B981;
+      border-radius: 16px;
+      padding: 20px 16px;
+      color: #FFFFFF;
+      box-sizing: border-box;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+    }
+    .player-discount-promo-card h4 {
+      margin: 0 0 6px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+    .player-discount-promo-card p {
+      margin: 0 0 16px;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.4;
+    }
+    .btn-discount-explore {
+      display: block;
+      width: 100%;
+      background: #FFFFFF;
+      color: #059669;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      box-sizing: border-box;
+      transition: transform 0.15s ease;
+    }
+    .btn-discount-explore:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .player-sidebar-bottom {
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .player-bottom-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #64748B;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .player-bottom-link-btn:hover {
+      background: #F1F5F9;
+      color: #0F172A;
+    }
+
+    /* ── Overview Layout & Card Sizing ────────────────────────── */
+    .player-overview-grid {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) 320px !important;
+      gap: 24px !important;
+      padding: 24px 28px !important;
+      box-sizing: border-box !important;
+      align-items: start !important;
+      max-width: 100% !important;
+    }
+
+    /* Hero Card (Fixed width & no button cut-off) */
+    .player-mockup-hero-card {
+      background: #FFFFFF !important;
+      border-radius: 20px !important;
+      padding: 18px !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+      border: 1px solid #E2E8F0 !important;
+      display: grid !important;
+      grid-template-columns: 290px minmax(0, 1fr) !important;
+      gap: 20px !important;
+      align-items: stretch !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+    }
+
+    .hero-left-media {
+      position: relative !important;
+      border-radius: 16px !important;
+      overflow: hidden !important;
+      height: 100% !important;
+      min-height: 260px !important;
+      background: #0F172A !important;
+    }
+    .hero-left-media img#player-featured-hero-img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      border-radius: 16px !important;
+    }
+
+    .hero-media-badges {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      z-index: 2;
+    }
+    .hero-status-chip {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 999px;
+      letter-spacing: 0.3px;
+    }
+    .hero-status-confirmed {
+      background: #10B981;
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+    }
+    .hero-status-paid {
+      background: rgba(15, 23, 42, 0.85);
+      color: #FFFFFF;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero-right-info {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      min-width: 0 !important;
+    }
+    .hero-title {
+      font-size: 1.35rem !important;
+      font-weight: 800 !important;
+      color: #0F172A !important;
+      margin: 0 0 4px !important;
+      letter-spacing: -0.3px !important;
+    }
+
+    /* Actions Row & Buttons */
+    .hero-bottom-actions-row {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 10px !important;
+      padding-top: 12px !important;
+      border-top: 1px solid #F1F5F9 !important;
+      flex-wrap: wrap !important;
+    }
+    .hero-price-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-price-label {
+      font-size: 0.68rem;
+      color: #94A3B8;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .hero-price-val {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #0F172A;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-buttons-group {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      flex-shrink: 0 !important;
+    }
+    .btn-hero-primary-green {
+      background: #10B981 !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+      font-size: 0.82rem !important;
+      border: none !important;
+      border-radius: 10px !important;
+      padding: 9px 16px !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      transition: background 0.15s ease !important;
+    }
+    .btn-hero-primary-green:hover { background: #059669 !important; }
+
+    .btn-hero-secondary-white {
+      background: #F8FAFC !important;
+      color: #334155 !important;
+      font-weight: 700 !important;
+      font-size: 0.8rem !important;
+      border: 1.5px solid #CBD5E1 !important;
+      border-radius: 10px !important;
+      padding: 8px 12px !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+    }
+    .btn-hero-secondary-white:hover { background: #E2E8F0 !important; }
+
+    .btn-hero-danger-soft {
+      background: #FEF2F2 !important;
+      color: #DC2626 !important;
+      font-weight: 700 !important;
+      font-size: 0.8rem !important;
+      border: 1.5px solid #FECACA !important;
+      border-radius: 10px !important;
+      padding: 8px 12px !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+    }
+    .btn-hero-danger-soft:hover { background: #FEE2E2 !important; }
+
+    /* Calendar Day Strip - Interactive & Clickable */
+    .cal-day-col {
+      cursor: pointer !important;
+      transition: transform 0.15s ease !important;
+      border-radius: 12px !important;
+      padding: 4px 6px !important;
+    }
+    .cal-day-col:hover {
+      background: #F1F5F9 !important;
+    }
+    .cal-day-col.active {
+      background: #10B981 !important;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+    }
+    .cal-day-col.active .cal-day-label {
+      color: rgba(255, 255, 255, 0.85) !important;
+    }
+    .cal-day-col.active .cal-day-num {
+      background: transparent !important;
+      color: #FFFFFF !important;
+      border: none !important;
+    }
+</style>
 </head>
 
 <body class="dash-page">
@@ -1945,70 +2278,73 @@
     <!-- LEFT SIDEBAR NAVIGATION -->
     <aside class="player-saas-sidebar" id="player-saas-sidebar">
       <div>
+        <!-- BRAND LOGO (MATCHING IMAGE 3) -->
         <div class="player-sidebar-brand">
-          <div style="width:36px; height:36px; border-radius:10px; background:#ECFDF5; border:1px solid #A7F3D0; display:flex; align-items:center; justify-content:center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18"></path><path d="M3 12h18"></path></svg>
+          <div style="width:34px; height:34px; border-radius:10px; background:#10B981; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(16,185,129,0.35);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
           </div>
-          <span style="font-size:1.25rem; font-weight:800; color:#0F172A; letter-spacing:-0.5px;">Turfi<span style="color:#10B981;">fy</span></span>
+          <span style="font-size:1.3rem; font-weight:800; color:#0F172A; letter-spacing:-0.5px;">Turfify</span>
         </div>
 
+        <!-- NAVIGATION LINKS (EXACT MATCH TO IMAGE 3) -->
         <ul class="player-nav-group">
           <li>
             <button type="button" class="player-tab-nav-btn active" data-player-tab="overview">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
-              <span>Overview</span>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+              <span>Dashboard</span>
             </button>
           </li>
           <li>
             <button type="button" class="player-tab-nav-btn" data-player-tab="bookings">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-              <span>My bookings</span>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+              <span>Discover</span>
             </button>
           </li>
           <li>
             <button type="button" class="player-tab-nav-btn" data-player-tab="payments">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-              <span>Payments</span>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              <span>Tickets</span>
             </button>
           </li>
           <li>
             <button type="button" class="player-tab-nav-btn" data-player-tab="favorites">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              <span>Favorites</span>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span>Favorite</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="player-tab-nav-btn" data-player-tab="support" style="position:relative;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <span>Messages</span>
+              <span class="player-nav-counter-green">5</span>
             </button>
           </li>
           <li>
             <button type="button" class="player-tab-nav-btn" data-player-tab="profile">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              <span>Profile</span>
-            </button>
-          </li>
-          <li>
-            <button type="button" class="player-tab-nav-btn" data-player-tab="support">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-              <span>Support</span>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span>Transaction</span>
             </button>
           </li>
         </ul>
 
-        <!-- Promo Banner Card (Matching Mockup) -->
-        <div class="player-promo-box">
-          <h4>25% Reward! ⚽</h4>
-          <p>Book regular weekday match slots and earn bonus Turfify loyalty coins on every game.</p>
-          <button type="button" class="player-promo-btn" onclick="window.openPlayerBookingModal()">
-            Book Match Now ⚡
+        <!-- 50% DISCOUNT CARD (EXACT MATCH TO IMAGE 3) -->
+        <div class="player-discount-promo-card">
+          <h4>50% Discount!</h4>
+          <p>Get best discounts on certain days and don't miss it</p>
+          <button type="button" class="btn-discount-explore" onclick="window.openPlayerBookingModal()">
+            Explore Now !!
           </button>
         </div>
       </div>
 
-      <!-- Bottom Settings & Logout -->
-      <div>
-        <button type="button" class="player-tab-nav-btn" data-player-tab="profile" style="margin-bottom:6px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      <!-- BOTTOM CONTROLS (EXACT MATCH TO IMAGE 3) -->
+      <div class="player-sidebar-bottom">
+        <button type="button" class="player-bottom-link-btn" onclick="switchPlayerTab('profile')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           <span>Settings</span>
         </button>
-        <button type="button" class="player-tab-nav-btn" onclick="window.handlePlayerLogout(event)" style="color:#DC2626;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <button type="button" class="player-bottom-link-btn" onclick="window.handlePlayerLogout(event)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
           <span>Log out</span>
         </button>
       </div>
@@ -2075,30 +2411,22 @@
           <!-- ⭐ THE MOST PROMINENT ITEM: HORIZONTAL FEATURED HERO BOOKING CARD -->
           <div class="player-mockup-hero-card" id="player-featured-upcoming-card">
             
-            <!-- LEFT HALF: PHOTO + OVERLAY THUMBNAILS -->
+            <!-- LEFT HALF: ENLARGED PHOTO (NO FAKE THUMBNAILS, NO WHITE SPACE) -->
             <div class="hero-left-media">
               <img id="player-featured-hero-img" src="images/turf-arena.jpg" alt="Featured Turf" onerror="this.src='https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800&q=80'">
               
-              <!-- Status Badges Overlay -->
+              <!-- Clean Floating Status Badges Overlay -->
               <div class="hero-media-badges">
-                <span id="player-featured-status-badge" class="hero-status-chip" style="background:#10B981; color:#FFFFFF;">
-                  CONFIRMED ✅
+                <span id="player-featured-status-badge" class="hero-status-chip hero-status-confirmed">
+                  CONFIRMED RESERVATION ✅
                 </span>
-                <span id="player-featured-pay-badge" class="hero-status-chip" style="background:rgba(15,23,42,0.8); color:#F8FAFC;">
-                  Paid Online
+                <span id="player-featured-pay-badge" class="hero-status-chip hero-status-paid">
+                  💳 Paid Online
                 </span>
-              </div>
-
-              <!-- Mini Thumbnails Overlay (Exact match to Mockup: 3 thumbs + "+3") -->
-              <div class="hero-media-thumbs-strip">
-                <div class="hero-thumb-box"><img src="images/turf-arena.jpg" alt="thumb" onerror="this.src='https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=200&q=70'"></div>
-                <div class="hero-thumb-box"><img src="images/turf-lights.jpg" alt="thumb" onerror="this.src='https://images.unsplash.com/photo-1551958219-acbc608c6377?w=200&q=70'"></div>
-                <div class="hero-thumb-box"><img src="images/turf-indoor.jpg" alt="thumb" onerror="this.src='https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=200&q=70'"></div>
-                <div class="hero-thumb-box hero-thumb-more">+3</div>
               </div>
             </div>
 
-            <!-- RIGHT HALF: DETAILS, PRICE, CANCEL POLICY, AND ACTIONS -->
+            <!-- RIGHT HALF: DETAILS, PRICE, AND ACCESSIBLE ACTION BUTTONS -->
             <div class="hero-right-info">
               <div>
                 <h2 class="hero-title" id="player-hero-turf">The Arena Sports Hub — Pitch A</h2>
@@ -2113,7 +2441,7 @@
                   Championship grade artificial grass pitch with high-intensity floodlights, professional pitch marking, and player changing rooms.
                 </p>
 
-                <!-- Spec Pills (⏱️ 60 Mins, 🌙 Night, ⚽ 11v11) -->
+                <!-- Spec Pills (⏱️ 60 Mins, ⚽ 11v11, 📋 Ref) -->
                 <div class="hero-specs-row">
                   <span class="hero-spec-pill" id="player-hero-time-pill">
                     <span>⏱️</span> <strong id="player-hero-time">Today, 08:00 PM – 09:00 PM</strong>
@@ -2128,20 +2456,20 @@
 
                 <!-- Free Cancellation Notice -->
                 <div class="hero-cancellation-callout">
-                  <span style="font-size:0.95rem;">🛡️</span>
+                  <span>🛡️</span>
                   <span><strong>Free Cancellation:</strong> Free cancellation up to 4 hrs before kickoff with instant OTP verification.</span>
                 </div>
               </div>
 
-              <!-- Price & Actions Row (Matching Mockup with bright green button) -->
+              <!-- Price & Actions Row (Properly spaced so Cancel button NEVER cuts off) -->
               <div class="hero-bottom-actions-row">
                 <div class="hero-price-wrap">
-                  <span class="hero-price-label">Price</span>
+                  <span class="hero-price-label">PRICE</span>
                   <span class="hero-price-val" id="player-hero-price">₹1,200</span>
                 </div>
                 <div class="hero-buttons-group">
                   <button type="button" class="btn-hero-primary-green" id="btn-hero-directions">
-                    📍 Get Directions
+                    📍 Directions
                   </button>
                   <button type="button" class="btn-hero-secondary-white" id="btn-hero-receipt">
                     📄 Receipt
@@ -3522,27 +3850,60 @@
       `).join('');
     }
 
+    // Global Interactive Calendar State
+    window.calCurrentDate = new Date();
+    window.calSelectedIso = new Date().toISOString().split('T')[0];
+
+    window.changeCalMonth = function(delta) {
+      window.calCurrentDate.setMonth(window.calCurrentDate.getMonth() + delta);
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      _renderCalendar(bookings);
+    };
+
+    window.selectCalDay = function(isoStr) {
+      window.calSelectedIso = isoStr;
+      document.querySelectorAll('.cal-day-col').forEach(el => {
+        el.classList.toggle('active', el.dataset.iso === isoStr);
+      });
+      // Filter schedule feed to selected day if matches exist
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      _renderScheduleFeed(bookings, isoStr);
+    };
+
     function _renderCalendar(bookings) {
       const monthEl = document.getElementById('cal-month-name');
       const daysEl  = document.getElementById('cal-days-strip');
       if (!monthEl || !daysEl) return;
-      const now   = new Date();
-      const days  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      monthEl.textContent = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
 
-      // Generate 5 days strip centered around today (matching mockup: Mon 06, Tue 14, Wed 18, etc.)
+      const date = window.calCurrentDate;
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      
+      monthEl.textContent = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+      // Wire arrow buttons
+      const prevBtn = document.querySelector('.cal-arrow-btn[aria-label="Previous month"]');
+      const nextBtn = document.querySelector('.cal-arrow-btn[aria-label="Next month"]');
+      if (prevBtn) prevBtn.onclick = () => window.changeCalMonth(-1);
+      if (nextBtn) nextBtn.onclick = () => window.changeCalMonth(1);
+
+      // Generate 5 days strip around active date (Mon 06, Tue 14, Wed 18 style)
       let html = '';
+      const startDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
       for (let i = 0; i < 5; i++) {
-        const d = new Date();
-        d.setDate(now.getDate() + i);
+        const d = new Date(startDay);
+        d.setDate(startDay.getDate() + i);
         const iso = d.toISOString().split('T')[0];
-        const isToday = i === 0;
+        const isSelected = iso === window.calSelectedIso || (i === 0 && !window.calSelectedIso);
         const dayStr = days[d.getDay()];
         const dateNum = String(d.getDate()).padStart(2, '0');
 
         html += `
-          <div class="cal-day-col ${isToday ? 'active' : ''}">
-            <span>${dayStr}</span>
+          <div class="cal-day-col ${isSelected ? 'active' : ''}" data-iso="${iso}" onclick="window.selectCalDay('${iso}')">
+            <span class="cal-day-label">${dayStr}</span>
             <div class="cal-day-num">${dateNum}</div>
           </div>
         `;
@@ -3550,18 +3911,26 @@
       daysEl.innerHTML = html;
     }
 
-    function _renderScheduleFeed(bookings) {
+    function _renderScheduleFeed(bookings, filterDate) {
       const feed = document.getElementById('player-schedule-feed');
       if (!feed) return;
-      const confirmed = bookings.filter(b => b.status === 'Confirmed' || b.status === 'Completed').slice(0, 4);
-      if (confirmed.length === 0) {
-        feed.innerHTML = '<p style="color:#94A3B8; font-size:0.85rem; padding:16px 0; margin:0; text-align:center;">No upcoming matches scheduled.</p>';
+
+      let list = bookings.filter(b => b.status === 'Confirmed' || b.status === 'Completed');
+      if (filterDate) {
+        const matchesOnDate = list.filter(b => b.date === filterDate || (b.date && b.date.startsWith(filterDate)));
+        if (matchesOnDate.length > 0) {
+          list = matchesOnDate;
+        }
+      }
+
+      if (list.length === 0) {
+        feed.innerHTML = '<p style="color:#94A3B8; font-size:0.85rem; padding:16px 0; margin:0; text-align:center;">No matches scheduled.</p>';
         return;
       }
-      feed.innerHTML = confirmed.map(b => `
+      feed.innerHTML = list.slice(0, 4).map(b => `
         <div class="schedule-item-card">
           <div class="schedule-item-thumb">
-            <img src="${b.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=200&q=70'}" alt="turf">
+            <img src="${b.image || 'images/turf-arena.jpg'}" alt="turf" onerror="this.src='https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=200&q=70'">
           </div>
           <div class="schedule-item-info">
             <div class="schedule-item-title">${b.turf_name}</div>
