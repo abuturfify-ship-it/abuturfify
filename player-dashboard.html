@@ -875,6 +875,424 @@
     }
     .btn-book-venue:hover { background: #ECFDF5 !important; }
 
+
+
+    /* =========================================================
+       TURFIFY PLAYER DASHBOARD — SAAS SHELL STYLES
+       Matching travel-dashboard reference mockup
+       ========================================================= */
+
+    /* Layout Shell */
+    .player-saas-shell {
+      display: flex;
+      min-height: 100vh;
+      background: #F8FAFC;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────── */
+    .player-saas-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #E8F0FE;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 0 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .player-sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 24px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .player-nav-group {
+      list-style: none;
+      margin: 16px 0 0;
+      padding: 0;
+    }
+    .player-nav-group li { padding: 2px 12px; }
+    .player-tab-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #64748B;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .player-tab-nav-btn:hover { background: #F1F5F9; color: #0F172A; }
+    .player-tab-nav-btn.active { background: #ECFDF5; color: #059669; }
+    .player-tab-nav-btn.active svg { stroke: #059669; }
+    .player-nav-badge {
+      margin-left: auto;
+      background: #EF4444;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 999px;
+      line-height: 1.2;
+    }
+    .player-sidebar-promo {
+      margin: 16px 12px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 0.82rem;
+    }
+    .player-sidebar-promo strong { font-size: 1.1rem; display: block; margin-bottom: 4px; }
+    .player-sidebar-promo p { margin: 0 0 10px; opacity: 0.9; line-height: 1.4; }
+    .player-promo-btn {
+      display: block;
+      width: 100%;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 8px;
+      padding: 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+    .player-promo-btn:hover { background: rgba(255,255,255,0.3); }
+    .player-sidebar-footer { padding: 0 12px; }
+    .player-sidebar-footer button {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; background: transparent; border: none;
+      color: #64748B; font-size: 0.82rem; font-weight: 600;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+    }
+    .player-sidebar-footer button:hover { background: #FFF1F2; color: #DC2626; }
+
+    /* ── Main Content Area ───────────────────────────────────── */
+    .player-saas-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ── Top Bar ─────────────────────────────────────────────── */
+    .player-saas-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 28px;
+      background: #fff;
+      border-bottom: 1px solid #E8F0FE;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+    .player-topbar-search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      max-width: 440px;
+    }
+    .player-topbar-search-wrap input {
+      flex: 1;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 0.875rem;
+      outline: none;
+      background: #F8FAFC;
+      transition: border-color 0.15s;
+    }
+    .player-topbar-search-wrap input:focus { border-color: #10B981; background: #fff; }
+    .player-topbar-search-btn {
+      background: #10B981;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .player-topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .player-topbar-icon-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #F1F5F9;
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .player-topbar-icon-btn .notif-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #EF4444; border: 2px solid #fff;
+    }
+    .player-topbar-avatar {
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+    }
+    .player-topbar-avatar .avatar-circle {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg,#10B981,#059669);
+      color: #fff; font-weight: 800; font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #A7F3D0;
+    }
+    #nav-player-name { font-size: 0.85rem; font-weight: 700; color: #0F172A; }
+
+    /* ── Tab Panes ───────────────────────────────────────────── */
+    .player-tab-pane { display: none; }
+    .player-tab-pane.active { display: block; }
+    .player-pane-inner {
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 1100px) {
+      .player-pane-inner { grid-template-columns: 1fr; }
+      .player-saas-sidebar { width: 180px; }
+    }
+    @media (max-width: 768px) {
+      .player-saas-shell { flex-direction: column; }
+      .player-saas-sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+      .player-pane-inner { padding: 16px; grid-template-columns: 1fr; }
+    }
+
+    /* ── Featured Hero Card ──────────────────────────────────── */
+    #player-featured-upcoming-card {
+      border-radius: 20px;
+      overflow: hidden;
+      background: #0F172A;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      margin-bottom: 24px;
+    }
+    .player-featured-img-wrap {
+      position: relative; height: 220px; overflow: hidden;
+    }
+    .player-featured-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .player-featured-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
+    }
+    .player-featured-badges {
+      position: absolute; top: 14px; left: 14px;
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .player-featured-body { padding: 20px 24px 24px; background: #fff; }
+    .player-featured-title {
+      font-size: 1.3rem; font-weight: 900; color: #0F172A;
+      margin: 0 0 4px; letter-spacing: -0.3px;
+    }
+    .player-featured-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 16px; }
+    .player-featured-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: #F1F5F9; border-radius: 999px;
+      padding: 5px 12px; font-size: 0.78rem; font-weight: 600; color: #334155;
+    }
+    .player-featured-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-featured-action {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 18px; border-radius: 12px; font-size: 0.82rem;
+      font-weight: 700; cursor: pointer; border: none;
+      transition: all 0.15s ease;
+    }
+    .btn-featured-primary { background: #10B981; color: #fff; }
+    .btn-featured-primary:hover { background: #059669; }
+    .btn-featured-secondary { background: #F1F5F9; color: #334155; border: 1.5px solid #E2E8F0; }
+    .btn-featured-secondary:hover { background: #E2E8F0; }
+    .btn-featured-danger { background: #FFF1F2; color: #DC2626; border: 1.5px solid #FECACA; }
+    .btn-featured-danger:hover { background: #FEE2E2; }
+
+    /* ── Popular Grid ────────────────────────────────────────── */
+    .player-popular-section { margin-top: 8px; }
+    .player-popular-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .player-popular-header h3 { margin: 0; font-size: 1.05rem; font-weight: 800; color: #0F172A; }
+    .player-popular-see-all { font-size: 0.82rem; font-weight: 700; color: #10B981; text-decoration: none; }
+    #player-popular-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Right Column ────────────────────────────────────────── */
+    .player-right-col { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Calendar Widget */
+    .player-cal-card {
+      background: #fff; border-radius: 16px;
+      padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .player-cal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .player-cal-header h4 { margin: 0; font-size: 0.95rem; font-weight: 800; color: #0F172A; }
+    .player-cal-nav-btn {
+      background: none; border: none; cursor: pointer;
+      color: #64748B; font-size: 1rem; padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .player-cal-nav-btn:hover { background: #F1F5F9; }
+    #cal-days-strip {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    #cal-days-strip::-webkit-scrollbar { display: none; }
+
+    /* Schedule Feed */
+    .player-sched-card {
+      background: #fff; border-radius: 16px;
+      padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .player-sched-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .player-sched-header h4 { margin: 0; font-size: 0.95rem; font-weight: 800; color: #0F172A; }
+    .player-sched-see-all { font-size: 0.78rem; font-weight: 700; color: #10B981; text-decoration: none; cursor: pointer; }
+
+    /* ── Bookings Pane ───────────────────────────────────────── */
+    .player-pane-simple { padding: 28px; }
+    .player-pane-heading {
+      font-size: 1.3rem; font-weight: 900; color: #0F172A;
+      margin: 0 0 4px; letter-spacing: -0.3px;
+    }
+    .player-pane-sub { font-size: 0.875rem; color: #64748B; margin: 0 0 20px; }
+    .player-filter-tabs {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .player-filter-tab {
+      padding: 7px 16px; border-radius: 999px; border: 1.5px solid #E2E8F0;
+      background: #fff; font-size: 0.8rem; font-weight: 700; color: #64748B;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .player-filter-tab:hover, .player-filter-tab.active {
+      background: #10B981; color: #fff; border-color: #10B981;
+    }
+    .player-search-bar {
+      display: flex; gap: 10px; margin-bottom: 20px;
+    }
+    .player-search-bar input {
+      flex: 1; border: 1.5px solid #E2E8F0; border-radius: 10px;
+      padding: 10px 16px; font-size: 0.875rem; outline: none; background: #F8FAFC;
+    }
+    .player-search-bar input:focus { border-color: #10B981; }
+    .player-table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid #E8F0FE; }
+    .player-bookings-tbl { width: 100%; border-collapse: collapse; background: #fff; }
+    .player-bookings-tbl thead th {
+      background: #F8FAFC; padding: 12px 10px;
+      font-size: 0.75rem; font-weight: 800; color: #64748B;
+      text-align: left; letter-spacing: 0.5px; text-transform: uppercase;
+      border-bottom: 1px solid #E8F0FE;
+    }
+    .player-bookings-tbl tbody tr:hover { background: #F8FAFC; }
+    .status-pill { display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.72rem; font-weight:700; }
+    .status-pill.confirmed { background:#DCFCE7; color:#15803D; }
+    .status-pill.cancelled { background:#FEE2E2; color:#DC2626; }
+    .status-pill.walkin    { background:#FEF9C3; color:#854D0E; }
+    .btn-mini-action {
+      display: inline-flex; align-items: center;
+      padding: 5px 10px; border-radius: 7px; font-size: 0.72rem; font-weight: 700;
+      border: 1.5px solid #E2E8F0; background: #F8FAFC; color: #334155; cursor: pointer;
+    }
+
+    /* ── Payments Pane ───────────────────────────────────────── */
+    .player-payments-summary {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+    .player-pay-stat {
+      background: #fff; border-radius: 14px; padding: 20px 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #E8F0FE;
+    }
+    .player-pay-stat .stat-label { font-size: 0.75rem; color: #64748B; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .player-pay-stat .stat-val { font-size: 1.5rem; font-weight: 900; color: #0F172A; letter-spacing: -0.5px; }
+
+    /* ── Favorites Grid ──────────────────────────────────────── */
+    #player-favorites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+      gap: 20px;
+    }
+
+    /* ── Profile Form ────────────────────────────────────────── */
+    .player-profile-form {
+      background: #fff; border-radius: 18px; padding: 28px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06); border: 1px solid #E8F0FE;
+      max-width: 600px;
+    }
+    .player-profile-form h3 { margin: 0 0 20px; font-size: 1.1rem; font-weight: 800; color: #0F172A; }
+    .player-form-row { margin-bottom: 16px; }
+    .player-form-row label { display: block; font-size: 0.78rem; font-weight: 700; color: #374151; margin-bottom: 6px; }
+    .player-form-row input,
+    .player-form-row select {
+      width: 100%; padding: 11px 14px; border: 1.5px solid #E2E8F0;
+      border-radius: 10px; font-size: 0.875rem; outline: none;
+      background: #F8FAFC; box-sizing: border-box; color: #0F172A;
+    }
+    .player-form-row input:focus,
+    .player-form-row select:focus { border-color: #10B981; background: #fff; }
+    .player-form-actions { display: flex; gap: 12px; margin-top: 22px; }
+    .btn-save-profile {
+      background: #10B981; color: #fff; border: none;
+      border-radius: 12px; padding: 12px 28px; font-size: 0.9rem;
+      font-weight: 700; cursor: pointer;
+    }
+    .btn-save-profile:hover { background: #059669; }
+
+    /* ── Support Pane ────────────────────────────────────────── */
+    .player-support-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      gap: 20px; margin-bottom: 28px;
+    }
+    .player-support-card {
+      background: #fff; border-radius: 16px; padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #E8F0FE;
+      text-align: center;
+    }
+    .player-support-card .support-icon { font-size: 2rem; margin-bottom: 10px; }
+    .player-support-card h4 { margin: 0 0 6px; font-size: 0.95rem; font-weight: 800; color: #0F172A; }
+    .player-support-card p { margin: 0 0 14px; font-size: 0.82rem; color: #64748B; line-height: 1.5; }
+    .btn-support-action {
+      display: inline-block; padding: 10px 20px;
+      border-radius: 10px; font-size: 0.82rem; font-weight: 700;
+      text-decoration: none; border: none; cursor: pointer;
+    }
+    .btn-support-whatsapp { background: #25D366; color: #fff; }
+    .btn-support-phone    { background: #EFF6FF; color: #1D4ED8; border: 1.5px solid #BFDBFE; }
+    .player-faq-section h3 { font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0 0 16px; }
+    .player-faq-item {
+      background: #fff; border: 1px solid #E8F0FE; border-radius: 12px;
+      padding: 16px 18px; margin-bottom: 10px;
+    }
+    .player-faq-item h5 { margin: 0 0 6px; font-size: 0.875rem; font-weight: 700; color: #0F172A; }
+    .player-faq-item p  { margin: 0; font-size: 0.82rem; color: #64748B; line-height: 1.6; }
+
 </style>
 </head>
 
@@ -978,211 +1396,513 @@
   <!-- ==========================================================================
        PANORAMIC HERO WELCOME BANNER (PLAYER)
        ========================================================================== -->
-  <div class="panoramic-hero-banner">
+  
+  <!-- ==========================================================================
+       MODERN SAAS SHELL (MATCHING TRAVEL REFERENCE MOCKUP)
+       ========================================================================== -->
+  <div class="player-saas-shell" id="player-saas-shell">
 
-    <div class="banner-left">
-      <h1 id="player-welcome-title">Welcome!</h1>
-      <p id="player-welcome-sub">Ready for kickoff? Track your upcoming games, teammates, and loyalty coins.</p>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span class="banner-badge-player">
-          <span style="font-size:0.95rem;line-height:1;">⚽</span> PLAYER
-        </span>
-        <button type="button" class="btn-panel-white-pill" id="btn-player-book-slot" style="box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-          + Book Slot in Dashboard
-        </button>
-      </div>
-    </div>
-
-    <!-- Right Script Slogan: Play. Book. Win. -->
-    <div class="banner-right">
-      <div class="banner-script-slogan">Play. Book. Win.</div>
-    </div>
-  </div>
-
-  <!-- Quick-Jump Action Tabs (Mobile & Desktop) -->
-  <div class="dash-quick-nav-bar">
-    <a href="#my-matches" class="quick-nav-pill active">
-      <span>🎟️</span>
-      <span>My Booked Slots</span>
-    </a>
-    <button type="button" onclick="window.openPlayerBookingModal()" class="quick-nav-pill" style="cursor:pointer; font-family:inherit;">
-      <span>⚽</span>
-      <span>Book a Turf</span>
-    </button>
-    <a href="#saved-venues" class="quick-nav-pill">
-      <span>❤️</span>
-      <span>Saved Venues</span>
-    </a>
-    <a href="index.html#search-section" class="quick-nav-pill">
-      <span>🔍</span>
-      <span>Find Turfs</span>
-    </a>
-  </div>
-
-  <main style="width: 100%; max-width: 100%; margin: 0; padding: 0 16px; box-sizing: border-box;" id="player-main">
-
-    <!-- Hero Match Countdown Card -->
-    <div class="hero-match-card">
-      <span class="match-tag" style="background: #047857; color: #FFF; font-weight: 700; border-radius: 999px; padding: 3px 12px;">🔥 Next Kickoff</span>
-      <h2 class="hero-match-title" id="player-hero-turf" style="font-weight: 800; margin-top: 8px;">The Arena Sports Hub — Pitch A (Football)</h2>
-      <div class="match-details-row">
-        <div class="match-detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          <span id="player-hero-time">Today, 07:00 PM - 08:00 PM</span>
-        </div>
-        <div class="match-detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span id="player-hero-location">Anna Nagar, Chennai</span>
-        </div>
-        <div class="match-detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="1" x2="12" y2="23"></line>
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-          </svg>
-          <span>₹1,200 (Paid Online)</span>
-        </div>
-      </div>
-
-      <div class="hero-match-actions" style="margin-top: 14px;">
-        <button class="btn-match-action btn-match-primary" onclick="alert('Google Maps navigation opened!')">
-          📍 Get Directions
-        </button>
-        <button class="btn-match-action btn-match-secondary" onclick="alert('WhatsApp squad invite code copied!')">
-          📲 Share Squad Link
-        </button>
-        <button class="btn-match-action btn-match-secondary"
-          onclick="alert('Turf Entry Pass downloaded with QR verification.')">
-          🎟️ Download Pass
-        </button>
-      </div>
-    </div>
-
-    <!-- 4 MODERN KPI METRIC CARDS -->
-    <div class="metrics-grid-modern">
-      <!-- 1. Matches Played -->
-      <div class="kpi-card teal">
-        <div class="kpi-icon-wrap">⚽</div>
-        <div class="kpi-data">
-          <div class="kpi-label">Matches Played</div>
-          <div class="kpi-val" id="player-matches-count">0</div>
-          <div class="kpi-sub" id="player-matches-sub">Book a match to get started</div>
-        </div>
-        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#0D9488">
-          <circle cx="50" cy="50" r="35" fill="none" stroke="#0D9488" stroke-width="6"></circle>
-          <polygon points="50,30 62,40 58,55 42,55 38,40" fill="#0D9488"></polygon>
-        </svg>
-      </div>
-
-      <!-- 2. Turfify Coins -->
-      <div class="kpi-card purple">
-        <div class="kpi-icon-wrap">⭐</div>
-        <div class="kpi-data">
-          <div class="kpi-label">Turfify Coins</div>
-          <div class="kpi-val" id="player-loyalty">0 pts</div>
-          <div class="kpi-sub purple" id="player-loyalty-sub">Earn 25 coins per booking</div>
-        </div>
-        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#8B5CF6">
-          <rect x="15" y="15" width="70" height="70" rx="14" fill="none" stroke="#8B5CF6" stroke-width="8"></rect>
-          <circle cx="35" cy="45" r="5"></circle>
-          <circle cx="65" cy="45" r="5"></circle>
-        </svg>
-      </div>
-
-      <!-- 3. Upcoming Games -->
-      <div class="kpi-card green">
-        <div class="kpi-icon-wrap">📅</div>
-        <div class="kpi-data">
-          <div class="kpi-label">Upcoming Games</div>
-          <div class="kpi-val" id="player-upcoming-count">0</div>
-          <div class="kpi-sub green" id="player-upcoming-sub">No games scheduled</div>
-        </div>
-        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#10B981">
-          <rect x="10" y="20" width="80" height="60" rx="8" fill="none" stroke="#10B981" stroke-width="7"></rect>
-          <line x1="50" y1="20" x2="50" y2="80" stroke="#10B981" stroke-width="5"></line>
-        </svg>
-      </div>
-
-      <!-- 4. Favorite Sport -->
-      <div class="kpi-card blue">
-        <div class="kpi-icon-wrap">🏆</div>
-        <div class="kpi-data">
-          <div class="kpi-label">Favorite Sport</div>
-          <div class="kpi-val">Football</div>
-          <div class="kpi-sub blue">FIFA Certified turfs</div>
-        </div>
-        <svg class="kpi-watermark" viewBox="0 0 100 100" fill="#3B82F6">
-          <circle cx="40" cy="35" r="14"></circle>
-          <path d="M20 75 C20 55, 60 55, 60 75 Z"></path>
-        </svg>
-      </div>
-    </div>
-
-    <!-- Master-Detail Layout -->
-    <div class="player-master-detail-grid">
-      <!-- Left Column: Recent Bookings Table -->
-      <div id="my-matches">
-        <div class="panel-header-teal">
-          <div class="panel-title-teal">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            My Booked Slots
+    <!-- LEFT SIDEBAR NAVIGATION -->
+    <aside class="player-saas-sidebar" id="player-saas-sidebar">
+      <div>
+        <div class="player-sidebar-brand">
+          <div style="width:36px; height:36px; border-radius:10px; background:#ECFDF5; border:1px solid #A7F3D0; display:flex; align-items:center; justify-content:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18"></path><path d="M3 12h18"></path></svg>
           </div>
-          <button type="button" class="btn-panel-white-pill" id="btn-player-book-another">
-            + Book Another Turf
+          <span style="font-size:1.25rem; font-weight:800; color:#0F172A; letter-spacing:-0.5px;">Turfi<span style="color:#10B981;">fy</span></span>
+        </div>
+
+        <ul class="player-nav-group">
+          <li>
+            <button type="button" class="player-tab-nav-btn active" data-player-tab="overview">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+              <span>Overview</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="player-tab-nav-btn" data-player-tab="bookings">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              <span>My bookings</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="player-tab-nav-btn" data-player-tab="payments">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+              <span>Payments</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="player-tab-nav-btn" data-player-tab="favorites">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span>Favorites</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="player-tab-nav-btn" data-player-tab="profile">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span>Profile</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="player-tab-nav-btn" data-player-tab="support">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <span>Support</span>
+            </button>
+          </li>
+        </ul>
+
+        <!-- Promo Banner Card (Matching Mockup) -->
+        <div class="player-promo-box">
+          <h4>25% Reward! ⚽</h4>
+          <p>Book regular weekday match slots and earn bonus Turfify loyalty coins on every game.</p>
+          <button type="button" class="player-promo-btn" onclick="window.openPlayerBookingModal()">
+            Book Match Now ⚡
           </button>
         </div>
-        <div class="panel-body-teal" style="padding: 0; overflow: hidden; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;">
-          <div style="font-size:0.75rem; color:#64748B; background:#F8FAFC; padding:7px 14px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; gap:6px;">
-            <span>↔️</span>
-            <span style="font-weight:600;">Swipe left/right to view full booking details & actions</span>
+      </div>
+
+      <!-- Bottom Settings & Logout -->
+      <div>
+        <button type="button" class="player-tab-nav-btn" data-player-tab="profile" style="margin-bottom:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings</span>
+        </button>
+        <button type="button" class="player-tab-nav-btn" onclick="window.handlePlayerLogout(event)" style="color:#DC2626;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- RIGHT WORKSPACE (TOPBAR + PANES) -->
+    <div style="display:flex; flex-direction:column; min-width:0; width:100%;">
+
+      <!-- TOPBAR HEADER BAR (MATCHING MOCKUP) -->
+      <header class="player-saas-topbar">
+        <div style="display:flex; align-items:center; gap:12px; flex:1; max-width:540px;">
+          <button type="button" id="btn-player-mobile-menu" class="btn-mini-action" style="display:none; padding:8px 10px; border-radius:10px; background:#F1F5F9;" onclick="document.getElementById('player-saas-sidebar')?.classList.toggle('drawer-open')">
+            ☰
+          </button>
+          <div class="player-search-bar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.2" style="margin-right:8px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="player-global-search" placeholder="Search destination, venue, sport or booking ID..." oninput="window.handlePlayerGlobalSearch(this.value)">
+            <button type="button" class="player-search-btn" onclick="window.executePlayerSearch()">Search</button>
           </div>
-          <div class="table-responsive-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;">
-            <table class="dash-table" style="margin: 0; width: 100%;">
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px;">
+          <!-- Notification Bell -->
+          <div style="position:relative; cursor:pointer;" onclick="showToast('🔔 All your match alerts and notifications are up to date.')">
+            <div style="width:38px; height:38px; border-radius:12px; background:#F8FAFC; border:1px solid #E2E8F0; display:flex; align-items:center; justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </div>
+            <div style="position:absolute; top:8px; right:8px; width:7px; height:7px; background:#EF4444; border-radius:50%; border:1.5px solid #FFFFFF;"></div>
+          </div>
+
+          <!-- Direct Book Action -->
+          <button type="button" onclick="window.openPlayerBookingModal()" style="background:#064E3B; color:#FFFFFF; border:none; padding:8px 16px; border-radius:12px; font-weight:700; font-size:0.84rem; cursor:pointer; display:flex; align-items:center; gap:6px;">
+            <span>+</span>
+            <span>Book Turf</span>
+          </button>
+
+          <!-- User Avatar Chip -->
+          <div style="display:flex; align-items:center; gap:8px; padding:3px 10px 3px 3px; background:#FFFFFF; border:1px solid #E2E8F0; border-radius:999px;">
+            <div style="width:30px; height:30px; border-radius:50%; background:#D1FAE5; color:#047857; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.8rem; overflow:hidden;" id="player-avatar-wrap">
+              ⚽
+            </div>
+            <span style="font-size:0.82rem; font-weight:700; color:#0F172A;" id="nav-player-name">Player</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ======================================================================
+           PANE 1: OVERVIEW (MATCHING REFERENCE MOCKUP)
+           ====================================================================== -->
+      <section class="player-tab-pane active" id="pane-player-overview">
+        <div class="overview-content-grid">
+
+          <!-- Left Column: Featured Upcoming Hero Card + Popular Places -->
+          <div>
+
+            <!-- ⭐ THE MOST PROMINENT ITEM: UPCOMING BOOKING HERO CARD -->
+            <div class="hero-booking-card-featured" id="player-featured-upcoming-card">
+              <div class="hero-booking-media-wrap">
+                <img id="player-featured-hero-img" src="images/turf-arena.jpg" alt="Featured Turf" onerror="this.src='images/turf-arena.jpg'">
+                <div class="hero-booking-badges-overlay">
+                  <span class="hero-booking-badge" id="player-featured-status-badge" style="background:#047857; color:#FFFFFF;">
+                    CONFIRMED RESERVATION ✅
+                  </span>
+                  <span class="hero-booking-badge" id="player-featured-pay-badge" style="background:rgba(15,23,42,0.75); color:#F8FAFC;">
+                    ₹1,200 (Paid Online)
+                  </span>
+                </div>
+                <!-- Thumbnails preview strip (matching mockup) -->
+                <div class="hero-booking-thumb-strip">
+                  <img src="images/turf-arena.jpg" alt="thumb" class="hero-thumb-mini">
+                  <img src="images/turf-lights.jpg" alt="thumb" class="hero-thumb-mini" onerror="this.src='images/turf-arena.jpg'">
+                  <div class="hero-thumb-mini" style="background:rgba(0,0,0,0.6); color:#FFF; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">
+                    +3
+                  </div>
+                </div>
+              </div>
+
+              <div class="hero-booking-body">
+                <div class="hero-booking-title-row">
+                  <div>
+                    <h2 class="hero-booking-venue-name" id="player-hero-turf">The Arena Sports Hub — Pitch A</h2>
+                    <div style="font-size:0.86rem; color:#475569; display:flex; align-items:center; gap:6px; margin-top:4px;">
+                      <span>📍</span>
+                      <span id="player-hero-location">Anna Nagar, Chennai, Tamil Nadu</span>
+                      <a href="#" id="player-hero-map-link" target="_blank" style="color:#059669; font-weight:700; text-decoration:none; margin-left:6px;" onclick="event.stopPropagation()">View on Map ↗</a>
+                    </div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:1.45rem; font-weight:800; color:#064E3B;" id="player-hero-price">₹1,200</div>
+                    <span style="font-size:0.72rem; color:#64748B; font-weight:600;">Standard Match Rate</span>
+                  </div>
+                </div>
+
+                <div class="hero-booking-meta-row">
+                  <span class="hero-meta-pill" id="player-hero-time-pill">
+                    <span>🗓️</span>
+                    <strong id="player-hero-time">Today, 08:00 PM – 09:00 PM</strong>
+                  </span>
+                  <span class="hero-meta-pill" id="player-hero-format-pill">
+                    <span>🏟️</span>
+                    <strong id="player-hero-format">11v11 Artificial Grass</strong>
+                  </span>
+                  <span class="hero-meta-pill" id="player-hero-ref-pill">
+                    <span>📋</span>
+                    <strong id="player-hero-ref">Ref: #TRF-179468</strong>
+                  </span>
+                </div>
+
+                <!-- Free Cancellation Notice -->
+                <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:10px 14px; margin-bottom:16px; font-size:0.78rem; color:#166534; display:flex; align-items:center; gap:8px;">
+                  <span>ℹ️</span>
+                  <span><strong>Free Cancellation:</strong> You can cancel this booking with instant OTP verification up to kickoff time.</span>
+                </div>
+
+                <!-- Hero Action Buttons -->
+                <div class="hero-booking-actions">
+                  <button type="button" class="btn-match-action btn-match-primary" id="btn-hero-directions" onclick="window.openHeroDirections()" style="border:none; cursor:pointer;">
+                    📍 Get Directions
+                  </button>
+                  <button type="button" class="btn-match-action btn-match-secondary" id="btn-hero-receipt" onclick="window.downloadHeroReceipt()" style="cursor:pointer;">
+                    📥 Download Receipt
+                  </button>
+                  <button type="button" class="btn-match-action btn-match-secondary" id="btn-hero-cancel" onclick="window.triggerHeroCancellation()" style="color:#DC2626; border-color:#FCA5A5; background:#FEF2F2; cursor:pointer;">
+                    🚫 Cancel Reservation
+                  </button>
+                  <button type="button" class="btn-match-action btn-match-secondary" onclick="window.shareSquadLink()" style="cursor:pointer;">
+                    📲 Invite Squad
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- POPULAR PLACES / QUICK REBOOK (MATCHING MOCKUP ROW) -->
+            <div style="margin-top:24px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <h3 style="font-size:1.15rem; font-weight:800; color:#0F172A; margin:0;">Popular Facilities 🏟️</h3>
+                <button type="button" class="link-btn" onclick="window.switchPlayerTab('favorites')" style="color:#059669; font-weight:700; font-size:0.84rem;">See all ↗</button>
+              </div>
+
+              <div class="popular-places-grid" id="player-popular-grid">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Interactive Mini Calendar & My Schedule -->
+          <div>
+            <!-- Mini Calendar Widget (Matching Mockup) -->
+            <div class="right-sidebar-box">
+              <div class="cal-header-row">
+                <button type="button" class="btn-mini-action" style="padding:4px 8px; border-radius:6px;" onclick="window.prevCalendarMonth()">‹</button>
+                <span class="cal-month-title" id="cal-month-name">November 2026</span>
+                <button type="button" class="btn-mini-action" style="padding:4px 8px; border-radius:6px;" onclick="window.nextCalendarMonth()">›</button>
+              </div>
+              <div class="cal-days-pills-row" id="cal-days-strip">
+                <!-- Day pills injected via JS -->
+              </div>
+            </div>
+
+            <!-- "My Schedule" Feed (Matching Mockup) -->
+            <div class="right-sidebar-box">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <h4 style="font-size:1rem; font-weight:800; color:#0F172A; margin:0;">My Schedule 🗓️</h4>
+                <button type="button" class="link-btn" onclick="window.switchPlayerTab('bookings')" style="color:#059669; font-size:0.78rem; font-weight:700;">See all</button>
+              </div>
+              <div id="player-schedule-feed">
+                <!-- Schedule cards injected via JS -->
+              </div>
+            </div>
+
+            <!-- 4 Quick Stats Summary -->
+            <div class="right-sidebar-box" style="padding:16px;">
+              <div style="font-size:0.75rem; font-weight:800; color:#64748B; text-transform:uppercase; margin-bottom:12px;">Player Performance</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px;">
+                  <div style="font-size:0.7rem; color:#64748B; font-weight:700;">MATCHES</div>
+                  <div style="font-size:1.3rem; font-weight:800; color:#0F172A;" id="player-matches-count">0</div>
+                  <div style="font-size:0.68rem; color:#059669;" id="player-matches-sub">Active player</div>
+                </div>
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px;">
+                  <div style="font-size:0.7rem; color:#64748B; font-weight:700;">COINS</div>
+                  <div style="font-size:1.3rem; font-weight:800; color:#7C3AED;" id="player-loyalty">0 pts</div>
+                  <div style="font-size:0.68rem; color:#7C3AED;" id="player-loyalty-sub">25/booking</div>
+                </div>
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px;">
+                  <div style="font-size:0.7rem; color:#64748B; font-weight:700;">UPCOMING</div>
+                  <div style="font-size:1.3rem; font-weight:800; color:#0284C7;" id="player-upcoming-count">0</div>
+                  <div style="font-size:0.68rem; color:#0284C7;" id="player-upcoming-sub">Games scheduled</div>
+                </div>
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px;">
+                  <div style="font-size:0.7rem; color:#64748B; font-weight:700;">STATUS</div>
+                  <div style="font-size:0.95rem; font-weight:800; color:#059669; margin-top:4px;">Verified ✓</div>
+                  <div style="font-size:0.68rem; color:#64748B;">Ready to play</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           PANE 2: MY BOOKINGS (ALL RESERVATION DETAILS)
+           ====================================================================== -->
+      <section class="player-tab-pane" id="pane-player-bookings">
+        <div style="background:#FFFFFF; border-radius:20px; border:1px solid #E2E8F0; padding:24px; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+          
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+            <div>
+              <h2 style="font-size:1.35rem; font-weight:800; color:#0F172A; margin:0 0 4px 0;">All Match Reservations 🎟️</h2>
+              <p style="font-size:0.82rem; color:#64748B; margin:0;">View complete details, download official receipts, or cancel with instant OTP verification.</p>
+            </div>
+            <button type="button" class="btn-match-action btn-match-primary" onclick="window.openPlayerBookingModal()" style="border:none; cursor:pointer;">
+              + Book Another Match
+            </button>
+          </div>
+
+          <!-- Filter Tabs + Search -->
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid #F1F5F9;">
+            <div style="display:flex; gap:8px;" id="player-bookings-filter-tabs">
+              <button type="button" class="btn-mini-action active-filter" data-bfilter="all" onclick="window.filterBookingsTab('all', this)" style="background:#064E3B; color:#FFF; font-weight:700; border-radius:8px; padding:6px 14px; cursor:pointer;">All</button>
+              <button type="button" class="btn-mini-action" data-bfilter="upcoming" onclick="window.filterBookingsTab('upcoming', this)" style="background:#F1F5F9; color:#475569; font-weight:600; border-radius:8px; padding:6px 14px; cursor:pointer;">Upcoming</button>
+              <button type="button" class="btn-mini-action" data-bfilter="completed" onclick="window.filterBookingsTab('completed', this)" style="background:#F1F5F9; color:#475569; font-weight:600; border-radius:8px; padding:6px 14px; cursor:pointer;">Completed</button>
+              <button type="button" class="btn-mini-action" data-bfilter="cancelled" onclick="window.filterBookingsTab('cancelled', this)" style="background:#F1F5F9; color:#475569; font-weight:600; border-radius:8px; padding:6px 14px; cursor:pointer;">Cancelled</button>
+            </div>
+            <input type="text" id="bookings-search-input" placeholder="🔍 Search venue, ref ID..." style="border:1px solid #CBD5E1; border-radius:10px; padding:7px 14px; font-size:0.82rem; outline:none; width:220px;" oninput="window.filterBookingsSearch(this.value)">
+          </div>
+
+          <!-- Bookings Table -->
+          <div style="overflow-x:auto;">
+            <table class="dash-table" style="margin:0; width:100%;">
               <thead>
                 <tr>
-                  <th>Turf Name</th>
-                  <th>Date & Time</th>
+                  <th>Booking Ref</th>
+                  <th>Turf Venue</th>
+                  <th>Date &amp; Time</th>
                   <th>Amount</th>
-                  <th>Payment</th>
+                  <th>Payment Status</th>
                   <th>Status</th>
-                  <th>Action</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="player-bookings-body">
-                <!-- Injected via JavaScript -->
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           PANE 3: PAYMENTS (PAYMENT RECORDS & RECEIPTS)
+           ====================================================================== -->
+      <section class="player-tab-pane" id="pane-player-payments">
+        <div style="background:#FFFFFF; border-radius:20px; border:1px solid #E2E8F0; padding:24px; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+          <div style="margin-bottom:20px;">
+            <h2 style="font-size:1.35rem; font-weight:800; color:#0F172A; margin:0 0 4px 0;">Payment Records &amp; Invoices 💳</h2>
+            <p style="font-size:0.82rem; color:#64748B; margin:0;">Transparent transaction history, payment channel breakdowns, and instant tax-compliant receipts.</p>
+          </div>
+
+          <!-- 3 Financial KPI Cards -->
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:24px;">
+            <div style="background:#ECFDF5; border:1.5px solid #A7F3D0; border-radius:16px; padding:18px;">
+              <div style="font-size:0.75rem; font-weight:800; color:#065F46; text-transform:uppercase;">TOTAL AMOUNT SPENT</div>
+              <div style="font-size:1.8rem; font-weight:800; color:#064E3B; margin-top:4px;" id="player-total-spent">₹0</div>
+              <div style="font-size:0.72rem; color:#047857; margin-top:4px;">Across all completed matches</div>
+            </div>
+            <div style="background:#EFF6FF; border:1.5px solid #BAE6FD; border-radius:16px; padding:18px;">
+              <div style="font-size:0.75rem; font-weight:800; color:#1E40AF; text-transform:uppercase;">SUCCESSFUL PAYMENTS</div>
+              <div style="font-size:1.8rem; font-weight:800; color:#1D4ED8; margin-top:4px;" id="player-paid-tx-count">0</div>
+              <div style="font-size:0.72rem; color:#2563EB; margin-top:4px;">Instant online settlements via UPI / Card</div>
+            </div>
+            <div style="background:#FAF5FF; border:1.5px solid #E9D5FF; border-radius:16px; padding:18px;">
+              <div style="font-size:0.75rem; font-weight:800; color:#6B21A8; text-transform:uppercase;">TURFIFY REWARD COINS</div>
+              <div style="font-size:1.8rem; font-weight:800; color:#7E22CE; margin-top:4px;" id="player-payment-coins">0 pts</div>
+              <div style="font-size:0.72rem; color:#9333EA; margin-top:4px;">Redeemable for court discounts</div>
+            </div>
+          </div>
+
+          <!-- Payments Table -->
+          <div style="overflow-x:auto;">
+            <table class="dash-table" style="margin:0; width:100%;">
+              <thead>
+                <tr>
+                  <th>Transaction Date</th>
+                  <th>Booking Ref</th>
+                  <th>Turf Facility</th>
+                  <th>Amount</th>
+                  <th>Channel</th>
+                  <th>Status</th>
+                  <th>Receipt</th>
+                </tr>
+              </thead>
+              <tbody id="player-payments-body">
+                <!-- Injected via JS -->
               </tbody>
             </table>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Right Column: Saved Turfs -->
-      <div id="saved-venues">
-        <div class="panel-header-teal">
-          <div class="panel-title-teal">
-            ❤️ Saved Venues
+      <!-- ======================================================================
+           PANE 4: FAVORITES (SAVED FACILITIES)
+           ====================================================================== -->
+      <section class="player-tab-pane" id="pane-player-favorites">
+        <div style="background:#FFFFFF; border-radius:20px; border:1px solid #E2E8F0; padding:24px; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+            <div>
+              <h2 style="font-size:1.35rem; font-weight:800; color:#0F172A; margin:0 0 4px 0;">Saved &amp; Recommended Facilities ❤️</h2>
+              <p style="font-size:0.82rem; color:#64748B; margin:0;">Your favorite verified venues with live pricing, court dimensions, and instant 1-click booking.</p>
+            </div>
+            <a href="index.html#search-section" class="btn-match-action btn-match-primary" style="text-decoration:none; cursor:pointer;">
+              🔍 Discover More Turfs
+            </a>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;" id="player-favorites-grid">
+            <!-- Populated via JS -->
           </div>
         </div>
-        <div class="panel-body-teal" id="player-favorites-list">
-          <!-- Injected via JavaScript -->
-        </div>
-      </div>
-    </div>
+      </section>
 
-  </main>
+      <!-- ======================================================================
+           PANE 5: PROFILE (CONTACT & ACCOUNT INFORMATION)
+           ====================================================================== -->
+      <section class="player-tab-pane" id="pane-player-profile">
+        <div style="max-width:760px; margin:0 auto; background:#FFFFFF; border-radius:20px; border:1px solid #E2E8F0; padding:28px; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+          <div style="display:flex; align-items:center; gap:18px; padding-bottom:20px; border-bottom:1px solid #F1F5F9; margin-bottom:24px;">
+            <div style="width:72px; height:72px; border-radius:50%; background:#D1FAE5; border:3px solid #10B981; display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:800; color:#047857;">
+              ⚽
+            </div>
+            <div>
+              <h2 style="font-size:1.3rem; font-weight:800; color:#0F172A; margin:0 0 4px 0;" id="profile-display-name">Player Account</h2>
+              <div style="font-size:0.82rem; color:#64748B;">Registered Athlete • Tamil Nadu Sports Marketplace</div>
+            </div>
+          </div>
+
+          <form id="form-player-profile" onsubmit="window.savePlayerProfile(event)">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div class="form-group">
+                <label class="form-label" style="font-weight:700;">Full Name</label>
+                <input type="text" class="form-control" id="player-profile-name" placeholder="Full Name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-weight:700;">WhatsApp / Phone Number</label>
+                <input type="tel" class="form-control" id="player-profile-phone" placeholder="+91 Phone" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-weight:700;">Email Address</label>
+                <input type="email" class="form-control" id="player-profile-email" placeholder="you@gmail.com" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-weight:700;">Operating City / District</label>
+                <input type="text" class="form-control" id="player-profile-city" placeholder="e.g. Chennai">
+              </div>
+              <div class="form-group" style="grid-column:1 / -1;">
+                <label class="form-label" style="font-weight:700;">Favorite Primary Sport</label>
+                <select class="form-control" id="player-profile-sport">
+                  <option value="Football">⚽ Football (5v5 / 7v7 / 11v11)</option>
+                  <option value="Cricket">🏏 Box Cricket</option>
+                  <option value="Badminton">🏸 Badminton</option>
+                  <option value="Tennis">🎾 Tennis</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:20px; padding:12px; background:#F8FAFC; border-radius:10px; border:1px solid #E2E8F0; font-size:0.78rem; color:#64748B;">
+              🔒 Your contact information is used strictly for digital match passes, receipt invoices, and cancellation OTP verifications.
+            </div>
+
+            <button type="submit" style="margin-top:20px; width:100%; background:#064E3B; color:#FFFFFF; border:none; padding:14px; border-radius:12px; font-weight:800; font-size:0.92rem; cursor:pointer;">
+              💾 Save Profile &amp; Contact Info
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           PANE 6: SUPPORT (BOOKING-RELATED ASSISTANCE)
+           ====================================================================== -->
+      <section class="player-tab-pane" id="pane-player-support">
+        <div style="max-width:820px; margin:0 auto; background:#FFFFFF; border-radius:20px; border:1px solid #E2E8F0; padding:28px; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+          <div style="margin-bottom:24px;">
+            <h2 style="font-size:1.35rem; font-weight:800; color:#0F172A; margin:0 0 4px 0;">Booking Support &amp; Assistance 🎧</h2>
+            <p style="font-size:0.82rem; color:#64748B; margin:0;">Need help with a reservation, refund status, or venue directions? We are here to help 24/7.</p>
+          </div>
+
+          <!-- Support Channels -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+            <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:16px; padding:18px; text-align:center;">
+              <div style="font-size:2rem; margin-bottom:6px;">💬</div>
+              <h4 style="font-size:1rem; font-weight:800; color:#064E3B; margin:0 0 4px 0;">WhatsApp Support</h4>
+              <p style="font-size:0.78rem; color:#047857; margin:0 0 12px 0;">Instant chat with our match coordinators</p>
+              <a href="https://wa.me/919384797751?text=Hi%20Turfify,%20I%20need%20assistance%20with%20my%20booking" target="_blank" style="display:inline-block; background:#10B981; color:#FFFFFF; text-decoration:none; padding:8px 18px; border-radius:999px; font-weight:700; font-size:0.82rem;">
+                Open WhatsApp Chat ↗
+              </a>
+            </div>
+
+            <div style="background:#EFF6FF; border:1px solid #BAE6FD; border-radius:16px; padding:18px; text-align:center;">
+              <div style="font-size:2rem; margin-bottom:6px;">📞</div>
+              <h4 style="font-size:1rem; font-weight:800; color:#1E40AF; margin:0 0 4px 0;">Helpline Assistance</h4>
+              <p style="font-size:0.78rem; color:#1D4ED8; margin:0 0 12px 0;">Toll-free venue liaison helpline</p>
+              <a href="tel:+919384797751" style="display:inline-block; background:#2563EB; color:#FFFFFF; text-decoration:none; padding:8px 18px; border-radius:999px; font-weight:700; font-size:0.82rem;">
+                Call +91 93847 97751
+              </a>
+            </div>
+          </div>
+
+          <!-- FAQ Policy Breakdown -->
+          <h4 style="font-size:1.05rem; font-weight:800; color:#0F172A; margin:0 0 12px 0;">Frequently Asked Questions</h4>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="padding:14px; background:#F8FAFC; border-radius:12px; border:1px solid #E2E8F0;">
+              <strong style="font-size:0.88rem; color:#0F172A; display:block; margin-bottom:4px;">❓ How do I cancel a match reservation?</strong>
+              <span style="font-size:0.8rem; color:#64748B; line-height:1.5;">Click "Cancel" on any upcoming booking. A secure 6-digit confirmation code will be dispatched to your Gmail. Entering the OTP immediately confirms the cancellation and updates slot availability.</span>
+            </div>
+            <div style="padding:14px; background:#F8FAFC; border-radius:12px; border:1px solid #E2E8F0;">
+              <strong style="font-size:0.88rem; color:#0F172A; display:block; margin-bottom:4px;">❓ How do refunds work for online bookings?</strong>
+              <span style="font-size:0.8rem; color:#64748B; line-height:1.5;">Online payments made via UPI or Card are automatically queued for refund upon cancellation and settle back to your source account within 2-4 business days.</span>
+            </div>
+            <div style="padding:14px; background:#F8FAFC; border-radius:12px; border:1px solid #E2E8F0;">
+              <strong style="font-size:0.88rem; color:#0F172A; display:block; margin-bottom:4px;">❓ What happens if it rains heavily on an outdoor turf?</strong>
+              <span style="font-size:0.8rem; color:#64748B; line-height:1.5;">In the event of unplayable waterlogging, the facility owner will either reschedule your match or issue a full credit refund to your account.</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+
 
   <!-- ==========================================================================
        MODAL: BOOK TURF SLOT (PLAYER DASHBOARD IN-PLACE BOOKING)
@@ -2109,7 +2829,463 @@
       if (overlay) overlay.addEventListener('click', window.closeDrawer);
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+
+    // ========================================================================
+    //  MODERN SAAS SHELL — PLAYER DASHBOARD CONTROLLER
+    // ========================================================================
+
+    /* ── Tab Switching ──────────────────────────────────────────────────── */
+    function switchPlayerTab(tabName) {
+      // Update sidebar buttons
+      document.querySelectorAll('.player-tab-nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.playerTab === tabName);
+      });
+      // Show / hide panes
+      document.querySelectorAll('.player-tab-pane').forEach(pane => {
+        pane.classList.toggle('active', pane.id === 'pane-player-' + tabName);
+      });
+      // Update URL hash without scroll-jump
+      history.replaceState(null, '', '#' + tabName);
+      // Lazy-load specific pane data
+      if (tabName === 'payments')   renderPaymentsPane();
+      if (tabName === 'favorites')  renderFavoritesGrid();
+      if (tabName === 'profile')    prefillProfileForm();
+      if (tabName === 'overview')   renderOverviewExtras();
+    }
+    window.switchPlayerTab = switchPlayerTab;
+
+    // Wire up sidebar nav buttons (they may already exist in HTML as onclick,
+    // but add listener defensively)
+    document.querySelectorAll('.player-tab-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchPlayerTab(btn.dataset.playerTab));
+    });
+
+    // Hash-based deep link on page load
+    (function handleInitialHash() {
+      const hash = (window.location.hash || '#overview').replace('#', '');
+      const valid = ['overview','bookings','payments','favorites','profile','support'];
+      switchPlayerTab(valid.includes(hash) ? hash : 'overview');
+    })();
+
+    /* ── Overview Extras: Hero Card + Calendar + Schedule ───────────────── */
+    function renderOverviewExtras() {
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const turfs    = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+
+      /* Hero upcoming card */
+      const upcoming = bookings.find(b => b.status === 'Confirmed');
+      _renderHeroCard(upcoming, turfs);
+
+      /* Popular grid */
+      _renderPopularGrid(turfs);
+
+      /* Mini calendar */
+      _renderCalendar(bookings);
+
+      /* Schedule feed */
+      _renderScheduleFeed(bookings);
+    }
+
+    function _renderHeroCard(upcoming, turfs) {
+      const badge   = document.getElementById('player-featured-status-badge');
+      const payBadge= document.getElementById('player-featured-pay-badge');
+      const turfEl  = document.getElementById('player-hero-turf');
+      const locEl   = document.getElementById('player-hero-location');
+      const mapEl   = document.getElementById('player-hero-map-link');
+      const priceEl = document.getElementById('player-hero-price');
+      const timeEl  = document.getElementById('player-hero-time');
+      const fmtEl   = document.getElementById('player-hero-format');
+      const refEl   = document.getElementById('player-hero-ref');
+      const imgEl   = document.getElementById('player-featured-hero-img');
+      const dirBtn  = document.getElementById('btn-hero-directions');
+      const rcptBtn = document.getElementById('btn-hero-receipt');
+      const cnclBtn = document.getElementById('btn-hero-cancel');
+      const card    = document.getElementById('player-featured-upcoming-card');
+
+      if (!upcoming) {
+        // Empty state
+        if (card) {
+          card.style.background = 'linear-gradient(135deg,#0F172A 0%,#1E293B 100%)';
+          card.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;text-align:center;padding:2rem;">
+              <div style="font-size:3rem;margin-bottom:1rem;">⚽</div>
+              <h3 style="color:#F1F5F9;font-size:1.4rem;font-weight:800;margin-bottom:0.5rem;">No Upcoming Matches</h3>
+              <p style="color:#94A3B8;font-size:0.95rem;max-width:400px;margin-bottom:1.5rem;">Reserve a turf slot and your next match will appear here with full details.</p>
+              <button type="button" onclick="window.openPlayerBookingModal()" style="background:#10B981;color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:0.95rem;font-weight:700;cursor:pointer;">📅 Book a Slot</button>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      const turf = turfs.find(t => t.id === upcoming.turf_id) || {};
+      if (imgEl)   imgEl.src = turf.image || upcoming.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800&q=80';
+      if (badge)   { badge.textContent = '✅ CONFIRMED'; badge.style.cssText='background:#DCFCE7;color:#15803D;padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:800;letter-spacing:0.5px;'; }
+      if (payBadge){ payBadge.textContent = upcoming.payment_status === 'Paid' ? '💳 Paid Online' : '💵 Cash on Ground'; payBadge.style.cssText='background:#EFF6FF;color:#1D4ED8;padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:700;'; }
+      if (turfEl)  turfEl.textContent = upcoming.turf_name || 'Your Turf';
+      if (locEl)   locEl.textContent  = turf.location || upcoming.location || 'Tamil Nadu';
+      const mapsQ = encodeURIComponent((turf.location || upcoming.turf_name || '') + ' Tamil Nadu');
+      if (mapEl)   { mapEl.href = 'https://maps.google.com/?q=' + mapsQ; mapEl.textContent = '📍 Get Directions'; }
+      if (priceEl) priceEl.textContent = '₹' + (upcoming.amount || turf.price_per_hour || '—');
+      if (timeEl)  timeEl.textContent  = upcoming.date + '  •  ' + upcoming.time_slot;
+      if (fmtEl)   fmtEl.textContent   = upcoming.format || turf.format || '11v11';
+      if (refEl)   refEl.textContent   = 'Ref: #TRF-' + (upcoming.id || '').toString().slice(-6).toUpperCase().padStart(6,'0');
+
+      // Wire action buttons
+      if (dirBtn)  { dirBtn.onclick = () => window.open('https://maps.google.com/?q=' + mapsQ, '_blank'); }
+      if (rcptBtn) { rcptBtn.onclick = () => downloadBookingReceipt(upcoming); }
+      if (cnclBtn) { cnclBtn.onclick = () => cancelBooking(upcoming.id); }
+    }
+
+    function _renderPopularGrid(turfs) {
+      const grid = document.getElementById('player-popular-grid');
+      if (!grid) return;
+      const featured = turfs.slice(0, 3);
+      if (featured.length === 0) {
+        grid.innerHTML = '<p style="color:#94A3B8;font-size:0.9rem;">No facilities found.</p>';
+        return;
+      }
+      grid.innerHTML = featured.map(t => `
+        <div style="border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);background:#fff;cursor:pointer;" onclick="window.location='facility-details.html?id=${encodeURIComponent(t.id)}'">
+          <div style="height:130px;overflow:hidden;position:relative;">
+            <img src="${t.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=400&q=70'}" alt="${t.name}" style="width:100%;height:100%;object-fit:cover;">
+            <div style="position:absolute;bottom:8px;left:10px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.7rem;padding:3px 8px;border-radius:999px;">⭐ ${t.rating || '4.9'}</div>
+          </div>
+          <div style="padding:10px 12px 12px;">
+            <div style="font-weight:700;font-size:0.9rem;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.name}</div>
+            <div style="font-size:0.75rem;color:#64748B;margin:2px 0 8px;">📍 ${t.location || 'Tamil Nadu'}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-weight:800;color:#059669;font-size:0.95rem;">₹${t.price_per_hour}<span style="font-size:0.7rem;font-weight:500;color:#94A3B8;">/hr</span></span>
+              <button onclick="event.stopPropagation();window.openPlayerBookingModal('${t.id}')" style="background:#10B981;color:#fff;border:none;padding:5px 12px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;">Book</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function _renderCalendar(bookings) {
+      const monthEl = document.getElementById('cal-month-name');
+      const daysEl  = document.getElementById('cal-days-strip');
+      if (!monthEl || !daysEl) return;
+      const now   = new Date();
+      const year  = now.getFullYear();
+      const month = now.getMonth();
+      const days  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      monthEl.textContent = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+
+      // Build 7-day strip starting today
+      let html = '';
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(year, month, now.getDate() + i);
+        const iso = d.toISOString().split('T')[0];
+        const hasBooking = bookings.some(b => b.date === iso || (b.date && b.date.startsWith(iso)));
+        const isToday = i === 0;
+        html += `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:38px;cursor:default;">
+            <span style="font-size:0.65rem;color:#94A3B8;font-weight:600;text-transform:uppercase;">${days[d.getDay()]}</span>
+            <span style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:${isToday?'800':'600'};
+              background:${isToday?'#10B981':'transparent'};color:${isToday?'#fff':(hasBooking?'#059669':'#334155')};
+              border:${hasBooking&&!isToday?'2px solid #6EE7B7':'2px solid transparent'};">
+              ${d.getDate()}
+            </span>
+            ${hasBooking ? '<span style="width:5px;height:5px;border-radius:50%;background:#10B981;"></span>' : '<span style="width:5px;height:5px;"></span>'}
+          </div>
+        `;
+      }
+      daysEl.innerHTML = html;
+    }
+
+    function _renderScheduleFeed(bookings) {
+      const feed = document.getElementById('player-schedule-feed');
+      if (!feed) return;
+      const upcoming = bookings.filter(b => b.status === 'Confirmed').slice(0, 4);
+      if (upcoming.length === 0) {
+        feed.innerHTML = '<p style="color:#94A3B8;font-size:0.85rem;padding:12px 0;">No upcoming matches scheduled.</p>';
+        return;
+      }
+      const sports = { Football:'⚽', Cricket:'🏏', Badminton:'🏸', Basketball:'🏀', Tennis:'🎾' };
+      feed.innerHTML = upcoming.map(b => {
+        const icon = sports[b.sport] || '🏟️';
+        return `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F1F5F9;">
+            <div style="width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;">
+              <img src="${b.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=100&q=60'}" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:0.85rem;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${icon} ${b.turf_name}</div>
+              <div style="font-size:0.72rem;color:#64748B;margin-top:2px;">📅 ${b.date} &nbsp;•&nbsp; ⏰ ${b.time_slot}</div>
+            </div>
+            <span style="background:#DCFCE7;color:#15803D;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:999px;flex-shrink:0;">Confirmed</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ── Payments Pane ──────────────────────────────────────────────────── */
+    function renderPaymentsPane() {
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const paid     = bookings.filter(b => b.payment_status === 'Paid' || b.status === 'Confirmed' || b.status === 'Completed');
+      const totalSpent    = paid.reduce((s,b) => s + parseFloat(b.amount || 0), 0);
+      const coins         = paid.length * 25;
+
+      const spentEl = document.getElementById('player-total-spent');
+      const txEl    = document.getElementById('player-paid-tx-count');
+      const coinsEl = document.getElementById('player-payment-coins');
+      if (spentEl)  spentEl.textContent  = '₹' + totalSpent.toLocaleString('en-IN');
+      if (txEl)     txEl.textContent     = paid.length;
+      if (coinsEl)  coinsEl.textContent  = coins + ' coins';
+
+      const tbody = document.getElementById('player-payments-body');
+      if (!tbody) return;
+      if (paid.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:3rem;color:#94A3B8;">No payment records yet. Book a turf to see your receipts here.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = paid.map((b,i) => `
+        <tr style="border-bottom:1px solid #F1F5F9;">
+          <td style="padding:12px 8px;font-size:0.8rem;color:#64748B;">#TRF-${(b.id||i).toString().slice(-6).toUpperCase().padStart(6,'0')}</td>
+          <td style="padding:12px 8px;font-size:0.85rem;font-weight:600;color:#0F172A;">${b.turf_name}</td>
+          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.date}</td>
+          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.time_slot}</td>
+          <td style="padding:12px 8px;font-weight:800;color:#059669;font-size:0.95rem;">₹${b.amount}</td>
+          <td style="padding:12px 8px;">
+            <button onclick="downloadBookingReceipt(window.TurfifyStore.getPlayerBookings(window.TurfifyStore.getCurrentUser()?.id).find(x=>x.id==='${b.id}'))" 
+              style="background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;">📄 Receipt</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    /* ── Favorites / Popular Grid ───────────────────────────────────────── */
+    function renderFavoritesGrid() {
+      const grid  = document.getElementById('player-favorites-grid');
+      const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+      if (!grid) return;
+      if (turfs.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#94A3B8;"><div style="font-size:2.5rem;margin-bottom:0.5rem;">🏟️</div><p>No facilities found in your area yet.</p></div>';
+        return;
+      }
+      const sports = { Football:'⚽', Cricket:'🏏', Badminton:'🏸', Basketball:'🏀', Tennis:'🎾' };
+      grid.innerHTML = turfs.map(t => {
+        const icon = sports[t.sport] || '🏟️';
+        return `
+          <div style="border-radius:18px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.07);background:#fff;display:flex;flex-direction:column;">
+            <div style="height:160px;overflow:hidden;position:relative;">
+              <img src="${t.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&q=75'}" alt="${t.name}" style="width:100%;height:100%;object-fit:cover;">
+              <div style="position:absolute;top:10px;left:10px;background:rgba(16,185,129,0.9);color:#fff;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:999px;">${icon} ${t.format || '11v11'}</div>
+              <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.5);color:#fff;font-size:0.7rem;padding:3px 9px;border-radius:999px;">⭐ ${t.rating || '4.9'}</div>
+            </div>
+            <div style="padding:14px 16px;flex:1;display:flex;flex-direction:column;">
+              <h4 style="margin:0 0 4px;font-size:1rem;font-weight:800;color:#0F172A;">${t.name}</h4>
+              <p style="margin:0 0 8px;font-size:0.78rem;color:#64748B;">📍 ${t.location || 'Tamil Nadu'}</p>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                ${(t.amenities || ['Floodlights','Parking']).slice(0,3).map(a => `<span style="background:#F0FDF4;color:#15803D;font-size:0.68rem;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid #BBF7D0;">${a}</span>`).join('')}
+              </div>
+              <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <span style="font-size:1.15rem;font-weight:900;color:#059669;">₹${t.price_per_hour}</span>
+                  <span style="font-size:0.72rem;color:#94A3B8;">/hr</span>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="background:#F1F5F9;color:#334155;border:1.5px solid #E2E8F0;border-radius:10px;padding:7px 12px;font-size:0.78rem;font-weight:600;text-decoration:none;">Details</a>
+                  <button onclick="window.openPlayerBookingModal('${t.id}')" style="background:#10B981;color:#fff;border:none;border-radius:10px;padding:7px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;">Book Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ── Profile Form ───────────────────────────────────────────────────── */
+    function prefillProfileForm() {
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      if (!user) return;
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+      setVal('player-profile-name',  user.name);
+      setVal('player-profile-phone', user.phone || user.whatsapp);
+      setVal('player-profile-email', user.email);
+      setVal('player-profile-city',  user.city);
+      setVal('player-profile-sport', user.preferred_sport);
+    }
+
+    window.savePlayerProfile = function(e) {
+      if (e) e.preventDefault();
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      if (!user) return;
+      const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+      user.name            = getVal('player-profile-name')  || user.name;
+      user.phone           = getVal('player-profile-phone') || user.phone;
+      user.city            = getVal('player-profile-city')  || user.city;
+      user.preferred_sport = getVal('player-profile-sport') || user.preferred_sport;
+      window.TurfifyStore.setCurrentUser(user);
+      // Update nav name immediately
+      const navName = document.getElementById('nav-player-name');
+      if (navName) navName.textContent = user.name;
+      showToast('✅ Profile updated successfully!');
+    };
+
+    /* ── Receipt Download ───────────────────────────────────────────────── */
+    window.downloadBookingReceipt = function(booking) {
+      if (!booking) { showToast('Receipt not available.'); return; }
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : {};
+      const refId = 'TRF-' + (booking.id || Date.now()).toString().slice(-6).toUpperCase().padStart(6,'0');
+      const receiptHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Receipt ${refId}</title>
+  <style>
+    body{font-family:'Segoe UI',sans-serif;max-width:580px;margin:40px auto;color:#1e293b;line-height:1.5;}
+    .header{background:#10B981;color:#fff;padding:28px 32px;border-radius:16px 16px 0 0;}
+    .header h1{margin:0;font-size:1.8rem;font-weight:900;letter-spacing:-0.5px;}
+    .header p{margin:4px 0 0;opacity:0.85;font-size:0.9rem;}
+    .body{background:#fff;border:1px solid #E2E8F0;border-top:0;padding:28px 32px;border-radius:0 0 16px 16px;}
+    .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F1F5F9;font-size:0.9rem;}
+    .row:last-child{border:0;}
+    .label{color:#64748B;}
+    .val{font-weight:700;color:#0F172A;}
+    .total-row{display:flex;justify-content:space-between;padding:16px 0 0;font-size:1.1rem;font-weight:900;}
+    .total-row .val{color:#059669;}
+    .badge{display:inline-block;background:#DCFCE7;color:#15803D;padding:3px 12px;border-radius:999px;font-size:0.78rem;font-weight:700;margin-bottom:16px;}
+    .footer{text-align:center;margin-top:28px;font-size:0.78rem;color:#94A3B8;}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🏟️ Turfify</h1>
+    <p>Booking Confirmation Receipt — ${refId}</p>
+  </div>
+  <div class="body">
+    <div class="badge">✅ CONFIRMED RESERVATION</div>
+    <div class="row"><span class="label">Player Name</span><span class="val">${user.name || 'Player'}</span></div>
+    <div class="row"><span class="label">Email</span><span class="val">${user.email || '—'}</span></div>
+    <div class="row"><span class="label">Venue</span><span class="val">${booking.turf_name}</span></div>
+    <div class="row"><span class="label">Sport</span><span class="val">${booking.sport || 'Football'}</span></div>
+    <div class="row"><span class="label">Date</span><span class="val">${booking.date}</span></div>
+    <div class="row"><span class="label">Time Slot</span><span class="val">${booking.time_slot}</span></div>
+    <div class="row"><span class="label">Booking Ref</span><span class="val">${refId}</span></div>
+    <div class="row"><span class="label">Payment Status</span><span class="val">${booking.payment_status || 'Paid'}</span></div>
+    <div class="total-row"><span>Total Paid</span><span class="val">₹${booking.amount}</span></div>
+    <div class="footer">Thank you for booking with Turfify · support@turfify.in<br>This is a system-generated receipt.</div>
+  </div>
+</body>
+</html>`;
+      const blob = new Blob([receiptHtml], { type: 'text/html' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'Turfify-Receipt-' + refId + '.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('📄 Receipt downloaded!');
+    };
+    window.downloadBookingReceipt = window.downloadBookingReceipt;
+
+    /* ── Bookings Pane: Filter Tabs + Search ────────────────────────────── */
+    (function setupBookingsFilters() {
+      const filterTabs = document.getElementById('player-bookings-filter-tabs');
+      if (filterTabs) {
+        filterTabs.addEventListener('click', e => {
+          const btn = e.target.closest('[data-filter]');
+          if (!btn) return;
+          filterTabs.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          filterBookingsTab(btn.dataset.filter);
+        });
+      }
+      const searchInput = document.getElementById('bookings-search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', e => filterBookingsSearch(e.target.value));
+      }
+    })();
+
+    function filterBookingsTab(status) {
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const filtered = status === 'all' ? bookings : bookings.filter(b => b.status.toLowerCase() === status.toLowerCase());
+      _renderBookingsTable(filtered);
+    }
+
+    function filterBookingsSearch(query) {
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const q        = query.toLowerCase();
+      const filtered = q ? bookings.filter(b =>
+        (b.turf_name||'').toLowerCase().includes(q) ||
+        (b.date||'').toLowerCase().includes(q) ||
+        (b.status||'').toLowerCase().includes(q) ||
+        (b.sport||'').toLowerCase().includes(q)
+      ) : bookings;
+      _renderBookingsTable(filtered);
+    }
+
+    function _renderBookingsTable(bookings) {
+      const tbody = document.getElementById('player-bookings-body');
+      if (!tbody) return;
+      if (bookings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:3rem 1rem;color:#94A3B8;"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div><strong style="display:block;color:#0F172A;margin-bottom:4px;">No Bookings Found</strong><span style="font-size:0.85rem;">Try a different filter or book a turf slot.</span></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = bookings.map(b => {
+        const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
+        const venueLink   = b.turf_id ? `facility-details.html?id=${encodeURIComponent(b.turf_id)}` : '#';
+        const refId       = '#TRF-' + (b.id||'').toString().slice(-6).toUpperCase().padStart(6,'0');
+        return `
+          <tr style="border-bottom:1px solid #F8FAFC;">
+            <td style="padding:12px 8px;">
+              <strong><a href="${venueLink}" style="color:inherit;text-decoration:underline;">${b.turf_name}</a></strong>
+              <br><span style="font-size:0.72rem;color:#64748B;">${b.sport || 'Sports'} &nbsp;•&nbsp; ${refId}</span>
+            </td>
+            <td style="padding:12px 8px;">${b.date}<br><span style="font-size:0.72rem;color:#64748B;">${b.time_slot}</span></td>
+            <td style="padding:12px 8px;font-weight:800;color:#059669;">₹${b.amount}</td>
+            <td style="padding:12px 8px;font-size:0.8rem;color:#1D4ED8;font-weight:600;">${b.payment_status}</td>
+            <td style="padding:12px 8px;"><span class="status-pill ${statusClass}">${b.status}</span></td>
+            <td style="padding:12px 8px;">
+              <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                ${b.status === 'Confirmed' ?
+                  `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626;cursor:pointer;">Cancel</button>` :
+                  `<button class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id||''}')" style="cursor:pointer;">Rebook</button>`
+                }
+                <button class="btn-mini-action" onclick="downloadBookingReceipt(window.TurfifyStore.getPlayerBookings(window.TurfifyStore.getCurrentUser()?.id).find(x=>x.id==='${b.id}'))" style="color:#1D4ED8;border-color:#BFDBFE;background:#EFF6FF;cursor:pointer;">📄</button>
+                <button class="btn-mini-action" onclick="window.playerDeleteBooking('${b.id}')" style="color:#7C3AED;border-color:#DDD6FE;background:#F5F3FF;cursor:pointer;">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /* ── Override renderPlayerDashboard to also populate new sections ───── */
+    const _originalRenderPlayerDashboard = renderPlayerDashboard;
+    renderPlayerDashboard = function() {
+      _originalRenderPlayerDashboard();
+      // Also populate whichever pane is active
+      const hash = (window.location.hash || '#overview').replace('#','');
+      if (hash === 'overview' || hash === '')  renderOverviewExtras();
+      if (hash === 'payments')   renderPaymentsPane();
+      if (hash === 'favorites')  renderFavoritesGrid();
+      if (hash === 'profile')    prefillProfileForm();
+      // Always rebuild the bookings pane table so it stays up to date
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      _renderBookingsTable(bookings);
+    };
+
+    /* ── Initial render on DOMContentLoaded already called above ─────────
+       Re-run overview extras once TurfifyStore is ready               */
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderOverviewExtras);
+    } else {
+      renderOverviewExtras();
+    }
+
+</script>
 </body>
 
 </html>
