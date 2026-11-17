@@ -2712,10 +2712,10 @@
                   <button type="button" class="btn-hero-primary-green" id="btn-hero-directions">
                     📍 Directions
                   </button>
-                  <button type="button" class="btn-hero-secondary-white" id="btn-hero-receipt">
+                  <button type="button" class="btn-hero-secondary-white" id="btn-hero-receipt" onclick="window.triggerHeroReceipt()">
                     📄 Receipt
                   </button>
-                  <button type="button" class="btn-hero-danger-soft" id="btn-hero-cancel">
+                  <button type="button" class="btn-hero-danger-soft" id="btn-hero-cancel" onclick="window.triggerHeroCancel()">
                     Cancel
                   </button>
                 </div>
@@ -3186,6 +3186,7 @@
   <script src="store.js"></script>
   <script>
     // Toast Helper
+    window.showToast = showToast;
     function showToast(msg) {
       const container = document.getElementById('toast-container');
       if (!container) return;
@@ -3284,6 +3285,7 @@
       }
     };
 
+    window.renderPlayerDashboard = renderPlayerDashboard;
     function renderPlayerDashboard() {
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
       if (!user || !user.is_authenticated) {
@@ -3941,11 +3943,17 @@
   <script>
 
     // ========================================================================
-    //  MODERN SAAS SHELL — PLAYER DASHBOARD CONTROLLER
+    //  MODERN SAAS SHELL — PLAYER DASHBOARD BULLETPROOF CONTROLLER
     // ========================================================================
+
+    const showToast = (msg) => (window.showToast ? window.showToast(msg) : console.log(msg));
+    // Global Interactive State (Initialized upfront to prevent undefined errors)
+    window.calCurrentDate = new Date();
+    window.calSelectedIso = new Date().toISOString().split('T')[0];
 
     /* ── Tab Switching ──────────────────────────────────────────────────── */
     function switchPlayerTab(tabName) {
+      if (!tabName) tabName = 'overview';
       // Update sidebar buttons
       document.querySelectorAll('.player-tab-nav-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.playerTab === tabName);
@@ -3955,7 +3963,9 @@
         pane.classList.toggle('active', pane.id === 'pane-player-' + tabName);
       });
       // Update URL hash without scroll-jump
-      history.replaceState(null, '', '#' + tabName);
+      if (window.history && window.history.replaceState) {
+        history.replaceState(null, '', '#' + tabName);
+      }
       // Lazy-load specific pane data
       if (tabName === 'payments')   renderPaymentsPane();
       if (tabName === 'favorites')  renderFavoritesGrid();
@@ -3964,18 +3974,28 @@
     }
     window.switchPlayerTab = switchPlayerTab;
 
-    // Wire up sidebar nav buttons (they may already exist in HTML as onclick,
-    // but add listener defensively)
-    document.querySelectorAll('.player-tab-nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => switchPlayerTab(btn.dataset.playerTab));
-    });
+    // Direct Receipt & Cancellation Triggers
+    window.triggerHeroReceipt = function() {
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const upcoming = bookings.find(b => b.status === 'Confirmed') || bookings[0];
+      if (upcoming) {
+        window.downloadBookingReceipt(upcoming);
+      } else {
+        showToast('📄 No booking receipt available.');
+      }
+    };
 
-    // Hash-based deep link on page load
-    (function handleInitialHash() {
-      const hash = (window.location.hash || '#overview').replace('#', '');
-      const valid = ['overview','bookings','payments','favorites','profile','support'];
-      switchPlayerTab(valid.includes(hash) ? hash : 'overview');
-    })();
+    window.triggerHeroCancel = function() {
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const upcoming = bookings.find(b => b.status === 'Confirmed');
+      if (upcoming && window.cancelBooking) {
+        window.cancelBooking(upcoming.id);
+      } else {
+        showToast('ℹ️ No active confirmed booking to cancel.');
+      }
+    };
 
     /* ── Overview Extras: Hero Card + Calendar + Schedule ───────────────── */
     function renderOverviewExtras() {
@@ -3996,6 +4016,7 @@
       /* Schedule feed */
       _renderScheduleFeed(bookings);
     }
+    window.renderOverviewExtras = renderOverviewExtras;
 
     function _renderHeroCard(upcoming, turfs) {
       const badge   = document.getElementById('player-featured-status-badge');
@@ -4037,7 +4058,7 @@
       card.style.display = 'grid';
       card.style.background = '#FFFFFF';
 
-      const turf = turfs.find(t => t.id === upcoming.turf_id) || {};
+      const turf = (turfs || []).find(t => t.id === upcoming.turf_id) || {};
       if (imgEl)   imgEl.src = turf.image || upcoming.image || 'images/turf-arena.jpg';
       if (badge)   { badge.textContent = 'CONFIRMED RESERVATION ✅'; }
       if (payBadge){ payBadge.textContent = (upcoming.payment_status === 'Paid Online' || upcoming.payment_status === 'Paid') ? '💳 Paid Online' : '💵 Cash on Ground'; }
@@ -4055,16 +4076,16 @@
       const refCode = '#TRF-' + (upcoming.id || '').toString().slice(-6).toUpperCase().padStart(6,'0');
       if (refEl)   refEl.textContent   = 'Ref: ' + refCode;
 
-      // Wire action buttons
+      // Dynamic action buttons
       if (dirBtn)  { dirBtn.onclick = () => window.open('https://maps.google.com/?q=' + mapsQ, '_blank'); }
-      if (rcptBtn) { rcptBtn.onclick = () => downloadBookingReceipt(upcoming); }
-      if (cnclBtn) { cnclBtn.onclick = () => cancelBooking(upcoming.id); }
+      if (rcptBtn) { rcptBtn.onclick = () => window.downloadBookingReceipt(upcoming); }
+      if (cnclBtn) { cnclBtn.onclick = () => (window.cancelBooking ? window.cancelBooking(upcoming.id) : null); }
     }
 
     function _renderPopularGrid(turfs) {
       const grid = document.getElementById('player-popular-grid');
       if (!grid) return;
-      const featured = turfs.slice(0, 3);
+      const featured = (turfs || []).slice(0, 3);
       if (featured.length === 0) {
         grid.innerHTML = '<p style="color:#94A3B8; font-size:0.9rem; grid-column:1/-1; padding:20px; text-align:center;">No facilities found.</p>';
         return;
@@ -4072,7 +4093,7 @@
       grid.innerHTML = featured.map(t => `
         <div class="popular-facility-card" onclick="window.location='facility-details.html?id=${encodeURIComponent(t.id)}'">
           <div class="popular-card-media">
-            <img src="${t.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&q=75'}" alt="${t.name}">
+            <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}">
             <div class="popular-card-rating">⭐ ${t.rating || '4.8'}</div>
           </div>
           <div class="popular-card-body">
@@ -4091,11 +4112,9 @@
       `).join('');
     }
 
-    // Global Interactive Calendar State
-    window.calCurrentDate = new Date();
-    window.calSelectedIso = new Date().toISOString().split('T')[0];
-
+    /* ── Interactive Calendar Functions ─────────────────────────────────── */
     window.changeCalMonth = function(delta) {
+      if (!window.calCurrentDate) window.calCurrentDate = new Date();
       window.calCurrentDate.setMonth(window.calCurrentDate.getMonth() + delta);
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
       const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
@@ -4118,7 +4137,9 @@
       const daysEl  = document.getElementById('cal-days-strip');
       if (!monthEl || !daysEl) return;
 
-      const date = window.calCurrentDate;
+      const date = window.calCurrentDate || new Date();
+      window.calCurrentDate = date;
+
       const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       
@@ -4130,7 +4151,7 @@
       if (prevBtn) prevBtn.onclick = () => window.changeCalMonth(-1);
       if (nextBtn) nextBtn.onclick = () => window.changeCalMonth(1);
 
-      // Generate 5 days strip around active date (Mon 06, Tue 14, Wed 18 style)
+      // Generate 5 days strip around active date
       let html = '';
       const startDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
@@ -4156,7 +4177,7 @@
       const feed = document.getElementById('player-schedule-feed');
       if (!feed) return;
 
-      let list = bookings.filter(b => b.status === 'Confirmed' || b.status === 'Completed');
+      let list = (bookings || []).filter(b => b.status === 'Confirmed' || b.status === 'Completed');
       if (filterDate) {
         const matchesOnDate = list.filter(b => b.date === filterDate || (b.date && b.date.startsWith(filterDate)));
         if (matchesOnDate.length > 0) {
@@ -4165,7 +4186,11 @@
       }
 
       if (list.length === 0) {
-        feed.innerHTML = '<p style="color:#94A3B8; font-size:0.85rem; padding:16px 0; margin:0; text-align:center;">No matches scheduled.</p>';
+        feed.innerHTML = `<div style="text-align:center; padding:1.5rem 0.5rem; color:#94A3B8;">
+          <div style="font-size:1.6rem; margin-bottom:4px;">⚽</div>
+          <strong style="font-size:0.85rem; color:#0F172A;">No matches on this date</strong><br>
+          <span style="font-size:0.75rem;">Select another date or book a slot.</span>
+        </div>`;
         return;
       }
       feed.innerHTML = list.slice(0, 4).map(b => `
@@ -4187,269 +4212,6 @@
       `).join('');
     }
 
-    function renderPaymentsPane() {
-      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
-      const paid     = bookings.filter(b => b.payment_status === 'Paid' || b.status === 'Confirmed' || b.status === 'Completed');
-      const totalSpent    = paid.reduce((s,b) => s + parseFloat(b.amount || 0), 0);
-      const coins         = paid.length * 25;
-
-      const spentEl = document.getElementById('player-total-spent');
-      const txEl    = document.getElementById('player-paid-tx-count');
-      const coinsEl = document.getElementById('player-payment-coins');
-      if (spentEl)  spentEl.textContent  = '₹' + totalSpent.toLocaleString('en-IN');
-      if (txEl)     txEl.textContent     = paid.length;
-      if (coinsEl)  coinsEl.textContent  = coins + ' coins';
-
-      const tbody = document.getElementById('player-payments-body');
-      if (!tbody) return;
-      if (paid.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:3rem;color:#94A3B8;">No payment records yet. Book a turf to see your receipts here.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = paid.map((b,i) => `
-        <tr style="border-bottom:1px solid #F1F5F9;">
-          <td style="padding:12px 8px;font-size:0.8rem;color:#64748B;">#TRF-${(b.id||i).toString().slice(-6).toUpperCase().padStart(6,'0')}</td>
-          <td style="padding:12px 8px;font-size:0.85rem;font-weight:600;color:#0F172A;">${b.turf_name}</td>
-          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.date}</td>
-          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.time_slot}</td>
-          <td style="padding:12px 8px;font-weight:800;color:#059669;font-size:0.95rem;">₹${b.amount}</td>
-          <td style="padding:12px 8px;">
-            <button onclick="downloadBookingReceipt(window.TurfifyStore.getPlayerBookings(window.TurfifyStore.getCurrentUser()?.id).find(x=>x.id==='${b.id}'))" 
-              style="background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;">📄 Receipt</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    /* ── Favorites / Popular Grid ───────────────────────────────────────── */
-    function renderFavoritesGrid() {
-      const grid  = document.getElementById('player-favorites-grid');
-      const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
-      if (!grid) return;
-      if (turfs.length === 0) {
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#94A3B8;"><div style="font-size:2.5rem;margin-bottom:0.5rem;">🏟️</div><p>No facilities found in your area yet.</p></div>';
-        return;
-      }
-      const sports = { Football:'⚽', Cricket:'🏏', Badminton:'🏸', Basketball:'🏀', Tennis:'🎾' };
-      grid.innerHTML = turfs.map(t => {
-        const icon = sports[t.sport] || '🏟️';
-        return `
-          <div style="border-radius:18px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.07);background:#fff;display:flex;flex-direction:column;">
-            <div style="height:160px;overflow:hidden;position:relative;">
-              <img src="${t.image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&q=75'}" alt="${t.name}" style="width:100%;height:100%;object-fit:cover;">
-              <div style="position:absolute;top:10px;left:10px;background:rgba(16,185,129,0.9);color:#fff;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:999px;">${icon} ${t.format || '11v11'}</div>
-              <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.5);color:#fff;font-size:0.7rem;padding:3px 9px;border-radius:999px;">⭐ ${t.rating || '4.9'}</div>
-            </div>
-            <div style="padding:14px 16px;flex:1;display:flex;flex-direction:column;">
-              <h4 style="margin:0 0 4px;font-size:1rem;font-weight:800;color:#0F172A;">${t.name}</h4>
-              <p style="margin:0 0 8px;font-size:0.78rem;color:#64748B;">📍 ${t.location || 'Tamil Nadu'}</p>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-                ${(t.amenities || ['Floodlights','Parking']).slice(0,3).map(a => `<span style="background:#F0FDF4;color:#15803D;font-size:0.68rem;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid #BBF7D0;">${a}</span>`).join('')}
-              </div>
-              <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;">
-                <div>
-                  <span style="font-size:1.15rem;font-weight:900;color:#059669;">₹${t.price_per_hour}</span>
-                  <span style="font-size:0.72rem;color:#94A3B8;">/hr</span>
-                </div>
-                <div style="display:flex;gap:8px;">
-                  <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="background:#F1F5F9;color:#334155;border:1.5px solid #E2E8F0;border-radius:10px;padding:7px 12px;font-size:0.78rem;font-weight:600;text-decoration:none;">Details</a>
-                  <button onclick="window.openPlayerBookingModal('${t.id}')" style="background:#10B981;color:#fff;border:none;border-radius:10px;padding:7px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;">Book Now</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    /* ── Profile Form ───────────────────────────────────────────────────── */
-    function prefillProfileForm() {
-      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      if (!user) return;
-      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-      setVal('player-profile-name',  user.name);
-      setVal('player-profile-phone', user.phone || user.whatsapp);
-      setVal('player-profile-email', user.email);
-      setVal('player-profile-city',  user.city);
-      setVal('player-profile-sport', user.preferred_sport);
-    }
-
-    window.savePlayerProfile = function(e) {
-      if (e) e.preventDefault();
-      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      if (!user) return;
-      const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-      user.name            = getVal('player-profile-name')  || user.name;
-      user.phone           = getVal('player-profile-phone') || user.phone;
-      user.city            = getVal('player-profile-city')  || user.city;
-      user.preferred_sport = getVal('player-profile-sport') || user.preferred_sport;
-      window.TurfifyStore.setCurrentUser(user);
-      // Update nav name immediately
-      const navName = document.getElementById('nav-player-name');
-      if (navName) navName.textContent = user.name;
-      showToast('✅ Profile updated successfully!');
-    };
-
-    /* ── Receipt Download ───────────────────────────────────────────────── */
-    window.downloadBookingReceipt = function(booking) {
-      if (!booking) { showToast('Receipt not available.'); return; }
-      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : {};
-      const refId = 'TRF-' + (booking.id || Date.now()).toString().slice(-6).toUpperCase().padStart(6,'0');
-      const receiptHtml = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Receipt ${refId}</title>
-  <style>
-    body{font-family:'Segoe UI',sans-serif;max-width:580px;margin:40px auto;color:#1e293b;line-height:1.5;}
-    .header{background:#10B981;color:#fff;padding:28px 32px;border-radius:16px 16px 0 0;}
-    .header h1{margin:0;font-size:1.8rem;font-weight:900;letter-spacing:-0.5px;}
-    .header p{margin:4px 0 0;opacity:0.85;font-size:0.9rem;}
-    .body{background:#fff;border:1px solid #E2E8F0;border-top:0;padding:28px 32px;border-radius:0 0 16px 16px;}
-    .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F1F5F9;font-size:0.9rem;}
-    .row:last-child{border:0;}
-    .label{color:#64748B;}
-    .val{font-weight:700;color:#0F172A;}
-    .total-row{display:flex;justify-content:space-between;padding:16px 0 0;font-size:1.1rem;font-weight:900;}
-    .total-row .val{color:#059669;}
-    .badge{display:inline-block;background:#DCFCE7;color:#15803D;padding:3px 12px;border-radius:999px;font-size:0.78rem;font-weight:700;margin-bottom:16px;}
-    .footer{text-align:center;margin-top:28px;font-size:0.78rem;color:#94A3B8;}
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>🏟️ Turfify</h1>
-    <p>Booking Confirmation Receipt — ${refId}</p>
-  </div>
-  <div class="body">
-    <div class="badge">✅ CONFIRMED RESERVATION</div>
-    <div class="row"><span class="label">Player Name</span><span class="val">${user.name || 'Player'}</span></div>
-    <div class="row"><span class="label">Email</span><span class="val">${user.email || '—'}</span></div>
-    <div class="row"><span class="label">Venue</span><span class="val">${booking.turf_name}</span></div>
-    <div class="row"><span class="label">Sport</span><span class="val">${booking.sport || 'Football'}</span></div>
-    <div class="row"><span class="label">Date</span><span class="val">${booking.date}</span></div>
-    <div class="row"><span class="label">Time Slot</span><span class="val">${booking.time_slot}</span></div>
-    <div class="row"><span class="label">Booking Ref</span><span class="val">${refId}</span></div>
-    <div class="row"><span class="label">Payment Status</span><span class="val">${booking.payment_status || 'Paid'}</span></div>
-    <div class="total-row"><span>Total Paid</span><span class="val">₹${booking.amount}</span></div>
-    <div class="footer">Thank you for booking with Turfify · support@turfify.in<br>This is a system-generated receipt.</div>
-  </div>
-</body>
-</html>`;
-      const blob = new Blob([receiptHtml], { type: 'text/html' });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href     = url;
-      a.download = 'Turfify-Receipt-' + refId + '.html';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast('📄 Receipt downloaded!');
-    };
-    window.downloadBookingReceipt = window.downloadBookingReceipt;
-
-    /* ── Bookings Pane: Filter Tabs + Search ────────────────────────────── */
-    (function setupBookingsFilters() {
-      const filterTabs = document.getElementById('player-bookings-filter-tabs');
-      if (filterTabs) {
-        filterTabs.addEventListener('click', e => {
-          const btn = e.target.closest('[data-filter]');
-          if (!btn) return;
-          filterTabs.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          filterBookingsTab(btn.dataset.filter);
-        });
-      }
-      const searchInput = document.getElementById('bookings-search-input');
-      if (searchInput) {
-        searchInput.addEventListener('input', e => filterBookingsSearch(e.target.value));
-      }
-    })();
-
-    function filterBookingsTab(status) {
-      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
-      const filtered = status === 'all' ? bookings : bookings.filter(b => b.status.toLowerCase() === status.toLowerCase());
-      _renderBookingsTable(filtered);
-    }
-
-    function filterBookingsSearch(query) {
-      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
-      const q        = query.toLowerCase();
-      const filtered = q ? bookings.filter(b =>
-        (b.turf_name||'').toLowerCase().includes(q) ||
-        (b.date||'').toLowerCase().includes(q) ||
-        (b.status||'').toLowerCase().includes(q) ||
-        (b.sport||'').toLowerCase().includes(q)
-      ) : bookings;
-      _renderBookingsTable(filtered);
-    }
-
-    function _renderBookingsTable(bookings) {
-      const tbody = document.getElementById('player-bookings-body');
-      if (!tbody) return;
-      if (bookings.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:3rem 1rem;color:#94A3B8;"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div><strong style="display:block;color:#0F172A;margin-bottom:4px;">No Bookings Found</strong><span style="font-size:0.85rem;">Try a different filter or book a turf slot.</span></td></tr>`;
-        return;
-      }
-      tbody.innerHTML = bookings.map(b => {
-        const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
-        const venueLink   = b.turf_id ? `facility-details.html?id=${encodeURIComponent(b.turf_id)}` : '#';
-        const refId       = '#TRF-' + (b.id||'').toString().slice(-6).toUpperCase().padStart(6,'0');
-        return `
-          <tr style="border-bottom:1px solid #F8FAFC;">
-            <td style="padding:12px 8px;">
-              <strong><a href="${venueLink}" style="color:inherit;text-decoration:underline;">${b.turf_name}</a></strong>
-              <br><span style="font-size:0.72rem;color:#64748B;">${b.sport || 'Sports'} &nbsp;•&nbsp; ${refId}</span>
-            </td>
-            <td style="padding:12px 8px;">${b.date}<br><span style="font-size:0.72rem;color:#64748B;">${b.time_slot}</span></td>
-            <td style="padding:12px 8px;font-weight:800;color:#059669;">₹${b.amount}</td>
-            <td style="padding:12px 8px;font-size:0.8rem;color:#1D4ED8;font-weight:600;">${b.payment_status}</td>
-            <td style="padding:12px 8px;"><span class="status-pill ${statusClass}">${b.status}</span></td>
-            <td style="padding:12px 8px;">
-              <div style="display:flex;gap:5px;flex-wrap:wrap;">
-                ${b.status === 'Confirmed' ?
-                  `<button class="btn-mini-action" onclick="cancelBooking('${b.id}')" style="color:#DC2626;cursor:pointer;">Cancel</button>` :
-                  `<button class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id||''}')" style="cursor:pointer;">Rebook</button>`
-                }
-                <button class="btn-mini-action" onclick="downloadBookingReceipt(window.TurfifyStore.getPlayerBookings(window.TurfifyStore.getCurrentUser()?.id).find(x=>x.id==='${b.id}'))" style="color:#1D4ED8;border-color:#BFDBFE;background:#EFF6FF;cursor:pointer;">📄</button>
-                <button class="btn-mini-action" onclick="window.playerDeleteBooking('${b.id}')" style="color:#7C3AED;border-color:#DDD6FE;background:#F5F3FF;cursor:pointer;">🗑️</button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    /* ── Override renderPlayerDashboard to also populate new sections ───── */
-    const _originalRenderPlayerDashboard = renderPlayerDashboard;
-    renderPlayerDashboard = function() {
-      _originalRenderPlayerDashboard();
-      // Also populate whichever pane is active
-      const hash = (window.location.hash || '#overview').replace('#','');
-      if (hash === 'overview' || hash === '')  renderOverviewExtras();
-      if (hash === 'payments')   renderPaymentsPane();
-      if (hash === 'favorites')  renderFavoritesGrid();
-      if (hash === 'profile')    prefillProfileForm();
-      // Always rebuild the bookings pane table so it stays up to date
-      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
-      _renderBookingsTable(bookings);
-    };
-
-    /* ── Initial render on DOMContentLoaded already called above ─────────
-       Re-run overview extras once TurfifyStore is ready               */
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', renderOverviewExtras);
-    } else {
-      renderOverviewExtras();
-    }
-
-
-
     /* ── Working Hamburger Toggle (≡) ─────────────────────────────────── */
     window.togglePlayerSidebar = function() {
       const sidebar = document.getElementById('player-saas-sidebar');
@@ -4465,8 +4227,6 @@
     window.handlePlayerGlobalSearch = function(query) {
       const q = (query || '').toLowerCase().trim();
       const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
-      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
 
       // Filter Popular Places in Overview
       const popGrid = document.getElementById('player-popular-grid');
@@ -4527,6 +4287,299 @@
       _renderPopularGrid(turfs);
     };
 
+    /* ── Payments Pane ──────────────────────────────────────────────────── */
+    function renderPaymentsPane() {
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const paid     = bookings.filter(b => b.payment_status === 'Paid' || b.payment_status === 'Paid Online' || b.status === 'Confirmed' || b.status === 'Completed');
+      const totalSpent    = paid.reduce((s,b) => s + parseFloat(b.amount || 0), 0);
+      const coins         = paid.length * 25;
+
+      const spentEl = document.getElementById('player-total-spent');
+      const txEl    = document.getElementById('player-paid-tx-count');
+      const coinsEl = document.getElementById('player-payment-coins');
+      if (spentEl)  spentEl.textContent  = '₹' + totalSpent.toLocaleString('en-IN');
+      if (txEl)     txEl.textContent     = paid.length;
+      if (coinsEl)  coinsEl.textContent  = coins + ' coins';
+
+      const tbody = document.getElementById('player-payments-body');
+      if (!tbody) return;
+      if (paid.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:3rem;color:#94A3B8;">No payment records yet. Book a turf to see your receipts here.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = paid.map((b,i) => `
+        <tr style="border-bottom:1px solid #F1F5F9;">
+          <td style="padding:12px 8px;font-size:0.8rem;color:#64748B;">#TRF-${(b.id||i).toString().slice(-6).toUpperCase().padStart(6,'0')}</td>
+          <td style="padding:12px 8px;font-size:0.85rem;font-weight:600;color:#0F172A;">${b.turf_name}</td>
+          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.date}</td>
+          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.time_slot}</td>
+          <td style="padding:12px 8px;font-weight:800;color:#059669;font-size:0.95rem;">₹${b.amount}</td>
+          <td style="padding:12px 8px;">
+            <button onclick="window.downloadBookingReceipt(window.TurfifyStore.getPlayerBookings(window.TurfifyStore.getCurrentUser()?.id).find(x=>x.id==='${b.id}'))" 
+              style="background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;">📄 Receipt</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    /* ── Favorites Grid ───────────────────────────────────────── */
+    function renderFavoritesGrid() {
+      const grid  = document.getElementById('player-favorites-grid');
+      const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+      if (!grid) return;
+      if (turfs.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#94A3B8;"><div style="font-size:2.5rem;margin-bottom:0.5rem;">🏟️</div><p>No facilities found in your area yet.</p></div>';
+        return;
+      }
+      const sports = { Football:'⚽', Cricket:'🏏', Badminton:'🏸', Basketball:'🏀', Tennis:'🎾' };
+      grid.innerHTML = turfs.map(t => {
+        const icon = sports[t.sport] || '🏟️';
+        return `
+          <div style="border-radius:18px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.07);background:#fff;display:flex;flex-direction:column;">
+            <div style="height:160px;overflow:hidden;position:relative;">
+              <img src="${t.image || 'images/turf-arena.jpg'}" alt="${t.name}" style="width:100%;height:100%;object-fit:cover;">
+              <div style="position:absolute;top:10px;left:10px;background:rgba(16,185,129,0.9);color:#fff;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:999px;">${icon} ${t.format || '11v11'}</div>
+              <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.5);color:#fff;font-size:0.7rem;padding:3px 9px;border-radius:999px;">⭐ ${t.rating || '4.9'}</div>
+            </div>
+            <div style="padding:14px 16px;flex:1;display:flex;flex-direction:column;">
+              <h4 style="margin:0 0 4px;font-size:1rem;font-weight:800;color:#0F172A;">${t.name}</h4>
+              <p style="margin:0 0 8px;font-size:0.78rem;color:#64748B;">📍 ${t.location || 'Tamil Nadu'}</p>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                ${(t.amenities || ['Floodlights','Parking']).slice(0,3).map(a => `<span style="background:#F0FDF4;color:#15803D;font-size:0.68rem;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid #BBF7D0;">${a}</span>`).join('')}
+              </div>
+              <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <span style="font-size:1.15rem;font-weight:900;color:#059669;">₹${t.price_per_hour}</span>
+                  <span style="font-size:0.72rem;color:#94A3B8;">/hr</span>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="background:#F1F5F9;color:#334155;border:1.5px solid #E2E8F0;border-radius:10px;padding:7px 12px;font-size:0.78rem;font-weight:600;text-decoration:none;">Details</a>
+                  <button onclick="window.openPlayerBookingModal('${t.id}')" style="background:#10B981;color:#fff;border:none;border-radius:10px;padding:7px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;">Book Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ── Profile Form ───────────────────────────────────────────────────── */
+    function prefillProfileForm() {
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      if (!user) return;
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+      setVal('player-profile-name',  user.name);
+      setVal('player-profile-phone', user.phone || user.whatsapp);
+      setVal('player-profile-email', user.email);
+      setVal('player-profile-city',  user.city);
+      setVal('player-profile-sport', user.preferred_sport);
+    }
+
+    window.savePlayerProfile = function(e) {
+      if (e) e.preventDefault();
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      if (!user) return;
+      const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+      user.name            = getVal('player-profile-name')  || user.name;
+      user.phone           = getVal('player-profile-phone') || user.phone;
+      user.city            = getVal('player-profile-city')  || user.city;
+      user.preferred_sport = getVal('player-profile-sport') || user.preferred_sport;
+      window.TurfifyStore.setCurrentUser(user);
+      const navName = document.getElementById('nav-player-name');
+      if (navName) navName.textContent = user.name;
+      showToast('✅ Profile updated successfully!');
+    };
+
+    /* ── Professional Printable Receipt Generator ────────────────────────── */
+    window.downloadBookingReceipt = function(booking) {
+      if (!booking) { showToast('📄 Receipt not available.'); return; }
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : {};
+      const refId = 'TRF-' + (booking.id || Date.now()).toString().slice(-6).toUpperCase().padStart(6,'0');
+      const receiptHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Turfify Receipt - ${refId}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 580px; margin: 30px auto; color: #0F172A; padding: 20px; line-height: 1.5; background: #F8FAFC; }
+    .receipt-box { background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .header { background: #10B981; color: #FFFFFF; padding: 24px; text-align: center; }
+    .header h1 { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
+    .body { padding: 24px; }
+    .badge { display: inline-block; background: #DCFCE7; color: #15803D; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; margin-bottom: 16px; }
+    .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #F1F5F9; font-size: 0.88rem; }
+    .label { color: #64748B; font-weight: 500; }
+    .val { font-weight: 700; color: #0F172A; text-align: right; }
+    .total-row { display: flex; justify-content: space-between; padding: 16px 0 8px; font-size: 1.15rem; font-weight: 900; }
+    .total-row .val { color: #059669; }
+    .footer { text-align: center; margin-top: 24px; font-size: 0.75rem; color: #94A3B8; }
+    .print-btn-bar { text-align: center; margin-top: 20px; }
+    .btn-print { background: #10B981; color: #fff; border: none; padding: 10px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+    @media print { .print-btn-bar { display: none; } body { background: #fff; margin: 0; padding: 0; } }
+  </style>
+</head>
+<body>
+  <div class="receipt-box">
+    <div class="header">
+      <h1>🏟️ Turfify</h1>
+      <p style="margin:4px 0 0; opacity:0.9; font-size:0.85rem;">Booking Confirmation & Tax Invoice</p>
+    </div>
+    <div class="body">
+      <div class="badge">CONFIRMED RESERVATION ✅</div>
+      <div class="row"><span class="label">Booking Ref</span><span class="val">#${refId}</span></div>
+      <div class="row"><span class="label">Player Name</span><span class="val">${user.name || booking.player_name || 'Player'}</span></div>
+      <div class="row"><span class="label">Venue</span><span class="val">${booking.turf_name}</span></div>
+      <div class="row"><span class="label">Sport</span><span class="val">${booking.sport || 'Sports'}</span></div>
+      <div class="row"><span class="label">Date</span><span class="val">${booking.date}</span></div>
+      <div class="row"><span class="label">Time Slot</span><span class="val">${booking.time_slot}</span></div>
+      <div class="row"><span class="label">Payment Status</span><span class="val">${booking.payment_status || 'Paid Online'}</span></div>
+      <div class="total-row"><span>Total Amount</span><span class="val">₹${booking.amount}</span></div>
+      <div class="footer">Thank you for playing with Turfify · Instant Verified Pass</div>
+    </div>
+  </div>
+  <div class="print-btn-bar">
+    <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  </div>
+</body>
+</html>`;
+
+      // Open printable receipt in popup window
+      const receiptWin = window.open('', '_blank', 'width=640,height=720,scrollbars=yes');
+      if (receiptWin) {
+        receiptWin.document.open();
+        receiptWin.document.write(receiptHtml);
+        receiptWin.document.close();
+        showToast('📄 Receipt generated. Ready to print or save!');
+      } else {
+        // Fallback to blob download if popup blocker blocked
+        try {
+          const blob = new Blob([receiptHtml], { type: 'text/html' });
+          const url  = URL.createObjectURL(blob);
+          const a    = document.createElement('a');
+          a.href     = url;
+          a.download = 'Turfify-Receipt-' + refId + '.html';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast('📄 Receipt downloaded!');
+        } catch(e) {
+          showToast('Receipt popup blocked. Please allow popups.');
+        }
+      }
+    };
+
+    /* ── Bookings Pane: Filter Tabs + Search ────────────────────────────── */
+    (function setupBookingsFilters() {
+      const filterTabs = document.getElementById('player-bookings-filter-tabs');
+      if (filterTabs) {
+        filterTabs.addEventListener('click', e => {
+          const btn = e.target.closest('[data-filter]');
+          if (!btn) return;
+          filterTabs.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          filterBookingsTab(btn.dataset.filter);
+        });
+      }
+      const searchInput = document.getElementById('bookings-search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', e => filterBookingsSearch(e.target.value));
+      }
+    })();
+
+    function filterBookingsTab(status) {
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const filtered = status === 'all' ? bookings : bookings.filter(b => b.status.toLowerCase() === status.toLowerCase());
+      _renderBookingsTable(filtered);
+    }
+
+    function filterBookingsSearch(query) {
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const q        = (query || '').toLowerCase().trim();
+      const filtered = q ? bookings.filter(b =>
+        (b.turf_name||'').toLowerCase().includes(q) ||
+        (b.date||'').toLowerCase().includes(q) ||
+        (b.status||'').toLowerCase().includes(q) ||
+        (b.sport||'').toLowerCase().includes(q)
+      ) : bookings;
+      _renderBookingsTable(filtered);
+    }
+
+    function _renderBookingsTable(bookings) {
+      const tbody = document.getElementById('player-bookings-body');
+      if (!tbody) return;
+      if (bookings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:3rem 1rem;color:#94A3B8;"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div><strong style="display:block;color:#0F172A;margin-bottom:4px;">No Bookings Found</strong><span style="font-size:0.85rem;">Try a different filter or book a turf slot.</span></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = bookings.map(b => {
+        const statusClass = b.status === 'Confirmed' ? 'confirmed' : (b.status === 'Cancelled' ? 'cancelled' : 'walkin');
+        const venueLink   = b.turf_id ? `facility-details.html?id=${encodeURIComponent(b.turf_id)}` : '#';
+        const refId       = '#TRF-' + (b.id||'').toString().slice(-6).toUpperCase().padStart(6,'0');
+        return `
+          <tr style="border-bottom:1px solid #F8FAFC;">
+            <td style="padding:12px 8px;">
+              <strong><a href="${venueLink}" style="color:inherit;text-decoration:underline;">${b.turf_name}</a></strong>
+              <br><span style="font-size:0.72rem;color:#64748B;">${b.sport || 'Sports'} &nbsp;•&nbsp; ${refId}</span>
+            </td>
+            <td style="padding:12px 8px;">${b.date}<br><span style="font-size:0.72rem;color:#64748B;">${b.time_slot}</span></td>
+            <td style="padding:12px 8px;font-weight:800;color:#059669;">₹${b.amount}</td>
+            <td style="padding:12px 8px;font-size:0.8rem;color:#1D4ED8;font-weight:600;">${b.payment_status}</td>
+            <td style="padding:12px 8px;"><span class="status-pill ${statusClass}">${b.status}</span></td>
+            <td style="padding:12px 8px;">
+              <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                ${b.status === 'Confirmed' ?
+                  `<button class="btn-mini-action" onclick="window.cancelBooking('${b.id}')" style="color:#DC2626;cursor:pointer;">Cancel</button>` :
+                  `<button class="btn-mini-action" onclick="window.openPlayerBookingModal('${b.turf_id||''}')" style="cursor:pointer;">Rebook</button>`
+                }
+                <button class="btn-mini-action" onclick="window.downloadBookingReceipt(window.TurfifyStore.getPlayerBookings(window.TurfifyStore.getCurrentUser()?.id).find(x=>x.id==='${b.id}'))" style="color:#1D4ED8;border-color:#BFDBFE;background:#EFF6FF;cursor:pointer;">📄</button>
+                <button class="btn-mini-action" onclick="window.playerDeleteBooking('${b.id}')" style="color:#7C3AED;border-color:#DDD6FE;background:#F5F3FF;cursor:pointer;">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Attach click listeners to sidebar navigation buttons
+    document.querySelectorAll('.player-tab-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchPlayerTab(btn.dataset.playerTab));
+    });
+
+    // Hash-based deep link on page load
+    (function handleInitialHash() {
+      const hash = (window.location.hash || '#overview').replace('#', '');
+      const valid = ['overview','bookings','payments','favorites','profile','support'];
+      switchPlayerTab(valid.includes(hash) ? hash : 'overview');
+    })();
+
+    /* ── Hook renderPlayerDashboard to sync new views ───── */
+    const _originalRenderPlayerDashboard = window.renderPlayerDashboard || function() {};
+    renderPlayerDashboard = function() {
+      if (typeof _originalRenderPlayerDashboard === 'function') {
+        _originalRenderPlayerDashboard();
+      }
+      renderOverviewExtras();
+      const hash = (window.location.hash || '#overview').replace('#','');
+      if (hash === 'payments')   renderPaymentsPane();
+      if (hash === 'favorites')  renderFavoritesGrid();
+      if (hash === 'profile')    prefillProfileForm();
+      const user     = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      _renderBookingsTable(bookings);
+    };
+
+    // Auto-render on ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        renderOverviewExtras();
+      });
+    } else {
+      renderOverviewExtras();
+    }
 </script>
 </body>
 
