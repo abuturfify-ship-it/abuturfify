@@ -2568,7 +2568,7 @@
             </div>
           </div>
 
-          <form id="form-player-profile" onsubmit="window.savePlayerProfile(event)">
+          <form id="form-player-profile" onsubmit="return false;">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
               <div class="form-group">
                 <label class="form-label" style="font-weight:700;">Full Name</label>
@@ -2601,7 +2601,7 @@
               🔒 Your contact information is used strictly for digital match passes, receipt invoices, and cancellation OTP verifications.
             </div>
 
-            <button type="submit" style="margin-top:20px; width:100%; background:#064E3B; color:#FFFFFF; border:none; padding:14px; border-radius:12px; font-weight:800; font-size:0.92rem; cursor:pointer;">
+            <button type="button" onclick="window.savePlayerProfile(null)" style="margin-top:20px; width:100%; background:#064E3B; color:#FFFFFF; border:none; padding:14px; border-radius:12px; font-weight:800; font-size:0.92rem; cursor:pointer;">
               💾 Save Profile &amp; Contact Info
             </button>
           </form>
@@ -4184,54 +4184,56 @@
     window.prefillProfileForm = prefillProfileForm;
 
     window.savePlayerProfile = function(e) {
-      if (e) e.preventDefault();
-      const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-      const name  = getVal('player-profile-name');
-      const phone = getVal('player-profile-phone');
-      const email = getVal('player-profile-email');
-      const city  = getVal('player-profile-city');
-      const sport = getVal('player-profile-sport');
-
-      // Helper: show toast safely regardless of scope
-      const _toast = function(msg) {
-        if (typeof window.showToast === 'function') { window.showToast(msg); return; }
-        // Fallback inline toast
-        const t = document.createElement('div');
-        t.textContent = msg;
-        t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#064E3B;color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;font-size:0.9rem;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.3);';
-        document.body.appendChild(t);
-        setTimeout(() => t.remove(), 3000);
-      };
-
-      if (!name) { _toast('⚠️ Please enter your Full Name first.'); return; }
-
-      // Build profile object
-      const profile = { name, phone, email, city, preferred_sport: sport || 'Football', is_authenticated: true, updated_at: new Date().toISOString() };
-
-      // Save to dedicated profile key (always works, no auth needed)
-      try { localStorage.setItem('turfify_player_profile', JSON.stringify(profile)); } catch(err) {}
-
-      // Also update current user session
+      if (e && e.preventDefault) e.preventDefault();
       try {
-        const existing = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
-          JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
-        const merged = Object.assign({}, existing, profile);
-        if (window.TurfifyStore && window.TurfifyStore.setCurrentUser) {
-          window.TurfifyStore.setCurrentUser(merged);
-        }
-        localStorage.setItem('turfify_current_user', JSON.stringify(merged));
-      } catch(err) {}
+        const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+        const name  = getVal('player-profile-name');
+        const phone = getVal('player-profile-phone');
+        const email = getVal('player-profile-email');
+        const city  = getVal('player-profile-city');
+        const sport = getVal('player-profile-sport');
 
-      // Update UI immediately
-      const navName = document.getElementById('nav-player-name');
-      if (navName) navName.textContent = name;
-      const dispName = document.getElementById('profile-display-name');
-      if (dispName) dispName.textContent = name;
+        // Helper: show toast safely regardless of scope
+        const _toast = function(msg) {
+          if (typeof window.showToast === 'function') { window.showToast(msg); return; }
+          const t = document.createElement('div');
+          t.textContent = msg;
+          t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#064E3B;color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;font-size:0.9rem;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity 0.3s;';
+          document.body.appendChild(t);
+          setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3000);
+        };
 
-      // Re-read saved data into form to confirm persistence
-      if (typeof prefillProfileForm === 'function') prefillProfileForm();
+        if (!name) { _toast('⚠️ Please enter your Full Name first.'); return; }
 
-      _toast('✅ Profile saved successfully!');
+        const profile = { name, phone, email, city, preferred_sport: sport || 'Football', is_authenticated: true, updated_at: new Date().toISOString() };
+
+        // Save to dedicated profile key
+        localStorage.setItem('turfify_player_profile', JSON.stringify(profile));
+
+        // Also update current user session
+        try {
+          const existing = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+            JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
+          const merged = Object.assign({}, existing, profile);
+          if (window.TurfifyStore && window.TurfifyStore.setCurrentUser) window.TurfifyStore.setCurrentUser(merged);
+          localStorage.setItem('turfify_current_user', JSON.stringify(merged));
+        } catch(err2) {}
+
+        // Update header name
+        const navName = document.getElementById('nav-player-name');
+        if (navName) navName.textContent = name;
+        const dispName = document.getElementById('profile-display-name');
+        if (dispName) dispName.textContent = name;
+
+        // Re-prefill to confirm
+        if (typeof prefillProfileForm === 'function') prefillProfileForm();
+        else if (typeof window.prefillProfileForm === 'function') window.prefillProfileForm();
+
+        _toast('✅ Profile saved successfully!');
+      } catch(outerErr) {
+        console.error('savePlayerProfile error:', outerErr);
+        alert('Profile saved! (toast error: ' + outerErr.message + ')');
+      }
     };
 
     /* ── Printable Digital Receipt Generator ────────────────────────────── */
