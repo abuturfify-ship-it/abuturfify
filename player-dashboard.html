@@ -2572,15 +2572,15 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
               <div class="form-group">
                 <label class="form-label" style="font-weight:700;">Full Name</label>
-                <input type="text" class="form-control" id="player-profile-name" placeholder="Full Name" required>
+                <input type="text" class="form-control" id="player-profile-name" placeholder="Full Name">
               </div>
               <div class="form-group">
                 <label class="form-label" style="font-weight:700;">WhatsApp / Phone Number</label>
-                <input type="tel" class="form-control" id="player-profile-phone" placeholder="+91 Phone" required>
+                <input type="tel" class="form-control" id="player-profile-phone" placeholder="+91 Phone">
               </div>
               <div class="form-group">
                 <label class="form-label" style="font-weight:700;">Email Address</label>
-                <input type="email" class="form-control" id="player-profile-email" placeholder="you@gmail.com" required>
+                <input type="email" class="form-control" id="player-profile-email" placeholder="you@gmail.com">
               </div>
               <div class="form-group">
                 <label class="form-label" style="font-weight:700;">Operating City / District</label>
@@ -4192,15 +4192,26 @@
       const city  = getVal('player-profile-city');
       const sport = getVal('player-profile-sport');
 
-      if (!name) { showToast('⚠️ Please enter your name.'); return; }
+      // Helper: show toast safely regardless of scope
+      const _toast = function(msg) {
+        if (typeof window.showToast === 'function') { window.showToast(msg); return; }
+        // Fallback inline toast
+        const t = document.createElement('div');
+        t.textContent = msg;
+        t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#064E3B;color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;font-size:0.9rem;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.3);';
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+      };
+
+      if (!name) { _toast('⚠️ Please enter your Full Name first.'); return; }
 
       // Build profile object
-      const profile = { name, phone, email, city, preferred_sport: sport, is_authenticated: true };
+      const profile = { name, phone, email, city, preferred_sport: sport || 'Football', is_authenticated: true, updated_at: new Date().toISOString() };
 
       // Save to dedicated profile key (always works, no auth needed)
       try { localStorage.setItem('turfify_player_profile', JSON.stringify(profile)); } catch(err) {}
 
-      // Also update current user session if it exists
+      // Also update current user session
       try {
         const existing = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
           JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
@@ -4217,7 +4228,10 @@
       const dispName = document.getElementById('profile-display-name');
       if (dispName) dispName.textContent = name;
 
-      showToast('✅ Profile saved successfully!');
+      // Re-read saved data into form to confirm persistence
+      if (typeof prefillProfileForm === 'function') prefillProfileForm();
+
+      _toast('✅ Profile saved successfully!');
     };
 
     /* ── Printable Digital Receipt Generator ────────────────────────────── */
