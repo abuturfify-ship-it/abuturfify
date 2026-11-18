@@ -2778,6 +2778,41 @@
 
   <script src="store.js"></script>
   <script>
+    // Standalone guaranteed tab switcher - available immediately on parse
+    window.switchPlayerTab = function(tabName) {
+      if (!tabName) tabName = 'overview';
+      console.log('Switching tab to:', tabName);
+      document.querySelectorAll('.player-tab-nav-btn').forEach(function(btn) {
+        var isTab = btn.getAttribute('data-player-tab') === tabName;
+        btn.classList.toggle('active', isTab);
+      });
+      var paneIds = ['overview', 'bookings', 'payments', 'favorites', 'profile', 'support'];
+      paneIds.forEach(function(id) {
+        var pane = document.getElementById('pane-player-' + id);
+        if (pane) {
+          var active = (id === tabName);
+          pane.classList.toggle('active', active);
+          pane.style.setProperty('display', active ? 'block' : 'none', 'important');
+        }
+      });
+      if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+        try { window.history.replaceState(null, '', '#' + tabName); } catch(e) {}
+      }
+      try {
+        if (tabName === 'overview' && typeof window.renderOverviewExtras === 'function') window.renderOverviewExtras();
+        if (tabName === 'payments' && typeof window.renderPaymentsPane === 'function') window.renderPaymentsPane();
+        if (tabName === 'favorites' && typeof window.renderFavoritesGrid === 'function') window.renderFavoritesGrid();
+        if (tabName === 'profile' && typeof window.prefillProfileForm === 'function') window.prefillProfileForm();
+        if (tabName === 'bookings' && typeof window._renderBookingsTable === 'function') {
+          var user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+          var bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+          window._renderBookingsTable(bookings);
+        }
+      } catch (err) {
+        console.warn('Pane render hook note:', err);
+      }
+    };
+
     // Toast Helper
     window.showToast = showToast;
     function showToast(msg) {
@@ -2998,33 +3033,35 @@
       }
 
       // Favorites
-      const favList = document.getElementById('player-favorites-list');
-      favList.innerHTML = '';
-      turfs.forEach(t => {
-        const item = document.createElement('div');
-        item.className = 'owner-turf-item';
-        item.innerHTML = `
-          <img src="${t.image}" alt="${t.name}" class="owner-turf-img">
-          <div class="owner-turf-info" style="min-width:0; flex:1;">
-            <div class="owner-turf-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-              <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="color:inherit; text-decoration:none;">${t.name}</a>
+      const favList = document.getElementById('player-favorites-list') || document.getElementById('player-favorites-grid');
+      if (favList) {
+        favList.innerHTML = '';
+        turfs.forEach(t => {
+          const item = document.createElement('div');
+          item.className = 'owner-turf-item';
+          item.innerHTML = `
+            <img src="${t.image}" alt="${t.name}" class="owner-turf-img">
+            <div class="owner-turf-info" style="min-width:0; flex:1;">
+              <div class="owner-turf-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <a href="facility-details.html?id=${encodeURIComponent(t.id)}" style="color:inherit; text-decoration:none;">${t.name}</a>
+              </div>
+              <div class="owner-turf-meta">
+                <span>⭐ ${t.rating || "4.9"}</span>
+                <span style="font-weight:700; color:#047857;">₹${t.price_per_hour}/hr</span>
+              </div>
             </div>
-            <div class="owner-turf-meta">
-              <span>⭐ ${t.rating || "4.9"}</span>
-              <span style="font-weight:700; color:#047857;">₹${t.price_per_hour}/hr</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <a href="facility-details.html?id=${encodeURIComponent(t.id)}" class="btn-mini-action" style="text-decoration:none; color:#334155; background:#F1F5F9; border-color:#CBD5E1; font-weight:600; padding:7px 10px; border-radius:8px;">
+                Details
+              </a>
+              <button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${t.id}')" style="background:#ECFDF5; color:#047857; font-weight:700; cursor:pointer; border:1.5px solid #6EE7B7; flex-shrink:0; white-space:nowrap; padding:7px 14px; border-radius:8px;">
+                Book
+              </button>
             </div>
-          </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <a href="facility-details.html?id=${encodeURIComponent(t.id)}" class="btn-mini-action" style="text-decoration:none; color:#334155; background:#F1F5F9; border-color:#CBD5E1; font-weight:600; padding:7px 10px; border-radius:8px;">
-              Details
-            </a>
-            <button type="button" class="btn-mini-action" onclick="window.openPlayerBookingModal('${t.id}')" style="background:#ECFDF5; color:#047857; font-weight:700; cursor:pointer; border:1.5px solid #6EE7B7; flex-shrink:0; white-space:nowrap; padding:7px 14px; border-radius:8px;">
-              Book
-            </button>
-          </div>
-        `;
-        if (favList) { if (favList) { favList.appendChild(item); } }
-      });
+          `;
+          favList.appendChild(item);
+        });
+      }
     }
 
     // --------------------------------------------------------------------------
@@ -3575,7 +3612,7 @@
         if (pane) {
           const active = (id === tabName);
           pane.classList.toggle('active', active);
-          pane.style.display = active ? 'block' : 'none';
+          pane.style.setProperty('display', active ? 'block' : 'none', 'important');
         }
       });
 
