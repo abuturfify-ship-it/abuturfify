@@ -352,7 +352,15 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTurfsList();
       renderBookingsTable();
       renderUsersTable();
+      renderComplaintsTable();
+      renderAuditLogs();
     }
+  });
+
+  window.addEventListener('turfify:complaint_raised', () => {
+    renderKPIs();
+    renderComplaintsTable();
+    renderAuditLogs();
   });
 
   window.addEventListener('turfify:data_synced', () => {
