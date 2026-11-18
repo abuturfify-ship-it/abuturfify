@@ -1221,17 +1221,75 @@
       border: 1.5px solid #E2E8F0; background: #F8FAFC; color: #334155; cursor: pointer;
     }
 
-    /* ── Payments Pane ───────────────────────────────────────── */
-    .player-payments-summary {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
-      gap: 16px; margin-bottom: 24px;
+    /* ── Payments Pane ──────────────────────────────────────────────────── */
+    function renderPaymentsPane() {
+      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      let bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      if (!bookings || bookings.length === 0) {
+        bookings = (window.TurfifyStore && window.TurfifyStore.getBookings) ? window.TurfifyStore.getBookings() : [];
+      }
+
+      const spentEl = document.getElementById('player-total-spent');
+      const txEl = document.getElementById('player-paid-tx-count');
+      const coinsEl = document.getElementById('player-payment-coins');
+      const tbody = document.getElementById('player-payments-body');
+      if (!tbody) return;
+
+      if (!bookings || bookings.length === 0) {
+        if (spentEl) spentEl.textContent = '₹0';
+        if (txEl) txEl.textContent = '0';
+        if (coinsEl) coinsEl.textContent = '0 coins';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:3rem 1rem; color:#94A3B8;"><div style="font-size:2rem; margin-bottom:0.5rem;">💳</div><strong style="color:#0F172A;">No Payment Records Found</strong><br><span style="font-size:0.85rem;">When you book a match, your payment transaction and receipt will appear here.</span></td></tr>';
+        return;
+      }
+
+      // Calculate totals from the same bookings list
+      const paidBookings = bookings.filter(b => b.status !== 'Cancelled');
+      const validForTotal = paidBookings.length > 0 ? paidBookings : bookings;
+      const totalSpent = validForTotal.reduce((sum, b) => sum + (parseFloat(b.amount || b.price) || 1200), 0);
+      const paidCount = validForTotal.length;
+      const coins = paidCount * 25;
+
+      if (spentEl) spentEl.textContent = '₹' + totalSpent.toLocaleString('en-IN');
+      if (txEl) txEl.textContent = String(paidCount);
+      if (coinsEl) coinsEl.textContent = coins + ' coins';
+
+      // Render every booking from My Bookings directly into the payments table
+      tbody.innerHTML = bookings.map((b, i) => {
+        const isCancelled = b.status === 'Cancelled';
+        const statusText = isCancelled ? 'Refunded' : (b.payment_status || 'Paid Online');
+        const statusColor = isCancelled ? '#DC2626' : '#059669';
+        const amountVal = parseFloat(b.amount || b.price) || 1200;
+        const refId = '#TRF-' + (b.id || i).toString().slice(-6).toUpperCase().padStart(6, '0');
+        const channel = b.payment_method || 'UPI (Instant)';
+        const dateStr = b.date || new Date().toISOString().split('T')[0];
+
+        return `
+          <tr style="border-bottom:1px solid #F1F5F9;">
+            <td style="padding:12px 8px; font-size:0.82rem; color:#475569;">${dateStr}</td>
+            <td style="padding:12px 8px; font-size:0.8rem; font-weight:700; color:#64748B;">${refId}</td>
+            <td style="padding:12px 8px; font-size:0.85rem; font-weight:700; color:#0F172A;">
+              ${b.turf_name}
+              ${b.time_slot ? `<br><span style="font-size:0.72rem; color:#94A3B8; font-weight:500;">${b.time_slot}</span>` : ''}
+            </td>
+            <td style="padding:12px 8px; font-weight:800; color:#059669; font-size:0.95rem;">₹${amountVal.toLocaleString('en-IN')}</td>
+            <td style="padding:12px 8px; font-size:0.8rem; color:#475569; font-weight:600;">${channel}</td>
+            <td style="padding:12px 8px;">
+              <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:700; color:${statusColor}; background:${isCancelled ? '#FEE2E2' : '#ECFDF5'}; padding:3px 8px; border-radius:999px;">
+                ${isCancelled ? '↩️' : '✅'} ${statusText}
+              </span>
+            </td>
+            <td style="padding:12px 8px;">
+              <button type="button" onclick="window.downloadBookingReceipt({turf_name:'${b.turf_name}',amount:'${amountVal}',date:'${dateStr}',time_slot:'${b.time_slot||''}',payment_status:'${statusText}',id:'${b.id}'})" 
+                style="background:#EFF6FF; color:#1D4ED8; border:1.5px solid #BFDBFE; border-radius:8px; padding:5px 12px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+                📄 Receipt
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
-    .player-pay-stat {
-      background: #fff; border-radius: 14px; padding: 20px 18px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #E8F0FE;
-    }
-    .player-pay-stat .stat-label { font-size: 0.75rem; color: #64748B; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .player-pay-stat .stat-val { font-size: 1.5rem; font-weight: 900; color: #0F172A; letter-spacing: -0.5px; }
+    window.renderPaymentsPane = renderPaymentsPane;
 
     /* ── Favorites Grid ──────────────────────────────────────── */
     #player-favorites-grid {
@@ -2778,6 +2836,53 @@
 
   <script src="store.js"></script>
   <script>
+    
+    // Standalone renderPaymentsPane available on parse
+    window.renderPaymentsPane = function() {
+      var user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
+      var bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      if (!bookings || bookings.length === 0) {
+        bookings = (window.TurfifyStore && window.TurfifyStore.getBookings) ? window.TurfifyStore.getBookings() : [];
+      }
+      var spentEl = document.getElementById('player-total-spent');
+      var txEl = document.getElementById('player-paid-tx-count');
+      var coinsEl = document.getElementById('player-payment-coins');
+      var tbody = document.getElementById('player-payments-body');
+      if (!tbody) return;
+      if (!bookings || bookings.length === 0) {
+        if (spentEl) spentEl.textContent = '₹0';
+        if (txEl) txEl.textContent = '0';
+        if (coinsEl) coinsEl.textContent = '0 coins';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:3rem 1rem; color:#94A3B8;"><div style="font-size:2rem; margin-bottom:0.5rem;">💳</div><strong style="color:#0F172A;">No Payment Records Found</strong><br><span style="font-size:0.85rem;">When you book a match, your payment transaction and receipt will appear here.</span></td></tr>';
+        return;
+      }
+      var paidBookings = bookings.filter(function(b) { return b.status !== 'Cancelled'; });
+      var valid = paidBookings.length > 0 ? paidBookings : bookings;
+      var total = valid.reduce(function(sum, b) { return sum + (parseFloat(b.amount || b.price) || 1200); }, 0);
+      var count = valid.length;
+      if (spentEl) spentEl.textContent = '₹' + total.toLocaleString('en-IN');
+      if (txEl) txEl.textContent = String(count);
+      if (coinsEl) coinsEl.textContent = (count * 25) + ' coins';
+      tbody.innerHTML = bookings.map(function(b, i) {
+        var isCancelled = b.status === 'Cancelled';
+        var statusText = isCancelled ? 'Refunded' : (b.payment_status || 'Paid Online');
+        var statusColor = isCancelled ? '#DC2626' : '#059669';
+        var amountVal = parseFloat(b.amount || b.price) || 1200;
+        var refId = '#TRF-' + (b.id || i).toString().slice(-6).toUpperCase().padStart(6, '0');
+        var channel = b.payment_method || 'UPI (Instant)';
+        var dateStr = b.date || new Date().toISOString().split('T')[0];
+        return '<tr style="border-bottom:1px solid #F1F5F9;">' +
+          '<td style="padding:12px 8px; font-size:0.82rem; color:#475569;">' + dateStr + '</td>' +
+          '<td style="padding:12px 8px; font-size:0.8rem; font-weight:700; color:#64748B;">' + refId + '</td>' +
+          '<td style="padding:12px 8px; font-size:0.85rem; font-weight:700; color:#0F172A;">' + b.turf_name + (b.time_slot ? '<br><span style="font-size:0.72rem; color:#94A3B8; font-weight:500;">' + b.time_slot + '</span>' : '') + '</td>' +
+          '<td style="padding:12px 8px; font-weight:800; color:#059669; font-size:0.95rem;">₹' + amountVal.toLocaleString('en-IN') + '</td>' +
+          '<td style="padding:12px 8px; font-size:0.8rem; color:#475569; font-weight:600;">' + channel + '</td>' +
+          '<td style="padding:12px 8px;"><span style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:700; color:' + statusColor + '; background:' + (isCancelled ? '#FEE2E2' : '#ECFDF5') + '; padding:3px 8px; border-radius:999px;">' + (isCancelled ? '↩️' : '✅') + ' ' + statusText + '</span></td>' +
+          '<td style="padding:12px 8px;"><button type="button" onclick="window.downloadBookingReceipt({turf_name:\'' + b.turf_name + '\',amount:\'' + amountVal + '\',date:\'' + dateStr + '\',time_slot:\'' + (b.time_slot||'') + '\',payment_status:\'' + statusText + '\',id:\'' + b.id + '\'})" style="background:#EFF6FF; color:#1D4ED8; border:1.5px solid #BFDBFE; border-radius:8px; padding:5px 12px; font-size:0.75rem; font-weight:700; cursor:pointer;">📄 Receipt</button></td>' +
+        '</tr>';
+      }).join('');
+    };
+
     // Standalone guaranteed tab switcher - available immediately on parse
     window.switchPlayerTab = function(tabName) {
       if (!tabName) tabName = 'overview';
