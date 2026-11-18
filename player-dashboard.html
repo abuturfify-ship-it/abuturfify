@@ -3935,10 +3935,14 @@
 
     /* ── Payments Pane ──────────────────────────────────────────────────── */
     function renderPaymentsPane() {
-      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      let bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      const user = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+        JSON.parse(localStorage.getItem('turfify_current_user') || 'null');
+      let bookings = user ? (window.TurfifyStore ? window.TurfifyStore.getPlayerBookings(user.id) : []) : [];
       if (!bookings || bookings.length === 0) {
-        bookings = [{ id: 'bk-595', turf_name: 'Apex arena', amount: 1800, date: '2026-11-15', time_slot: '09:00 - 10:00 AM', payment_status: 'Paid Online', status: 'Confirmed' }];
+        bookings = [
+          { id: 'TRF-179468', turf_name: 'Apex arena', amount: 1200, date: '2026-11-15', time_slot: '09:00 - 10:00 AM', payment_status: 'Paid Online', status: 'Confirmed' },
+          { id: 'TRF-179320', turf_name: 'Elite Sports Park', amount: 1000, date: '2026-11-08', time_slot: '06:00 - 07:00 PM', payment_status: 'Paid Online', status: 'Completed' }
+        ];
       }
       const paid = bookings.filter(b => b.payment_status === 'Paid' || b.payment_status === 'Paid Online' || b.status === 'Confirmed' || b.status === 'Completed');
       const totalSpent = paid.reduce((s,b) => s + parseFloat(b.amount || 0), 0);
@@ -3955,20 +3959,22 @@
       if (!tbody) return;
       tbody.innerHTML = paid.map((b,i) => `
         <tr style="border-bottom:1px solid #F1F5F9;">
-          <td style="padding:12px 8px;font-size:0.8rem;color:#64748B;">#TRF-${(b.id||i).toString().slice(-6).toUpperCase().padStart(6,'0')}</td>
-          <td style="padding:12px 8px;font-size:0.85rem;font-weight:600;color:#0F172A;">${b.turf_name}</td>
+          <td style="padding:12px 8px;font-size:0.8rem;color:#64748B;">${(b.id || '').startsWith('#') ? b.id : '#TRF-' + (b.id||i).toString().slice(-6).toUpperCase().padStart(6,'0')}</td>
+          <td style="padding:12px 8px;font-size:0.85rem;font-weight:700;color:#0F172A;">${b.turf_name}</td>
           <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.date}</td>
-          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.time_slot}</td>
+          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.time_slot||''}</td>
           <td style="padding:12px 8px;font-weight:800;color:#059669;font-size:0.95rem;">₹${b.amount}</td>
           <td style="padding:12px 8px;">
-            <button onclick="window.downloadBookingReceipt(window.TurfifyStore.getPlayerBookings(window.TurfifyStore.getCurrentUser()?.id).find(x=>x.id==='${b.id}') || { turf_name:'${b.turf_name}', amount:'${b.amount}', date:'${b.date}', time_slot:'${b.time_slot}', payment_status:'Paid Online', id:'${b.id}' })" 
+            <button onclick="window.downloadBookingReceipt({turf_name:'${b.turf_name}',amount:'${b.amount}',date:'${b.date}',time_slot:'${b.time_slot}',payment_status:'${b.payment_status||'Paid Online'}',id:'${b.id}'})" 
               style="background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;">📄 Receipt</button>
           </td>
         </tr>
       `).join('');
     }
+    window.renderPaymentsPane = renderPaymentsPane;
 
     /* ── Favorites Grid ─────────────────────────────────────────────────── */
+    window.renderFavoritesGrid = renderFavoritesGrid;
     function renderFavoritesGrid() {
       const grid = document.getElementById('player-favorites-grid');
       let turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
@@ -4007,28 +4013,45 @@
 
     /* ── Profile Form ───────────────────────────────────────────────────── */
     function prefillProfileForm() {
-      const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      if (!user) return;
+      const user = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+        JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
       const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
       setVal('player-profile-name', user.name || 'Sajaruth Mahjabeen M');
       setVal('player-profile-phone', user.phone || '6380639179');
       setVal('player-profile-email', user.email || 'salihathasneem3@gmail.com');
       setVal('player-profile-city', user.city || 'Chennai');
       setVal('player-profile-sport', user.preferred_sport || 'Football');
+      const dispName = document.getElementById('profile-display-name');
+      if (dispName) dispName.textContent = user.name || 'Sajaruth Mahjabeen M';
     }
+    window.prefillProfileForm = prefillProfileForm;
 
     window.savePlayerProfile = function(e) {
       if (e) e.preventDefault();
-      const user = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) || {};
+      const user = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+        JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
       const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+      
       user.name = getVal('player-profile-name') || user.name || 'Sajaruth Mahjabeen M';
       user.phone = getVal('player-profile-phone') || user.phone || '6380639179';
+      user.email = getVal('player-profile-email') || user.email || 'salihathasneem3@gmail.com';
       user.city = getVal('player-profile-city') || user.city || 'Chennai';
       user.preferred_sport = getVal('player-profile-sport') || user.preferred_sport || 'Football';
-      if (window.TurfifyStore) window.TurfifyStore.setCurrentUser(user);
+      user.is_authenticated = true;
+
+      if (window.TurfifyStore && window.TurfifyStore.setCurrentUser) {
+        window.TurfifyStore.setCurrentUser(user);
+      }
+      try {
+        localStorage.setItem('turfify_current_user', JSON.stringify(user));
+      } catch (err) {}
+
       const navName = document.getElementById('nav-player-name');
       if (navName) navName.textContent = user.name;
-      showToast('✅ Profile updated successfully!');
+      const dispName = document.getElementById('profile-display-name');
+      if (dispName) dispName.textContent = user.name;
+
+      showToast('✅ Profile saved successfully!');
     };
 
     /* ── Printable Digital Receipt Generator ────────────────────────────── */
@@ -4152,6 +4175,7 @@
       _renderBookingsTable(filtered);
     }
 
+    window._renderBookingsTable = _renderBookingsTable;
     function _renderBookingsTable(bookings) {
       const tbody = document.getElementById('player-bookings-body');
       if (!tbody) return;
