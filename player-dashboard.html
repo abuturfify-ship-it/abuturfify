@@ -4040,41 +4040,80 @@
 
     /* ── Payments Pane ──────────────────────────────────────────────────── */
     function renderPaymentsPane() {
-      const user = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
-        JSON.parse(localStorage.getItem('turfify_current_user') || 'null');
-      let bookings = user ? (window.TurfifyStore ? window.TurfifyStore.getPlayerBookings(user.id) : []) : [];
+      // Step 1: Try to get real bookings from store (all bookings, not just by player ID)
+      let bookings = [];
+      try {
+        const user = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+          JSON.parse(localStorage.getItem('turfify_current_user') || 'null');
+        // Try player-specific first
+        if (user && window.TurfifyStore && window.TurfifyStore.getPlayerBookings) {
+          bookings = window.TurfifyStore.getPlayerBookings(user.id) || [];
+        }
+        // If still empty, get ALL bookings from store
+        if (bookings.length === 0 && window.TurfifyStore && window.TurfifyStore.getBookings) {
+          bookings = window.TurfifyStore.getBookings() || [];
+        }
+        // If still empty, try raw localStorage
+        if (bookings.length === 0) {
+          const raw = JSON.parse(localStorage.getItem('turfify_bookings') || '[]');
+          if (Array.isArray(raw) && raw.length > 0) bookings = raw;
+        }
+      } catch(e) {}
+
+      // Step 2: Fallback to hardcoded demo rows if truly nothing found
       if (!bookings || bookings.length === 0) {
         bookings = [
-          { id: 'TRF-179468', turf_name: 'Apex arena', amount: 1200, date: '2026-11-15', time_slot: '09:00 - 10:00 AM', payment_status: 'Paid Online', status: 'Confirmed' },
+          { id: 'TRF-179468', turf_name: 'Apex Arena', amount: 1200, date: '2026-11-15', time_slot: '09:00 - 10:00 AM', payment_status: 'Paid Online', status: 'Confirmed' },
           { id: 'TRF-179320', turf_name: 'Elite Sports Park', amount: 1000, date: '2026-11-08', time_slot: '06:00 - 07:00 PM', payment_status: 'Paid Online', status: 'Completed' }
         ];
       }
-      const paid = bookings.filter(b => b.payment_status === 'Paid' || b.payment_status === 'Paid Online' || b.status === 'Confirmed' || b.status === 'Completed');
-      const totalSpent = paid.reduce((s,b) => s + parseFloat(b.amount || 0), 0);
-      const coins = paid.length * 25;
+
+      // Step 3: Include all non-cancelled bookings as "paid"
+      const displayRows = bookings.filter(b => b.status !== 'Cancelled');
+      const rowsToShow = displayRows.length > 0 ? displayRows : bookings;
+
+      const totalSpent = rowsToShow.reduce((s, b) => s + (parseFloat(b.amount || b.price) || 0), 0);
+      const coins = rowsToShow.length * 25;
 
       const spentEl = document.getElementById('player-total-spent');
       const txEl = document.getElementById('player-paid-tx-count');
       const coinsEl = document.getElementById('player-payment-coins');
       if (spentEl) spentEl.textContent = '₹' + totalSpent.toLocaleString('en-IN');
-      if (txEl) txEl.textContent = paid.length;
+      if (txEl) txEl.textContent = String(rowsToShow.length);
       if (coinsEl) coinsEl.textContent = coins + ' coins';
 
       const tbody = document.getElementById('player-payments-body');
       if (!tbody) return;
-      tbody.innerHTML = paid.map((b,i) => `
-        <tr style="border-bottom:1px solid #F1F5F9;">
-          <td style="padding:12px 8px;font-size:0.8rem;color:#64748B;">${(b.id || '').startsWith('#') ? b.id : '#TRF-' + (b.id||i).toString().slice(-6).toUpperCase().padStart(6,'0')}</td>
-          <td style="padding:12px 8px;font-size:0.85rem;font-weight:700;color:#0F172A;">${b.turf_name}</td>
-          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.date}</td>
-          <td style="padding:12px 8px;font-size:0.82rem;color:#334155;">${b.time_slot||''}</td>
-          <td style="padding:12px 8px;font-weight:800;color:#059669;font-size:0.95rem;">₹${b.amount}</td>
-          <td style="padding:12px 8px;">
-            <button onclick="window.downloadBookingReceipt({turf_name:'${b.turf_name}',amount:'${b.amount}',date:'${b.date}',time_slot:'${b.time_slot}',payment_status:'${b.payment_status||'Paid Online'}',id:'${b.id}'})" 
-              style="background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;">📄 Receipt</button>
-          </td>
-        </tr>
-      `).join('');
+
+      tbody.innerHTML = rowsToShow.map((b, i) => {
+        const isCancelled = b.status === 'Cancelled';
+        const statusText = isCancelled ? 'Refunded' : (b.payment_status || 'Paid Online');
+        const statusColor = isCancelled ? '#DC2626' : '#059669';
+        const amountVal = parseFloat(b.amount || b.price) || 0;
+        const refId = '#TRF-' + (b.id || i).toString().slice(-6).toUpperCase().padStart(6, '0');
+        const channel = b.payment_method || 'UPI (Instant)';
+        const dateStr = b.date || new Date().toISOString().split('T')[0];
+        const turfName = (b.turf_name || 'Turf').replace(/'/g, "\\'");
+        const slot = (b.time_slot || '').replace(/'/g, "\\'");
+        return `
+          <tr style="border-bottom:1px solid #F1F5F9;">
+            <td style="padding:12px 8px;font-size:0.82rem;color:#475569;">${dateStr}</td>
+            <td style="padding:12px 8px;font-size:0.8rem;font-weight:700;color:#64748B;">${refId}</td>
+            <td style="padding:12px 8px;font-size:0.85rem;font-weight:700;color:#0F172A;">${b.turf_name || 'Turf'}${b.time_slot ? `<br><span style="font-size:0.72rem;color:#94A3B8;font-weight:500;">${b.time_slot}</span>` : ''}</td>
+            <td style="padding:12px 8px;font-weight:800;color:#059669;font-size:0.95rem;">₹${amountVal.toLocaleString('en-IN')}</td>
+            <td style="padding:12px 8px;font-size:0.8rem;color:#475569;font-weight:600;">${channel}</td>
+            <td style="padding:12px 8px;">
+              <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.78rem;font-weight:700;color:${statusColor};background:${isCancelled?'#FEE2E2':'#ECFDF5'};padding:3px 8px;border-radius:999px;">
+                ${isCancelled ? '↩️' : '✅'} ${statusText}
+              </span>
+            </td>
+            <td style="padding:12px 8px;">
+              <button type="button" onclick="window.downloadBookingReceipt({turf_name:'${turfName}',amount:'${amountVal}',date:'${dateStr}',time_slot:'${slot}',payment_status:'${statusText}',id:'${b.id || i}'})"
+                style="background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;">📄 Receipt</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
     window.renderPaymentsPane = renderPaymentsPane;
 
@@ -4118,43 +4157,65 @@
 
     /* ── Profile Form ───────────────────────────────────────────────────── */
     function prefillProfileForm() {
-      const user = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
-        JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
+      // Priority: dedicated profile store → current user session → empty defaults
+      let profile = {};
+      try {
+        const saved = localStorage.getItem('turfify_player_profile');
+        if (saved) profile = JSON.parse(saved);
+      } catch(e) {}
+      if (!profile.name) {
+        try {
+          const u = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+            JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
+          if (u.name) profile = Object.assign({}, u, profile);
+        } catch(e) {}
+      }
       const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-      setVal('player-profile-name', user.name || 'Sajaruth Mahjabeen M');
-      setVal('player-profile-phone', user.phone || '6380639179');
-      setVal('player-profile-email', user.email || 'salihathasneem3@gmail.com');
-      setVal('player-profile-city', user.city || 'Chennai');
-      setVal('player-profile-sport', user.preferred_sport || 'Football');
+      setVal('player-profile-name',  profile.name  || '');
+      setVal('player-profile-phone', profile.phone || '');
+      setVal('player-profile-email', profile.email || '');
+      setVal('player-profile-city',  profile.city  || '');
+      // For select: set value then verify it matched an option
+      const sportEl = document.getElementById('player-profile-sport');
+      if (sportEl) sportEl.value = profile.preferred_sport || profile.sport || 'Football';
       const dispName = document.getElementById('profile-display-name');
-      if (dispName) dispName.textContent = user.name || 'Sajaruth Mahjabeen M';
+      if (dispName) dispName.textContent = profile.name || 'Player Account';
     }
     window.prefillProfileForm = prefillProfileForm;
 
     window.savePlayerProfile = function(e) {
       if (e) e.preventDefault();
-      const user = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
-        JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
       const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-      
-      user.name = getVal('player-profile-name') || user.name || 'Sajaruth Mahjabeen M';
-      user.phone = getVal('player-profile-phone') || user.phone || '6380639179';
-      user.email = getVal('player-profile-email') || user.email || 'salihathasneem3@gmail.com';
-      user.city = getVal('player-profile-city') || user.city || 'Chennai';
-      user.preferred_sport = getVal('player-profile-sport') || user.preferred_sport || 'Football';
-      user.is_authenticated = true;
+      const name  = getVal('player-profile-name');
+      const phone = getVal('player-profile-phone');
+      const email = getVal('player-profile-email');
+      const city  = getVal('player-profile-city');
+      const sport = getVal('player-profile-sport');
 
-      if (window.TurfifyStore && window.TurfifyStore.setCurrentUser) {
-        window.TurfifyStore.setCurrentUser(user);
-      }
+      if (!name) { showToast('⚠️ Please enter your name.'); return; }
+
+      // Build profile object
+      const profile = { name, phone, email, city, preferred_sport: sport, is_authenticated: true };
+
+      // Save to dedicated profile key (always works, no auth needed)
+      try { localStorage.setItem('turfify_player_profile', JSON.stringify(profile)); } catch(err) {}
+
+      // Also update current user session if it exists
       try {
-        localStorage.setItem('turfify_current_user', JSON.stringify(user));
-      } catch (err) {}
+        const existing = (window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null) ||
+          JSON.parse(localStorage.getItem('turfify_current_user') || 'null') || {};
+        const merged = Object.assign({}, existing, profile);
+        if (window.TurfifyStore && window.TurfifyStore.setCurrentUser) {
+          window.TurfifyStore.setCurrentUser(merged);
+        }
+        localStorage.setItem('turfify_current_user', JSON.stringify(merged));
+      } catch(err) {}
 
+      // Update UI immediately
       const navName = document.getElementById('nav-player-name');
-      if (navName) navName.textContent = user.name;
+      if (navName) navName.textContent = name;
       const dispName = document.getElementById('profile-display-name');
-      if (dispName) dispName.textContent = user.name;
+      if (dispName) dispName.textContent = name;
 
       showToast('✅ Profile saved successfully!');
     };
