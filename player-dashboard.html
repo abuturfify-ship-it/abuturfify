@@ -3779,8 +3779,8 @@
       if (!turfs || turfs.length === 0) {
         turfs = [
           { id: 'turf-1794508336893', name: 'Apex arena', location: 'Anna Nagar, Chennai', price_per_hour: 1400, rating: 5.0, image: 'images/turf-arena.jpg', dimensions: '11v11' },
-          { id: 'turf-elite', name: 'Elite Sports Park', location: 'Nungambakkam, Chennai', price_per_hour: 1200, rating: 4.8, image: 'images/turf-lights.jpg', dimensions: '7v7' },
-          { id: 'turf-spartan', name: 'Spartan Turf Arena', location: 'Velachery, Chennai', price_per_hour: 1500, rating: 4.9, image: 'images/turf-indoor.jpg', dimensions: '11v11' }
+          { id: 'turf-elite', name: 'Elite Sports Park', location: 'Nungambakkam, Chennai', price_per_hour: 1200, rating: 4.8, image: 'images/turf-gameon.jpg', dimensions: '7v7' },
+          { id: 'turf-spartan', name: 'Spartan Turf Arena', location: 'Velachery, Chennai', price_per_hour: 1500, rating: 4.9, image: 'images/turf-kickoff.jpg', dimensions: '11v11' }
         ];
       }
 
@@ -3883,7 +3883,10 @@
       if (!window.calCurrentDate) window.calCurrentDate = new Date();
       window.calCurrentDate.setMonth(window.calCurrentDate.getMonth() + delta);
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      let bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      if (!bookings || bookings.length === 0) {
+        bookings = (window.TurfifyStore && window.TurfifyStore.getBookings) ? window.TurfifyStore.getBookings() : [];
+      }
       _renderCalendar(bookings);
     };
 
@@ -3893,7 +3896,13 @@
         el.classList.toggle('active', el.getAttribute('data-iso') === isoStr);
       });
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
-      const bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      let bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
+      if (!bookings || bookings.length === 0) {
+        bookings = (window.TurfifyStore && window.TurfifyStore.getBookings) ? window.TurfifyStore.getBookings() : [];
+      }
+      if (!bookings || bookings.length === 0) {
+        try { bookings = JSON.parse(localStorage.getItem('turfify_bookings') || '[]'); } catch(e) {}
+      }
       _renderScheduleFeed(bookings, isoStr);
     };
 
@@ -3908,7 +3917,9 @@
       const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       
-      monthEl.textContent = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      monthEl.textContent = `${monthNames[month]} ${year}`;
 
       // Wire arrow buttons
       const prevBtn = document.querySelector('.cal-arrow-btn[aria-label="Previous month"]');
@@ -3916,67 +3927,117 @@
       if (prevBtn) prevBtn.onclick = () => window.changeCalMonth(-1);
       if (nextBtn) nextBtn.onclick = () => window.changeCalMonth(1);
 
-      // 5 Days strip
-      let html = '';
-      const startDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      // Render all days of the month (e.g. 1 to 30 for Nov, 1 to 31 for Dec)
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+      const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-      for (let i = 0; i < 5; i++) {
-        const d = new Date(startDay);
-        d.setDate(startDay.getDate() + i);
-        const iso = d.toISOString().split('T')[0];
-        const isSelected = (iso === window.calSelectedIso) || (i === 0 && !window.calSelectedIso);
+      if (!window.calSelectedIso) {
+        window.calSelectedIso = todayIso;
+      }
+
+      let html = '';
+      for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+        const d = new Date(year, month, dayNum);
+        const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+        const isSelected = (iso === window.calSelectedIso);
         const dayStr = days[d.getDay()];
-        const dateNum = String(d.getDate()).padStart(2, '0');
+        const dateNumDisplay = String(dayNum).padStart(2, '0');
 
         html += `
-          <div class="cal-day-col ${isSelected ? 'active' : ''}" data-iso="${iso}" onclick="window.selectCalDay('${iso}')">
+          <div class="cal-day-col ${isSelected ? 'active' : ''}" data-iso="${iso}" onclick="window.selectCalDay('${iso}')" style="flex:0 0 auto; min-width:44px; cursor:pointer;">
             <span class="cal-day-label">${dayStr}</span>
-            <div class="cal-day-num">${dateNum}</div>
+            <div class="cal-day-num">${dateNumDisplay}</div>
           </div>
         `;
       }
       daysEl.innerHTML = html;
+
+      // Auto-scroll so selected/today's date is centered in the scrollable strip
+      setTimeout(() => {
+        const activeEl = daysEl.querySelector('.cal-day-col.active');
+        if (activeEl) {
+          activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }, 50);
+    }
+
+    function _getTurfImageForBooking(b) {
+      const allTurfs = (window.TurfifyStore && window.TurfifyStore.getTurfs) ? window.TurfifyStore.getTurfs() : [];
+      // 1. Try matching by ID or Name from registered turfs in store
+      const found = allTurfs.find(t => 
+        (b.turf_id && String(t.id) === String(b.turf_id)) ||
+        (b.turf_name && t.name && t.name.toLowerCase().trim() === b.turf_name.toLowerCase().trim())
+      );
+      if (found && (found.image || (found.images && found.images[0]))) {
+        const img = found.image || found.images[0];
+        if (!img.includes('turf-lights') && !img.includes('turf-indoor')) return img;
+      }
+      // 2. If booking itself has a valid image
+      if (b.image && !b.image.includes('turf-lights') && !b.image.includes('turf-indoor')) {
+        return b.image;
+      }
+      // 3. Match by turf name keywords to distinct local turf images
+      const name = (b.turf_name || '').toLowerCase();
+      if (name.includes('apex')) return 'images/turf-arena.jpg';
+      if (name.includes('elite') || name.includes('gameon') || name.includes('game')) return 'images/turf-gameon.jpg';
+      if (name.includes('spartan') || name.includes('kickoff') || name.includes('strike')) return 'images/turf-kickoff.jpg';
+      if (name.includes('playground') || name.includes('valley') || name.includes('green')) return 'images/turf-playground.jpg';
+      if (name.includes('marina') || name.includes('panorama') || name.includes('clubhouse') || name.includes('park')) return 'images/turf-hero-panorama.jpg';
+      return 'images/turf-arena.jpg';
     }
 
     function _renderScheduleFeed(bookings, filterDate) {
       const feed = document.getElementById('player-schedule-feed');
       if (!feed) return;
 
-      let list = (bookings || []).filter(b => b.status === 'Confirmed' || b.status === 'Completed');
+      let list = (bookings || []).filter(b => b.status !== 'Cancelled');
+      
+      // If filtering by a selected calendar date:
       if (filterDate) {
         const matchesOnDate = list.filter(b => b.date === filterDate || (b.date && b.date.startsWith(filterDate)));
         if (matchesOnDate.length > 0) {
           list = matchesOnDate;
+        } else {
+          feed.innerHTML = `
+            <div style="text-align:center; padding:1.5rem 1rem; color:#64748B; background:#F8FAFC; border-radius:12px; border:1px dashed #CBD5E1;">
+              <div style="font-size:1.6rem; margin-bottom:4px;">📅</div>
+              <strong style="color:#0F172A; font-size:0.88rem; display:block;">No Match on ${filterDate}</strong>
+              <span style="font-size:0.75rem; color:#94A3B8;">Select another calendar date or book a new slot.</span>
+            </div>
+          `;
+          return;
         }
       }
 
-      // If no bookings in user history, show Apex arena match as active scheduled item
+      // If no bookings in user history, show sample scheduled items with distinct real photos
       if (list.length === 0) {
-        list = [{
-          turf_name: 'Apex arena',
-          date: '2026-11-15',
-          time_slot: '09:00 - 10:00 AM',
-          image: 'images/turf-arena.jpg'
-        }];
+        list = [
+          { turf_name: 'Apex arena', date: '2026-11-18', time_slot: '09:00 - 10:00 AM', sport: 'Football' },
+          { turf_name: 'Elite Sports Park', date: '2026-11-20', time_slot: '06:00 - 07:00 PM', sport: 'Box Cricket' }
+        ];
       }
 
-      feed.innerHTML = list.slice(0, 4).map(b => `
-        <div class="schedule-item-card">
-          <div class="schedule-item-thumb">
-            <img src="${b.image || 'images/turf-arena.jpg'}" alt="turf">
-          </div>
-          <div class="schedule-item-info">
-            <div class="schedule-item-title">${b.turf_name}</div>
-            <div class="schedule-item-date">
-              <span>🗓️</span> ${b.date} • ${b.time_slot}
+      feed.innerHTML = list.slice(0, 5).map(b => {
+        const imgSrc = _getTurfImageForBooking(b);
+        return `
+          <div class="schedule-item-card">
+            <div class="schedule-item-thumb">
+              <img src="${imgSrc}" alt="${b.turf_name}" onerror="this.src='images/turf-arena.jpg'">
+            </div>
+            <div class="schedule-item-info">
+              <div class="schedule-item-title">${b.turf_name}</div>
+              <div class="schedule-item-date">
+                <span>🗓️</span> ${b.date || ''} ${b.time_slot ? '• ' + b.time_slot : ''}
+              </div>
+            </div>
+            <div class="schedule-squad-icons">
+              <span>👥</span>
+              <span>+5</span>
             </div>
           </div>
-          <div class="schedule-squad-icons">
-            <span>👥</span>
-            <span>+5</span>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     /* ── Hamburger Toggle (≡) ───────────────────────────────────────────── */
@@ -3997,8 +4058,8 @@
       if (!turfs || turfs.length === 0) {
         turfs = [
           { id: 'turf-1794508336893', name: 'Apex arena', location: 'Anna Nagar, Chennai', price_per_hour: 1400, rating: 5.0, image: 'images/turf-arena.jpg', dimensions: '11v11' },
-          { id: 'turf-elite', name: 'Elite Sports Park', location: 'Nungambakkam, Chennai', price_per_hour: 1200, rating: 4.8, image: 'images/turf-lights.jpg', dimensions: '7v7' },
-          { id: 'turf-spartan', name: 'Spartan Turf Arena', location: 'Velachery, Chennai', price_per_hour: 1500, rating: 4.9, image: 'images/turf-indoor.jpg', dimensions: '11v11' }
+          { id: 'turf-elite', name: 'Elite Sports Park', location: 'Nungambakkam, Chennai', price_per_hour: 1200, rating: 4.8, image: 'images/turf-gameon.jpg', dimensions: '7v7' },
+          { id: 'turf-spartan', name: 'Spartan Turf Arena', location: 'Velachery, Chennai', price_per_hour: 1500, rating: 4.9, image: 'images/turf-kickoff.jpg', dimensions: '11v11' }
         ];
       }
 
@@ -4130,8 +4191,8 @@
       if (!turfs || turfs.length === 0) {
         turfs = [
           { id: 'turf-1794508336893', name: 'Apex arena', location: 'Anna Nagar, Chennai', price_per_hour: 1400, rating: 5.0, image: 'images/turf-arena.jpg', dimensions: '11v11' },
-          { id: 'turf-elite', name: 'Elite Sports Park', location: 'Nungambakkam, Chennai', price_per_hour: 1200, rating: 4.8, image: 'images/turf-lights.jpg', dimensions: '7v7' },
-          { id: 'turf-spartan', name: 'Spartan Turf Arena', location: 'Velachery, Chennai', price_per_hour: 1500, rating: 4.9, image: 'images/turf-indoor.jpg', dimensions: '11v11' }
+          { id: 'turf-elite', name: 'Elite Sports Park', location: 'Nungambakkam, Chennai', price_per_hour: 1200, rating: 4.8, image: 'images/turf-gameon.jpg', dimensions: '7v7' },
+          { id: 'turf-spartan', name: 'Spartan Turf Arena', location: 'Velachery, Chennai', price_per_hour: 1500, rating: 4.9, image: 'images/turf-kickoff.jpg', dimensions: '11v11' }
         ];
       }
       grid.innerHTML = turfs.map(t => `
