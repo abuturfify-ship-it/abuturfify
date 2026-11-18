@@ -2601,10 +2601,49 @@
               🔒 Your contact information is used strictly for digital match passes, receipt invoices, and cancellation OTP verifications.
             </div>
 
-            <button type="button" onclick="window.savePlayerProfile(null)" style="margin-top:20px; width:100%; background:#064E3B; color:#FFFFFF; border:none; padding:14px; border-radius:12px; font-weight:800; font-size:0.92rem; cursor:pointer;">
+            <button type="button" id="btn-save-profile" style="margin-top:20px; width:100%; background:#064E3B; color:#FFFFFF; border:none; padding:14px; border-radius:12px; font-weight:800; font-size:0.92rem; cursor:pointer;">
               💾 Save Profile &amp; Contact Info
             </button>
+            <div id="profile-save-msg" style="display:none; margin-top:12px; background:#DCFCE7; color:#15803D; border:1.5px solid #86EFAC; border-radius:10px; padding:12px 16px; font-weight:700; font-size:0.9rem; text-align:center;">
+              ✅ Profile saved successfully!
+            </div>
           </form>
+
+          <script>
+            (function() {
+              function doSaveProfile() {
+                var n = document.getElementById('player-profile-name');
+                var p = document.getElementById('player-profile-phone');
+                var em = document.getElementById('player-profile-email');
+                var c = document.getElementById('player-profile-city');
+                var s = document.getElementById('player-profile-sport');
+                var name  = n  ? n.value.trim()  : '';
+                var phone = p  ? p.value.trim()  : '';
+                var email = em ? em.value.trim() : '';
+                var city  = c  ? c.value.trim()  : '';
+                var sport = s  ? s.value         : 'Football';
+                if (!name) { alert('Please enter your Full Name.'); return; }
+                var profile = { name: name, phone: phone, email: email, city: city, preferred_sport: sport, updated_at: new Date().toISOString() };
+                try { localStorage.setItem('turfify_player_profile', JSON.stringify(profile)); } catch(e) {}
+                try { localStorage.setItem('turfify_current_user', JSON.stringify(profile)); } catch(e) {}
+                // Update header
+                var hdr = document.getElementById('profile-display-name');
+                if (hdr) hdr.textContent = name;
+                var nav = document.getElementById('nav-player-name');
+                if (nav) nav.textContent = name;
+                // Show inline success message
+                var msg = document.getElementById('profile-save-msg');
+                if (msg) { msg.style.display = 'block'; setTimeout(function(){ msg.style.display='none'; }, 4000); }
+              }
+              document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('btn-save-profile');
+                if (btn) btn.addEventListener('click', doSaveProfile);
+              });
+              // Also expose globally
+              window.savePlayerProfile = function(e) { if (e && e.preventDefault) e.preventDefault(); doSaveProfile(); };
+              window._doSaveProfile = doSaveProfile;
+            })();
+          </script>
         </div>
       </section>
 
