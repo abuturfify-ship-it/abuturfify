@@ -1247,5 +1247,56 @@
     "bk-110",
     "bk-186",
     "bk-680"
+  ],
+  "complaints": [
+    {
+      "id": "TC-801",
+      "turf_name": "Saju turf",
+      "location": "Madurai",
+      "player_name": "Rahul Sharma",
+      "player_phone": "+91 98765 43210",
+      "issue": "Floodlight power trip during second half of 8 PM football match. 25 minutes play time lost.",
+      "date": "2026-11-17",
+      "time_slot": "08:00 PM - 09:00 PM",
+      "status": "Open",
+      "booking_id": "bk-101",
+      "amount": 1400
+    },
+    {
+      "id": "TC-802",
+      "turf_name": "Apex Arena Football",
+      "location": "Madurai",
+      "player_name": "Mohamed Shafi",
+      "player_phone": "+91 94431 88920",
+      "issue": "Double booking conflict: offline walk-in team was already occupying court at 06:00 PM.",
+      "date": "2026-11-16",
+      "time_slot": "06:00 PM - 07:00 PM",
+      "status": "Open",
+      "booking_id": "bk-102",
+      "amount": 1200
+    }
+  ],
+  "logs": [
+    {
+      "id": "log-1",
+      "timestamp": "2026-11-18T16:30:00Z",
+      "actor": "Super Admin",
+      "action": "Facility Verification",
+      "details": "Verified venue Saju turf (Madurai)"
+    },
+    {
+      "id": "log-2",
+      "timestamp": "2026-11-18T15:45:00Z",
+      "actor": "Super Admin",
+      "action": "Platform Commission Audit",
+      "details": "Monthly Statement generated (30% Net)"
+    },
+    {
+      "id": "log-3",
+      "timestamp": "2026-11-18T14:10:00Z",
+      "actor": "Super Admin",
+      "action": "Super Admin Auth Gate",
+      "details": "Session login verified from 103.21.244.18"
+    }
   ]
 }
