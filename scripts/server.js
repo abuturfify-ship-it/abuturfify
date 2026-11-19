@@ -800,6 +800,33 @@ async function handleRequest(req, res) {
       }
     }
 
+    if (pathname === '/api/complaint') {
+      try {
+        const complaintHandler = require('../api/complaint.js');
+        if (req.method === 'POST') {
+          req.body = await readBody(req);
+        }
+        res.status = function(code) {
+          res.statusCode = code;
+          return {
+            json: function(data) {
+              return sendJson(res, code, data);
+            },
+            end: function() {
+              res.end();
+            }
+          };
+        };
+        res.json = function(data) {
+          return sendJson(res, res.statusCode || 200, data);
+        };
+        return await complaintHandler(req, res);
+      } catch(err) {
+        console.error('Local complaint API error:', err);
+        return sendJson(res, 500, { error: err.message });
+      }
+    }
+
     return sendJson(res, 404, { error: 'Unknown API endpoint' });
   }
 

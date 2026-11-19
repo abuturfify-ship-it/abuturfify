@@ -4556,9 +4556,25 @@
     }
 
     /* ── Facility Disputes & Complaints Engine ─────────────────────────── */
-    window.renderPlayerDisputesList = function() {
+    window.renderPlayerDisputesList = async function() {
       const container = document.getElementById('player-disputes-list');
       if (!container) return;
+
+      // Try fetching newest complaints from server
+      try {
+        const res = await fetch('/api/complaint');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.complaints) && data.complaints.length > 0) {
+            const local = JSON.parse(localStorage.getItem('turfify_complaints') || '[]');
+            const serverIds = new Set(data.complaints.map(c => String(c.id)));
+            const localOnly = local.filter(c => !serverIds.has(String(c.id)));
+            const merged = [...data.complaints, ...localOnly];
+            localStorage.setItem('turfify_complaints', JSON.stringify(merged));
+          }
+        }
+      } catch(e) {}
+
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
       let complaints = [];
       try {
@@ -4629,16 +4645,22 @@
       if (!bookings || bookings.length === 0) {
         try { bookings = JSON.parse(localStorage.getItem('turfify_bookings') || '[]'); } catch(e) {}
       }
+      if (!bookings || bookings.length === 0) {
+        bookings = [
+          { id: 'bk-101', turf_name: 'Saju turf', date: '2026-11-17', time_slot: '08:00 PM - 09:00 PM', amount: 1400 },
+          { id: 'bk-102', turf_name: 'Apex Arena Football', date: '2026-11-16', time_slot: '06:00 PM - 07:00 PM', amount: 1200 }
+        ];
+      }
 
       if (select) {
         select.innerHTML = bookings.map(b => `
-          <option value="${b.id}" data-turf="${(b.turf_name||'').replace(/"/g, '&quot;')}" data-amount="${b.amount||1200}" data-date="${b.date||''}" data-slot="${b.time_slot||''}" ${String(b.id) === String(bookingId) ? 'selected' : ''}>
+          <option value="${b.id}" data-turf="${(b.turf_name||'Turf').replace(/"/g, '&quot;')}" data-amount="${b.amount||1200}" data-date="${b.date||''}" data-slot="${b.time_slot||''}" ${String(b.id) === String(bookingId) ? 'selected' : ''}>
             ${b.turf_name || 'Turf'} — ${b.date || ''} (${b.time_slot || ''}) • ₹${b.amount || 1200}
           </option>
         `).join('');
       }
 
-      const chosen = bookings.find(b => String(b.id) === String(bookingId)) || bookings[0] || {
+      const chosen = (bookingId ? bookings.find(b => String(b.id) === String(bookingId)) : null) || bookings[0] || {
         id: bookingId || 'bk-101',
         turf_name: turfName || 'Saju turf',
         amount: amount || 1400,
@@ -4646,13 +4668,13 @@
         time_slot: timeSlot || '08:00 PM - 09:00 PM'
       };
 
-      document.getElementById('report-booking-id').value = chosen.id;
-      document.getElementById('report-turf-name').value = chosen.turf_name;
-      document.getElementById('report-booking-amount').value = chosen.amount;
-      document.getElementById('report-booking-date').value = chosen.date;
-      document.getElementById('report-booking-slot').value = chosen.time_slot;
+      document.getElementById('report-booking-id').value = chosen.id || 'bk-101';
+      document.getElementById('report-turf-name').value = chosen.turf_name || 'Saju turf';
+      document.getElementById('report-booking-amount').value = chosen.amount || 1400;
+      document.getElementById('report-booking-date').value = chosen.date || '2026-11-17';
+      document.getElementById('report-booking-slot').value = chosen.time_slot || '08:00 PM - 09:00 PM';
       const amtDisplay = document.getElementById('report-refund-amount-display');
-      if (amtDisplay) amtDisplay.textContent = '₹' + Number(chosen.amount || 0).toLocaleString('en-IN');
+      if (amtDisplay) amtDisplay.textContent = '₹' + Number(chosen.amount || 1400).toLocaleString('en-IN');
       const descInput = document.getElementById('report-issue-desc');
       if (descInput) descInput.value = '';
 
@@ -4666,19 +4688,19 @@
     window.onReportBookingSelectChange = function(sel) {
       const opt = sel.options[sel.selectedIndex];
       if (!opt) return;
-      document.getElementById('report-booking-id').value = opt.value;
-      document.getElementById('report-turf-name').value = opt.dataset.turf;
-      document.getElementById('report-booking-amount').value = opt.dataset.amount;
-      document.getElementById('report-booking-date').value = opt.dataset.date;
-      document.getElementById('report-booking-slot').value = opt.dataset.slot;
+      document.getElementById('report-booking-id').value = opt.value || 'bk-101';
+      document.getElementById('report-turf-name').value = opt.dataset.turf || 'Saju turf';
+      document.getElementById('report-booking-amount').value = opt.dataset.amount || 1200;
+      document.getElementById('report-booking-date').value = opt.dataset.date || '';
+      document.getElementById('report-booking-slot').value = opt.dataset.slot || '';
       const amtDisplay = document.getElementById('report-refund-amount-display');
-      if (amtDisplay) amtDisplay.textContent = '₹' + Number(opt.dataset.amount || 0).toLocaleString('en-IN');
+      if (amtDisplay) amtDisplay.textContent = '₹' + Number(opt.dataset.amount || 1200).toLocaleString('en-IN');
     };
 
-    window.submitPlayerDispute = function(e) {
+    window.submitPlayerDispute = async function(e) {
       if (e && e.preventDefault) e.preventDefault();
       const bookingId = document.getElementById('report-booking-id')?.value || 'bk-' + Date.now().toString().slice(-4);
-      const turfName = document.getElementById('report-turf-name')?.value || 'Sports Facility';
+      const turfName = document.getElementById('report-turf-name')?.value || 'Saju turf';
       const amount = parseInt(document.getElementById('report-booking-amount')?.value, 10) || 1200;
       const date = document.getElementById('report-booking-date')?.value || new Date().toISOString().slice(0, 10);
       const slot = document.getElementById('report-booking-slot')?.value || '08:00 PM - 09:00 PM';
@@ -4710,7 +4732,7 @@
         created_at: new Date().toISOString()
       };
 
-      // 1. Save to complaints (shared key read by admin.js)
+      // 1. Save to local storage for immediate UI update
       let complaints = [];
       try {
         complaints = JSON.parse(localStorage.getItem('turfify_complaints') || '[]');
@@ -4734,7 +4756,16 @@
       });
       localStorage.setItem('turfify_admin_audit_logs', JSON.stringify(logs.slice(0, 100)));
 
-      // 3. Dispatch storage event so any open Admin tabs immediately increment the Risk Flags badge!
+      // 3. Post to server database so Admin sees it across all devices
+      try {
+        fetch('/api/complaint', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newTicket)
+        }).catch(() => {});
+      } catch(err) {}
+
+      // 4. Dispatch storage event for other tabs
       window.dispatchEvent(new Event('storage'));
 
       window.closeReportIssueModal();

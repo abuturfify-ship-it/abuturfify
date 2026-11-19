@@ -299,6 +299,7 @@ function initAdminAuthGate() {
       initDashboardCharts();
       fetchSupabaseProfiles();
       fetchSupabaseBookingsAndTurfs();
+      fetchAdminComplaintsAndLogs();
       showToast('Super Admin console unlocked.');
     } else {
       if (errBox) {
@@ -336,6 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load cloud profiles and server database
   fetchSupabaseProfiles();
   fetchSupabaseBookingsAndTurfs();
+  fetchAdminComplaintsAndLogs();
+  setInterval(fetchAdminComplaintsAndLogs, 10000);
   if (window.TurfifyStore?.syncWithServer) {
     window.TurfifyStore.syncWithServer().then(() => {
       renderKPIs();
@@ -582,6 +585,7 @@ function initNavigation() {
       if (targetView === 'overview') {
         initDashboardCharts();
         renderKPIs();
+        fetchAdminComplaintsAndLogs();
       } else if (targetView === 'approvals') {
         renderApprovalsQueue();
       } else if (targetView === 'turfs') {
@@ -595,8 +599,10 @@ function initNavigation() {
         renderPaymentsSplit(confirmedBookings, getLiveTurfs());
       } else if (targetView === 'complaints') {
         renderComplaintsTable();
+        fetchAdminComplaintsAndLogs();
       } else if (targetView === 'audit') {
         renderAuditLogs();
+        fetchAdminComplaintsAndLogs();
       }
 
       // Close mobile drawer if open
@@ -1647,6 +1653,42 @@ const INITIAL_COMPLAINTS = [
     amount: 1200
   }
 ];
+
+async function fetchAdminComplaintsAndLogs() {
+  try {
+    const res = await fetch('/api/complaint');
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data.complaints) && data.complaints.length > 0) {
+        let local = [];
+        try {
+          local = JSON.parse(localStorage.getItem('turfify_complaints') || '[]');
+        } catch(e) {}
+        const serverIds = new Set(data.complaints.map(c => String(c.id)));
+        const localOnly = local.filter(c => !serverIds.has(String(c.id)));
+        const merged = [...data.complaints, ...localOnly];
+        localStorage.setItem('turfify_complaints', JSON.stringify(merged));
+
+        if (Array.isArray(data.logs) && data.logs.length > 0) {
+          let localLogs = [];
+          try {
+            localLogs = JSON.parse(localStorage.getItem('turfify_admin_audit_logs') || '[]');
+          } catch(e) {}
+          const serverLogIds = new Set(data.logs.map(l => String(l.id)));
+          const localOnlyLogs = localLogs.filter(l => !serverLogIds.has(String(l.id)));
+          const mergedLogs = [...data.logs, ...localOnlyLogs];
+          localStorage.setItem('turfify_admin_audit_logs', JSON.stringify(mergedLogs));
+        }
+
+        renderKPIs();
+        renderComplaintsTable();
+        renderAuditLogs();
+      }
+    }
+  } catch(err) {
+    console.warn('Could not fetch server complaints:', err);
+  }
+}
 
 function getAdminComplaints() {
   try {
