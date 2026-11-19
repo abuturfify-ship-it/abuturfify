@@ -1664,9 +1664,34 @@ async function fetchAdminComplaintsAndLogs() {
         try {
           local = JSON.parse(localStorage.getItem('turfify_complaints') || '[]');
         } catch(e) {}
-        const serverIds = new Set(data.complaints.map(c => String(c.id)));
-        const localOnly = local.filter(c => !serverIds.has(String(c.id)));
-        const merged = [...data.complaints, ...localOnly];
+
+        // Map existing local complaints to keep their resolved state if admin already acted
+        const localMap = new Map();
+        local.forEach(c => {
+          const key = String(c.id).replace('#', '').trim();
+          localMap.set(key, c);
+        });
+
+        const merged = data.complaints.map(sc => {
+          const key = String(sc.id).replace('#', '').trim();
+          const lc = localMap.get(key);
+          if (lc) {
+            localMap.delete(key);
+            // If local status is already Resolved or Refunded, never allow stale server 'Open' to overwrite it!
+            const isLocalResolved = lc.status && (lc.status.toLowerCase().includes('resolve') || lc.status.toLowerCase().includes('refund'));
+            const isServerResolved = sc.status && (sc.status.toLowerCase().includes('resolve') || sc.status.toLowerCase().includes('refund'));
+            if (isLocalResolved && !isServerResolved) {
+              return { ...sc, status: lc.status, resolved_at: lc.resolved_at || new Date().toISOString() };
+            }
+          }
+          return sc;
+        });
+
+        // Add any complaints that only exist locally
+        for (const [_, lc] of localMap) {
+          merged.push(lc);
+        }
+
         localStorage.setItem('turfify_complaints', JSON.stringify(merged));
 
         if (Array.isArray(data.logs) && data.logs.length > 0) {
@@ -1793,13 +1818,24 @@ function renderComplaintsTable(filter = currentComplaintsFilter) {
 }
 
 window.adminResolveComplaint = async function(ticketId) {
+  const cleanId = String(ticketId).replace('#', '').trim();
   const complaints = getAdminComplaints();
-  const c = complaints.find(x => String(x.id) === String(ticketId));
+  const c = complaints.find(x => String(x.id).replace('#', '').trim() === cleanId);
   if (c) {
     c.status = 'Resolved';
     c.resolved_at = new Date().toISOString();
     localStorage.setItem('turfify_complaints', JSON.stringify(complaints));
 
+    // 1. Post to /api/complaint
+    try {
+      fetch('/api/complaint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'resolve', id: c.id, ticket_id: c.id, status: 'Resolved' })
+      }).catch(() => {});
+    } catch(e) {}
+
+    // 2. Post to /api/admin
     try {
       fetch('/api/admin', {
         method: 'POST',
@@ -1807,14 +1843,14 @@ window.adminResolveComplaint = async function(ticketId) {
           'Content-Type': 'application/json',
           'x-admin-token': ADMIN_PASSWORD
         },
-        body: JSON.stringify({ action: 'resolve_complaint', ticket_id: ticketId })
+        body: JSON.stringify({ action: 'resolve_complaint', ticket_id: c.id, id: c.id, status: 'Resolved' })
       }).catch(() => {});
     } catch(e) {}
 
-    addAdminAuditLog('Complaint Resolved', `Resolved dispute #${ticketId} for ${c.turf_name}`);
+    addAdminAuditLog('Complaint Resolved', `Resolved dispute #${c.id} for ${c.turf_name}`);
     renderComplaintsTable(currentComplaintsFilter);
     renderKPIs();
-    showToast(`Dispute #${ticketId} resolved.`);
+    showToast(`Dispute #${c.id} resolved.`);
   }
 };
 
@@ -1829,21 +1865,40 @@ window.adminRefundBooking = async function(bookingId, ticketId, amount) {
     if (b) {
       b.payment_status = 'Refunded';
       b.status = 'Cancelled';
+      b.refunded_at = new Date().toISOString();
       try { localStorage.setItem('turfify_bookings', JSON.stringify(bookings)); } catch(e) {}
     }
 
     // 2. Mark complaint resolved
-    if (ticketId) {
+    const cleanTicketId = ticketId ? String(ticketId).replace('#', '').trim() : '';
+    let turfName = 'Facility';
+    if (cleanTicketId) {
       const complaints = getAdminComplaints();
-      const c = complaints.find(x => String(x.id) === String(ticketId));
+      const c = complaints.find(x => String(x.id).replace('#', '').trim() === cleanTicketId);
       if (c) {
         c.status = 'Resolved (Refunded)';
         c.resolved_at = new Date().toISOString();
+        turfName = c.turf_name || turfName;
         try { localStorage.setItem('turfify_complaints', JSON.stringify(complaints)); } catch(e) {}
       }
     }
 
-    // 3. Server-side API call
+    // 3. Server-side API calls to persist both refund and complaint resolution
+    try {
+      fetch('/api/complaint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'refund',
+          id: cleanTicketId,
+          ticket_id: cleanTicketId,
+          booking_id: bookingId,
+          amount: amount,
+          status: 'Resolved (Refunded)'
+        })
+      }).catch(() => {});
+    } catch(e) {}
+
     try {
       fetch('/api/admin', {
         method: 'POST',
@@ -1851,7 +1906,12 @@ window.adminRefundBooking = async function(bookingId, ticketId, amount) {
           'Content-Type': 'application/json',
           'x-admin-token': ADMIN_PASSWORD
         },
-        body: JSON.stringify({ action: 'process_refund', booking_id: bookingId })
+        body: JSON.stringify({
+          action: 'process_refund',
+          booking_id: bookingId,
+          ticket_id: cleanTicketId,
+          amount: amount
+        })
       }).catch(() => {});
     } catch(e) {}
 
@@ -1859,7 +1919,7 @@ window.adminRefundBooking = async function(bookingId, ticketId, amount) {
     renderComplaintsTable(currentComplaintsFilter);
     renderBookingsTable();
     renderKPIs();
-    showToast(`Refund of ₹${amount} authorized for booking #${bookingId}.`);
+    showToast(`Refund of ₹${amount} authorized. Dispute resolved.`);
   }
 };
 
