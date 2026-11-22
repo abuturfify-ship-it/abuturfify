@@ -735,54 +735,197 @@
 
 
         <!-- ==================================================================
-             SECTION 6: REPORTS & EXPORT
+             SECTION 6: PLATFORM COMMISSION REPORTS (CORE ADMIN SAAS REQUIREMENT)
              ================================================================== -->
         <section class="view-section" id="view-reports">
           <div class="view-header">
             <div>
-              <h1 class="view-heading">Reports & Exports</h1>
-              <p class="view-subheading">Generate audit-ready statements, GST tax filing ledgers, and venue performance statistics.</p>
+              <h1 class="view-heading">Platform Commission Reports 📈</h1>
+              <p class="view-subheading">Comprehensive accounting breakdown of Turfify's 30% platform take-rate, gross merchandise value (GMV), venue payouts, and tax ledger.</p>
+            </div>
+            <div class="action-buttons-group" style="display:flex; gap:10px; align-items:center;">
+              <button class="btn-primary-green" onclick="window.exportCommissionCSV()" style="display:inline-flex; align-items:center; gap:6px;">
+                <span>📥</span> Download CSV Report
+              </button>
+              <button class="btn-secondary-light" onclick="window.printCommissionReport()" style="display:inline-flex; align-items:center; gap:6px;">
+                <span>🖨️</span> Print Statement
+              </button>
             </div>
           </div>
 
+          <!-- Commission KPI Summary Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card blue">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">💼</div>
+                <span class="status-pill confirmed">Platform 30%</span>
+              </div>
+              <div class="kpi-value" id="commission-kpi-platform" style="color:#2563EB;">₹0</div>
+              <div class="kpi-label">Net Turfify Commission</div>
+              <div class="kpi-footer-text">30% marketplace cut collected</div>
+            </div>
+
+            <div class="kpi-card green">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">💰</div>
+                <span class="status-pill active">Gross GMV</span>
+              </div>
+              <div class="kpi-value" id="commission-kpi-gmv" style="color:#059669;">₹0</div>
+              <div class="kpi-label">Gross Transaction Volume</div>
+              <div class="kpi-footer-text">Total value of all confirmed matches</div>
+            </div>
+
+            <div class="kpi-card purple">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">🏟️</div>
+                <span class="status-pill active">Owner 70%</span>
+              </div>
+              <div class="kpi-value" id="commission-kpi-owner" style="color:#7C3AED;">₹0</div>
+              <div class="kpi-label">Venue Owner Payouts</div>
+              <div class="kpi-footer-text">70% net payable to turf partners</div>
+            </div>
+
+            <div class="kpi-card amber">
+              <div class="kpi-top">
+                <div class="kpi-icon-wrap">🧾</div>
+                <span class="status-pill pending">Audit Trail</span>
+              </div>
+              <div class="kpi-value" id="commission-kpi-txns" style="color:#D97706;">0</div>
+              <div class="kpi-label">Commissionable Bookings</div>
+              <div class="kpi-footer-text">Total confirmed paid sessions</div>
+            </div>
+          </div>
+
+          <!-- Dynamic Commission Filter & Search Controls -->
+          <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:16px 20px; margin:20px 0; display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; align-items:center;">
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+              <span style="font-size:0.82rem; font-weight:700; color:#475569;">Time Period:</span>
+              <button class="commission-period-btn active" data-period="all" onclick="window.filterCommissionPeriod('all')" style="background:#0F172A; color:#FFFFFF; border:none; padding:6px 14px; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer;">All Time</button>
+              <button class="commission-period-btn" data-period="month" onclick="window.filterCommissionPeriod('month')" style="background:#F1F5F9; color:#475569; border:1px solid #CBD5E1; padding:6px 14px; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer;">This Month</button>
+              <button class="commission-period-btn" data-period="week" onclick="window.filterCommissionPeriod('week')" style="background:#F1F5F9; color:#475569; border:1px solid #CBD5E1; padding:6px 14px; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer;">Last 7 Days</button>
+              <button class="commission-period-btn" data-period="today" onclick="window.filterCommissionPeriod('today')" style="background:#F1F5F9; color:#475569; border:1px solid #CBD5E1; padding:6px 14px; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer;">Today</button>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; flex:1; justify-content:flex-end;">
+              <select id="commission-filter-turf" onchange="window.filterCommissionReports()" style="padding:7px 12px; border-radius:8px; border:1px solid #CBD5E1; font-size:0.8rem; background:#FFF; color:#334155; font-weight:600;">
+                <option value="all">All Turf Venues</option>
+              </select>
+
+              <div style="position:relative; min-width:220px;">
+                <input type="text" id="commission-filter-search" placeholder="Search by booking, turf, or player..." oninput="window.filterCommissionReports()" style="width:100%; padding:7px 12px 7px 30px; border-radius:8px; border:1px solid #CBD5E1; font-size:0.8rem; box-sizing:border-box;">
+                <span style="position:absolute; left:9px; top:50%; transform:translateY(-50%); font-size:0.85rem; color:#94A3B8;">🔍</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table 1: Turf Venue Commission Breakdown -->
+          <div class="table-panel" style="margin-bottom:24px;">
+            <div style="padding:18px 24px; border-bottom:1px solid var(--slate-100); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h3 style="font-family:var(--font-display); font-size:1.1rem; font-weight:800; color:var(--navy-900); margin:0 0 4px 0;">Turf-by-Turf Commission Yield (30% Platform Split)</h3>
+                <p style="font-size:0.78rem; color:var(--slate-400); margin:0;">Aggregated revenue share generated per facility venue.</p>
+              </div>
+              <span id="commission-venue-count-badge" style="background:#EFF6FF; color:#1D4ED8; font-weight:700; font-size:0.76rem; padding:4px 10px; border-radius:999px;">0 Venues Active</span>
+            </div>
+
+            <div class="table-responsive-container" style="overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%;">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>Turf Venue</th>
+                    <th>Owner / Partner</th>
+                    <th>Location</th>
+                    <th>Total Bookings</th>
+                    <th>Gross GMV</th>
+                    <th style="color:#10B981;">Owner Payout (70%)</th>
+                    <th style="color:#2563EB;">Turfify Cut (30%)</th>
+                    <th>Settlement Status</th>
+                  </tr>
+                </thead>
+                <tbody id="commission-venues-table-body">
+                  <tr><td colspan="8" style="text-align:center; padding:28px; color:#94A3B8;">Calculating venue commission yields...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Table 2: Detailed Commission Transactions Ledger -->
+          <div class="table-panel" style="margin-bottom:24px;">
+            <div style="padding:18px 24px; border-bottom:1px solid var(--slate-100); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h3 style="font-family:var(--font-display); font-size:1.1rem; font-weight:800; color:var(--navy-900); margin:0 0 4px 0;">Itemized Commission Transaction Ledger</h3>
+                <p style="font-size:0.78rem; color:var(--slate-400); margin:0;">Transaction-level commission audit trail on all customer bookings.</p>
+              </div>
+              <button class="btn-secondary-light" onclick="window.exportCommissionCSV()" style="font-size:0.75rem; padding:5px 12px;">
+                Export Ledger (CSV)
+              </button>
+            </div>
+
+            <div class="table-responsive-container" style="overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%;">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>Txn / Booking ID</th>
+                    <th>Turf Venue</th>
+                    <th>Date & Slot</th>
+                    <th>Customer / Athlete</th>
+                    <th>Gross Billing</th>
+                    <th style="color:#10B981;">Owner Share (70%)</th>
+                    <th style="color:#2563EB;">Commission (30%)</th>
+                    <th>Fee Status</th>
+                  </tr>
+                </thead>
+                <tbody id="commission-txns-table-body">
+                  <tr><td colspan="8" style="text-align:center; padding:28px; color:#94A3B8;">Loading commission records...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Functional Accounting Export Cards -->
+          <div style="margin-top:28px; margin-bottom:12px;">
+            <h3 style="font-family:var(--font-display); font-size:1.1rem; font-weight:800; color:var(--navy-900); margin:0 0 4px 0;">Audit Export Generators</h3>
+            <p style="font-size:0.78rem; color:var(--slate-400); margin:0;">Download real formatted CSV statements for taxation, accountant reconciliation, and venue audits.</p>
+          </div>
+
           <div class="reports-grid">
-            <!-- Report 1 -->
+            <!-- Report 1: P&L Statement -->
             <div class="report-export-card">
               <div class="report-card-icon" style="background: var(--green-subtle); color: var(--green-dark);">📊</div>
               <h3 class="report-card-title">Monthly P&L Audit Statement</h3>
-              <p class="report-card-desc">Detailed breakdown of gross customer billing, Razorpay gateway fees, 10% platform commission, and venue payouts.</p>
-              <button class="btn-primary-green" onclick="alert('Monthly P&L generated. Ready for download.')">
-                Download PDF
+              <p class="report-card-desc">Detailed accounting breakdown of gross GMV, venue payouts (70%), and net platform commission (30%).</p>
+              <button class="btn-primary-green" onclick="window.exportMonthlyPL()">
+                Download Statement CSV
               </button>
             </div>
 
-            <!-- Report 2 -->
+            <!-- Report 2: Turf Occupancy & Utilization -->
             <div class="report-export-card">
               <div class="report-card-icon" style="background: var(--blue-subtle); color: var(--blue-dark);">🏟️</div>
               <h3 class="report-card-title">Turf Utilization & Peak Hours</h3>
-              <p class="report-card-desc">Hourly slot occupancy matrix across weekday evenings and weekends. Highlights high-yield prime-time slots.</p>
-              <button class="btn-secondary-light" onclick="alert('Turf Utilization Excel sheet exported.')">
-                Export Spreadsheet
+              <p class="report-card-desc">Slot occupancy analysis across evening prime-time and morning hours across all active turfs.</p>
+              <button class="btn-secondary-light" onclick="window.exportTurfUtilization()">
+                Export Utilization CSV
               </button>
             </div>
 
-            <!-- Report 3 -->
+            <!-- Report 3: GST Tax Register -->
             <div class="report-export-card">
               <div class="report-card-icon" style="background: var(--amber-subtle); color: var(--amber-dark);">🧾</div>
               <h3 class="report-card-title">GST Tax Invoices Register</h3>
-              <p class="report-card-desc">Compliant 18% GST tax breakdown on platform convenience fees with SAC codes and business GSTIN records.</p>
-              <button class="btn-secondary-light" onclick="alert('GST Tax summary generated.')">
-                Download CSV
+              <p class="report-card-desc">Compliant 18% GST tax ledger breakdown calculated on Turfify's 30% platform convenience fees.</p>
+              <button class="btn-secondary-light" onclick="window.exportGSTRegister()">
+                Download GST Ledger CSV
               </button>
             </div>
 
-            <!-- Report 4 -->
+            <!-- Report 4: Player Retention & Cohorts -->
             <div class="report-export-card">
               <div class="report-card-icon" style="background: var(--violet-subtle); color: var(--violet-dark);">👥</div>
               <h3 class="report-card-title">Player Retention & Cohorts</h3>
-              <p class="report-card-desc">Repeat booking frequency, cancellation rates, favorite time-slots, and player team size analysis.</p>
-              <button class="btn-secondary-light" onclick="alert('Player Retention matrix exported.')">
-                View Cohorts
+              <p class="report-card-desc">Repeat booking frequency, lifetime value (LTV), and athlete spending analytics across facilities.</p>
+              <button class="btn-secondary-light" onclick="window.exportRetentionCohort()">
+                Export Cohort CSV
               </button>
             </div>
           </div>

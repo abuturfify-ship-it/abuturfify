@@ -330,6 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderApprovalsQueue();
   renderComplaintsTable();
   renderAuditLogs();
+  renderCommissionReports();
   initFilters();
   initExportButtons();
   initModals();
@@ -345,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTurfsList();
       renderBookingsTable();
       renderUsersTable();
+      renderCommissionReports();
     }).catch(() => {});
   }
 
@@ -357,6 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderUsersTable();
       renderComplaintsTable();
       renderAuditLogs();
+      renderCommissionReports();
     }
   });
 
@@ -597,6 +600,8 @@ function initNavigation() {
       } else if (targetView === 'payments') {
         const confirmedBookings = getLiveBookings().filter(b => b.status !== 'Cancelled');
         renderPaymentsSplit(confirmedBookings, getLiveTurfs());
+      } else if (targetView === 'reports') {
+        renderCommissionReports();
       } else if (targetView === 'complaints') {
         renderComplaintsTable();
         fetchAdminComplaintsAndLogs();
@@ -1170,6 +1175,334 @@ function initExportButtons() {
     showToast('CSV exported with 70/30 revenue split data.');
   });
 }
+
+// =============================================================================
+// PLATFORM COMMISSION REPORTS ENGINE (30% PLATFORM TAKE-RATE)
+// =============================================================================
+
+let commissionCurrentPeriod = 'all';
+
+window.filterCommissionPeriod = function(period) {
+  commissionCurrentPeriod = period;
+  document.querySelectorAll('.commission-period-btn').forEach(btn => {
+    if (btn.getAttribute('data-period') === period) {
+      btn.style.background = '#0F172A';
+      btn.style.color = '#FFFFFF';
+      btn.style.borderColor = '#0F172A';
+    } else {
+      btn.style.background = '#F1F5F9';
+      btn.style.color = '#475569';
+      btn.style.borderColor = '#CBD5E1';
+    }
+  });
+  renderCommissionReports();
+};
+
+window.filterCommissionReports = function() {
+  renderCommissionReports();
+};
+
+function getFilteredCommissionBookings() {
+  const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
+  const now = new Date();
+  const selectedTurf = document.getElementById('commission-filter-turf')?.value || 'all';
+  const searchTerm = (document.getElementById('commission-filter-search')?.value || '').toLowerCase().trim();
+
+  return confirmed.filter(b => {
+    // 1. Period filter
+    if (b.date) {
+      const bDate = new Date(b.date);
+      if (commissionCurrentPeriod === 'today') {
+        const todayStr = now.toISOString().slice(0, 10);
+        if (b.date !== todayStr) return false;
+      } else if (commissionCurrentPeriod === 'week') {
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        if (bDate < sevenDaysAgo) return false;
+      } else if (commissionCurrentPeriod === 'month') {
+        const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        if (bDate < thirtyDaysAgo) return false;
+      }
+    }
+
+    // 2. Turf filter
+    if (selectedTurf !== 'all') {
+      if (String(b.turf_id) !== selectedTurf && String(b.turf_name) !== selectedTurf) {
+        return false;
+      }
+    }
+
+    // 3. Search filter
+    if (searchTerm) {
+      const matchId = String(b.id || '').toLowerCase().includes(searchTerm);
+      const matchTurf = String(b.turf_name || '').toLowerCase().includes(searchTerm);
+      const matchPlayer = String(b.player_name || '').toLowerCase().includes(searchTerm);
+      if (!matchId && !matchTurf && !matchPlayer) return false;
+    }
+
+    return true;
+  });
+}
+
+function renderCommissionReports() {
+  const turfs = getLiveTurfs();
+  const filtered = getFilteredCommissionBookings();
+
+  // Populate Turf Filter dropdown if not yet populated
+  const turfSelect = document.getElementById('commission-filter-turf');
+  if (turfSelect && turfSelect.options.length <= 1) {
+    const existingVal = turfSelect.value;
+    turfSelect.innerHTML = '<option value="all">All Turf Venues</option>' +
+      turfs.map(t => `<option value="${t.id}">${t.name} (${t.location || 'TN'})</option>`).join('');
+    turfSelect.value = existingVal || 'all';
+  }
+
+  // Calculate Metrics
+  const grossGMV = filtered.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const platformCut = Math.round(grossGMV * ADMIN_SHARE);
+  const ownerPayouts = Math.round(grossGMV * OWNER_SHARE);
+  const txnsCount = filtered.length;
+
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setEl('commission-kpi-platform', fmt(platformCut));
+  setEl('commission-kpi-gmv', fmt(grossGMV));
+  setEl('commission-kpi-owner', fmt(ownerPayouts));
+  setEl('commission-kpi-txns', txnsCount);
+
+  // Render Table 1: Turf-by-Turf Commission Yield
+  const venueTbody = document.getElementById('commission-venues-table-body');
+  const venueBadge = document.getElementById('commission-venue-count-badge');
+
+  const venueStats = {};
+  filtered.forEach(b => {
+    const tid = b.turf_id || b.turf_name || 'unknown';
+    if (!venueStats[tid]) {
+      const turfObj = turfs.find(t => String(t.id) === String(b.turf_id) || t.name === b.turf_name);
+      venueStats[tid] = {
+        name: b.turf_name || turfObj?.name || 'Turf Venue',
+        sport: b.sport || turfObj?.sport || 'Football',
+        location: turfObj?.location || turfObj?.city || 'Tamil Nadu',
+        owner: turfObj?.owner_name || 'Venue Partner',
+        bookings: 0,
+        gmv: 0
+      };
+    }
+    venueStats[tid].bookings++;
+    venueStats[tid].gmv += (Number(b.amount) || 0);
+  });
+
+  const venueList = Object.values(venueStats).sort((a, b) => b.gmv - a.gmv);
+  if (venueBadge) venueBadge.textContent = `${venueList.length} Active Venue${venueList.length === 1 ? '' : 's'}`;
+
+  if (venueTbody) {
+    if (!venueList.length) {
+      venueTbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94A3B8;">No booking volume found for this period filter.</td></tr>`;
+    } else {
+      venueTbody.innerHTML = venueList.map(v => {
+        const vOwner = Math.round(v.gmv * OWNER_SHARE);
+        const vPlatform = Math.round(v.gmv * ADMIN_SHARE);
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:700; color:#0F172A; display:flex; align-items:center; gap:6px;">
+                <span>${getSportIcon(v.sport)}</span>
+                <span>${v.name}</span>
+              </div>
+            </td>
+            <td>
+              <div style="font-weight:600; color:#334155;">${v.owner}</div>
+            </td>
+            <td style="font-size:0.8rem; color:#64748B;">📍 ${v.location}</td>
+            <td style="font-weight:700; text-align:center;">${v.bookings}</td>
+            <td style="font-weight:800; color:#0F172A;">${fmt(v.gmv)}</td>
+            <td style="font-weight:700; color:#10B981;">${fmt(vOwner)}</td>
+            <td style="font-weight:800; color:#2563EB;">${fmt(vPlatform)}</td>
+            <td>
+              <span class="status-pill confirmed">Settled (T+1)</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  // Render Table 2: Detailed Itemized Commission Transactions Ledger
+  const txnsTbody = document.getElementById('commission-txns-table-body');
+  if (txnsTbody) {
+    if (!filtered.length) {
+      txnsTbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94A3B8;">No commissionable bookings matching your filter criteria.</td></tr>`;
+    } else {
+      txnsTbody.innerHTML = filtered.map(b => {
+        const amt = Number(b.amount) || 0;
+        const ownerAmt = Math.round(amt * OWNER_SHARE);
+        const adminAmt = Math.round(amt * ADMIN_SHARE);
+        return `
+          <tr>
+            <td>
+              <span style="font-family:monospace; font-weight:800; color:#2563EB;">#${b.id}</span>
+            </td>
+            <td>
+              <div style="font-weight:700; color:#0F172A;">${b.turf_name || 'Turf Venue'}</div>
+              <div style="font-size:0.72rem; color:#64748B;">${getSportIcon(b.sport)} ${b.sport || 'Sports'}</div>
+            </td>
+            <td style="font-size:0.8rem; color:#64748B; white-space:nowrap;">
+              ${b.date || '—'}<br><small style="color:#94A3B8;">${b.time_slot || ''}</small>
+            </td>
+            <td>
+              <div style="font-weight:600; color:#0F172A;">${b.player_name || 'Athlete'}</div>
+              <div style="font-size:0.72rem; color:#64748B;">${b.player_phone || '—'}</div>
+            </td>
+            <td style="font-weight:800; color:#0F172A;">${fmt(amt)}</td>
+            <td style="font-weight:700; color:#10B981;">${fmt(ownerAmt)}</td>
+            <td style="font-weight:800; color:#2563EB;">${fmt(adminAmt)}</td>
+            <td>
+              <span class="status-pill confirmed">Collected ✓</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+}
+
+// ─── CSV Download Trigger Helper ──────────────────────────────────────────────
+function downloadCSV(filename, csvContent) {
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+// ─── Export 1: Platform Commission Full Report CSV ────────────────────────────
+window.exportCommissionCSV = function() {
+  const list = getFilteredCommissionBookings();
+  const turfs = getLiveTurfs();
+
+  if (!list.length) {
+    alert('No commission records available to export for current filter.');
+    return;
+  }
+
+  let csv = 'Transaction ID,Date,Time Slot,Turf Venue,Sport,Owner Name,Player Name,Gross Billing (INR),Owner Payout 70% (INR),Platform Commission 30% (INR),Payment Status\r\n';
+
+  list.forEach(b => {
+    const amt = Number(b.amount) || 0;
+    const ownerAmt = Math.round(amt * OWNER_SHARE);
+    const adminAmt = Math.round(amt * ADMIN_SHARE);
+    const turfObj = turfs.find(t => String(t.id) === String(b.turf_id) || t.name === b.turf_name);
+    const owner = (turfObj?.owner_name || 'Venue Partner').replace(/"/g, '""');
+    const turf = (b.turf_name || 'Turf').replace(/"/g, '""');
+    const player = (b.player_name || 'Athlete').replace(/"/g, '""');
+
+    csv += `"${b.id}","${b.date || ''}","${b.time_slot || ''}","${turf}","${b.sport || 'Sports'}","${owner}","${player}",${amt},${ownerAmt},${adminAmt},"Confirmed (Settled)"\r\n`;
+  });
+
+  const filename = `Turfify_Commission_Report_${new Date().toISOString().slice(0, 10)}.csv`;
+  downloadCSV(filename, csv);
+  showToast('✅ Platform Commission Report downloaded.');
+};
+
+// ─── Export 2: Print Commission Statement ─────────────────────────────────────
+window.printCommissionReport = function() {
+  window.print();
+};
+
+// ─── Export 3: Monthly P&L Audit Statement ────────────────────────────────────
+window.exportMonthlyPL = function() {
+  const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
+  const totalGMV = confirmed.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const ownerDisbursed = Math.round(totalGMV * OWNER_SHARE);
+  const grossCommission = Math.round(totalGMV * ADMIN_SHARE);
+  const paymentGatewayFee = Math.round(totalGMV * 0.02); // 2% gateway processing
+  const netCommissionProfit = grossCommission - paymentGatewayFee;
+
+  let csv = 'Metric,Amount (INR),Accounting Notes\r\n';
+  csv += `"Gross Merchandise Value (GMV)",${totalGMV},"Total customer booking turnover"\r\n`;
+  csv += `"Venue Owner Payouts (70%)",${ownerDisbursed},"Disbursed to turf partners under T+1 settlement"\r\n`;
+  csv += `"Gross Platform Take-Rate (30%)",${grossCommission},"Turfify marketplace platform fee"\r\n`;
+  csv += `"Payment Gateway Fees (2% est.)",${paymentGatewayFee},"Razorpay / Banking interchange cost"\r\n`;
+  csv += `"Net Operating Commission Profit",${netCommissionProfit},"Net revenue retained by Turfify"\r\n`;
+  csv += `"Total Bookings Count",${confirmed.length},"Successfully completed match slots"\r\n`;
+
+  const filename = `Turfify_Monthly_PL_Statement_${new Date().toISOString().slice(0, 10)}.csv`;
+  downloadCSV(filename, csv);
+  showToast('✅ Monthly P&L Statement downloaded.');
+};
+
+// ─── Export 4: Turf Occupancy & Utilization ─────────────────────────────────
+window.exportTurfUtilization = function() {
+  const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
+  const turfs = getLiveTurfs();
+
+  let csv = 'Turf Name,Sport,Location,Hourly Rate (INR),Total Bookings,Total Revenue (INR),Platform 30% Cut (INR)\r\n';
+  turfs.forEach(t => {
+    const turfBookings = confirmed.filter(b => String(b.turf_id) === String(t.id) || b.turf_name === t.name);
+    const rev = turfBookings.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+    const comm = Math.round(rev * ADMIN_SHARE);
+    csv += `"${t.name.replace(/"/g, '""')}","${t.sport || 'Sports'}","${t.location || 'Tamil Nadu'}",${t.price_per_hour || 1200},${turfBookings.length},${rev},${comm}\r\n`;
+  });
+
+  const filename = `Turfify_Turf_Utilization_Matrix_${new Date().toISOString().slice(0, 10)}.csv`;
+  downloadCSV(filename, csv);
+  showToast('✅ Turf Utilization report downloaded.');
+};
+
+// ─── Export 5: GST Tax Invoices Register ──────────────────────────────────────
+window.exportGSTRegister = function() {
+  const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
+  let csv = 'Booking ID,Date,Turf Venue,Gross Amount (INR),Platform Service Fee (INR),Taxable Value (INR),CGST 9% (INR),SGST 9% (INR),Total 18% GST (INR)\r\n';
+
+  confirmed.forEach(b => {
+    const amt = Number(b.amount) || 0;
+    const fee = Math.round(amt * ADMIN_SHARE); // 30% service fee
+    const taxable = Math.round(fee / 1.18);
+    const gstTotal = fee - taxable;
+    const cgst = Math.round(gstTotal / 2);
+    const sgst = gstTotal - cgst;
+
+    csv += `"${b.id}","${b.date || ''}","${(b.turf_name || '').replace(/"/g, '""')}",${amt},${fee},${taxable},${cgst},${sgst},${gstTotal}\r\n`;
+  });
+
+  const filename = `Turfify_GST_Tax_Register_${new Date().toISOString().slice(0, 10)}.csv`;
+  downloadCSV(filename, csv);
+  showToast('✅ GST Tax Invoices Register downloaded.');
+};
+
+// ─── Export 6: Player Retention & Cohorts ────────────────────────────────────
+window.exportRetentionCohort = function() {
+  const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
+  const userMap = {};
+
+  confirmed.forEach(b => {
+    const key = b.player_phone || b.player_name || 'Athlete';
+    if (!userMap[key]) {
+      userMap[key] = {
+        name: b.player_name || 'Athlete',
+        phone: b.player_phone || '—',
+        bookings: 0,
+        spent: 0,
+        venues: new Set()
+      };
+    }
+    userMap[key].bookings++;
+    userMap[key].spent += (Number(b.amount) || 0);
+    if (b.turf_name) userMap[key].venues.add(b.turf_name);
+  });
+
+  let csv = 'Athlete Name,Phone,Total Matches Booked,Gross Spend (INR),Platform Commission Contributed (INR),Unique Venues Played\r\n';
+  Object.values(userMap).forEach(u => {
+    const comm = Math.round(u.spent * ADMIN_SHARE);
+    csv += `"${u.name.replace(/"/g, '""')}","${u.phone}",${u.bookings},${u.spent},${comm},${u.venues.size}\r\n`;
+  });
+
+  const filename = `Turfify_Player_Retention_Cohorts_${new Date().toISOString().slice(0, 10)}.csv`;
+  downloadCSV(filename, csv);
+  showToast('✅ Player Retention Cohorts report downloaded.');
+};
 
 
 
