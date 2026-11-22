@@ -1364,9 +1364,24 @@ function renderCommissionReports() {
   }
 }
 
-// ─── CSV Download Trigger Helper ──────────────────────────────────────────────
+// ─── Clean Date Formatter (Prevents Excel ###### Overflow) ───────────────────
+function formatCleanDate(dateStr) {
+  if (!dateStr) return '—';
+  try {
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+  } catch (e) {}
+  return String(dateStr);
+}
+
+// ─── CSV Download Trigger Helper (With UTF-8 BOM) ─────────────────────────────
 function downloadCSV(filename, csvContent) {
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  // Prepend UTF-8 BOM (\uFEFF) so Excel opens UTF-8 without mangling characters or alignments
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
@@ -1377,7 +1392,127 @@ function downloadCSV(filename, csvContent) {
   URL.revokeObjectURL(url);
 }
 
-// ─── Export 1: Platform Commission Full Report CSV ────────────────────────────
+// ─── Excel (.xls) Download Trigger Helper ─────────────────────────────────────
+function downloadExcel(filename, htmlContent) {
+  const blob = new Blob(['\uFEFF' + htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+// ─── Export 1: Formatted Excel Spreadsheet (.xls with Auto Widths & Styles) ──
+window.exportCommissionExcel = function() {
+  const list = getFilteredCommissionBookings();
+  const turfs = getLiveTurfs();
+
+  if (!list.length) {
+    alert('No commission records available to export for current filter.');
+    return;
+  }
+
+  let totalGMV = 0;
+  let totalOwner = 0;
+  let totalAdmin = 0;
+
+  const rows = list.map((b, idx) => {
+    const amt = Number(b.amount) || 0;
+    const ownerAmt = Math.round(amt * OWNER_SHARE);
+    const adminAmt = Math.round(amt * ADMIN_SHARE);
+    totalGMV += amt;
+    totalOwner += ownerAmt;
+    totalAdmin += adminAmt;
+
+    const turfObj = turfs.find(t => String(t.id) === String(b.turf_id) || t.name === b.turf_name);
+    const owner = turfObj?.owner_name || 'Venue Partner';
+    const turf = b.turf_name || 'Turf Venue';
+    const player = b.player_name || 'Athlete';
+    const dateFormatted = formatCleanDate(b.date);
+    const bg = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC';
+
+    return `
+      <tr style="background-color: ${bg};">
+        <td style="padding: 8px 12px; font-family: monospace; font-weight: bold; color: #2563EB; mso-number-format: '\\@';">${b.id}</td>
+        <td style="padding: 8px 12px; text-align: center; mso-number-format: '\\@'; white-space: nowrap;">${dateFormatted}</td>
+        <td style="padding: 8px 12px; mso-number-format: '\\@';">${b.time_slot || '—'}</td>
+        <td style="padding: 8px 12px; font-weight: bold; color: #0F172A;">${turf}</td>
+        <td style="padding: 8px 12px;">${b.sport || 'Sports'}</td>
+        <td style="padding: 8px 12px;">${owner}</td>
+        <td style="padding: 8px 12px;">${player}</td>
+        <td style="padding: 8px 12px; text-align: right; font-weight: bold; mso-number-format: '#,##0';">${amt}</td>
+        <td style="padding: 8px 12px; text-align: right; font-weight: bold; color: #059669; mso-number-format: '#,##0';">${ownerAmt}</td>
+        <td style="padding: 8px 12px; text-align: right; font-weight: bold; color: #2563EB; mso-number-format: '#,##0';">${adminAmt}</td>
+        <td style="padding: 8px 12px; text-align: center; font-weight: bold; color: #059669; background-color: #ECFDF5;">Confirmed (Settled)</td>
+      </tr>
+    `;
+  }).join('');
+
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta charset="utf-8">
+      <!--[if gte mso 9]>
+      <xml>
+        <x:ExcelWorkbook>
+          <x:ExcelWorksheets>
+            <x:ExcelWorksheet>
+              <x:Name>Platform Commission Report</x:Name>
+              <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+            </x:ExcelWorksheet>
+          </x:ExcelWorksheets>
+        </x:ExcelWorkbook>
+      </xml>
+      <![endif]-->
+      <style>
+        table { border-collapse: collapse; width: 100%; font-family: Calibri, Arial, sans-serif; font-size: 11pt; }
+        th { background-color: #0F172A; color: #FFFFFF; font-weight: bold; padding: 10px 14px; text-align: left; border: 1px solid #334155; }
+        td { border: 1px solid #E2E8F0; }
+      </style>
+    </head>
+    <body>
+      <h2 style="font-family: Arial, sans-serif; color: #0F172A; margin: 10px 0 4px 0;">Turfify Platform Commission Report</h2>
+      <p style="font-family: Arial, sans-serif; color: #64748B; font-size: 10pt; margin: 0 0 16px 0;">Generated on: ${new Date().toLocaleString('en-IN')} &bull; Platform Share: 30% | Venue Partner Share: 70%</p>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 130px;">Transaction ID</th>
+            <th style="width: 120px; text-align: center;">Match Date</th>
+            <th style="width: 180px;">Time Slot</th>
+            <th style="width: 180px;">Turf Venue</th>
+            <th style="width: 120px;">Sport</th>
+            <th style="width: 160px;">Owner Partner</th>
+            <th style="width: 160px;">Player / Athlete</th>
+            <th style="width: 140px; text-align: right;">Gross Billing (₹)</th>
+            <th style="width: 150px; text-align: right; background-color: #047857;">Owner Payout 70% (₹)</th>
+            <th style="width: 160px; text-align: right; background-color: #1D4ED8;">Turfify Cut 30% (₹)</th>
+            <th style="width: 150px; text-align: center;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+          <tr style="background-color: #F1F5F9; font-weight: bold; border-top: 2px solid #0F172A;">
+            <td colspan="7" style="padding: 10px 14px; text-align: right; font-weight: bold; font-size: 11pt; color: #0F172A;">GRAND TOTALS:</td>
+            <td style="padding: 10px 14px; text-align: right; font-weight: bold; font-size: 11pt; color: #0F172A; mso-number-format: '#,##0';">₹${totalGMV.toLocaleString('en-IN')}</td>
+            <td style="padding: 10px 14px; text-align: right; font-weight: bold; font-size: 11pt; color: #059669; mso-number-format: '#,##0';">₹${totalOwner.toLocaleString('en-IN')}</td>
+            <td style="padding: 10px 14px; text-align: right; font-weight: bold; font-size: 11pt; color: #2563EB; mso-number-format: '#,##0';">₹${totalAdmin.toLocaleString('en-IN')}</td>
+            <td style="padding: 10px 14px; text-align: center; font-weight: bold; color: #0F172A;">${list.length} Matches</td>
+          </tr>
+        </tbody>
+      </table>
+    </body>
+    </html>
+  `;
+
+  const filename = `Turfify_Commission_Report_${new Date().toISOString().slice(0, 10)}.xls`;
+  downloadExcel(filename, html);
+  showToast('✅ Excel Commission Report downloaded with auto-aligned columns.');
+};
+
+// ─── Export 2: Platform Commission CSV (With Explicit Text Formulas) ──────────
 window.exportCommissionCSV = function() {
   const list = getFilteredCommissionBookings();
   const turfs = getLiveTurfs();
@@ -1397,21 +1532,23 @@ window.exportCommissionCSV = function() {
     const owner = (turfObj?.owner_name || 'Venue Partner').replace(/"/g, '""');
     const turf = (b.turf_name || 'Turf').replace(/"/g, '""');
     const player = (b.player_name || 'Athlete').replace(/"/g, '""');
+    const dateClean = formatCleanDate(b.date);
 
-    csv += `"${b.id}","${b.date || ''}","${b.time_slot || ''}","${turf}","${b.sport || 'Sports'}","${owner}","${player}",${amt},${ownerAmt},${adminAmt},"Confirmed (Settled)"\r\n`;
+    // ="Value" forces Excel to display the exact text string without collapsing into ###
+    csv += `="${b.id}",="${dateClean}","${b.time_slot || ''}","${turf}","${b.sport || 'Sports'}","${owner}","${player}",${amt},${ownerAmt},${adminAmt},"Confirmed (Settled)"\r\n`;
   });
 
   const filename = `Turfify_Commission_Report_${new Date().toISOString().slice(0, 10)}.csv`;
   downloadCSV(filename, csv);
-  showToast('✅ Platform Commission Report downloaded.');
+  showToast('✅ Platform Commission CSV downloaded.');
 };
 
-// ─── Export 2: Print Commission Statement ─────────────────────────────────────
+// ─── Export 3: Print Commission Statement ─────────────────────────────────────
 window.printCommissionReport = function() {
   window.print();
 };
 
-// ─── Export 3: Monthly P&L Audit Statement ────────────────────────────────────
+// ─── Export 4: Monthly P&L Audit Statement ────────────────────────────────────
 window.exportMonthlyPL = function() {
   const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
   const totalGMV = confirmed.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
@@ -1433,7 +1570,7 @@ window.exportMonthlyPL = function() {
   showToast('✅ Monthly P&L Statement downloaded.');
 };
 
-// ─── Export 4: Turf Occupancy & Utilization ─────────────────────────────────
+// ─── Export 5: Turf Occupancy & Utilization ─────────────────────────────────
 window.exportTurfUtilization = function() {
   const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
   const turfs = getLiveTurfs();
@@ -1451,7 +1588,7 @@ window.exportTurfUtilization = function() {
   showToast('✅ Turf Utilization report downloaded.');
 };
 
-// ─── Export 5: GST Tax Invoices Register ──────────────────────────────────────
+// ─── Export 6: GST Tax Invoices Register ──────────────────────────────────────
 window.exportGSTRegister = function() {
   const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
   let csv = 'Booking ID,Date,Turf Venue,Gross Amount (INR),Platform Service Fee (INR),Taxable Value (INR),CGST 9% (INR),SGST 9% (INR),Total 18% GST (INR)\r\n';
@@ -1463,8 +1600,9 @@ window.exportGSTRegister = function() {
     const gstTotal = fee - taxable;
     const cgst = Math.round(gstTotal / 2);
     const sgst = gstTotal - cgst;
+    const dateClean = formatCleanDate(b.date);
 
-    csv += `"${b.id}","${b.date || ''}","${(b.turf_name || '').replace(/"/g, '""')}",${amt},${fee},${taxable},${cgst},${sgst},${gstTotal}\r\n`;
+    csv += `="${b.id}",="${dateClean}","${(b.turf_name || '').replace(/"/g, '""')}",${amt},${fee},${taxable},${cgst},${sgst},${gstTotal}\r\n`;
   });
 
   const filename = `Turfify_GST_Tax_Register_${new Date().toISOString().slice(0, 10)}.csv`;
@@ -1472,7 +1610,7 @@ window.exportGSTRegister = function() {
   showToast('✅ GST Tax Invoices Register downloaded.');
 };
 
-// ─── Export 6: Player Retention & Cohorts ────────────────────────────────────
+// ─── Export 7: Player Retention & Cohorts ────────────────────────────────────
 window.exportRetentionCohort = function() {
   const confirmed = getLiveBookings().filter(b => b.status !== 'Cancelled');
   const userMap = {};

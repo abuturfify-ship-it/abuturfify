@@ -743,9 +743,12 @@
               <h1 class="view-heading">Platform Commission Reports 📈</h1>
               <p class="view-subheading">Comprehensive accounting breakdown of Turfify's 30% platform take-rate, gross merchandise value (GMV), venue payouts, and tax ledger.</p>
             </div>
-            <div class="action-buttons-group" style="display:flex; gap:10px; align-items:center;">
-              <button class="btn-primary-green" onclick="window.exportCommissionCSV()" style="display:inline-flex; align-items:center; gap:6px;">
-                <span>📥</span> Download CSV Report
+            <div class="action-buttons-group" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <button class="btn-primary-green" onclick="window.exportCommissionExcel()" style="display:inline-flex; align-items:center; gap:6px;">
+                <span>📊</span> Download Excel (.xls)
+              </button>
+              <button class="btn-secondary-light" onclick="window.exportCommissionCSV()" style="display:inline-flex; align-items:center; gap:6px;">
+                <span>📥</span> Download CSV (.csv)
               </button>
               <button class="btn-secondary-light" onclick="window.printCommissionReport()" style="display:inline-flex; align-items:center; gap:6px;">
                 <span>🖨️</span> Print Statement
@@ -856,9 +859,14 @@
                 <h3 style="font-family:var(--font-display); font-size:1.1rem; font-weight:800; color:var(--navy-900); margin:0 0 4px 0;">Itemized Commission Transaction Ledger</h3>
                 <p style="font-size:0.78rem; color:var(--slate-400); margin:0;">Transaction-level commission audit trail on all customer bookings.</p>
               </div>
-              <button class="btn-secondary-light" onclick="window.exportCommissionCSV()" style="font-size:0.75rem; padding:5px 12px;">
-                Export Ledger (CSV)
-              </button>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-primary-green" onclick="window.exportCommissionExcel()" style="font-size:0.75rem; padding:5px 12px;">
+                  📊 Excel (.xls)
+                </button>
+                <button class="btn-secondary-light" onclick="window.exportCommissionCSV()" style="font-size:0.75rem; padding:5px 12px;">
+                  📥 CSV (.csv)
+                </button>
+              </div>
             </div>
 
             <div class="table-responsive-container" style="overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%;">
