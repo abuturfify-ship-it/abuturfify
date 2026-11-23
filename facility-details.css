@@ -742,6 +742,39 @@ body.dark-mode .amenity-icon-wrap {
   color: #E2E8F0;
 }
 
+/* Full Month Interactive Calendar Widget */
+.cal-month-day-cell:hover:not([disabled]) {
+  border-color: #10B981 !important;
+  background: #F0FDF4 !important;
+  transform: translateY(-1px);
+}
+.cal-month-day-cell.active {
+  background: #164C38 !important;
+  color: #FFFFFF !important;
+  border-color: #164C38 !important;
+  box-shadow: 0 4px 12px rgba(22, 76, 56, 0.25);
+}
+#btn-toggle-calendar-view:hover {
+  background: #DBEAFE !important;
+  border-color: #93C5FD !important;
+}
+body.dark-mode #full-month-calendar-widget {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+body.dark-mode .cal-month-day-cell {
+  background: #0F172A !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+body.dark-mode .cal-month-day-cell[disabled] {
+  background: #1E293B !important;
+  color: #475569 !important;
+}
+body.dark-mode #cal-month-title {
+  color: #F8FAFC !important;
+}
+
 body.dark-mode .date-pill-btn {
   background: #1E293B;
   border-color: #334155;
