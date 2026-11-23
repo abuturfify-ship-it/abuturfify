@@ -935,6 +935,22 @@
 
       const slotsContainer = document.getElementById('time-slots-container');
 
+      function isPeakSlot(slotLabel) {
+        if (!slotLabel) return false;
+        // Peak night slots: 7 PM - 11 PM
+        const peakStarts = ['07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'];
+        const start = slotLabel.split(' - ')[0].trim();
+        return peakStarts.some(p => start === p || start.startsWith(p));
+      }
+
+      function getSlotPrice(slotLabel) {
+        const base = selectedField ? selectedField.price : (turf.price_per_hour || 1200);
+        if (isPeakSlot(slotLabel)) {
+          return turf.peak_price || turf.peak_rate || Math.round(base * 1.33);
+        }
+        return base;
+      }
+
       function renderTimeSlots() {
         const filtered = (currentPhase === 'all') 
           ? ALL_HOURS 
@@ -943,10 +959,18 @@
         slotsContainer.innerHTML = filtered.map(s => {
           const isBooked = bookedSlotLabels.has(s.label);
           const isSelected = (s.label === selectedSlot.label);
+          const isPeak = isPeakSlot(s.label);
+          const slotRate = getSlotPrice(s.label);
           return `
-            <button type="button" class="time-slot-btn ${isBooked ? 'booked' : ''} ${isSelected && !isBooked ? 'selected' : ''}" data-slot="${s.label}" ${isBooked ? 'disabled' : ''}>
-              <span>${s.label.split(' - ')[0]}</span>
-              <span class="slot-status-text">${isBooked ? 'Booked' : (isSelected ? 'Selected' : 'Available')}</span>
+            <button type="button" class="time-slot-btn ${isBooked ? 'booked' : ''} ${isSelected && !isBooked ? 'selected' : ''} ${isPeak ? 'peak-slot' : ''}" data-slot="${s.label}" ${isBooked ? 'disabled' : ''} style="${isPeak ? 'border-color:#FCD34D; background:#FFFDF7;' : ''}">
+              <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:4px;">
+                <span style="font-weight:700;">${s.label.split(' - ')[0]}</span>
+                ${isPeak ? '<span style="font-size:0.65rem; background:#FEF3C7; color:#B45309; padding:1px 4px; border-radius:4px; font-weight:800;">⚡ Peak</span>' : ''}
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:2px;">
+                <span class="slot-status-text">${isBooked ? 'Booked' : (isSelected ? 'Selected' : 'Available')}</span>
+                <span style="font-size:0.75rem; font-weight:800; color:${isBooked ? '#94A3B8' : (isPeak ? '#D97706' : '#059669')};">₹${slotRate}</span>
+              </div>
             </button>
           `;
         }).join('');
@@ -976,16 +1000,18 @@
 
       // 11. Update Booking Panel Summary
       function updateBookingSummary() {
-        const price = selectedField.price;
-        document.getElementById('panel-price-badge').textContent = `₹${price.toLocaleString()}/hr`;
+        const slotPrice = getSlotPrice(selectedSlot.label);
+        const isPeak = isPeakSlot(selectedSlot.label);
+
+        document.getElementById('panel-price-badge').innerHTML = `₹${slotPrice.toLocaleString()}/hr ${isPeak ? '<span style="font-size:0.72rem; color:#F59E0B; font-weight:800;">⚡ Peak</span>' : ''}`;
         document.getElementById('panel-summary-field').textContent = `${selectedField.name} (${selectedField.format})`;
         document.getElementById('panel-summary-date').textContent = `${selectedDate.dayName}, ${selectedDate.monthName} ${selectedDate.dayNum}`;
-        document.getElementById('panel-summary-slot').textContent = selectedSlot.label;
-        document.getElementById('panel-calc-base').textContent = `₹${price.toLocaleString()}`;
-        document.getElementById('panel-calc-total').textContent = `₹${price.toLocaleString()}`;
+        document.getElementById('panel-summary-slot').innerHTML = `${selectedSlot.label} ${isPeak ? '<span style="background:#FEF3C7; color:#B45309; font-size:0.72rem; font-weight:800; padding:2px 6px; border-radius:4px; margin-left:6px;">⚡ Peak Rate</span>' : ''}`;
+        document.getElementById('panel-calc-base').textContent = `₹${slotPrice.toLocaleString()}`;
+        document.getElementById('panel-calc-total').textContent = `₹${slotPrice.toLocaleString()}`;
 
         // Mobile Sticky bar update
-        document.getElementById('mobile-price-display').innerHTML = `₹${price.toLocaleString()} <span style="font-size:0.75rem; font-weight:400; color:#64748B;">/hour</span>`;
+        document.getElementById('mobile-price-display').innerHTML = `₹${slotPrice.toLocaleString()} <span style="font-size:0.75rem; font-weight:400; color:#64748B;">/hour ${isPeak ? '(Peak)' : ''}</span>`;
         document.getElementById('mobile-slot-display').textContent = `${selectedDate.dayName} • ${selectedSlot.label.split(' - ')[0]}`;
       }
 
@@ -995,6 +1021,7 @@
       function executeBooking() {
         const curUser = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
         const isAuthenticated = !!(curUser && (curUser.is_authenticated || curUser.role || curUser.id));
+        const slotPrice = getSlotPrice(selectedSlot.label);
 
         const bookingData = {
           turf_id: turf.id,
@@ -1003,7 +1030,7 @@
           field_name: selectedField.name,
           date: selectedDate.iso,
           time_slot: selectedSlot.label,
-          amount: selectedField.price,
+          amount: slotPrice,
           status: 'Confirmed',
           payment_status: 'Paid Online',
           player_name: (curUser && curUser.name) ? curUser.name : 'Guest Player'

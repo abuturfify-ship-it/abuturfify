@@ -1432,9 +1432,20 @@ document.addEventListener('DOMContentLoaded', () => {
       ? operatingSlots
       : defaultSlots;
 
-    grid.innerHTML = slotsToRender.map(s =>
-      `<button type="button" class="slot-btn" data-slot="${s}">${s}</button>`
-    ).join('');
+    const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+    const activeTurf = turfs.find(t => String(t.id) === String(activeTurfId));
+    const peakPrice = activeTurf?.peak_price || activeTurf?.peak_rate || Math.round(activeTurfRate * 1.33);
+
+    const isPeakSlot = (s) => [
+      '07:00 - 08:00 PM', '08:00 - 09:00 PM', '09:00 - 10:00 PM', '10:00 - 11:00 PM',
+      '07:00 PM - 08:00 PM', '08:00 PM - 09:00 PM', '09:00 PM - 10:00 PM', '10:00 PM - 11:00 PM'
+    ].some(p => (s || '').includes(p.split(' - ')[0]));
+
+    grid.innerHTML = slotsToRender.map(s => {
+      const isPeak = isPeakSlot(s);
+      const slotPrice = isPeak ? peakPrice : activeTurfRate;
+      return `<button type="button" class="slot-btn ${isPeak ? 'peak-slot' : ''}" data-slot="${s}" data-price="${slotPrice}" style="${isPeak ? 'border-color:#FCD34D; background:#FFFDF5;' : ''}">${s}${isPeak ? ' <span style="font-size:0.65rem; background:#FEF3C7; color:#B45309; padding:1px 4px; border-radius:3px; font-weight:800; margin-left:4px;">⚡Peak</span>' : ''}</button>`;
+    }).join('');
   }
 
   function refreshSlotAvailability() {
@@ -1497,8 +1508,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateBookingModalRates() {
     const selectedBtns = Array.from(document.querySelectorAll('.slot-btn.selected:not([disabled])'));
-    const count = Math.max(1, selectedBtns.length);
-    const totalAmount = activeTurfRate * selectedBtns.length;
+    const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+    const activeTurf = turfs.find(t => String(t.id) === String(activeTurfId));
+    const peakPrice = activeTurf?.peak_price || activeTurf?.peak_rate || Math.round(activeTurfRate * 1.33);
+
+    const isPeakSlot = (s) => [
+      '07:00 - 08:00 PM', '08:00 - 09:00 PM', '09:00 - 10:00 PM', '10:00 - 11:00 PM',
+      '07:00 PM - 08:00 PM', '08:00 PM - 09:00 PM', '09:00 PM - 10:00 PM', '10:00 PM - 11:00 PM'
+    ].some(p => (s || '').includes(p.split(' - ')[0]));
+
+    let totalAmount = 0;
+    selectedBtns.forEach(btn => {
+      const slot = btn.dataset.slot || '';
+      const p = parseFloat(btn.dataset.price) || (isPeakSlot(slot) ? peakPrice : activeTurfRate);
+      totalAmount += p;
+    });
 
     const baseRateLabel = document.getElementById('modal-base-rate-label');
     const baseRateEl = document.getElementById('modal-base-rate');
@@ -1512,8 +1536,8 @@ document.addEventListener('DOMContentLoaded', () => {
         : `Turf Rate (1 Hour)`;
     }
     if (baseRateEl) {
-      baseRateEl.textContent = selectedBtns.length > 1
-        ? `₹${activeTurfRate.toLocaleString()} × ${selectedBtns.length}`
+      baseRateEl.textContent = selectedBtns.length > 0
+        ? `₹${totalAmount.toLocaleString()}`
         : `₹${activeTurfRate.toLocaleString()}`;
     }
     if (totalRateEl) {
@@ -1542,7 +1566,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const selectedSlots = selectedBtns.map(b => b.dataset.slot);
     const slotString = selectedSlots.join(', ');
-    const totalAmount = activeTurfRate * selectedSlots.length;
+
+    const turfs = window.TurfifyStore ? window.TurfifyStore.getTurfs() : [];
+    const activeTurf = turfs.find(t => String(t.id) === String(activeTurfId));
+    const peakPrice = activeTurf?.peak_price || activeTurf?.peak_rate || Math.round(activeTurfRate * 1.33);
+
+    const isPeakSlot = (s) => [
+      '07:00 - 08:00 PM', '08:00 - 09:00 PM', '09:00 - 10:00 PM', '10:00 - 11:00 PM',
+      '07:00 PM - 08:00 PM', '08:00 PM - 09:00 PM', '09:00 PM - 10:00 PM', '10:00 PM - 11:00 PM'
+    ].some(p => (s || '').includes(p.split(' - ')[0]));
+
+    let totalAmount = 0;
+    selectedBtns.forEach(btn => {
+      const slot = btn.dataset.slot || '';
+      const p = parseFloat(btn.dataset.price) || (isPeakSlot(slot) ? peakPrice : activeTurfRate);
+      totalAmount += p;
+    });
+
     const date = document.getElementById('booking-date').value || new Date().toISOString().split('T')[0];
     
     const curUser = (window.TurfifyStore && window.TurfifyStore.getCurrentUser()) || {};

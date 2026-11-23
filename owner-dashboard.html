@@ -2839,12 +2839,14 @@
       const turf = turfs.find(t => String(t.id) === String(turfId));
       if (!turf) return;
       const base = turf.price_per_hour || 1200;
+      const peak = turf.peak_price || turf.peak_rate || Math.round(base * 1.33);
+      const weekend = (turf.weekend_premium !== undefined) ? turf.weekend_premium : 200;
       const baseEl = document.getElementById('pricing-base-rate');
       const peakEl = document.getElementById('pricing-peak-rate');
       const weekendEl = document.getElementById('pricing-weekend-premium');
       if (baseEl) baseEl.value = base;
-      if (peakEl) peakEl.value = Math.round(base * 1.33);
-      if (weekendEl) weekendEl.value = 200;
+      if (peakEl) peakEl.value = peak;
+      if (weekendEl) weekendEl.value = weekend;
     };
 
     window.handleSaveTurfPricing = function() {
@@ -2857,15 +2859,25 @@
         return;
       }
       const newRate = parseInt(document.getElementById('pricing-base-rate')?.value, 10);
+      const newPeak = parseInt(document.getElementById('pricing-peak-rate')?.value, 10);
+      const newWeekend = parseInt(document.getElementById('pricing-weekend-premium')?.value, 10);
+
       if (isNaN(newRate) || newRate <= 0) {
         alert('Please enter a valid hourly rate.');
         return;
       }
+      const validPeak = (!isNaN(newPeak) && newPeak > 0) ? newPeak : Math.round(newRate * 1.33);
+      const validWeekend = (!isNaN(newWeekend) && newWeekend >= 0) ? newWeekend : 0;
+
       turf.price_per_hour = newRate;
+      turf.peak_price = validPeak;
+      turf.peak_rate = validPeak;
+      turf.weekend_premium = validWeekend;
+
       window.TurfifyStore.addTurf(turf);
       renderOwnerDashboard();
-      alert('✅ Pricing updated live to ₹' + newRate + '/hr for ' + turf.name + '!\n\nThis new rate is immediately live across the marketplace without needing administrator approval.');
-      if (typeof showToast === 'function') showToast('💰 Pricing updated to ₹' + newRate + '/hr for ' + turf.name);
+      alert('✅ Pricing updated live to ₹' + newRate + '/hr (Base) & ₹' + validPeak + '/hr (Peak 7 PM - 11 PM) for ' + turf.name + '!\n\nThis new rate is immediately live across the marketplace.');
+      if (typeof showToast === 'function') showToast('💰 Pricing updated: ₹' + newRate + '/hr Base, ₹' + validPeak + '/hr Peak');
     };
 
     // Customer search filter for Bookings
