@@ -318,6 +318,91 @@ function initAdminAuthGate() {
   });
 }
 
+// ─── Universal Table Swipe & Drag-To-Scroll Engine ───────────────────────────
+function initUniversalSwipe() {
+  const containers = document.querySelectorAll('.table-responsive-container');
+  containers.forEach(container => {
+    if (container.dataset.swipeInit) return;
+    container.dataset.swipeInit = 'true';
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    let moved = false;
+
+    // Mouse drag-to-scroll support for desktop & responsive emulators
+    container.addEventListener('mousedown', (e) => {
+      if (e.target.closest('button, a, input, select, textarea, kbd, label')) return;
+      isDown = true;
+      moved = false;
+      container.classList.add('is-dragging');
+      startX = e.pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false;
+      container.classList.remove('is-dragging');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - container.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      if (Math.abs(walk) > 4) moved = true;
+      container.scrollLeft = scrollLeft - walk;
+    });
+
+    // Touch swipe support with native momentum
+    let touchStartX = 0;
+    let touchScrollLeft = 0;
+
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].pageX;
+        touchScrollLeft = container.scrollLeft;
+      }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1) {
+        const touchX = e.touches[0].pageX;
+        const walk = (touchX - touchStartX);
+        container.scrollLeft = touchScrollLeft - walk;
+      }
+    }, { passive: true });
+
+    // Prevent clicking action buttons if user was actively dragging
+    container.addEventListener('click', (e) => {
+      if (moved) {
+        e.preventDefault();
+        e.stopPropagation();
+        moved = false;
+      }
+    }, true);
+  });
+}
+
+// ─── Mobile Sidebar Drawer Controller ─────────────────────────────────────────
+window.toggleAdminSidebar = function(forceState) {
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (!sidebar) return;
+
+  const willOpen = (typeof forceState === 'boolean') ? forceState : !sidebar.classList.contains('mobile-open');
+  if (willOpen) {
+    sidebar.classList.add('mobile-open');
+    backdrop?.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  } else {
+    sidebar.classList.remove('mobile-open');
+    backdrop?.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+};
+
 // Application Controller
 document.addEventListener('DOMContentLoaded', () => {
   initAdminAuthGate();
@@ -334,6 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFilters();
   initExportButtons();
   initModals();
+  initUniversalSwipe();
 
   // Load cloud profiles and server database
   fetchSupabaseProfiles();
@@ -611,7 +697,8 @@ function initNavigation() {
       }
 
       // Close mobile drawer if open
-      document.querySelector(".sidebar")?.classList.remove("mobile-open");
+      window.toggleAdminSidebar(false);
+      setTimeout(initUniversalSwipe, 50);
     });
   });
 
@@ -619,7 +706,7 @@ function initNavigation() {
   const mobileToggle = document.querySelector(".mobile-menu-trigger");
   if (mobileToggle) {
     mobileToggle.addEventListener("click", () => {
-      document.querySelector(".sidebar")?.classList.toggle("mobile-open");
+      window.toggleAdminSidebar();
     });
   }
 }
@@ -1382,6 +1469,11 @@ function formatCleanDate(dateStr) {
 function downloadCSV(filename, csvContent) {
   // Prepend UTF-8 BOM (\uFEFF) so Excel opens UTF-8 without mangling characters or alignments
   const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  downloadBlob(filename, blob);
+}
+
+// ─── Generic Blob Download Trigger Helper ────────────────────────────────────
+function downloadBlob(filename, blob) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
@@ -1395,17 +1487,10 @@ function downloadCSV(filename, csvContent) {
 // ─── Excel (.xls) Download Trigger Helper ─────────────────────────────────────
 function downloadExcel(filename, htmlContent) {
   const blob = new Blob(['\uFEFF' + htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', filename);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  downloadBlob(filename, blob);
 }
 
-// ─── Export 1: Formatted Excel Spreadsheet (.xls with Auto Widths & Styles) ──
+// ─── Export 1: Formatted Excel Spreadsheet (.xlsx with Auto Widths & Styles) ──
 window.exportCommissionExcel = function() {
   const list = getFilteredCommissionBookings();
   const turfs = getLiveTurfs();
@@ -1419,7 +1504,21 @@ window.exportCommissionExcel = function() {
   let totalOwner = 0;
   let totalAdmin = 0;
 
-  const rows = list.map((b, idx) => {
+  const headers = [
+    'Transaction ID',
+    'Match Date',
+    'Time Slot',
+    'Turf Venue',
+    'Sport',
+    'Owner Partner',
+    'Player / Athlete',
+    'Gross Billing (INR)',
+    'Owner Payout 70% (INR)',
+    'Turfify Cut 30% (INR)',
+    'Payment Status'
+  ];
+
+  const dataRows = list.map(b => {
     const amt = Number(b.amount) || 0;
     const ownerAmt = Math.round(amt * OWNER_SHARE);
     const adminAmt = Math.round(amt * ADMIN_SHARE);
@@ -1427,6 +1526,73 @@ window.exportCommissionExcel = function() {
     totalOwner += ownerAmt;
     totalAdmin += adminAmt;
 
+    const turfObj = turfs.find(t => String(t.id) === String(b.turf_id) || t.name === b.turf_name);
+    const owner = turfObj?.owner_name || 'Venue Partner';
+    const turf = b.turf_name || 'Turf Venue';
+    const player = b.player_name || 'Athlete';
+    const dateFormatted = formatCleanDate(b.date);
+
+    return [
+      String(b.id || ''),
+      dateFormatted,
+      String(b.time_slot || '—'),
+      turf,
+      String(b.sport || 'Sports'),
+      owner,
+      player,
+      amt,
+      ownerAmt,
+      adminAmt,
+      'Confirmed (Settled)'
+    ];
+  });
+
+  const totalsRow = [
+    'GRAND TOTALS',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    totalGMV,
+    totalOwner,
+    totalAdmin,
+    `${list.length} Matches`
+  ];
+
+  // If SheetJS is available, export native .xlsx with auto-fitted column widths
+  if (typeof XLSX !== 'undefined' && XLSX.utils) {
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows, totalsRow]);
+    ws['!cols'] = [
+      { wch: 18 }, // Transaction ID
+      { wch: 16 }, // Match Date
+      { wch: 22 }, // Time Slot
+      { wch: 26 }, // Turf Venue
+      { wch: 16 }, // Sport
+      { wch: 22 }, // Owner Partner
+      { wch: 22 }, // Player / Athlete
+      { wch: 20 }, // Gross Billing (INR)
+      { wch: 22 }, // Owner Payout 70% (INR)
+      { wch: 22 }, // Turfify Cut 30% (INR)
+      { wch: 22 }  // Payment Status
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Commission Ledger');
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const filename = `Turfify_Commission_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    downloadBlob(filename, blob);
+    showToast('✅ Native Excel (.xlsx) downloaded with auto-aligned columns & clear dates.');
+    return;
+  }
+
+  // Fallback to XML/HTML if SheetJS script not yet loaded
+  const rows = list.map((b, idx) => {
+    const amt = Number(b.amount) || 0;
+    const ownerAmt = Math.round(amt * OWNER_SHARE);
+    const adminAmt = Math.round(amt * ADMIN_SHARE);
     const turfObj = turfs.find(t => String(t.id) === String(b.turf_id) || t.name === b.turf_name);
     const owner = turfObj?.owner_name || 'Venue Partner';
     const turf = b.turf_name || 'Turf Venue';
@@ -1479,17 +1645,17 @@ window.exportCommissionExcel = function() {
       <table>
         <thead>
           <tr>
-            <th style="width: 130px;">Transaction ID</th>
-            <th style="width: 120px; text-align: center;">Match Date</th>
+            <th style="width: 140px;">Transaction ID</th>
+            <th style="width: 130px; text-align: center;">Match Date</th>
             <th style="width: 180px;">Time Slot</th>
-            <th style="width: 180px;">Turf Venue</th>
-            <th style="width: 120px;">Sport</th>
-            <th style="width: 160px;">Owner Partner</th>
-            <th style="width: 160px;">Player / Athlete</th>
-            <th style="width: 140px; text-align: right;">Gross Billing (₹)</th>
-            <th style="width: 150px; text-align: right; background-color: #047857;">Owner Payout 70% (₹)</th>
+            <th style="width: 200px;">Turf Venue</th>
+            <th style="width: 130px;">Sport</th>
+            <th style="width: 170px;">Owner Partner</th>
+            <th style="width: 170px;">Player / Athlete</th>
+            <th style="width: 150px; text-align: right;">Gross Billing (₹)</th>
+            <th style="width: 160px; text-align: right; background-color: #047857;">Owner Payout 70% (₹)</th>
             <th style="width: 160px; text-align: right; background-color: #1D4ED8;">Turfify Cut 30% (₹)</th>
-            <th style="width: 150px; text-align: center;">Status</th>
+            <th style="width: 160px; text-align: center;">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -1512,7 +1678,7 @@ window.exportCommissionExcel = function() {
   showToast('✅ Excel Commission Report downloaded with auto-aligned columns.');
 };
 
-// ─── Export 2: Platform Commission CSV (With Explicit Text Formulas) ──────────
+// ─── Export 2: Platform Commission CSV (With Clean Date & Columns) ─────────────
 window.exportCommissionCSV = function() {
   const list = getFilteredCommissionBookings();
   const turfs = getLiveTurfs();
@@ -1534,13 +1700,13 @@ window.exportCommissionCSV = function() {
     const player = (b.player_name || 'Athlete').replace(/"/g, '""');
     const dateClean = formatCleanDate(b.date);
 
-    // ="Value" forces Excel to display the exact text string without collapsing into ###
-    csv += `="${b.id}",="${dateClean}","${b.time_slot || ''}","${turf}","${b.sport || 'Sports'}","${owner}","${player}",${amt},${ownerAmt},${adminAmt},"Confirmed (Settled)"\r\n`;
+    // Standard CSV text quoting without broken Excel formula prefix ="..."
+    csv += `"${b.id}","${dateClean}","${b.time_slot || ''}","${turf}","${b.sport || 'Sports'}","${owner}","${player}",${amt},${ownerAmt},${adminAmt},"Confirmed (Settled)"\r\n`;
   });
 
   const filename = `Turfify_Commission_Report_${new Date().toISOString().slice(0, 10)}.csv`;
   downloadCSV(filename, csv);
-  showToast('✅ Platform Commission CSV downloaded.');
+  showToast('✅ Platform Commission CSV downloaded with clean dates.');
 };
 
 // ─── Export 3: Print Commission Statement ─────────────────────────────────────
@@ -1602,7 +1768,7 @@ window.exportGSTRegister = function() {
     const sgst = gstTotal - cgst;
     const dateClean = formatCleanDate(b.date);
 
-    csv += `="${b.id}",="${dateClean}","${(b.turf_name || '').replace(/"/g, '""')}",${amt},${fee},${taxable},${cgst},${sgst},${gstTotal}\r\n`;
+    csv += `"${b.id}","${dateClean}","${(b.turf_name || '').replace(/"/g, '""')}",${amt},${fee},${taxable},${cgst},${sgst},${gstTotal}\r\n`;
   });
 
   const filename = `Turfify_GST_Tax_Register_${new Date().toISOString().slice(0, 10)}.csv`;

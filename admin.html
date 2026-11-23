@@ -105,13 +105,16 @@
          ====================================================================== -->
     <aside class="sidebar">
       <!-- Brand Logo - 1-Click to Home -->
-      <a href="index.html" class="sidebar-brand" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;" title="← Return to Turfify Home">
-        <div class="brand-icon" style="font-size: 1.6rem; font-weight: 800; font-family: 'Outfit', sans-serif; line-height: 1; display: flex; align-items: center; justify-content: center; border-radius: 14px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); text-transform: lowercase;">t</div>
-        <div class="brand-title">
-          <span>Turfify</span>
-          <span class="brand-tag">Admin Console</span>
-        </div>
-      </a>
+      <div style="display:flex; align-items:center; justify-content:space-between; padding-right:12px;">
+        <a href="index.html" class="sidebar-brand" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; flex:1;" title="← Return to Turfify Home">
+          <div class="brand-icon" style="font-size: 1.6rem; font-weight: 800; font-family: 'Outfit', sans-serif; line-height: 1; display: flex; align-items: center; justify-content: center; border-radius: 14px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); text-transform: lowercase;">t</div>
+          <div class="brand-title">
+            <span>Turfify</span>
+            <span class="brand-tag">Admin Console</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="btn-close-sidebar" onclick="window.toggleAdminSidebar(false)" aria-label="Close sidebar">✕</button>
+      </div>
 
       <!-- Super Admin Profile Card -->
       <div class="admin-badge-card">
@@ -192,6 +195,9 @@
         </a>
       </div>
     </aside>
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="window.toggleAdminSidebar(false)"></div>
 
     <!-- ======================================================================
          MAIN CONTENT AREA
@@ -541,11 +547,11 @@
 
           <!-- Bookings Table Panel -->
           <div class="table-panel">
-            <div style="font-size:0.75rem; color:#64748B; background:#F8FAFC; padding:7px 14px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; gap:6px;">
+            <div class="admin-swipe-bar">
               <span>↔️</span>
-              <span style="font-weight:600;">Swipe left/right to view full booking details & actions</span>
+              <span>Swipe or drag left/right to view full booking details &amp; actions</span>
             </div>
-            <div class="table-responsive-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
+            <div class="table-responsive-container">
               <table class="admin-data-table">
                 <thead>
                   <tr>
@@ -600,11 +606,11 @@
 
           <!-- Users Table Panel -->
           <div class="table-panel">
-            <div style="font-size:0.75rem; color:#64748B; background:#F8FAFC; padding:7px 14px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; gap:6px;">
+            <div class="admin-swipe-bar">
               <span>↔️</span>
-              <span style="font-weight:600;">Swipe left/right to view user details & actions</span>
+              <span>Swipe or drag left/right to view user details &amp; actions</span>
             </div>
-            <div class="table-responsive-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
+            <div class="table-responsive-container">
               <table class="admin-data-table">
                 <thead>
                   <tr>
@@ -697,11 +703,11 @@
               <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800;color:var(--navy-900);">Revenue Split Per Booking — Owner 70% | Platform 30%</h3>
               <p style="font-size:0.8rem;color:var(--slate-400);margin-top:4px;">Every confirmed booking is automatically split between the turf owner and the platform.</p>
             </div>
-            <div style="font-size:0.75rem; color:#64748B; background:#F8FAFC; padding:7px 14px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; gap:6px;">
+            <div class="admin-swipe-bar">
               <span>↔️</span>
-              <span style="font-weight:600;">Swipe left/right to view revenue split & payout details</span>
+              <span>Swipe or drag left/right to view revenue split &amp; payout details</span>
             </div>
-            <div class="table-responsive-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
+            <div class="table-responsive-container">
               <table class="admin-data-table">
                 <thead>
                   <tr>
@@ -831,7 +837,11 @@
               <span id="commission-venue-count-badge" style="background:#EFF6FF; color:#1D4ED8; font-weight:700; font-size:0.76rem; padding:4px 10px; border-radius:999px;">0 Venues Active</span>
             </div>
 
-            <div class="table-responsive-container" style="overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%;">
+            <div class="admin-swipe-bar">
+              <span>↔️</span>
+              <span>Swipe or drag left/right to view venue commission yields</span>
+            </div>
+            <div class="table-responsive-container">
               <table class="admin-data-table">
                 <thead>
                   <tr>
@@ -861,7 +871,7 @@
               </div>
               <div style="display:flex; gap:8px;">
                 <button class="btn-primary-green" onclick="window.exportCommissionExcel()" style="font-size:0.75rem; padding:5px 12px;">
-                  📊 Excel (.xls)
+                  📊 Excel (.xlsx)
                 </button>
                 <button class="btn-secondary-light" onclick="window.exportCommissionCSV()" style="font-size:0.75rem; padding:5px 12px;">
                   📥 CSV (.csv)
@@ -869,7 +879,11 @@
               </div>
             </div>
 
-            <div class="table-responsive-container" style="overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%;">
+            <div class="admin-swipe-bar">
+              <span>↔️</span>
+              <span>Swipe or drag left/right to view itemized commission transactions</span>
+            </div>
+            <div class="table-responsive-container">
               <table class="admin-data-table">
                 <thead>
                   <tr>
@@ -1005,7 +1019,11 @@
 
           <!-- Complaints Table Panel -->
           <div class="table-panel">
-            <div class="table-responsive-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
+            <div class="admin-swipe-bar">
+              <span>↔️</span>
+              <span>Swipe or drag left/right to view incident details &amp; dispute actions</span>
+            </div>
+            <div class="table-responsive-container">
               <table class="admin-data-table">
                 <thead>
                   <tr>
@@ -1042,7 +1060,11 @@
 
           <!-- Audit Logs Table Panel -->
           <div class="table-panel">
-            <div class="table-responsive-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
+            <div class="admin-swipe-bar">
+              <span>↔️</span>
+              <span>Swipe or drag left/right to view full activity &amp; session logs</span>
+            </div>
+            <div class="table-responsive-container">
               <table class="admin-data-table">
                 <thead>
                   <tr>
@@ -1213,6 +1235,7 @@
   </div>
 
   <!-- Interactive Scripts -->
+  <script src="xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="store.js"></script>
   <script src="admin.js"></script>

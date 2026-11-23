@@ -1288,6 +1288,7 @@
           </tr>
         `;
       }).join('');
+      setTimeout(initUniversalSwipe, 50);
     }
     window.renderPaymentsPane = renderPaymentsPane;
 
@@ -1350,6 +1351,37 @@
     }
     .player-faq-item h5 { margin: 0 0 6px; font-size: 0.875rem; font-weight: 700; color: #0F172A; }
     .player-faq-item p  { margin: 0; font-size: 0.82rem; color: #64748B; line-height: 1.6; }
+
+    /* Table Responsive & Universal Drag / Swipe */
+    .table-panel {
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #FFFFFF;
+      margin-bottom: 20px;
+    }
+    .admin-swipe-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #F8FAFC;
+      border-bottom: 1px solid #E2E8F0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748B;
+    }
+    .table-responsive-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      cursor: grab;
+      user-select: none;
+      touch-action: pan-x pan-y;
+      width: 100%;
+    }
+    .table-responsive-container.is-dragging {
+      cursor: grabbing;
+    }
 
 </style>
 
@@ -2473,23 +2505,29 @@
           </div>
 
           <!-- Bookings Table -->
-          <div style="overflow-x:auto;">
-            <table class="dash-table" style="margin:0; width:100%;">
-              <thead>
-                <tr>
-                  <th>Booking Ref</th>
-                  <th>Turf Venue</th>
-                  <th>Date &amp; Time</th>
-                  <th>Amount</th>
-                  <th>Payment Status</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="player-bookings-body">
-                <!-- Injected via JS -->
-              </tbody>
-            </table>
+          <div class="table-panel" style="border:1px solid #E2E8F0; border-radius:12px; overflow:hidden;">
+            <div class="admin-swipe-bar" style="font-size:0.75rem; color:#475569; background:#F8FAFC; padding:8px 16px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; gap:8px; font-weight:600;">
+              <span>↔️</span>
+              <span>Swipe or drag left/right to view full booking details &amp; actions</span>
+            </div>
+            <div class="table-responsive-container" style="overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%;">
+              <table class="dash-table" style="margin:0; width:100%; min-width:760px;">
+                <thead>
+                  <tr>
+                    <th>Booking Ref</th>
+                    <th>Turf Venue</th>
+                    <th>Date &amp; Time</th>
+                    <th>Amount</th>
+                    <th>Payment Status</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="player-bookings-body">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
           </div>
 
         </div>
@@ -2525,23 +2563,29 @@
           </div>
 
           <!-- Payments Table -->
-          <div style="overflow-x:auto;">
-            <table class="dash-table" style="margin:0; width:100%;">
-              <thead>
-                <tr>
-                  <th>Transaction Date</th>
-                  <th>Booking Ref</th>
-                  <th>Turf Facility</th>
-                  <th>Amount</th>
-                  <th>Channel</th>
-                  <th>Status</th>
-                  <th>Receipt</th>
-                </tr>
-              </thead>
-              <tbody id="player-payments-body">
-                <!-- Injected via JS -->
-              </tbody>
-            </table>
+          <div class="table-panel" style="border:1px solid #E2E8F0; border-radius:12px; overflow:hidden;">
+            <div class="admin-swipe-bar" style="font-size:0.75rem; color:#475569; background:#F8FAFC; padding:8px 16px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; gap:8px; font-weight:600;">
+              <span>↔️</span>
+              <span>Swipe or drag left/right to view payment transactions &amp; download receipts</span>
+            </div>
+            <div class="table-responsive-container" style="overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%;">
+              <table class="dash-table" style="margin:0; width:100%; min-width:760px;">
+                <thead>
+                  <tr>
+                    <th>Transaction Date</th>
+                    <th>Booking Ref</th>
+                    <th>Turf Facility</th>
+                    <th>Amount</th>
+                    <th>Channel</th>
+                    <th>Status</th>
+                    <th>Receipt</th>
+                  </tr>
+                </thead>
+                <tbody id="player-payments-body">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -4292,6 +4336,7 @@
           </tr>
         `;
       }).join('');
+      setTimeout(initUniversalSwipe, 50);
     }
     window.renderPaymentsPane = renderPaymentsPane;
 
@@ -4578,6 +4623,7 @@
           </tr>
         `;
       }).join('');
+      setTimeout(initUniversalSwipe, 50);
     }
 
     /* ── Facility Disputes & Complaints Engine ─────────────────────────── */
@@ -4818,6 +4864,72 @@
       window.openReportIssueModal(upcoming.id, upcoming.turf_name, upcoming.date, upcoming.time_slot, upcoming.amount);
     };
 
+    // ─── Universal Table Swipe & Drag-To-Scroll Engine ───────────────────────────
+    function initUniversalSwipe() {
+      const containers = document.querySelectorAll('.table-responsive-container');
+      containers.forEach(container => {
+        if (container.dataset.swipeInit) return;
+        container.dataset.swipeInit = 'true';
+
+        let isDown = false;
+        let startX = 0;
+        let scrollLeft = 0;
+        let moved = false;
+
+        // Mouse drag-to-scroll support for desktop & responsive emulators
+        container.addEventListener('mousedown', (e) => {
+          if (e.target.closest('button, a, input, select, textarea, kbd, label')) return;
+          isDown = true;
+          moved = false;
+          container.classList.add('is-dragging');
+          startX = e.pageX - container.offsetLeft;
+          scrollLeft = container.scrollLeft;
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (!isDown) return;
+          isDown = false;
+          container.classList.remove('is-dragging');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - container.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          if (Math.abs(walk) > 4) moved = true;
+          container.scrollLeft = scrollLeft - walk;
+        });
+
+        // Touch swipe support with native momentum
+        let touchStartX = 0;
+        let touchScrollLeft = 0;
+
+        container.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 1) {
+            touchStartX = e.touches[0].pageX;
+            touchScrollLeft = container.scrollLeft;
+          }
+        }, { passive: true });
+
+        container.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 1) {
+            const touchX = e.touches[0].pageX;
+            const walk = (touchX - touchStartX);
+            container.scrollLeft = touchScrollLeft - walk;
+          }
+        }, { passive: true });
+
+        // Prevent clicking action buttons if user was actively dragging
+        container.addEventListener('click', (e) => {
+          if (moved) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true);
+      });
+    }
+
     // Initial render on load
     (function initDashboard() {
       const hash = (window.location.hash || '#overview').replace('#', '');
@@ -4825,6 +4937,7 @@
       const targetTab = valid.includes(hash) ? hash : 'overview';
       window.switchPlayerTab(targetTab);
       window.renderPlayerDisputesList();
+      setTimeout(initUniversalSwipe, 100);
     })();
 </script>
 </body>
