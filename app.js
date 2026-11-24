@@ -1274,6 +1274,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize Discovery Events and Initial Render
   setupDiscoveryEventListeners();
+
+  // Read URL query parameters if present (e.g., from explore.html?sport=cricket&city=chennai)
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramSport = urlParams.get('sport');
+    const paramCity = urlParams.get('city');
+    if (paramSport && paramSport !== 'all') {
+      exploreFilters.sport = paramSport.toLowerCase();
+      document.querySelectorAll('.filter-chip-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.sport === exploreFilters.sport);
+      });
+      const heroSportSelect = document.getElementById('select-sport');
+      if (heroSportSelect) heroSportSelect.value = exploreFilters.sport;
+    }
+    if (paramCity && paramCity !== 'all') {
+      exploreFilters.city = paramCity.toLowerCase();
+      const citySelect = document.getElementById('filter-city-select');
+      if (citySelect) citySelect.value = exploreFilters.city;
+      const heroLocSelect = document.getElementById('select-location');
+      if (heroLocSelect) heroLocSelect.value = exploreFilters.city;
+    }
+  } catch (e) {
+    console.error('Error parsing query params:', e);
+  }
+
   updateFavoritesBadge();
   renderMarketplaceTurfs();
 
@@ -1674,6 +1699,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const loc = document.getElementById('select-location')?.value || 'all';
     const sport = document.getElementById('select-sport')?.value || 'all';
 
+    // If on a page without the turfs marketplace container (e.g. index.html), redirect to explore.html
+    if (!document.getElementById('turfs-container')) {
+      window.location.href = `explore.html?city=${encodeURIComponent(loc)}&sport=${encodeURIComponent(sport)}`;
+      return;
+    }
+
     exploreFilters.city = loc;
     exploreFilters.sport = sport;
 
@@ -1693,6 +1724,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.sport-pill-card').forEach(pill => {
     pill.addEventListener('click', () => {
       const sport = pill.dataset.sport || 'all';
+
+      // If on a page without the turfs marketplace container, redirect to explore.html
+      if (!document.getElementById('turfs-container')) {
+        window.location.href = `explore.html?sport=${encodeURIComponent(sport)}`;
+        return;
+      }
+
       exploreFilters.sport = sport;
 
       const heroSportSelect = document.getElementById('select-sport');

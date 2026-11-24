@@ -34,7 +34,7 @@
       <nav aria-label="Main Navigation">
         <ul class="nav-menu">
           <li><a href="#home" class="nav-link active">Home</a></li>
-          <li><a href="#search-section" class="nav-link">Find Turfs</a></li>
+          <li><a href="explore.html" class="nav-link">Find Turfs</a></li>
           <li><a href="dashboard.html" class="nav-link" style="color: var(--primary-green-dark); font-weight: 700;">Dashboard</a></li>
           <li><a href="admin.html" class="nav-link" style="color: #2563EB; font-weight: 700;">⚡ Admin</a></li>
           <li><a href="#owner-box" class="nav-link">List Your Turf</a></li>
@@ -89,7 +89,7 @@
     </div>
     <ul class="mobile-nav-links">
       <li><a href="#home">Home</a></li>
-      <li><a href="#search-section">Find Turfs</a></li>
+      <li><a href="explore.html">Find Turfs</a></li>
       <li><a href="dashboard.html" style="color: var(--primary-green-dark); font-weight: 700;">Dashboard</a></li>
       <li><a href="admin.html" style="color: #2563EB; font-weight: 700;">⚡ Admin</a></li>
       <li><a href="#owner-box">List Your Turf</a></li>
@@ -619,233 +619,31 @@
   </section>
 
   <!-- ==========================================================================
-       6. EXPLORE & SEARCH RESULTS (SECTION A: SPORTMATCH / AIRBNB TWO-SIDED REDESIGN)
+       6. EXPLORE SPORTS FACILITIES GATEWAY (DEDICATED EXPLORATION PAGE LINK)
        ========================================================================== -->
-  <section class="turfs-listing-section" id="popular-turfs">
+  <section class="explore-gateway-section" id="popular-turfs" style="padding: 56px 0; background: #FFFFFF;">
     <div class="container">
-
-      <!-- Top Discovery Header & Toolbar -->
-      <div class="explore-header-toolbar">
-        <div class="explore-heading-group">
-          <div class="explore-eyebrow-pill">
-            <span class="live-dot-green"></span>
-            <span>VERIFIED SPORTS ARENAS</span>
+      <div style="background: linear-gradient(135deg, #064E3B 0%, #065F46 45%, #047857 100%); border-radius: 24px; padding: 48px 36px; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center; gap: 32px; flex-wrap: wrap; box-shadow: 0 16px 40px -10px rgba(6, 78, 59, 0.25); position: relative; overflow: hidden;">
+        <div style="position: absolute; right: -50px; top: -50px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
+        <div style="max-width: 620px; position: relative; z-index: 2;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.15); padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; color: #A7F3D0; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 14px; backdrop-filter: blur(4px);">
+            <span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+            <span>50+ Verified Sports Facilities Across Tamil Nadu</span>
           </div>
-          <div class="explore-heading-title-row">
-            <h2 class="section-main-heading">Explore Sports Facilities</h2>
-            <span class="explore-results-badge" id="turf-results-count-badge">Loading venues...</span>
-          </div>
-          <p class="explore-subtitle">Compare verified arenas, check real-time availability, and book your game across Tamil Nadu.</p>
+          <h2 style="font-size: 2.2rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.03em; margin-bottom: 12px; line-height: 1.2;">
+            Find &amp; Book Your Next Sports Ground
+          </h2>
+          <p style="font-size: 1rem; color: #D1FAE5; line-height: 1.6; margin: 0;">
+            Compare verified arenas in Chennai, Coimbatore, Madurai, Trichy, Salem and beyond. Check real-time availability, select your favorite slots, and confirm instantly on our dedicated explore portal.
+          </p>
         </div>
-
-        <div class="explore-toolbar-actions">
-          <!-- Mobile Filters Trigger Button -->
-          <button type="button" class="btn-mobile-filter-trigger" id="btn-open-mobile-filters" aria-label="Open Filters">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-            <span>Filters</span>
-            <span class="filter-count-dot" id="filter-active-dot" style="display:none;"></span>
-          </button>
-
-          <!-- Sorting Dropdown -->
-          <div class="explore-sort-wrapper">
-            <span class="sort-label">Sort by:</span>
-            <select id="explore-sort-select" class="explore-sort-dropdown" aria-label="Sort facilities">
-              <option value="relevance">Recommended</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="rating-desc">Rating: Highest First</option>
-            </select>
-            <svg class="sort-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </div>
+        <div style="position: relative; z-index: 2;">
+          <a href="explore.html" style="display: inline-flex; align-items: center; gap: 10px; background: #FFFFFF; color: #064E3B; font-weight: 800; font-size: 1.05rem; padding: 16px 32px; border-radius: 14px; text-decoration: none; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+            <span>🔍 Explore All Facilities</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
         </div>
       </div>
-
-      <!-- Quick Category Sub-tabs (SportMatch Style) -->
-      <div class="explore-subtabs-row">
-        <div class="subtabs-left-scroll">
-          <button type="button" class="explore-tab-pill active" data-tab="all">All Facilities</button>
-          <button type="button" class="explore-tab-pill" data-tab="popular">Most Popular</button>
-          <button type="button" class="explore-tab-pill" data-tab="instant">Instant Confirm</button>
-          <button type="button" class="explore-tab-pill" data-tab="favourites">Favourites (<span id="fav-count-pill">0</span>)</button>
-        </div>
-        <div class="subtabs-quick-tags">
-          <button type="button" class="quick-chip-toggle" data-quick="indoor">Indoor</button>
-          <button type="button" class="quick-chip-toggle" data-quick="outdoor">Outdoor</button>
-          <button type="button" class="quick-chip-toggle" data-quick="under1200">Under ₹1,200</button>
-        </div>
-      </div>
-
-      <!-- Main Discovery Layout: Left Filters + Results Cards Grid -->
-      <div class="explore-layout-wrapper" id="explore-layout-wrapper">
-        
-        <!-- LEFT FILTER SIDEBAR (Desktop) / Mobile Drawer -->
-        <aside class="explore-filter-sidebar" id="explore-filter-sidebar">
-          <div class="sidebar-header-row">
-            <div class="sidebar-title-block">
-              <h3 class="filter-sidebar-title">Filters</h3>
-              <span class="filter-count-sub" id="active-filters-count-label">0 active</span>
-            </div>
-            <button type="button" class="btn-filter-reset-link" id="btn-reset-filters">Clear all</button>
-            <button type="button" class="btn-close-filter-drawer" id="btn-close-filter-drawer" aria-label="Close Filters">✕</button>
-          </div>
-
-          <div class="filter-scrollable-content">
-            <!-- 1. Sport Selection -->
-            <div class="filter-group-block">
-              <label class="filter-group-heading">Sport</label>
-              <div class="filter-chips-grid">
-                <button type="button" class="filter-chip-btn active" data-sport="all">All Sports</button>
-                <button type="button" class="filter-chip-btn" data-sport="football">Football</button>
-                <button type="button" class="filter-chip-btn" data-sport="cricket">Box Cricket</button>
-                <button type="button" class="filter-chip-btn" data-sport="badminton">Badminton</button>
-                <button type="button" class="filter-chip-btn" data-sport="tennis">Tennis</button>
-                <button type="button" class="filter-chip-btn" data-sport="basketball">Basketball</button>
-              </div>
-            </div>
-
-            <!-- 2. Location & Distance -->
-            <div class="filter-group-block">
-              <label class="filter-group-heading" for="filter-city-select">Location / City</label>
-              <div class="filter-select-wrapper">
-                <svg class="select-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <select id="filter-city-select" class="filter-select-input">
-                  <option value="all">All Tamil Nadu Cities</option>
-                  <option value="chennai">Chennai (Anna Nagar, Pallavaram)</option>
-                  <option value="coimbatore">Coimbatore (RS Puram)</option>
-                  <option value="madurai">Madurai (KK Nagar)</option>
-                  <option value="trichy">Tiruchirappalli (Thillai Nagar)</option>
-                  <option value="salem">Salem (Fairlands)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- 3. Indoor / Outdoor Environment -->
-            <div class="filter-group-block">
-              <label class="filter-group-heading">Environment</label>
-              <div class="filter-segmented-control">
-                <button type="button" class="segment-btn active" data-env="all">All</button>
-                <button type="button" class="segment-btn" data-env="indoor">Indoor</button>
-                <button type="button" class="segment-btn" data-env="outdoor">Outdoor</button>
-              </div>
-            </div>
-
-            <!-- 4. Price Range Slider -->
-            <div class="filter-group-block">
-              <div class="filter-heading-between">
-                <label class="filter-group-heading" style="margin-bottom:0;">Max Price</label>
-                <span class="price-slider-label" id="price-slider-display">₹3,000/hr</span>
-              </div>
-              <input type="range" id="filter-price-range" min="500" max="3000" step="100" value="3000" class="filter-range-slider">
-              <div class="range-labels-row">
-                <span>₹500</span>
-                <span>₹1,500</span>
-                <span>₹3,000+</span>
-              </div>
-            </div>
-
-            <!-- 5. Facility Amenities -->
-            <div class="filter-group-block">
-              <label class="filter-group-heading">Amenities</label>
-              <div class="filter-checkbox-list">
-                <label class="filter-checkbox-item">
-                  <input type="checkbox" value="Floodlights" class="filter-amenity-cb">
-                  <span class="custom-cb-check"></span>
-                  <span class="cb-label-text">Floodlights</span>
-                </label>
-                <label class="filter-checkbox-item">
-                  <input type="checkbox" value="Parking" class="filter-amenity-cb">
-                  <span class="custom-cb-check"></span>
-                  <span class="cb-label-text">Parking Space</span>
-                </label>
-                <label class="filter-checkbox-item">
-                  <input type="checkbox" value="Changing Room" class="filter-amenity-cb">
-                  <span class="custom-cb-check"></span>
-                  <span class="cb-label-text">Changing Room</span>
-                </label>
-                <label class="filter-checkbox-item">
-                  <input type="checkbox" value="Cafeteria" class="filter-amenity-cb">
-                  <span class="custom-cb-check"></span>
-                  <span class="cb-label-text">Cafeteria / Drinks</span>
-                </label>
-                <label class="filter-checkbox-item">
-                  <input type="checkbox" value="Drinking Water" class="filter-amenity-cb">
-                  <span class="custom-cb-check"></span>
-                  <span class="cb-label-text">Drinking Water</span>
-                </label>
-                <label class="filter-checkbox-item">
-                  <input type="checkbox" value="Free Wi-Fi" class="filter-amenity-cb">
-                  <span class="custom-cb-check"></span>
-                  <span class="cb-label-text">Free Wi-Fi</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- 6. Available Time Slots -->
-            <div class="filter-group-block">
-              <label class="filter-group-heading">Time Slots</label>
-              <div class="filter-times-grid">
-                <button type="button" class="filter-time-btn" data-time="morning">Morning (6 AM – 11 AM)</button>
-                <button type="button" class="filter-time-btn" data-time="afternoon">Afternoon (12 PM – 4 PM)</button>
-                <button type="button" class="filter-time-btn" data-time="evening">Evening & Night (5 PM – 11 PM)</button>
-              </div>
-            </div>
-
-            <!-- 7. Rating Filter -->
-            <div class="filter-group-block">
-              <label class="filter-group-heading">Rating</label>
-              <div class="filter-rating-options">
-                <button type="button" class="rating-filter-pill active" data-rating="0">Any</button>
-                <button type="button" class="rating-filter-pill" data-rating="4.0">4.0+</button>
-                <button type="button" class="rating-filter-pill" data-rating="4.5">4.5+</button>
-                <button type="button" class="rating-filter-pill" data-rating="4.8">4.8+</button>
-              </div>
-            </div>
-
-            <!-- 8. Capacity / Pitch Size -->
-            <div class="filter-group-block">
-              <label class="filter-group-heading">Capacity / Size</label>
-              <div class="filter-capacity-pills">
-                <button type="button" class="capacity-pill-btn active" data-cap="all">All</button>
-                <button type="button" class="capacity-pill-btn" data-cap="court">Court</button>
-                <button type="button" class="capacity-pill-btn" data-cap="5v5">5v5</button>
-                <button type="button" class="capacity-pill-btn" data-cap="7v7">7v7</button>
-                <button type="button" class="capacity-pill-btn" data-cap="11v11">11v11</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Filter Footer Actions (Mobile drawer) -->
-          <div class="filter-sidebar-footer mobile-only">
-            <button type="button" class="btn-filter-apply" id="btn-apply-filters-mobile">Show Results</button>
-          </div>
-        </aside>
-
-        <!-- RIGHT AREA: FACILITY CARDS GRID -->
-        <main class="explore-results-area" id="explore-results-area">
-          <div class="turfs-cards-grid" id="turfs-container">
-            <!-- Dynamically populated by app.js with real & verified turfs (2-column grid, 6 per page) -->
-          </div>
-
-          <!-- Pagination Controls (SportMatch Style) -->
-          <nav class="explore-pagination-wrapper" id="explore-pagination" aria-label="Facility pages navigation">
-            <!-- Dynamically populated by app.js: e.g. < 1 2 3 > -->
-          </nav>
-          
-          <!-- Empty state fallback (hidden by default) -->
-          <div class="explore-empty-state" id="explore-empty-state" style="display: none;">
-            <div class="empty-state-icon">
-              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#164C38" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-            </div>
-            <h3 class="empty-state-title">No matching venues found</h3>
-            <p class="empty-state-desc">Try clearing some filters or searching for another city or sport category.</p>
-            <button type="button" class="btn-empty-reset" id="btn-empty-reset-action">Clear All Filters</button>
-          </div>
-        </main>
-      </div>
-
-      <!-- Mobile Drawer Backdrop Overlay (MUST BE OUTSIDE THE GRID) -->
-      <div class="explore-drawer-overlay" id="explore-drawer-overlay"></div>
-
     </div>
   </section>
 
