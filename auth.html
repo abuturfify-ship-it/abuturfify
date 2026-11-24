@@ -667,75 +667,164 @@
       }
     }
     @media (max-width: 640px) {
+      html, body {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+      }
       .auth-page-canvas {
-        padding: 12px 8px !important;
+        padding: 10px 8px !important;
         align-items: flex-start !important;
         min-height: 100vh !important;
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
+        max-width: 100% !important;
         overflow-x: hidden !important;
+        box-sizing: border-box !important;
       }
       .auth-card-shell {
         border-radius: 20px !important;
-        padding: 8px !important;
-        gap: 10px !important;
+        padding: 10px !important;
+        gap: 12px !important;
         width: 100% !important;
         max-width: 100% !important;
+        min-width: 0 !important;
         overflow: hidden !important;
         box-sizing: border-box !important;
         margin: 0 auto !important;
       }
       .auth-visual-side {
-        min-height: 180px !important;
+        min-height: 170px !important;
         padding: 14px 12px !important;
         border-radius: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+      }
+      .visual-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 6px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
       .visual-brand-badge {
-        padding: 6px 10px !important;
-        font-size: 12px !important;
+        padding: 5px 9px !important;
+        font-size: 11.5px !important;
       }
       .visual-tag {
-        font-size: 11px !important;
+        font-size: 10.5px !important;
         padding: 4px 8px !important;
+        white-space: nowrap !important;
+      }
+      .visual-quote {
+        font-size: 16px !important;
+        max-width: 100% !important;
+        line-height: 1.35 !important;
       }
       .visual-bottom-label {
-        font-size: 10px !important;
+        font-size: 9.5px !important;
         margin-bottom: 6px !important;
       }
       .visual-partners-row {
         gap: 6px !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
       }
       .partner-badge {
-        font-size: 11px !important;
+        font-size: 10.5px !important;
         padding: 4px 8px !important;
       }
       .auth-form-side {
-        padding: 16px 12px !important;
+        padding: 12px 6px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
       }
       .form-header-bar {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
         margin-bottom: 14px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .back-home-pill {
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+        flex-shrink: 0 !important;
+      }
+      .auth-headline-block {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
       }
       .auth-card-title {
         font-size: 20px !important;
+        line-height: 1.25 !important;
+        word-break: break-word !important;
       }
       .auth-card-sub {
-        font-size: 13px !important;
+        font-size: 12.5px !important;
+        line-height: 1.4 !important;
+        word-break: break-word !important;
       }
       .auth-tabs {
         margin-bottom: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
       }
       .auth-tab {
-        padding: 10px !important;
-        font-size: 13.5px !important;
+        padding: 9px !important;
+        font-size: 13px !important;
+      }
+      .auth-view {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+      }
+      .form-group {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .form-input {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
       }
       .btn-auth {
         padding: 12px !important;
         font-size: 14px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
       #booking-login-banner {
         padding: 10px 12px !important;
         font-size: 0.78rem !important;
         line-height: 1.4 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        word-break: break-word !important;
+      }
+      .g_id_signin_wrap, #g_id_signin_wrap, #g_id_signup_wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        display: flex !important;
+        justify-content: center !important;
+      }
+      .g_id_signin_wrap iframe, #g_id_signin_wrap iframe, #g_id_signup_wrap iframe {
+        max-width: 100% !important;
       }
     }
   </style>
@@ -768,7 +857,7 @@
         <p class="auth-card-sub" id="auth-page-sub">Sign in to your Turfify account</p>
       </div>
 
-      <div id="booking-login-banner" style="display:none;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:10px;padding:12px 14px;margin-bottom:16px;color:#065F46;font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:8px;">
+      <div id="booking-login-banner" style="display:none;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:10px;padding:12px 14px;margin-bottom:16px;color:#065F46;font-size:0.85rem;font-weight:600;align-items:center;gap:8px;">
         <span style="font-size:1.15rem;">⚡</span>
         <span id="booking-login-text">Please sign in or create an account to complete your booking.</span>
       </div>
@@ -1127,6 +1216,7 @@
 
       const signinWrap = document.getElementById('g_id_signin_wrap');
       const signupWrap = document.getElementById('g_id_signup_wrap');
+      const btnWidth = Math.min(360, Math.max(260, (window.innerWidth || 360) - 48));
       const renderOpts = {
         theme: 'outline',
         size: 'large',
@@ -1134,7 +1224,7 @@
         text: 'continue_with',
         shape: 'rectangular',
         logo_alignment: 'center',
-        width: 360
+        width: btnWidth
       };
       if (signinWrap) google.accounts.id.renderButton(signinWrap, renderOpts);
       if (signupWrap) google.accounts.id.renderButton(signupWrap, renderOpts);
