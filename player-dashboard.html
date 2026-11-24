@@ -1924,6 +1924,67 @@
     }
     .btn-hero-danger-soft:hover { background: #FEE2E2 !important; }
 
+    /* ── FILTER PILLS (MY BOOKINGS TAB) ───────────────────────────────── */
+    .player-filter-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 6px 14px !important;
+      border-radius: 8px !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      border: 1.5px solid transparent !important;
+      cursor: pointer !important;
+      transition: all 0.15s ease !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+    }
+    .player-filter-pill.active {
+      background: #064E3B !important;
+      color: #FFFFFF !important;
+      border-color: #064E3B !important;
+    }
+    .player-filter-pill:not(.active) {
+      background: #F1F5F9 !important;
+      color: #475569 !important;
+      border-color: #E2E8F0 !important;
+    }
+    .player-filter-pill:not(.active):hover {
+      background: #E2E8F0 !important;
+      color: #1E293B !important;
+    }
+
+    /* ── PAYMENTS PANE CONTAINERS & KPI GRID ──────────────────────────── */
+    .player-payments-container {
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid #E2E8F0;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    .player-payments-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* ── PROFILE PANE CARD & FORM GRID ────────────────────────────────── */
+    .player-profile-card {
+      max-width: 760px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid #E2E8F0;
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    .player-profile-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
     /* ── POPULAR FACILITIES (3-COLUMN CARDS) ──────────────────────────── */
     .player-popular-cards-grid {
       display: grid !important;
@@ -2168,17 +2229,19 @@
       .player-mockup-hero-card {
         display: flex !important;
         flex-direction: column !important;
-        padding: 14px !important;
-        gap: 14px !important;
+        padding: 14px 12px !important;
+        gap: 10px !important;
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
         border-radius: 16px !important;
         background: #FFFFFF !important;
+        height: auto !important;
+        min-height: unset !important;
       }
       .hero-left-media {
-        min-height: 180px !important;
-        height: 180px !important;
+        min-height: 160px !important;
+        height: 160px !important;
         width: 100% !important;
         border-radius: 12px !important;
         overflow: hidden !important;
@@ -2197,17 +2260,20 @@
         box-sizing: border-box !important;
         display: flex !important;
         flex-direction: column !important;
-        gap: 10px !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+        height: auto !important;
+        min-height: unset !important;
       }
       .hero-title {
-        font-size: 1.2rem !important;
+        font-size: 1.15rem !important;
         font-weight: 800 !important;
         color: #0F172A !important;
         line-height: 1.3 !important;
         margin: 0 0 4px 0 !important;
       }
       .hero-location-line {
-        font-size: 0.8rem !important;
+        font-size: 0.78rem !important;
         color: #64748B !important;
         display: flex !important;
         align-items: center !important;
@@ -2215,60 +2281,59 @@
         margin-bottom: 6px !important;
       }
       .hero-description {
-        font-size: 0.78rem !important;
-        color: #64748B !important;
-        line-height: 1.4 !important;
-        margin-bottom: 8px !important;
+        display: none !important;
       }
       .hero-specs-row {
         display: flex !important;
         flex-wrap: wrap !important;
         gap: 6px !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 6px !important;
       }
       .hero-spec-pill {
         font-size: 0.72rem !important;
-        padding: 5px 8px !important;
+        padding: 4px 8px !important;
         background: #F8FAFC !important;
         border: 1px solid #E2E8F0 !important;
         border-radius: 8px !important;
         color: #334155 !important;
       }
       .hero-cancellation-callout {
-        font-size: 0.74rem !important;
-        padding: 8px 12px !important;
+        font-size: 0.72rem !important;
+        padding: 6px 10px !important;
         background: #ECFDF5 !important;
         border: 1px solid #A7F3D0 !important;
-        border-radius: 10px !important;
+        border-radius: 8px !important;
         color: #065F46 !important;
         display: flex !important;
         align-items: center !important;
-        gap: 8px !important;
-        margin-bottom: 8px !important;
+        gap: 6px !important;
+        margin-bottom: 6px !important;
       }
       .hero-bottom-actions-row {
         display: flex !important;
         flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 10px !important;
+        align-items: stretch !important;
+        gap: 8px !important;
         width: 100% !important;
         box-sizing: border-box !important;
-        padding-top: 10px !important;
+        padding-top: 8px !important;
         border-top: 1px solid #F1F5F9 !important;
+        margin-top: 2px !important;
       }
       .hero-price-wrap {
         display: flex !important;
         flex-direction: row !important;
         align-items: baseline !important;
-        gap: 8px !important;
+        justify-content: space-between !important;
+        width: 100% !important;
       }
       .hero-price-label {
-        font-size: 0.7rem !important;
+        font-size: 0.68rem !important;
         font-weight: 700 !important;
         color: #94A3B8 !important;
       }
       .hero-price-val {
-        font-size: 1.35rem !important;
+        font-size: 1.3rem !important;
         font-weight: 900 !important;
         color: #0F172A !important;
       }
@@ -2286,14 +2351,31 @@
         min-width: 0 !important;
         text-align: center !important;
         justify-content: center !important;
-        padding: 10px 8px !important;
-        font-size: 0.8rem !important;
+        padding: 9px 8px !important;
+        font-size: 0.78rem !important;
         font-weight: 700 !important;
-        border-radius: 10px !important;
+        border-radius: 8px !important;
         box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
         white-space: nowrap !important;
+      }
+      .player-payments-container {
+        padding: 16px 12px !important;
+        border-radius: 16px !important;
+      }
+      .player-payments-kpi-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        margin-bottom: 18px !important;
+      }
+      .player-profile-card {
+        padding: 16px 12px !important;
+        border-radius: 16px !important;
+      }
+      .player-profile-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
       }
       .player-popular-cards-grid {
         grid-template-columns: 1fr !important;
@@ -2370,7 +2452,6 @@
     }
     .player-mobile-bottom-nav {
       display: none;
-    }
     }
 </style>
 </head>
@@ -2726,10 +2807,10 @@
           <!-- Filter Tabs + Search -->
           <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid #F1F5F9;">
             <div style="display:flex; gap:8px;" id="player-bookings-filter-tabs">
-              <button type="button" class="btn-mini-action active-filter" data-bfilter="all" onclick="window.filterBookingsTab('all', this)" style="background:#064E3B; color:#FFF; font-weight:700; border-radius:8px; padding:6px 14px; cursor:pointer;">All</button>
-              <button type="button" class="btn-mini-action" data-bfilter="upcoming" onclick="window.filterBookingsTab('upcoming', this)" style="background:#F1F5F9; color:#475569; font-weight:600; border-radius:8px; padding:6px 14px; cursor:pointer;">Upcoming</button>
-              <button type="button" class="btn-mini-action" data-bfilter="completed" onclick="window.filterBookingsTab('completed', this)" style="background:#F1F5F9; color:#475569; font-weight:600; border-radius:8px; padding:6px 14px; cursor:pointer;">Completed</button>
-              <button type="button" class="btn-mini-action" data-bfilter="cancelled" onclick="window.filterBookingsTab('cancelled', this)" style="background:#F1F5F9; color:#475569; font-weight:600; border-radius:8px; padding:6px 14px; cursor:pointer;">Cancelled</button>
+              <button type="button" class="player-filter-pill active" data-bfilter="all" onclick="window.filterBookingsTab('all', this)">All</button>
+              <button type="button" class="player-filter-pill" data-bfilter="upcoming" onclick="window.filterBookingsTab('upcoming', this)">Upcoming</button>
+              <button type="button" class="player-filter-pill" data-bfilter="completed" onclick="window.filterBookingsTab('completed', this)">Completed</button>
+              <button type="button" class="player-filter-pill" data-bfilter="cancelled" onclick="window.filterBookingsTab('cancelled', this)">Cancelled</button>
             </div>
             <input type="text" id="bookings-search-input" placeholder="🔍 Search venue, ref ID..." style="border:1px solid #CBD5E1; border-radius:10px; padding:7px 14px; font-size:0.82rem; outline:none; width:220px;" oninput="window.filterBookingsSearch(this.value)">
           </div>
@@ -2767,14 +2848,14 @@
            PANE 3: PAYMENTS (PAYMENT RECORDS & RECEIPTS)
            ====================================================================== -->
       <section class="player-tab-pane" id="pane-player-payments">
-        <div style="background:#FFFFFF; border-radius:20px; border:1px solid #E2E8F0; padding:24px; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+        <div class="player-payments-container">
           <div style="margin-bottom:20px;">
             <h2 style="font-size:1.35rem; font-weight:800; color:#0F172A; margin:0 0 4px 0;">Payment Records &amp; Invoices 💳</h2>
             <p style="font-size:0.82rem; color:#64748B; margin:0;">Transparent transaction history, payment channel breakdowns, and instant tax-compliant receipts.</p>
           </div>
 
           <!-- 3 Financial KPI Cards -->
-          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:24px;">
+          <div class="player-payments-kpi-grid">
             <div style="background:#ECFDF5; border:1.5px solid #A7F3D0; border-radius:16px; padding:18px;">
               <div style="font-size:0.75rem; font-weight:800; color:#065F46; text-transform:uppercase;">TOTAL AMOUNT SPENT</div>
               <div style="font-size:1.8rem; font-weight:800; color:#064E3B; margin-top:4px;" id="player-total-spent">₹0</div>
@@ -2845,7 +2926,7 @@
            PANE 5: PROFILE (CONTACT & ACCOUNT INFORMATION)
            ====================================================================== -->
       <section class="player-tab-pane" id="pane-player-profile">
-        <div style="max-width:760px; margin:0 auto; background:#FFFFFF; border-radius:20px; border:1px solid #E2E8F0; padding:28px; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+        <div class="player-profile-card">
           <div style="display:flex; align-items:center; gap:18px; padding-bottom:20px; border-bottom:1px solid #F1F5F9; margin-bottom:24px;">
             <div style="width:72px; height:72px; border-radius:50%; background:#D1FAE5; border:3px solid #10B981; display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:800; color:#047857;">
               ⚽
@@ -2857,7 +2938,7 @@
           </div>
 
           <form id="form-player-profile" onsubmit="return false;">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="player-profile-form-grid">
               <div class="form-group">
                 <label class="form-label" style="font-weight:700;">Full Name</label>
                 <input type="text" class="form-control" id="player-profile-name" placeholder="Full Name">
@@ -4244,7 +4325,7 @@
         return;
       }
 
-      card.style.display = 'grid';
+      card.style.display = window.innerWidth <= 860 ? 'flex' : 'grid';
       card.style.background = '#FFFFFF';
 
       const turf = (turfs || []).find(t => t.id === upcoming.turf_id) || {};
@@ -4263,7 +4344,11 @@
       const cnclBtn = document.getElementById('btn-hero-cancel');
 
       if (imgEl) imgEl.src = turf.image || upcoming.image || 'images/turf-arena.jpg';
-      if (badge) badge.textContent = 'CONFIRMED RESERVATION ✅';
+      const isConfirmed = upcoming.status === 'Confirmed';
+      if (badge) {
+        badge.textContent = isConfirmed ? 'CONFIRMED RESERVATION ✅' : (upcoming.status ? upcoming.status.toUpperCase() + ' ⚠️' : 'UPCOMING MATCH');
+        badge.className = 'hero-status-chip ' + (isConfirmed ? 'hero-status-confirmed' : 'hero-status-paid');
+      }
       if (payBadge) payBadge.textContent = (upcoming.payment_status === 'Paid Online' || upcoming.payment_status === 'Paid') ? '💳 Paid Online' : '💵 Cash on Ground';
       if (turfEl) {
         turfEl.innerHTML = `<a href="facility-details.html?id=${encodeURIComponent(upcoming.turf_id || '')}" style="color:inherit; text-decoration:none;">${upcoming.turf_name}</a>`;
@@ -4279,7 +4364,19 @@
 
       if (dirBtn) dirBtn.onclick = () => window.open('https://maps.google.com/?q=' + encodeURIComponent(venueLoc), '_blank');
       if (rcptBtn) rcptBtn.onclick = () => window.downloadBookingReceipt(upcoming);
-      if (cnclBtn) cnclBtn.onclick = () => (typeof window.cancelBooking === 'function' ? window.cancelBooking(upcoming.id) : null);
+      if (cnclBtn) {
+        if (isConfirmed) {
+          cnclBtn.style.display = 'inline-flex';
+          cnclBtn.textContent = 'Cancel';
+          cnclBtn.className = 'btn-hero-danger-soft';
+          cnclBtn.onclick = () => (typeof window.cancelBooking === 'function' ? window.cancelBooking(upcoming.id) : null);
+        } else {
+          cnclBtn.style.display = 'inline-flex';
+          cnclBtn.textContent = 'Rebook';
+          cnclBtn.className = 'btn-hero-secondary-white';
+          cnclBtn.onclick = () => window.openPlayerBookingModal(upcoming.turf_id || '');
+        }
+      }
     }
 
     function _renderPopularGrid(turfs) {
@@ -4842,7 +4939,17 @@
       }
     })();
 
-    function filterBookingsTab(status) {
+    function filterBookingsTab(status, el) {
+      const filterTabs = document.getElementById('player-bookings-filter-tabs');
+      if (filterTabs) {
+        filterTabs.querySelectorAll('.player-filter-pill').forEach(b => b.classList.remove('active'));
+      }
+      if (el) {
+        el.classList.add('active');
+      } else if (filterTabs) {
+        const match = filterTabs.querySelector(`[data-bfilter="${status}"]`);
+        if (match) match.classList.add('active');
+      }
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
       let bookings = user ? window.TurfifyStore.getPlayerBookings(user.id) : [];
       if (!bookings || bookings.length === 0) {
@@ -4851,6 +4958,7 @@
       const filtered = status === 'all' ? bookings : bookings.filter(b => b.status.toLowerCase() === status.toLowerCase());
       _renderBookingsTable(filtered);
     }
+    window.filterBookingsTab = filterBookingsTab;
 
     function filterBookingsSearch(query) {
       const user = window.TurfifyStore ? window.TurfifyStore.getCurrentUser() : null;
