@@ -74,6 +74,7 @@
       box-shadow: 0 35px 110px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.12);
       position: relative;
       z-index: 1;
+      box-sizing: border-box;
     }
 
     /* Left Form Side */
@@ -645,20 +646,96 @@
         grid-template-columns: 1fr;
         border-radius: 28px;
         padding: 12px;
+        box-sizing: border-box;
       }
       .auth-visual-side {
         min-height: 240px;
         order: -1; /* Shows at top of card so player image is always seen! */
         padding: 20px;
+        box-sizing: border-box;
       }
       .auth-form-side {
         padding: 24px 18px;
+        box-sizing: border-box;
       }
       .auth-page-canvas {
         padding: 16px 10px;
+        box-sizing: border-box;
       }
       .auth-card-title {
         font-size: 24px;
+      }
+    }
+    @media (max-width: 640px) {
+      .auth-page-canvas {
+        padding: 12px 8px !important;
+        align-items: flex-start !important;
+        min-height: 100vh !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+      }
+      .auth-card-shell {
+        border-radius: 20px !important;
+        padding: 8px !important;
+        gap: 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+        margin: 0 auto !important;
+      }
+      .auth-visual-side {
+        min-height: 180px !important;
+        padding: 14px 12px !important;
+        border-radius: 16px !important;
+      }
+      .visual-brand-badge {
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+      }
+      .visual-tag {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+      }
+      .visual-bottom-label {
+        font-size: 10px !important;
+        margin-bottom: 6px !important;
+      }
+      .visual-partners-row {
+        gap: 6px !important;
+      }
+      .partner-badge {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+      }
+      .auth-form-side {
+        padding: 16px 12px !important;
+      }
+      .form-header-bar {
+        margin-bottom: 14px !important;
+      }
+      .auth-card-title {
+        font-size: 20px !important;
+      }
+      .auth-card-sub {
+        font-size: 13px !important;
+      }
+      .auth-tabs {
+        margin-bottom: 16px !important;
+      }
+      .auth-tab {
+        padding: 10px !important;
+        font-size: 13.5px !important;
+      }
+      .btn-auth {
+        padding: 12px !important;
+        font-size: 14px !important;
+      }
+      #booking-login-banner {
+        padding: 10px 12px !important;
+        font-size: 0.78rem !important;
+        line-height: 1.4 !important;
       }
     }
   </style>

@@ -2115,22 +2115,143 @@
 
     /* ── RESPONSIVE MOBILE BEHAVIOR (< 860px) ────────────────────────── */
     @media (max-width: 860px) {
+      .player-saas-topbar {
+        padding: 0 10px !important;
+        height: 58px !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+      }
+      .btn-topbar-green-search,
+      .btn-topbar-filter-sliders,
+      .topbar-icon-bubble,
+      .btn-delete-acc-pill {
+        display: none !important;
+      }
+      .player-topbar-left-cluster {
+        gap: 8px !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        flex: 1 !important;
+      }
+      .player-topbar-search-box {
+        height: 38px !important;
+        padding: 0 10px !important;
+        min-width: 0 !important;
+        flex: 1 !important;
+      }
+      .player-topbar-search-box input {
+        font-size: 0.8rem !important;
+      }
+      .player-topbar-right-cluster {
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+      }
+      .topbar-user-avatar-chip {
+        width: 34px !important;
+        height: 34px !important;
+      }
+      .btn-logout-pill {
+        padding: 0 10px !important;
+        font-size: 0.72rem !important;
+        height: 30px !important;
+      }
       .player-overview-grid {
         grid-template-columns: 1fr !important;
-        padding: 16px !important;
+        padding: 12px 10px !important;
+        gap: 16px !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
       }
       .player-mockup-hero-card {
         grid-template-columns: 1fr !important;
+        padding: 12px !important;
+        gap: 12px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        border-radius: 16px !important;
       }
       .hero-left-media {
-        min-height: 200px !important;
-        height: 200px !important;
+        min-height: 180px !important;
+        height: 180px !important;
+        width: 100% !important;
+        border-radius: 12px !important;
+        flex-shrink: 0 !important;
+      }
+      .hero-left-media img#player-featured-hero-img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+      }
+      .hero-right-info {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+      }
+      .hero-title {
+        font-size: 1.15rem !important;
+        line-height: 1.3 !important;
+      }
+      .hero-location-line {
+        font-size: 0.78rem !important;
+        margin-bottom: 6px !important;
+      }
+      .hero-description {
+        font-size: 0.75rem !important;
+        margin-bottom: 8px !important;
+      }
+      .hero-specs-row {
+        gap: 6px !important;
+        margin-bottom: 8px !important;
+      }
+      .hero-spec-pill {
+        font-size: 0.7rem !important;
+        padding: 4px 8px !important;
+      }
+      .hero-cancellation-callout {
+        font-size: 0.72rem !important;
+        padding: 6px 10px !important;
+        margin-bottom: 10px !important;
+      }
+      .hero-bottom-actions-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding-top: 10px !important;
+      }
+      .hero-price-wrap {
+        flex-direction: row !important;
+        align-items: baseline !important;
+        gap: 6px !important;
+      }
+      .hero-buttons-group {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+      }
+      .btn-hero-primary-green,
+      .btn-hero-secondary-white,
+      .btn-hero-danger-soft {
+        flex: 1 1 calc(50% - 8px) !important;
+        min-width: 120px !important;
+        text-align: center !important;
+        justify-content: center !important;
+        padding: 9px 12px !important;
+        font-size: 0.78rem !important;
+        box-sizing: border-box !important;
       }
       .player-popular-cards-grid {
         grid-template-columns: 1fr !important;
       }
       .player-overview-sidebar {
         width: 100% !important;
+        box-sizing: border-box !important;
       }
       .player-saas-sidebar {
         position: fixed !important;
